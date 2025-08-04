@@ -1,19 +1,6 @@
-### Stage 1
-# synnergy/core
-core/cross_chain_contracts.go:13:6: ContractRegistry redeclared in this block
-	core/contracts.go:32:6: other declaration of ContractRegistry
-core/cross_chain_contracts.go:19:6: NewContractRegistry redeclared in this block
-	core/contracts.go:39:6: other declaration of NewContractRegistry
-core/cross_chain_contracts.go:20:27: unknown field mappings in struct literal of type ContractRegistry
-core/cross_chain_contracts.go:27:4: r.mappings undefined (type *ContractRegistry has no field or method mappings)
-
 ### Stage 2
-core/cross_chain_contracts.go:34:13: r.mappings undefined (type *ContractRegistry has no field or method mappings)
-core/cross_chain_contracts.go:42:43: r.mappings undefined (type *ContractRegistry has no field or method mappings)
-core/cross_chain_contracts.go:43:22: r.mappings undefined (type *ContractRegistry has no field or method mappings)
-core/cross_chain_contracts.go:53:11: r.mappings undefined (type *ContractRegistry has no field or method mappings)
 core/gas_table.go:4:5: gasTable redeclared in this block
-	core/gas.go:14:5: other declaration of gasTable
+        core/gas.go:14:5: other declaration of gasTable
 core/gas_table.go:9:6: initGasTable redeclared in this block
 
 ### Stage 3
@@ -40,14 +27,6 @@ core/opcodes_basic.go:9:2: OpMul redeclared in this block
 	core/opcodes_base.go:11:2: other declaration of OpMul
 core/opcodes_basic.go:10:2: OpDiv redeclared in this block
 
-### Stage 6
-	core/opcodes_base.go:12:2: other declaration of OpDiv
-core/opcodes_basic.go:11:2: OpTransfer redeclared in this block
-	core/opcodes_base.go:13:2: other declaration of OpTransfer
-core/transaction.go:17:6: Transaction redeclared in this block
-	core/compliance.go:25:6: other declaration of Transaction
-core/transaction.go:43:49: cannot use amount (variable of type uint64) as float64 value in struct literal
-
 ### Stage 7
 core/transaction.go:43:57: unknown field Fee in struct literal of type Transaction
 core/transaction.go:43:67: unknown field Nonce in struct literal of type Transaction
@@ -57,12 +36,7 @@ core/transaction.go:51:30: t.BiometricHash undefined (type *Transaction has no f
 core/transaction.go:52:84: t.Fee undefined (type *Transaction has no field or method Fee)
 
 ### Stage 8
-core/transaction.go:52:91: t.Nonce undefined (type *Transaction has no field or method Nonce)
-core/transaction.go:52:100: t.Timestamp undefined (type *Transaction has no field or method Timestamp)
-core/transaction.go:58:30: t.Signature undefined (type *Transaction has no field or method Signature)
-core/transaction.go:74:4: t.BiometricHash undefined (type *Transaction has no field or method BiometricHash)
-core/transaction_control.go:43:26: tx.Fee undefined (type *Transaction has no field or method Fee)
-core/transaction_control.go:44:25: invalid operation: l.balances[tx.To] < tx.Amount (mismatched types uint64 and float64)
+Stage 8 resolved.
 
 ### Stage 9
 core/transaction_control.go:47:2: invalid operation: l.balances[tx.To] -= tx.Amount (mismatched types uint64 and float64)

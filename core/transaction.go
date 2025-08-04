@@ -40,7 +40,15 @@ type Transaction struct {
 // reproduced deterministically prior to signing.  Transactions default to the
 // Transfer type unless modified by higher level logic.
 func NewTransaction(from, to string, amount, fee, nonce uint64) *Transaction {
-	tx := &Transaction{From: from, To: to, Amount: amount, Fee: fee, Nonce: nonce, Timestamp: time.Now().Unix(), Type: TxTypeTransfer}
+	tx := &Transaction{
+		From:      from,
+		To:        to,
+		Amount:    amount,
+		Fee:       fee,
+		Nonce:     nonce,
+		Timestamp: time.Now().Unix(),
+		Type:      TxTypeTransfer,
+	}
 	tx.ID = tx.Hash()
 	return tx
 }
@@ -49,7 +57,17 @@ func NewTransaction(from, to string, amount, fee, nonce uint64) *Transaction {
 // signature.  It is used as the message for signing and verification.
 func (t *Transaction) Hash() string {
 	bio := hex.EncodeToString(t.BiometricHash)
-	h := sha256.Sum256([]byte(fmt.Sprintf("%s%s%d%d%d%d%s", t.From, t.To, t.Amount, t.Fee, t.Nonce, t.Timestamp, bio)))
+	h := sha256.Sum256([]byte(fmt.Sprintf(
+		"%s%s%d%d%d%d%d%s",
+		t.From,
+		t.To,
+		t.Amount,
+		t.Fee,
+		t.Nonce,
+		t.Timestamp,
+		t.Type,
+		bio,
+	)))
 	return hex.EncodeToString(h[:])
 }
 

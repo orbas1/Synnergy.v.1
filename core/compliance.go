@@ -21,8 +21,10 @@ type FraudSignal struct {
 	Timestamp time.Time
 }
 
-// Transaction represents a minimal transaction for compliance checks.
-type Transaction struct {
+// ComplianceTransaction represents a minimal transaction for compliance checks.
+// It uses float amounts because compliance monitoring may involve fractional
+// values independent of on-chain integer amounts.
+type ComplianceTransaction struct {
 	ID     string
 	From   string
 	To     string
@@ -100,7 +102,9 @@ func (s *ComplianceService) AuditTrail(address string) []AuditEntry {
 }
 
 // MonitorTransaction performs a simple anomaly detection on a transaction amount.
-func (s *ComplianceService) MonitorTransaction(tx Transaction, threshold float64) bool {
+// It operates on ComplianceTransaction to avoid colliding with the core
+// Transaction type used by the ledger.
+func (s *ComplianceService) MonitorTransaction(tx ComplianceTransaction, threshold float64) bool {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.appendAudit(tx.From, "tx_monitored", map[string]string{"id": tx.ID})
