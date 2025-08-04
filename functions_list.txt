@@ -358,6 +358,11 @@ core/firewall.go:23:func (f *Firewall) Allow(ip string) {
 core/firewall.go:32:func (f *Firewall) Block(ip string) {
 core/firewall.go:42:func (f *Firewall) IsAllowed(ip string) bool {
 core/firewall.go:56:func (f *Firewall) Rules() (allowed []string, blocked []string) {
+core/forensic_node.go:21:func NewForensicNode() *ForensicNode {
+core/forensic_node.go:26:func (f *ForensicNode) RecordTransaction(tx nodes.TransactionLite) error {
+core/forensic_node.go:34:func (f *ForensicNode) RecordNetworkTrace(trace nodes.NetworkTrace) error {
+core/forensic_node.go:42:func (f *ForensicNode) Transactions() []nodes.TransactionLite {
+core/forensic_node.go:51:func (f *ForensicNode) NetworkTraces() []nodes.NetworkTrace {
 core/idwallet_registration.go:15:func NewIDRegistry() *IDRegistry {
 core/idwallet_registration.go:20:func (r *IDRegistry) Register(addr, info string) error {
 core/idwallet_registration.go:31:func (r *IDRegistry) Info(addr string) (string, bool) {
