@@ -1,9 +1,13 @@
 package core
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 // DAOTokenLedger tracks DAO membership token balances.
 type DAOTokenLedger struct {
+	mu       sync.RWMutex
 	balances map[string]uint64
 }
 
@@ -14,11 +18,15 @@ func NewDAOTokenLedger() *DAOTokenLedger {
 
 // Mint creates tokens for an address.
 func (l *DAOTokenLedger) Mint(addr string, amount uint64) {
+	l.mu.Lock()
 	l.balances[addr] += amount
+	l.mu.Unlock()
 }
 
 // Transfer moves tokens between addresses.
 func (l *DAOTokenLedger) Transfer(from, to string, amount uint64) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	if l.balances[from] < amount {
 		return errors.New("insufficient balance")
 	}
@@ -29,5 +37,7 @@ func (l *DAOTokenLedger) Transfer(from, to string, amount uint64) error {
 
 // Balance returns the token balance for an address.
 func (l *DAOTokenLedger) Balance(addr string) uint64 {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
 	return l.balances[addr]
 }

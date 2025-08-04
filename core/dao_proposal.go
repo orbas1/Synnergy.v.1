@@ -3,10 +3,12 @@ package core
 import (
 	"errors"
 	"fmt"
+	"sync"
 )
 
 // DAOProposal represents a proposal within a DAO.
 type DAOProposal struct {
+	mu       sync.RWMutex
 	ID       string
 	DAOID    string
 	Creator  string
@@ -18,6 +20,7 @@ type DAOProposal struct {
 
 // ProposalManager manages DAO proposals.
 type ProposalManager struct {
+	mu        sync.RWMutex
 	proposals map[string]*DAOProposal
 	nextID    int
 }
@@ -29,21 +32,29 @@ func NewProposalManager() *ProposalManager {
 
 // CreateProposal adds a new proposal to a DAO.
 func (pm *ProposalManager) CreateProposal(dao *DAO, creator, desc string) *DAOProposal {
+	pm.mu.Lock()
+	defer pm.mu.Unlock()
 	id := fmt.Sprintf("%d", pm.nextID)
 	pm.nextID++
 	p := &DAOProposal{ID: id, DAOID: dao.ID, Creator: creator, Desc: desc,
 		YesVotes: make(map[string]uint64), NoVotes: make(map[string]uint64)}
 	pm.proposals[id] = p
+	dao.mu.Lock()
 	dao.Proposals = append(dao.Proposals, p)
+	dao.mu.Unlock()
 	return p
 }
 
 // Vote casts a vote on a proposal with given weight.
 func (pm *ProposalManager) Vote(id, voter string, weight uint64, support bool) error {
+	pm.mu.RLock()
 	p, ok := pm.proposals[id]
+	pm.mu.RUnlock()
 	if !ok {
 		return errors.New("proposal not found")
 	}
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	if support {
 		p.YesVotes[voter] = weight
 		delete(p.NoVotes, voter)
@@ -56,10 +67,14 @@ func (pm *ProposalManager) Vote(id, voter string, weight uint64, support bool) e
 
 // Results sums yes and no votes for a proposal.
 func (pm *ProposalManager) Results(id string) (yes, no uint64, err error) {
+	pm.mu.RLock()
 	p, ok := pm.proposals[id]
+	pm.mu.RUnlock()
 	if !ok {
 		return 0, 0, errors.New("proposal not found")
 	}
+	p.mu.RLock()
+	defer p.mu.RUnlock()
 	for _, w := range p.YesVotes {
 		yes += w
 	}
@@ -71,16 +86,22 @@ func (pm *ProposalManager) Results(id string) (yes, no uint64, err error) {
 
 // Execute marks a proposal as executed.
 func (pm *ProposalManager) Execute(id string) error {
+	pm.mu.RLock()
 	p, ok := pm.proposals[id]
+	pm.mu.RUnlock()
 	if !ok {
 		return errors.New("proposal not found")
 	}
+	p.mu.Lock()
 	p.Executed = true
+	p.mu.Unlock()
 	return nil
 }
 
 // Get returns a proposal by ID.
 func (pm *ProposalManager) Get(id string) (*DAOProposal, error) {
+	pm.mu.RLock()
+	defer pm.mu.RUnlock()
 	p, ok := pm.proposals[id]
 	if !ok {
 		return nil, errors.New("proposal not found")
@@ -90,6 +111,8 @@ func (pm *ProposalManager) Get(id string) (*DAOProposal, error) {
 
 // List returns all proposals.
 func (pm *ProposalManager) List() []*DAOProposal {
+	pm.mu.RLock()
+	defer pm.mu.RUnlock()
 	out := make([]*DAOProposal, 0, len(pm.proposals))
 	for _, p := range pm.proposals {
 		out = append(out, p)

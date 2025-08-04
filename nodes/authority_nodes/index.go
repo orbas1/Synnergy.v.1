@@ -1,5 +1,7 @@
 package authority_nodes
 
+import "sync"
+
 // AuthorityNode represents a node eligible for governance actions.
 type AuthorityNode struct {
 	Address string
@@ -9,6 +11,7 @@ type AuthorityNode struct {
 
 // Index maintains a lookup of authority nodes by address.
 type Index struct {
+	mu    sync.RWMutex
 	nodes map[string]*AuthorityNode
 }
 
@@ -19,6 +22,8 @@ func NewIndex() *Index {
 
 // Add inserts or replaces an authority node in the index.
 func (idx *Index) Add(node *AuthorityNode) {
+	idx.mu.Lock()
+	defer idx.mu.Unlock()
 	if idx.nodes == nil {
 		idx.nodes = make(map[string]*AuthorityNode)
 	}
@@ -27,17 +32,23 @@ func (idx *Index) Add(node *AuthorityNode) {
 
 // Get retrieves an authority node by address.
 func (idx *Index) Get(addr string) (*AuthorityNode, bool) {
+	idx.mu.RLock()
+	defer idx.mu.RUnlock()
 	n, ok := idx.nodes[addr]
 	return n, ok
 }
 
 // Remove deletes an authority node from the index by address.
 func (idx *Index) Remove(addr string) {
+	idx.mu.Lock()
+	defer idx.mu.Unlock()
 	delete(idx.nodes, addr)
 }
 
 // List returns all authority nodes in the index.
 func (idx *Index) List() []*AuthorityNode {
+	idx.mu.RLock()
+	defer idx.mu.RUnlock()
 	out := make([]*AuthorityNode, 0, len(idx.nodes))
 	for _, n := range idx.nodes {
 		out = append(out, n)
