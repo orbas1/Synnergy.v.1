@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	militarynodes "synnergy/Nodes/military_nodes"
+	militarynodes "synnergy/nodesextra/military_nodes"
 )
 
 // LogisticsRecord captures movement or status updates for military assets.

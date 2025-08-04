@@ -1,18 +1,20 @@
 package core
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
 
-// ContractMapping links a local contract address to a remote chain address.
+// ContractMapping links a local contract to a remote chain address.
 type ContractMapping struct {
-	LocalAddr   string
-	RemoteChain string
-	RemoteAddr  string
+	LocalAddress  string
+	RemoteChain   string
+	RemoteAddress string
 }
-
 // CrossChainRegistry manages cross-chain contract mappings.
 type CrossChainRegistry struct {
 	mu       sync.RWMutex
-	mappings map[string]*ContractMapping
+	mappings map[string]ContractMapping
 }
 
 // NewCrossChainRegistry creates an empty registry.
@@ -24,22 +26,25 @@ func NewCrossChainRegistry() *CrossChainRegistry {
 func (r *CrossChainRegistry) RegisterMapping(local, remoteChain, remoteAddr string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	r.mappings[local] = &ContractMapping{LocalAddr: local, RemoteChain: remoteChain, RemoteAddr: remoteAddr}
+	r.mappings[localAddr] = ContractMapping{LocalAddress: localAddr, RemoteChain: remoteChain, RemoteAddress: remoteAddr}
 }
 
 // GetMapping retrieves a mapping by local address.
 func (r *CrossChainRegistry) GetMapping(local string) (*ContractMapping, bool) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-	m, ok := r.mappings[local]
-	return m, ok
+	m, ok := r.mappings[localAddr]
+	if !ok {
+		return ContractMapping{}, errors.New("mapping not found")
+	}
+	return m, nil
 }
 
 // ListMappings returns all registered mappings.
 func (r *CrossChainRegistry) ListMappings() []*ContractMapping {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
-	out := make([]*ContractMapping, 0, len(r.mappings))
+	out := make([]ContractMapping, 0, len(r.mappings))
 	for _, m := range r.mappings {
 		out = append(out, m)
 	}
@@ -50,5 +55,10 @@ func (r *CrossChainRegistry) ListMappings() []*ContractMapping {
 func (r *CrossChainRegistry) RemoveMapping(local string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	delete(r.mappings, local)
+	if _, ok := r.mappings[localAddr]; !ok {
+		return errors.New("mapping not found")
+	}
+	delete(r.mappings, localAddr)
+	return nil
+
 }

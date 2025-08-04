@@ -2,19 +2,32 @@ package core
 
 import "testing"
 
-func TestBridgeTransferManager(t *testing.T) {
-	mgr := NewBridgeTransferManager()
-	tr, err := mgr.Deposit("bridge1", "alice", "bob", 100, "token")
+func TestBridgeManager(t *testing.T) {
+	l := NewLedger()
+	l.Credit("alice", 100)
+	bm := NewBridgeManager(l)
+	bridgeID := bm.RegisterBridge("chainA", "chainB", "relayer1")
+	if bridgeID == 0 {
+		t.Fatalf("expected bridge id")
+	}
+	transferID, err := bm.Deposit(bridgeID, "alice", "bob", 50, "token")
 	if err != nil {
-		t.Fatalf("deposit: %v", err)
+		t.Fatalf("deposit failed: %v", err)
 	}
-	if err := mgr.Claim(tr.ID, "proof"); err != nil {
-		t.Fatalf("claim: %v", err)
+	if l.GetBalance("alice") != 50 {
+		t.Fatalf("expected alice balance 50")
 	}
-	if tr.Status != "released" {
-		t.Fatalf("expected released status")
+	if err := bm.Claim(transferID, "proof"); err != nil {
+		t.Fatalf("claim failed: %v", err)
 	}
-	if len(mgr.ListTransfers()) != 1 {
-		t.Fatalf("list: expected 1 transfer")
+	if l.GetBalance("bob") != 50 {
+		t.Fatalf("expected bob balance 50")
+	}
+	if _, err := bm.GetTransfer(transferID); err != nil {
+		t.Fatalf("get transfer failed: %v", err)
+	}
+	if len(bm.ListTransfers()) != 1 {
+		t.Fatalf("unexpected transfer list length")
+
 	}
 }

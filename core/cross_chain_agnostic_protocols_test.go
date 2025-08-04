@@ -3,12 +3,16 @@ package core
 import "testing"
 
 func TestProtocolRegistry(t *testing.T) {
-	reg := NewProtocolRegistry()
-	p := reg.RegisterProtocol("IBC")
-	if _, ok := reg.GetProtocol(p.ID); !ok {
+	r := NewProtocolRegistry()
+	id := r.Register("ics-20")
+	if id == 0 {
+		t.Fatalf("expected id > 0")
+	}
+	if _, ok := r.Get(id); !ok {
 		t.Fatalf("protocol not found")
 	}
-	if len(reg.ListProtocols()) != 1 {
-		t.Fatalf("list: expected 1 protocol")
+	list := r.List()
+	if len(list) != 1 || list[0].ID != id {
+		t.Fatalf("unexpected list result")
 	}
 }

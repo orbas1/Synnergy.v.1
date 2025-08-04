@@ -1,7 +1,7 @@
 package core
 
 import (
-	nodes "synnergy/Nodes"
+	nodes "synnergy/nodesextra"
 	"testing"
 	"time"
 )

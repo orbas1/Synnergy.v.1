@@ -3,22 +3,31 @@ package core
 import "testing"
 
 func TestCrossChainTxManager(t *testing.T) {
-	mgr := NewCrossChainTxManager()
-	tx1, err := mgr.LockAndMint("bridge1", "asset1", 50, "proof")
+	l := NewLedger()
+	l.Credit("alice", 100)
+	l.Credit("bob", 100)
+	m := NewCrossChainTxManager(l)
+	id1, err := m.LockMint(1, "alice", "charlie", "asset1", 40, "proof")
 	if err != nil {
-		t.Fatalf("lockmint: %v", err)
+		t.Fatalf("lockmint failed: %v", err)
 	}
-	tx2, err := mgr.BurnAndRelease("bridge1", "bob", "asset1", 20)
+	if l.GetBalance("alice") != 60 || l.GetBalance("charlie") != 40 {
+		t.Fatalf("unexpected balances after lockmint")
+	}
+	id2, err := m.BurnRelease(1, "bob", "dave", "asset1", 30)
 	if err != nil {
-		t.Fatalf("burnrelease: %v", err)
+		t.Fatalf("burnrelease failed: %v", err)
 	}
-	if _, ok := mgr.GetTx(tx1.ID); !ok {
-		t.Fatalf("tx1 not found")
+	if l.GetBalance("bob") != 70 || l.GetBalance("dave") != 30 {
+		t.Fatalf("unexpected balances after burnrelease")
 	}
-	if len(mgr.ListTxs()) != 2 {
-		t.Fatalf("list: expected 2 txs")
+	if _, err := m.GetTransfer(id1); err != nil {
+		t.Fatalf("get transfer1 failed: %v", err)
 	}
-	if tx2.Type != "burnrelease" {
-		t.Fatalf("unexpected type")
+	if _, err := m.GetTransfer(id2); err != nil {
+		t.Fatalf("get transfer2 failed: %v", err)
+	}
+	if len(m.ListTransfers()) != 2 {
+		t.Fatalf("expected two transfers")
 	}
 }
