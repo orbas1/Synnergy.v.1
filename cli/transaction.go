@@ -11,11 +11,12 @@ import (
 	"synnergy/core"
 )
 
+var txCmd = &cobra.Command{
+	Use:   "tx",
+	Short: "Transaction utilities",
+}
+
 func init() {
-	txCmd := &cobra.Command{
-		Use:   "tx",
-		Short: "Transaction utilities",
-	}
 
 	createCmd := &cobra.Command{
 		Use:   "create [from] [to] [amount] [fee] [nonce]",
