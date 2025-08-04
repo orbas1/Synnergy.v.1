@@ -43,5 +43,6 @@ func TestAdjustForBlockUtilization(t *testing.T) {
 	}
 	if v := AdjustForBlockUtilization(100, 40, 100); v != 90 {
 		t.Fatalf("low util adjustment failed, got %d", v)
+
 	}
 }

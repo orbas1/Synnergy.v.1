@@ -22,12 +22,20 @@ type FeeBreakdown struct {
 	Total    uint64
 }
 
-// CalculateBaseFee computes the base fee using the median of recent fees and
-// an adjustment factor representing current network load.
+// CalculateBaseFee computes the base fee using the median of the most recent
+// 1000 block fees and an adjustment factor representing current network load.
+//
+// If more than 1000 fee values are supplied only the latest 1000 are used,
+// allowing the caller to provide a rolling history without manual trimming.
 func CalculateBaseFee(recent []uint64, adjustment float64) uint64 {
 	if len(recent) == 0 {
 		return 0
 	}
+
+	if len(recent) > 1000 {
+		recent = recent[len(recent)-1000:]
+	}
+
 	data := append([]uint64(nil), recent...)
 	sort.Slice(data, func(i, j int) bool { return data[i] < data[j] })
 	median := data[len(data)/2]
@@ -75,6 +83,16 @@ func FeeForWalletVerification(securityLevel, baseFee, variableRate, tip uint64) 
 	variable := securityLevel * variableRate
 	total := baseFee + variable + tip
 	return FeeBreakdown{Base: baseFee, Variable: variable, Priority: tip, Total: total}
+}
+
+// FeeForValidatedTransfer returns zero fees for transfers that have been
+// validated as eligible for fee-less execution. If validated is false it
+// falls back to the standard transfer fee calculation.
+func FeeForValidatedTransfer(dataSize, baseFee, variableRate, tip uint64, validated bool) FeeBreakdown {
+	if validated {
+		return FeeBreakdown{}
+	}
+	return FeeForTransfer(dataSize, baseFee, variableRate, tip)
 }
 
 // FeeDistribution represents the allocation of fees across network

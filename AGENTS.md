@@ -1,45 +1,69 @@
 # AGENTS Tasks
 
-This repository requires the following eight tasks to be executed simultaneously. Each task includes detailed sub tasks.
+The Synnergy VM development effort is divided into eight extensive tasks to be executed simultaneously. Each task contains detailed subtasks derived from the overall VM specification.
 
-1. **Transaction Fee Distribution (4.4.8.1)**
-   - Implement fee sharing model for validators and miners.
-   - Compute proportional fee shares.
-   - Automate smart contract-based distribution with real-time processing.
-   - Analyze economic impact to encourage full blocks and adapt to network conditions.
+1. **Execution Engine Development**
+   - Design a bytecode interpreter with JIT compilation, adaptive optimization, and machine-code caching.
+   - Build a controlled sandbox environment ensuring isolation, deterministic execution, replay protection, and efficient state management.
+   - Implement comprehensive error handling with detailed logs, real-time alerts, self-healing mechanisms, and fallback execution paths.
+   - Apply performance optimizations such as loop unrolling, inlining, constant folding, parallel execution, and dynamic gas management.
+   - Develop a resource manager for dynamic CPU/memory allocation, quota enforcement, and real-time monitoring.
 
-2. **Gas Fee Framework (4.4.8.2)**
-   - Define principles for fair, efficient, and sustainable gas fee calculation.
-   - Develop base fee algorithm using the median of the last 1000 blocks and an adjustment factor.
-   - Implement variable fee computation based on gas units and gas price per unit.
-   - Support priority fees (tips) and detailed fee calculations for transfers, purchases, deployed token usage, contract signing, wallet verification, and validated fee-less transfers.
+2. **Instruction Set Implementation**
+   - Provide arithmetic operations (basic, advanced, bitwise) with overflow/underflow protections and error flags.
+   - Implement control flow constructs including conditional branches, loops, switch statements, and recursive function calls.
+   - Integrate cryptographic functions: SHA-256/SHA-3, Blake2, AES, RSA, ECC, digital signatures, key generation, and secure key storage.
+   - Support event emission with custom and standard events, indexed logs, and off-chain interaction via listeners and webhooks.
+   - Enable inter-contract communication through synchronous/asynchronous calls, shared storage, access control, and encrypted data exchange.
+   - Add logical operations, state access primitives, assertions, and optimized data structures for persistent storage.
 
-3. **Security Measures (4.4.8.3)**
-   - Enforce minimum stake requirements for validators.
-   - Implement multi-factor validation tasks: transaction verification and block signing.
-   - Apply slashing conditions for double signing and downtime with penalties and rehabilitation procedures.
+3. **Security Framework**
+   - Enforce access control using RBAC, ABAC, multilevel security labels, mandatory access control, and detailed audit logs.
+   - Provide encryption for data at rest and in transit, homomorphic encryption, TLS, end-to-end encryption, and zero-knowledge proofs.
+   - Support formal verification via specification languages (TLA+, Alloy), SMT solvers, model checking, static analysis, and certification processes.
+   - Implement multi-signature schemes with threshold/aggregate signatures, distributed key generation, key sharding, multi-sig wallets, and comprehensive auditing.
 
-4. **Fee Distribution Strategy & Genesis Wallets (4.4.8.4-5)**
-   - Redistribute fees to internal development, charitable contributions, loan pool, passive income for holders, validators/miners, node hosts, and creator wallet.
-   - Manage genesis wallets for incentives and ongoing ecosystem support: genesis, internal/external charity, loan pool, passive income, node host distribution, creator wallet.
+4. **State Management Suite**
+   - Deliver snapshotting (scheduled/event-triggered), integrity verification, distributed storage, and compression.
+   - Build a state Merkle tree with root hashing, proof generation, incremental updates, and efficient traversal.
+   - Create pruning algorithms, automated/dynamic pruning strategies, and configurable data retention policies.
+   - Provide optimized state storage using key-value stores, RocksDB, sharding, and lossless compression.
+   - Implement atomic state updates, rollback mechanisms, optimistic concurrency, conflict detection, and cryptographic signatures.
+   - Offer logging, serialization (binary/JSON/XML), validation frameworks, and real-time execution monitoring dashboards.
+   - Include resource isolation, dynamic resource allocation, enhanced debugging tools, performance benchmarks, analytics, AI-driven optimization, self-healing, quantum-resistant cryptography, zero-knowledge execution, decentralized and predictive resource management, automated scalability adjustments, adaptive execution, AI security audits, cross-chain compatibility, dynamic gas pricing, on-chain governance, quantum-resistant algorithms, zero-knowledge proofs, AI-driven threat detection, multi-chain oracles, governance-based upgrades, dynamic execution profiles, enhanced privacy, predictive governance, self-adaptive gas pricing, AI-powered governance, interoperable contracts, real-time governance adjustments, zero-knowledge governance, blockchain compliance, and automated dispute resolution.
 
-5. **Dynamic Fee Adjustment & Transparent Estimator (4.4.8.6-7)**
-   - Monitor network conditions and algorithmically adjust base and variable fee rates.
-   - Provide real-time fee estimator with interactive UI, data synchronization, and fee breakdown.
-   - Communicate updates and gather user feedback for continuous optimization.
+5. **Compilation Pipeline**
+   - Define ABI encoding/decoding, function signature generation, interface description, and auto-generated JSON ABI files with versioning.
+   - Generate optimized bytecode via multi-stage compilation, intermediate representations, error diagnostics, and dead code elimination.
+   - Provide syntax and semantic checking with real-time IDE feedback, type checking, and logical consistency verification.
+   - Support multiple languages (Golang, Rust, Solidity, Vyper, Yul, Python, JavaScript, C++) with language-specific optimizations and standard libraries.
+   - Supply IDE plugins offering real-time compilation, debugging, customizable workspaces, and interactive tutorials.
+   - Deliver compilation analytics, real-time feedback, cross-platform compilation, interactive code editor, AI-assisted optimization, interactive debugging, decentralized compilation services, real-time code analysis, quantum-safe compilation, code quality assurance, and customizable compilation pipelines.
 
-6. **Extended Fee Controls (4.4.8.8)**
-   - Implement fee caps to prevent overcharging during congestion.
-   - Apply fee floors to guarantee minimum validator compensation.
-   - Automate monitoring and transparent communication of fee thresholds.
+6. **Execution Environment & Scalability**
+   - Provide concurrency support with multi-threading, non-blocking I/O, transaction isolation, conflict resolution, load balancing, and task scheduling.
+   - Ensure deterministic execution through consistent operation ordering, immutable state structures, snapshotting, and deterministic debugging tools.
+   - Implement gas metering with instruction-level accounting, real-time monitoring, dynamic pricing, and detailed cost reports.
+   - Establish sandboxing for secure isolation, resource limits, access control, threat detection, fault containment, and crash recovery.
+   - Deliver scalability features: horizontal/vertical scaling, elastic adjustments, intelligent load distribution, decentralized coordination, sharding, and resource throttling.
+   - Include execution auditing with logs, audit trails, compliance verification, real-time monitoring, priority transaction handling, AI-driven concurrency management, self-optimizing environment, quantum-resistant sandboxing, real-time resource scaling, decentralized execution, dynamic load balancing, and energy-efficient execution strategies.
 
-7. **Advanced Transaction Features (4.4.8.9-10)**
-   - Integrate biometric authentication via APIs, CLIs, GUIs, and SDKs.
-   - Optimize transaction broadcasting and relay through efficient algorithms, P2P propagation, relay nodes, and queue management.
+7. **Developer Interfaces & Tools**
+   - Integrate CI/CD support with automated testing, deployment automation, monitoring, and alerts.
+   - Provide an interactive debugger with breakpoints, variable watches, call stack inspection, and automated fix suggestions.
+   - Offer deployment tools with GUIs/CLIs, multi-chain deployment capabilities, version management, and upgrade mechanisms.
+   - Maintain comprehensive documentation, examples, sample projects, and community contributions.
+   - Supply profiling tools for execution metrics, gas consumption, visualizations, and optimization recommendations.
+   - Deliver testing frameworks (unit, integration, scenario, stress), automation, mocking, coverage analysis, and quality metrics.
+   - Provide blockchain state query utilities, security and reliability measures, smart contract interaction libraries, transaction submission tools, advanced query tools, API rate limiting, real-time interaction monitoring, deployment analytics, and comprehensive testing suites.
 
-8. **Transaction Control, Privacy & Receipt Management (4.4.8.11-13)**
-   - Enable cancellation, reversal, and scheduling with authority node oversight.
-   - Support conversion to private transactions using encryption, zero-knowledge proofs, ring signatures, and authority verification.
-   - Provide chargebacks and detailed, searchable transaction receipts with secure storage.
+8. **VM Management & Optimization**
+   - Implement VM lifecycle management: provisioning, deprovisioning, snapshots, policy-driven automation, compliance, and reporting.
+   - Develop dynamic resource allocation with shared/isolated pools, elastic scaling, and threshold-based adjustments.
+   - Provide VM monitoring for real-time metrics, health checks, anomaly detection, alerts, and historical analysis.
+   - Establish security management with RBAC, MFA, encryption, intrusion detection, vulnerability scanning, and secure communication.
+   - Automate update and patch management with scheduled updates, rollback mechanisms, and audit trails.
+   - Enable automated VM provisioning, integration with CI/CD, Infrastructure-as-Code, bulk provisioning, and elastic deployment.
+   - Support real-time resource adjustment, comprehensive analytics, enhanced security protocols, multi-cloud management, AI-driven optimization, decentralized management, self-healing capabilities, quantum-resistant security, real-time performance tuning, energy-efficient operation, predictive maintenance, and cross-network VM migration.
 
-All tasks should be tackled concurrently to deliver a secure, efficient, and user-friendly transaction system.
+All tasks should progress concurrently to deliver a robust, secure, and high-performance Synnergy VM.
