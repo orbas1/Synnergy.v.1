@@ -1,7 +1,12 @@
 package core
 
-import "testing"
+import (
+	"bytes"
+	"testing"
+)
 
+// TestSimpleVM verifies basic start/stop and opcode execution using the
+// default light VM profile.
 func TestSimpleVM(t *testing.T) {
 	vm := NewSimpleVM()
 	if vm.Status() {
@@ -10,14 +15,48 @@ func TestSimpleVM(t *testing.T) {
 	if err := vm.Start(); err != nil {
 		t.Fatalf("start: %v", err)
 	}
-	out, gas, err := vm.Execute(nil, "", []byte{1, 2, 3}, 10)
+	wasm := []byte{0x00, 0x00, 0x00} // single NOP opcode
+	args := []byte{1, 2, 3}
+	out, gas, err := vm.Execute(wasm, "", args, 10)
 	if err != nil {
 		t.Fatalf("execute: %v", err)
 	}
-	if gas != 3 || len(out) != 3 {
+	if gas != 1 || !bytes.Equal(out, args) {
 		t.Fatalf("unexpected result")
 	}
 	if err := vm.Stop(); err != nil {
 		t.Fatalf("stop: %v", err)
+	}
+}
+
+// TestVMVariants ensures that the heavy and super light VM profiles operate and
+// that the super light profile enforces a strict concurrency limit.
+func TestVMVariants(t *testing.T) {
+	heavy := NewSimpleVM(VMHeavy)
+	super := NewSimpleVM(VMSuperLight)
+	_ = heavy.Start()
+	_ = super.Start()
+
+	if _, _, err := heavy.Execute([]byte{0, 0, 0}, "", nil, 5); err != nil {
+		t.Fatalf("heavy execute: %v", err)
+	}
+
+	errCh := make(chan error, 2)
+	go func() {
+		_, _, err := super.Execute([]byte{0, 0, 0}, "", nil, 5)
+		errCh <- err
+	}()
+	go func() {
+		_, _, err := super.Execute([]byte{0, 0, 0}, "", nil, 5)
+		errCh <- err
+	}()
+	busy := 0
+	for i := 0; i < 2; i++ {
+		if err := <-errCh; err != nil && err.Error() == "vm busy" {
+			busy++
+		}
+	}
+	if busy == 0 {
+		t.Fatalf("expected busy error from super light VM")
 	}
 }
