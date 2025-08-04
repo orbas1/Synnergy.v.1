@@ -1,6 +1,9 @@
 package core
 
-import "sort"
+import (
+	"fmt"
+	"sort"
+)
 
 // TransactionType represents high level categories of transactions used for
 // fee calculations and policy decisions.
@@ -113,4 +116,23 @@ func ApplyFeeCapFloor(fee, cap, floor uint64) uint64 {
 		fee = floor
 	}
 	return fee
+}
+
+// FeePolicy defines network-wide fee limits.
+type FeePolicy struct {
+	Cap   uint64
+	Floor uint64
+}
+
+// Enforce applies the cap and floor and returns the adjusted fee along with a
+// message if a threshold was triggered.
+func (p FeePolicy) Enforce(fee uint64) (uint64, string) {
+	adjusted := ApplyFeeCapFloor(fee, p.Cap, p.Floor)
+	var note string
+	if p.Cap > 0 && fee > p.Cap {
+		note = fmt.Sprintf("fee capped at %d", p.Cap)
+	} else if fee < p.Floor {
+		note = fmt.Sprintf("fee raised to floor %d", p.Floor)
+	}
+	return adjusted, note
 }
