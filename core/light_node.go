@@ -23,3 +23,10 @@ func (n *LightNode) LatestHeader() (nodes.BlockHeader, bool) {
 	}
 	return n.headers[len(n.headers)-1], true
 }
+
+// Headers returns a copy of all stored block headers.
+func (n *LightNode) Headers() []nodes.BlockHeader {
+	out := make([]nodes.BlockHeader, len(n.headers))
+	copy(out, n.headers)
+	return out
+}

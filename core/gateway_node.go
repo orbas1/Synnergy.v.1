@@ -39,3 +39,17 @@ func (g *GatewayNode) Handle(name string, data []byte) error {
 	}
 	return fmt.Errorf("unknown endpoint: %s", name)
 }
+
+// RemoveEndpoint removes a previously registered endpoint handler.
+func (g *GatewayNode) RemoveEndpoint(name string) {
+	delete(g.handlers, name)
+}
+
+// Endpoints returns a list of registered endpoint names.
+func (g *GatewayNode) Endpoints() []string {
+	out := make([]string, 0, len(g.handlers))
+	for k := range g.handlers {
+		out = append(out, k)
+	}
+	return out
+}

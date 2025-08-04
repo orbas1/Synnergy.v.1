@@ -22,3 +22,18 @@ type FullNode struct {
 func NewFullNode(id nodes.Address, mode FullNodeMode) *FullNode {
 	return &FullNode{BaseNode: NewBaseNode(id), Mode: mode}
 }
+
+// SetMode updates the storage mode of the full node.
+func (f *FullNode) SetMode(m FullNodeMode) {
+	f.Mode = m
+}
+
+// CurrentMode returns the node's current storage mode.
+func (f *FullNode) CurrentMode() FullNodeMode {
+	return f.Mode
+}
+
+// IsArchive reports whether the node runs in archive mode.
+func (f *FullNode) IsArchive() bool {
+	return f.Mode == FullNodeModeArchive
+}

@@ -48,6 +48,13 @@ func (n *BaseNode) Stop() error {
 	return nil
 }
 
+// IsRunning reports whether the node is currently active.
+func (n *BaseNode) IsRunning() bool {
+	n.mu.RLock()
+	defer n.mu.RUnlock()
+	return n.running
+}
+
 // Peers returns the list of known peers.
 func (n *BaseNode) Peers() []nodes.Address {
 	n.mu.RLock()
