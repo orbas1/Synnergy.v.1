@@ -55,6 +55,12 @@ func NewSynnergyConsensus() *SynnergyConsensus {
 		PoSAvailable: true,
 		PoHAvailable: true,
 		PoWRewards:   true,
+		Weights: ConsensusWeights{PoW: 0.40, PoS: 0.30, PoH: 0.30},
+		Alpha:   0.5,
+		Beta:    0.5,
+		Gamma:   0.1,
+		Dmax:    1,
+		Smax:    1,
 	}
 }
 
@@ -144,6 +150,7 @@ func (sc *SynnergyConsensus) SetPoWRewards(enabled bool) {
 	sc.PoWRewards = enabled
 }
 
+
 // ValidateSubBlock performs POS and POH validation on a sub-block.  For the
 // prototype this simply returns true.
 func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {
@@ -167,4 +174,5 @@ func clamp(v, min, max float64) float64 {
 		return max
 	}
 	return v
+
 }
