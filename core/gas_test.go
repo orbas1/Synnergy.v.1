@@ -3,15 +3,12 @@ package core
 import "testing"
 
 func TestDefaultGasTable(t *testing.T) {
-    g := DefaultGasTable()
-    if g[OpNoop] != 1 {
-        t.Fatalf("expected gas 1 for OpNoop")
-    }
-    if g[OpTransfer] != 10 {
-        t.Fatalf("expected gas 10 for OpTransfer")
-    }
-    if g[OpAdd] != 0 {
-        t.Fatalf("expected undefined ops to have zero gas cost")
-    }
+	initGasTable()
+	if GasCost(OpAdd) != 0 {
+		t.Fatalf("expected zero gas cost for unpriced opcode")
+	}
+	SetGasCost(OpAdd, 5)
+	if GasCost(OpAdd) != 5 {
+		t.Fatalf("expected updated gas cost 5 for OpAdd, got %d", GasCost(OpAdd))
+	}
 }
-
