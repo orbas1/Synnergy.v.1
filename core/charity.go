@@ -1,5 +1,3 @@
-
-
 package core
 
 // CharityPool – 5% cut from every gas fee routed to on-chain philanthropy.
@@ -22,13 +20,107 @@ package core
 import (
 	"crypto/sha256"
 	"encoding/binary"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"sort"
+	"strings"
+	"sync"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
+
+// Address represents a 20-byte hex encoded address used throughout the
+// charity pool logic. It provides helpers for different string formats and
+// raw byte access.
+type Address string
+
+// StringToAddress validates that the provided string is a valid hex encoded
+// address and returns it as an Address type.
+func StringToAddress(s string) (Address, error) {
+	if len(s) != 42 || !strings.HasPrefix(s, "0x") {
+		return "", fmt.Errorf("invalid address length: %s", s)
+	}
+	if _, err := hex.DecodeString(s[2:]); err != nil {
+		return "", err
+	}
+	return Address(strings.ToLower(s)), nil
+}
+
+// Hex returns the hexadecimal representation of the address.
+func (a Address) Hex() string { return string(a) }
+
+// Short returns a shortened representation useful for logs.
+func (a Address) Short() string {
+	if len(a) <= 10 {
+		return string(a)
+	}
+	return string(a[:6]) + "..." + string(a[len(a)-4:])
+}
+
+// Bytes returns the raw 20 byte representation of the address.
+func (a Address) Bytes() []byte {
+	b, _ := hex.DecodeString(strings.TrimPrefix(string(a), "0x"))
+	return b
+}
+
+// Hash is a simple 32 byte value used for vote keys.
+type Hash [32]byte
+
+// Iterator represents a simple key/value iterator over state prefixes.
+type Iterator interface {
+	Next() bool
+	Value() []byte
+}
+
+// StateRW abstracts state reads/writes and balance transfers required by the
+// charity pool.
+type StateRW interface {
+	Transfer(from, to Address, amount uint64) error
+	BalanceOf(addr Address) uint64
+	SetState(key []byte, value []byte)
+	GetState(key []byte) ([]byte, error)
+	HasState(key []byte) (bool, error)
+	PrefixIterator(prefix []byte) Iterator
+}
+
+// CharityRegistration holds information about a charity participating in a
+// cycle and the accumulated votes it received.
+type CharityRegistration struct {
+	Addr      Address
+	Name      string
+	Category  CharityCategory
+	Cycle     uint64
+	VoteCount uint64
+}
+
+// CharityPool maintains charity registrations, votes and payout logic.
+type CharityPool struct {
+	mu        sync.Mutex
+	logger    *logrus.Logger
+	led       StateRW
+	vote      electorate
+	genesis   time.Time
+	lastDaily int64
+}
+
+// mustJSON marshals a value and panics on error. It simplifies error handling
+// for deterministic writes to the ledger.
+func mustJSON(v any) []byte {
+	b, err := json.Marshal(v)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
+// voteKey constructs the ledger key used to record that a voter has voted in a
+// given cycle.
+func voteKey(cycle Hash, voter Address) []byte {
+	return []byte(fmt.Sprintf("charity:vote:%x:%s", cycle, voter.Hex()))
+}
 
 //---------------------------------------------------------------------
 // Categories
