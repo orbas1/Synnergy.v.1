@@ -1,20 +1,18 @@
 package core
 
-// SetGasCost updates the gas cost for a specific opcode.
-// If the global gas table has not been initialised yet it
-// will be reset to the default values before applying the
-// override.
+// SetGasCost updates the gas cost for a specific opcode at runtime.
+// This allows governance or tests to tweak opcode pricing without
+// rebuilding the binary.
 func SetGasCost(op Opcode, cost uint64) {
-	if gasTable == nil {
-		initGasTable()
-	}
 	gasTable[op] = cost
 }
 
-// ResetGasTable restores the global gas table to the default
-// values returned by DefaultGasTable. This provides a simple
-// way for governance logic or tests to ensure a known set of
-// gas prices.
-func ResetGasTable() {
-	initGasTable()
+// GasTableSnapshot returns a copy of the current gas table. The
+// snapshot can be used for inspection or persistence.
+func GasTableSnapshot() GasTable {
+	snapshot := make(GasTable, len(gasTable))
+	for op, c := range gasTable {
+		snapshot[op] = c
+	}
+	return snapshot
 }
