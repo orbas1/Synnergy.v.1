@@ -25,9 +25,83 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 )
+
+// Address represents a 20 byte account identifier used throughout the charity
+// module. For now it is modelled as a simple string wrapper to keep the
+// implementation lightweight while providing a clear type for function
+// signatures.
+type Address string
+
+// StringToAddress converts a hex string into an Address. It performs very light
+// validation, ensuring a non-empty value and normalising to lower case.
+func StringToAddress(s string) (Address, error) {
+	if s == "" {
+		return "", errors.New("empty address")
+	}
+	return Address(strings.ToLower(s)), nil
+}
+
+// Hex returns the string form of the address.
+func (a Address) Hex() string { return string(a) }
+
+// Bytes returns the raw byte slice of the address.
+func (a Address) Bytes() []byte { return []byte(a) }
+
+// Short returns a shortened representation suitable for logging.
+func (a Address) Short() string {
+	h := a.Hex()
+	if len(h) <= 10 {
+		return h
+	}
+	return h[:6] + "..." + h[len(h)-4:]
+}
+
+// Hash is a 32 byte identifier used for cycle hashes and other keys.
+type Hash [32]byte
+
+// StateIterator defines the minimal behaviour required for iterating over state
+// key/value pairs with a common prefix.
+type StateIterator interface {
+	Next() bool
+	Value() []byte
+}
+
+// StateRW abstracts the ledger access used by the charity pool. It provides a
+// very small subset of read/write functionality so the charity module can be
+// tested in isolation.
+type StateRW interface {
+	Transfer(from, to Address, amount uint64) error
+	HasState(key []byte) (bool, error)
+	GetState(key []byte) ([]byte, error)
+	SetState(key []byte, value []byte) error
+	BalanceOf(addr Address) uint64
+	PrefixIterator(prefix []byte) StateIterator
+}
+
+// CharityRegistration captures a charity's registration information for a
+// given cycle along with its vote tally.
+type CharityRegistration struct {
+	Addr      Address
+	Name      string
+	Category  CharityCategory
+	Cycle     uint64
+	VoteCount uint64
+}
+
+// mustJSON marshals v to JSON and panics if marshalling fails. It is a small
+// helper used because the surrounding code cannot gracefully recover from a
+// serialisation error.
+func mustJSON(v interface{}) []byte {
+	b, err := json.Marshal(v)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
 
 //---------------------------------------------------------------------
 // Categories
@@ -369,6 +443,10 @@ func (cp *CharityPool) isCycleBoundary(ts time.Time) bool {
 //---------------------------------------------------------------------
 // Ledger key helpers
 //---------------------------------------------------------------------
+
+func voteKey(id Hash, voter Address) []byte {
+	return []byte(fmt.Sprintf("charity:vote:%x:%s", id[:], voter.Hex()))
+}
 
 func regKey(cycle uint64, addr Address) []byte {
 	return []byte(fmt.Sprintf("charity:reg:%d:%s", cycle, addr.Hex()))
