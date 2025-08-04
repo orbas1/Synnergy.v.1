@@ -96,3 +96,11 @@ func (n *ContentNode) Meta(id string) (ContentMeta, bool) {
 	n.mu.RUnlock()
 	return meta, ok
 }
+
+// DeleteContent removes the stored ciphertext and metadata for the given id.
+func (n *ContentNode) DeleteContent(id string) {
+	n.mu.Lock()
+	delete(n.contents, id)
+	delete(n.metas, id)
+	n.mu.Unlock()
+}

@@ -52,3 +52,10 @@ func (n *IndexingNode) Keys() []string {
 	}
 	return keys
 }
+
+// Count returns the number of entries currently indexed.
+func (n *IndexingNode) Count() int {
+	n.mu.RLock()
+	defer n.mu.RUnlock()
+	return len(n.index)
+}

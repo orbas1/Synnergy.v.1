@@ -36,6 +36,27 @@ func (f *DataFeed) Get(key string) (string, bool) {
 	return val, ok
 }
 
+// Delete removes a key from the feed and records the update time if the key existed.
+func (f *DataFeed) Delete(key string) {
+	f.mu.Lock()
+	if _, ok := f.data[key]; ok {
+		delete(f.data, key)
+		f.updated = time.Now().UTC()
+	}
+	f.mu.Unlock()
+}
+
+// Keys returns a snapshot of all keys stored in the feed.
+func (f *DataFeed) Keys() []string {
+	f.mu.RLock()
+	defer f.mu.RUnlock()
+	keys := make([]string, 0, len(f.data))
+	for k := range f.data {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
 // Snapshot returns a copy of the feed's current data map.
 func (f *DataFeed) Snapshot() map[string]string {
 	f.mu.RLock()
