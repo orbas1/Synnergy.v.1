@@ -14,7 +14,7 @@ import (
 const DefaultGasCost = 1
 
 // DefaultGasTable builds a gas pricing table for all registered opcodes. It
-// parses `opcode_and_gas_guide.md` at runtime to pull concrete costs. Any
+// parses `gas_table_list.md` at runtime to pull concrete costs. Any
 // opcode missing from the guide receives DefaultGasCost ensuring the table is
 // exhaustive.
 func DefaultGasTable() GasTable {
@@ -30,12 +30,12 @@ func DefaultGasTable() GasTable {
 	return tbl
 }
 
-// parseGasGuide reads opcode_and_gas_guide.md and extracts price overrides.
+// parseGasGuide reads gas_table_list.md and extracts price overrides.
 // The file is expected to contain markdown tables with backtick-quoted opcode
 // names and numeric gas costs.
 func parseGasGuide() map[string]uint64 {
 	_, filename, _, _ := runtime.Caller(0)
-	path := filepath.Join(filepath.Dir(filename), "..", "opcode_and_gas_guide.md")
+	path := filepath.Join(filepath.Dir(filename), "..", "gas_table_list.md")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil
