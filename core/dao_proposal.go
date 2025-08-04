@@ -13,6 +13,7 @@ type DAOProposal struct {
 	Desc     string
 	YesVotes map[string]uint64
 	NoVotes  map[string]uint64
+	Executed bool
 }
 
 // ProposalManager manages DAO proposals.
@@ -50,6 +51,31 @@ func (pm *ProposalManager) Vote(id, voter string, weight uint64, support bool) e
 		p.NoVotes[voter] = weight
 		delete(p.YesVotes, voter)
 	}
+	return nil
+}
+
+// Results sums yes and no votes for a proposal.
+func (pm *ProposalManager) Results(id string) (yes, no uint64, err error) {
+	p, ok := pm.proposals[id]
+	if !ok {
+		return 0, 0, errors.New("proposal not found")
+	}
+	for _, w := range p.YesVotes {
+		yes += w
+	}
+	for _, w := range p.NoVotes {
+		no += w
+	}
+	return yes, no, nil
+}
+
+// Execute marks a proposal as executed.
+func (pm *ProposalManager) Execute(id string) error {
+	p, ok := pm.proposals[id]
+	if !ok {
+		return errors.New("proposal not found")
+	}
+	p.Executed = true
 	return nil
 }
 
