@@ -4,20 +4,20 @@ import "errors"
 
 // Node represents a participant in the network.
 type Node struct {
-	ID         string
-	Addr       string
-	Ledger     *Ledger
-	Consensus  *SynnergyConsensus
-	VM         *SNVM
-	Mempool    []*Transaction
-	Blockchain []*Block
-	Stakes     map[string]uint64
-
+	ID            string
+	Addr          string
+	Ledger        *Ledger
+	Consensus     *SynnergyConsensus
+	VM            *SNVM
+	Mempool       []*Transaction
+	Blockchain    []*Block
+	Stakes        map[string]uint64
+	MaxTxPerBlock int
 }
 
 // NewNode creates a new node instance.
 func NewNode(id, addr string, ledger *Ledger) *Node {
-	return &Node{ID: id, Addr: addr, Ledger: ledger, Consensus: NewSynnergyConsensus(), VM: NewSNVM(), Stakes: make(map[string]uint64)}
+	return &Node{ID: id, Addr: addr, Ledger: ledger, Consensus: NewSynnergyConsensus(), VM: NewSNVM(), Stakes: make(map[string]uint64), MaxTxPerBlock: 100}
 }
 
 // AddTransaction validates and adds a transaction to the mempool.
@@ -52,10 +52,20 @@ func (n *Node) MineBlock() *Block {
 	}
 	block := NewBlock([]*SubBlock{sb}, prevHash)
 	n.Consensus.MineBlock(block, 3)
+	var totalFees uint64
 	for _, tx := range sb.Transactions {
+		totalFees += tx.Fee
 		_ = n.Ledger.ApplyTransaction(tx)
 	}
 	n.Blockchain = append(n.Blockchain, block)
+
+	dist := DistributeFees(totalFees)
+	pool := AdjustForBlockUtilization(dist.ValidatorsMiners, len(sb.Transactions), n.MaxTxPerBlock)
+	weights := map[string]uint64{validator: n.Stakes[validator]}
+	weights[n.ID] = 1
+	shares := ShareProportional(pool, weights)
+	contract := NewFeeDistributionContract(n.Ledger)
+	contract.Distribute(shares)
 	return block
 }
 

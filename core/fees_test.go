@@ -28,3 +28,20 @@ func TestApplyFeeCapFloor(t *testing.T) {
 		t.Fatalf("floor not applied, got %d", got)
 	}
 }
+
+func TestShareProportional(t *testing.T) {
+	weights := map[string]uint64{"a": 1, "b": 3}
+	shares := ShareProportional(100, weights)
+	if shares["a"] != 25 || shares["b"] != 75 {
+		t.Fatalf("unexpected shares: %v", shares)
+	}
+}
+
+func TestAdjustForBlockUtilization(t *testing.T) {
+	if v := AdjustForBlockUtilization(100, 95, 100); v != 110 {
+		t.Fatalf("high util adjustment failed, got %d", v)
+	}
+	if v := AdjustForBlockUtilization(100, 40, 100); v != 90 {
+		t.Fatalf("low util adjustment failed, got %d", v)
+	}
+}
