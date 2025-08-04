@@ -28,7 +28,30 @@ func init() {
 		Short: "Assign stake to an address",
 		Run: func(cmd *cobra.Command, args []string) {
 			amt, _ := strconv.ParseUint(args[1], 10, 64)
-			currentNode.SetStake(args[0], amt)
+			if err := currentNode.SetStake(args[0], amt); err != nil {
+				fmt.Println("error:", err)
+			}
+		},
+	}
+	slashCmd := &cobra.Command{
+		Use:   "slash [address] [reason]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Slash a validator (reason: double|downtime)",
+		Run: func(cmd *cobra.Command, args []string) {
+			switch args[1] {
+			case "double":
+				currentNode.ReportDoubleSign(args[0])
+			case "downtime":
+				currentNode.ReportDowntime(args[0])
+			}
+		},
+	}
+	rehabCmd := &cobra.Command{
+		Use:   "rehab [address]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Rehabilitate a slashed validator",
+		Run: func(cmd *cobra.Command, args []string) {
+			currentNode.Rehabilitate(args[0])
 		},
 	}
 	addTxCmd := &cobra.Command{
@@ -64,6 +87,6 @@ func init() {
 			fmt.Printf("mined block %s with nonce %d\n", block.Hash, block.Nonce)
 		},
 	}
-	nodeCmd.AddCommand(infoCmd, stakeCmd, addTxCmd, mempoolCmd, mineCmd)
+	nodeCmd.AddCommand(infoCmd, stakeCmd, slashCmd, rehabCmd, addTxCmd, mempoolCmd, mineCmd)
 	rootCmd.AddCommand(nodeCmd)
 }
