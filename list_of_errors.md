@@ -40,14 +40,6 @@ core/opcodes_basic.go:9:2: OpMul redeclared in this block
 	core/opcodes_base.go:11:2: other declaration of OpMul
 core/opcodes_basic.go:10:2: OpDiv redeclared in this block
 
-### Stage 6
-	core/opcodes_base.go:12:2: other declaration of OpDiv
-core/opcodes_basic.go:11:2: OpTransfer redeclared in this block
-	core/opcodes_base.go:13:2: other declaration of OpTransfer
-core/transaction.go:17:6: Transaction redeclared in this block
-	core/compliance.go:25:6: other declaration of Transaction
-core/transaction.go:43:49: cannot use amount (variable of type uint64) as float64 value in struct literal
-
 ### Stage 7
 core/transaction.go:43:57: unknown field Fee in struct literal of type Transaction
 core/transaction.go:43:67: unknown field Nonce in struct literal of type Transaction
