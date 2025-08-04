@@ -25,6 +25,7 @@ type NetworkMetrics struct {
 type ConsensusHopper struct {
 	mu   sync.RWMutex
 	mode ConsensusMode
+	last NetworkMetrics
 }
 
 // NewConsensusHopper creates a hopper with the supplied initial mode.
@@ -39,11 +40,25 @@ func (h *ConsensusHopper) Mode() ConsensusMode {
 	return h.mode
 }
 
+// SetMode forcibly sets the consensus mode, bypassing evaluation heuristics.
+func (h *ConsensusHopper) SetMode(m ConsensusMode) {
+	h.mu.Lock()
+	h.mode = m
+	h.mu.Unlock()
+}
+
+// LastMetrics returns the metrics used during the most recent evaluation.
+func (h *ConsensusHopper) LastMetrics() NetworkMetrics {
+	h.mu.RLock()
+	defer h.mu.RUnlock()
+	return h.last
+}
+
 // Evaluate selects a consensus mode based on network metrics and returns it.
 func (h *ConsensusHopper) Evaluate(m NetworkMetrics) ConsensusMode {
 	h.mu.Lock()
 	defer h.mu.Unlock()
-
+	h.last = m
 	switch {
 	case m.TPS > 1000 && m.LatencySec < 1:
 		h.mode = ConsensusPoS

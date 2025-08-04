@@ -42,6 +42,13 @@ func (n *EnergyEfficientNode) AddOffset(credits float64) {
 	n.mu.Unlock()
 }
 
+// OffsetCredits returns the current accumulated carbon offset credits for the node.
+func (n *EnergyEfficientNode) OffsetCredits() float64 {
+	n.mu.RLock()
+	defer n.mu.RUnlock()
+	return n.offsetCredits
+}
+
 // Certify recomputes and stores a sustainability certificate based on latest metrics.
 func (n *EnergyEfficientNode) Certify() SustainabilityCertificate {
 	eff, _ := n.tracker.Efficiency(n.id)
