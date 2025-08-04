@@ -1,35 +1,9 @@
-### Stage 1
-# synnergy/core
-core/cross_chain_contracts.go:13:6: ContractRegistry redeclared in this block
-	core/contracts.go:32:6: other declaration of ContractRegistry
-core/cross_chain_contracts.go:19:6: NewContractRegistry redeclared in this block
-	core/contracts.go:39:6: other declaration of NewContractRegistry
-core/cross_chain_contracts.go:20:27: unknown field mappings in struct literal of type ContractRegistry
-core/cross_chain_contracts.go:27:4: r.mappings undefined (type *ContractRegistry has no field or method mappings)
-
-### Stage 2
-core/cross_chain_contracts.go:34:13: r.mappings undefined (type *ContractRegistry has no field or method mappings)
-core/cross_chain_contracts.go:42:43: r.mappings undefined (type *ContractRegistry has no field or method mappings)
-core/cross_chain_contracts.go:43:22: r.mappings undefined (type *ContractRegistry has no field or method mappings)
-core/cross_chain_contracts.go:53:11: r.mappings undefined (type *ContractRegistry has no field or method mappings)
-core/gas_table.go:4:5: gasTable redeclared in this block
-	core/gas.go:14:5: other declaration of gasTable
-core/gas_table.go:9:6: initGasTable redeclared in this block
-
-### Stage 3
-	core/gas.go:22:6: other declaration of initGasTable
-core/gas_table.go:22:5: gasTable redeclared in this block
-	core/gas.go:14:5: other declaration of gasTable
-core/gas_table.go:26:6: initGasTable redeclared in this block
-	core/gas.go:22:6: other declaration of initGasTable
-core/gas_table.go:32:6: GasCost redeclared in this block
-
 ### Stage 4
-	core/gas.go:17:6: other declaration of GasCost
+        core/gas.go:17:6: other declaration of GasCost
 core/opcodes_basic.go:5:2: OpNoop redeclared in this block
-	core/opcodes_base.go:7:2: other declaration of OpNoop
+        core/opcodes_base.go:7:2: other declaration of OpNoop
 core/opcodes_basic.go:6:2: OpPush redeclared in this block
-	core/opcodes_base.go:8:2: other declaration of OpPush
+        core/opcodes_base.go:8:2: other declaration of OpPush
 core/opcodes_basic.go:7:2: OpAdd redeclared in this block
 
 ### Stage 5
