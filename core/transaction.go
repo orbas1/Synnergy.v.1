@@ -22,13 +22,15 @@ type Transaction struct {
 	Nonce     uint64
 	Timestamp int64
 	Signature []byte
+	Type      TransactionType
 }
 
 // NewTransaction creates a new unsigned transaction with the provided
 // parameters.  The ID is derived from a hash of the core fields and can be
-// reproduced deterministically prior to signing.
+// reproduced deterministically prior to signing.  Transactions default to the
+// Transfer type unless modified by higher level logic.
 func NewTransaction(from, to string, amount, fee, nonce uint64) *Transaction {
-	tx := &Transaction{From: from, To: to, Amount: amount, Fee: fee, Nonce: nonce, Timestamp: time.Now().Unix()}
+	tx := &Transaction{From: from, To: to, Amount: amount, Fee: fee, Nonce: nonce, Timestamp: time.Now().Unix(), Type: TxTypeTransfer}
 	tx.ID = tx.Hash()
 	return tx
 }

@@ -6,19 +6,6 @@ import (
 	"time"
 )
 
-
-// SubBlock groups transactions validated via POS and POH.
-type SubBlock struct {
-	Transactions []*Transaction
-	Validator    string
-}
-
-// Block is composed of multiple SubBlocks and finalized via POW.
-type Block struct {
-	SubBlocks []SubBlock
-	Nonce     uint64
-}
-
 // ConsensusWeights holds the relative weights assigned to each consensus
 // mechanism.  Values are represented as percentages that sum to 1.0.
 type ConsensusWeights struct {
@@ -169,7 +156,6 @@ func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
 	}
 	return ""
 }
-
 
 // ValidateSubBlock performs POS and POH validation on a sub-block.  For the
 // prototype this simply returns true.
