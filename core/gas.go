@@ -10,3 +10,15 @@ func DefaultGasTable() GasTable {
 		OpTransfer: 10,
 	}
 }
+
+var gasTable = DefaultGasTable()
+
+// GasCost returns the gas cost for the given opcode.
+func GasCost(op Opcode) uint64 {
+	return gasTable[op]
+}
+
+// initGasTable resets the global gas table to defaults.
+func initGasTable() {
+	gasTable = DefaultGasTable()
+}
