@@ -92,6 +92,8 @@ func init() {
 				fb = core.FeeForContract(val, base, rate, tip)
 			case "verify":
 				fb = core.FeeForWalletVerification(val, base, rate, tip)
+			case "feeless":
+				fb = core.FeeForValidatedTransfer(val, base, rate, tip, true)
 			default:
 				fmt.Println("unknown type")
 				return
@@ -101,6 +103,32 @@ func init() {
 		},
 	}
 
-	txCmd.AddCommand(createCmd, signCmd, verifyCmd, feeCmd)
+	baseFeeCmd := &cobra.Command{
+		Use:   "basefee [adjustment] [fees...]",
+		Args:  cobra.MinimumNArgs(2),
+		Short: "Calculate base fee from recent block fees",
+		Run: func(cmd *cobra.Command, args []string) {
+			adj, _ := strconv.ParseFloat(args[0], 64)
+			var fees []uint64
+			for _, a := range args[1:] {
+				v, _ := strconv.ParseUint(a, 10, 64)
+				fees = append(fees, v)
+			}
+			fmt.Println(core.CalculateBaseFee(fees, adj))
+		},
+	}
+
+	variableFeeCmd := &cobra.Command{
+		Use:   "variablefee [gasUnits] [gasPrice]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Calculate variable fee component",
+		Run: func(cmd *cobra.Command, args []string) {
+			units, _ := strconv.ParseUint(args[0], 10, 64)
+			price, _ := strconv.ParseUint(args[1], 10, 64)
+			fmt.Println(core.CalculateVariableFee(units, price))
+		},
+	}
+
+	txCmd.AddCommand(createCmd, signCmd, verifyCmd, feeCmd, baseFeeCmd, variableFeeCmd)
 	rootCmd.AddCommand(txCmd)
 }
