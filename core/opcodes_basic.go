@@ -2,10 +2,7 @@ package core
 
 // Basic opcode definitions used by the VM and gas table.
 const (
-	OpNoop Opcode = iota
-	OpPush
-	OpAdd
-	OpSub
+	OpSub Opcode = iota
 	OpMul
 	OpDiv
 	OpTransfer
