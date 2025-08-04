@@ -40,5 +40,20 @@ func TestEstimateFee(t *testing.T) {
 	fb := EstimateFee(TxTypePurchase, 2, 1, 3, 1)
 	if fb.Base != 1 || fb.Variable != 6 || fb.Priority != 1 || fb.Total != 8 {
 		t.Fatalf("unexpected estimate: %+v", fb)
+func TestShareProportional(t *testing.T) {
+	weights := map[string]uint64{"a": 1, "b": 3}
+	shares := ShareProportional(100, weights)
+	if shares["a"] != 25 || shares["b"] != 75 {
+		t.Fatalf("unexpected shares: %v", shares)
+	}
+}
+
+func TestAdjustForBlockUtilization(t *testing.T) {
+	if v := AdjustForBlockUtilization(100, 95, 100); v != 110 {
+		t.Fatalf("high util adjustment failed, got %d", v)
+	}
+	if v := AdjustForBlockUtilization(100, 40, 100); v != 90 {
+		t.Fatalf("low util adjustment failed, got %d", v)
+
 	}
 }
