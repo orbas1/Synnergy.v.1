@@ -36,12 +36,7 @@ core/transaction.go:51:30: t.BiometricHash undefined (type *Transaction has no f
 core/transaction.go:52:84: t.Fee undefined (type *Transaction has no field or method Fee)
 
 ### Stage 8
-core/transaction.go:52:91: t.Nonce undefined (type *Transaction has no field or method Nonce)
-core/transaction.go:52:100: t.Timestamp undefined (type *Transaction has no field or method Timestamp)
-core/transaction.go:58:30: t.Signature undefined (type *Transaction has no field or method Signature)
-core/transaction.go:74:4: t.BiometricHash undefined (type *Transaction has no field or method BiometricHash)
-core/transaction_control.go:43:26: tx.Fee undefined (type *Transaction has no field or method Fee)
-core/transaction_control.go:44:25: invalid operation: l.balances[tx.To] < tx.Amount (mismatched types uint64 and float64)
+Stage 8 resolved.
 
 ### Stage 9
 core/transaction_control.go:47:2: invalid operation: l.balances[tx.To] -= tx.Amount (mismatched types uint64 and float64)
