@@ -96,4 +96,5 @@ func (m *CrossChainTxManager) GetTransfer(id int) (*CrossChainTransfer, error) {
 		return nil, errors.New("transfer not found")
 	}
 	return t, nil
+
 }

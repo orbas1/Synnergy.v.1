@@ -28,5 +28,6 @@ func TestBridgeManager(t *testing.T) {
 	}
 	if len(bm.ListTransfers()) != 1 {
 		t.Fatalf("unexpected transfer list length")
+
 	}
 }

@@ -64,6 +64,7 @@ func (m *ConnectionManager) ListConnections() []*Connection {
 	defer m.mu.RUnlock()
 	out := make([]*Connection, 0, len(m.connections))
 	for _, c := range m.connections {
+
 		out = append(out, c)
 	}
 	return out

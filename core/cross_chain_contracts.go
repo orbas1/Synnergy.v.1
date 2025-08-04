@@ -61,4 +61,5 @@ func (r *ContractRegistry) RemoveMapping(localAddr string) error {
 	}
 	delete(r.mappings, localAddr)
 	return nil
+
 }

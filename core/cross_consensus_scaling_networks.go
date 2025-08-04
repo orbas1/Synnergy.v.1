@@ -8,9 +8,7 @@ import (
 // ConsensusNetwork represents a connection between differing consensus systems.
 type ConsensusNetwork struct {
 	ID              int
-	SourceConsensus string
-	TargetConsensus string
-}
+
 
 // ConsensusNetworkManager manages registered consensus networks.
 type ConsensusNetworkManager struct {
@@ -54,4 +52,5 @@ func (m *ConsensusNetworkManager) GetNetwork(id int) (ConsensusNetwork, error) {
 		return ConsensusNetwork{}, errors.New("network not found")
 	}
 	return n, nil
+
 }

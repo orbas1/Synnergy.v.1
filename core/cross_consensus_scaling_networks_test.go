@@ -14,5 +14,6 @@ func TestConsensusNetworkManager(t *testing.T) {
 	}
 	if len(m.ListNetworks()) != 1 {
 		t.Fatalf("expected one network")
+
 	}
 }

@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	"synnergy/Nodes/watchtower"
+	"synnergy/node_ext/watchtower"
 )
 
 // Watchtower implements the watchtower.WatchtowerNode interface.  It observes
