@@ -5,13 +5,17 @@ import "sync"
 // PeerManager maintains a simple peer table for discovery and connection
 // management.
 type PeerManager struct {
-	mu    sync.RWMutex
-	peers map[string]string // id -> address
+	mu      sync.RWMutex
+	peers   map[string]string // id -> address
+	adverts map[string][]string
 }
 
 // NewPeerManager creates an empty peer manager.
 func NewPeerManager() *PeerManager {
-	return &PeerManager{peers: make(map[string]string)}
+	return &PeerManager{
+		peers:   make(map[string]string),
+		adverts: make(map[string][]string),
+	}
 }
 
 // AddPeer records a peer and its address.
@@ -44,5 +48,29 @@ func (pm *PeerManager) ListPeers() []string {
 	for id := range pm.peers {
 		ids = append(ids, id)
 	}
+	return ids
+}
+
+// Connect records a peer by its network address and returns the derived
+// identifier. This is a helper for CLI commands where the address doubles as the
+// identifier.
+func (pm *PeerManager) Connect(addr string) string {
+	pm.AddPeer(addr, addr)
+	return addr
+}
+
+// Advertise notes that the given peer is advertising on a topic. It does not
+// perform any network operations but allows discovery via Discover.
+func (pm *PeerManager) Advertise(id, topic string) {
+	pm.mu.Lock()
+	pm.adverts[topic] = append(pm.adverts[topic], id)
+	pm.mu.Unlock()
+}
+
+// Discover returns peers that have advertised under the specified topic.
+func (pm *PeerManager) Discover(topic string) []string {
+	pm.mu.RLock()
+	ids := append([]string(nil), pm.adverts[topic]...)
+	pm.mu.RUnlock()
 	return ids
 }

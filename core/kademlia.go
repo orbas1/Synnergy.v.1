@@ -3,6 +3,7 @@ package core
 import (
 	"encoding/hex"
 	"math/big"
+	"sort"
 	"sync"
 )
 
@@ -53,4 +54,28 @@ func Distance(a, b string) *big.Int {
 		dist.Or(dist, big.NewInt(int64(ab[i]^bb[i])))
 	}
 	return dist
+}
+
+// Closest returns up to n keys in the store sorted by XOR distance to the
+// target identifier. It is a helper for peer lookups in the simulated DHT.
+func (k *Kademlia) Closest(target string, n int) []string {
+	k.mu.RLock()
+	defer k.mu.RUnlock()
+	type kv struct {
+		key  string
+		dist *big.Int
+	}
+	arr := make([]kv, 0, len(k.store))
+	for key := range k.store {
+		arr = append(arr, kv{key: key, dist: Distance(target, key)})
+	}
+	sort.Slice(arr, func(i, j int) bool { return arr[i].dist.Cmp(arr[j].dist) < 0 })
+	if n > len(arr) {
+		n = len(arr)
+	}
+	out := make([]string, n)
+	for i := 0; i < n; i++ {
+		out[i] = arr[i].key
+	}
+	return out
 }

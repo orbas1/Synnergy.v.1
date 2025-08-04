@@ -54,3 +54,30 @@ func (p *ConnectionPool) Size() int {
 	defer p.mu.Unlock()
 	return len(p.conns)
 }
+
+// Dial is a convenience wrapper around Acquire used by the CLI. It either
+// returns an existing connection for the address or creates a new one if
+// capacity allows.
+func (p *ConnectionPool) Dial(addr string) (*Connection, error) {
+	return p.Acquire(addr)
+}
+
+// Close removes all connections from the pool, effectively resetting it.
+func (p *ConnectionPool) Close() {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	p.conns = make(map[string]*Connection)
+}
+
+// PoolStats summarises connection usage and capacity for diagnostic output.
+type PoolStats struct {
+	Active   int
+	Capacity int
+}
+
+// Stats returns a snapshot of the pool's current usage.
+func (p *ConnectionPool) Stats() PoolStats {
+	p.mu.Lock()
+	defer p.mu.Unlock()
+	return PoolStats{Active: len(p.conns), Capacity: p.max}
+}
