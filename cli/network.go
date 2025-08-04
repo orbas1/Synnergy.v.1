@@ -8,7 +8,7 @@ import (
 	"synnergy/core"
 )
 
-var network = core.NewNetwork()
+var network = core.NewNetwork(biometricSvc)
 
 func init() {
 	networkCmd := &cobra.Command{
@@ -25,18 +25,32 @@ func init() {
 			fmt.Println("node added")
 		},
 	}
-	broadcastCmd := &cobra.Command{
-		Use:   "broadcast [from] [to] [amount] [fee] [nonce]",
-		Args:  cobra.ExactArgs(5),
-		Short: "Broadcast transaction to all nodes",
+	relayCmd := &cobra.Command{
+		Use:   "relay [id] [addr]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Add relay node to network",
 		Run: func(cmd *cobra.Command, args []string) {
-			amt, _ := strconv.ParseUint(args[2], 10, 64)
-			fee, _ := strconv.ParseUint(args[3], 10, 64)
-			nonce, _ := strconv.ParseUint(args[4], 10, 64)
-			tx := core.NewTransaction(args[0], args[1], amt, fee, nonce)
-			network.Broadcast(tx)
+			n := core.NewNode(args[0], args[1], core.NewLedger())
+			network.AddRelay(n)
+			fmt.Println("relay node added")
 		},
 	}
-	networkCmd.AddCommand(addCmd, broadcastCmd)
+	broadcastCmd := &cobra.Command{
+		Use:   "broadcast [userID] [biometric] [from] [to] [amount] [fee] [nonce]",
+		Args:  cobra.ExactArgs(7),
+		Short: "Broadcast transaction with biometric verification",
+		Run: func(cmd *cobra.Command, args []string) {
+			amt, _ := strconv.ParseUint(args[4], 10, 64)
+			fee, _ := strconv.ParseUint(args[5], 10, 64)
+			nonce, _ := strconv.ParseUint(args[6], 10, 64)
+			tx := core.NewTransaction(args[2], args[3], amt, fee, nonce)
+			if err := network.Broadcast(tx, args[0], []byte(args[1])); err != nil {
+				fmt.Println("broadcast failed:", err)
+				return
+			}
+			fmt.Println("transaction queued for broadcast")
+		},
+	}
+	networkCmd.AddCommand(addCmd, relayCmd, broadcastCmd)
 	rootCmd.AddCommand(networkCmd)
 }

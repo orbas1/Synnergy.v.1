@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"time"
 )
@@ -23,6 +24,15 @@ type Transaction struct {
 	Timestamp int64
 	Signature []byte
 	Type      TransactionType
+	// BiometricHash stores the hash of the biometric data used to
+	// authorize this transaction. It ensures that the transaction is tied
+	// to a verified identity when biometric authentication is required.
+	BiometricHash []byte
+
+	// Program holds optional bytecode instructions to be executed by the
+	// Synnergy Virtual Machine.  Traditional transfer transactions will
+	// leave this field nil.
+	Program []Instruction
 }
 
 // NewTransaction creates a new unsigned transaction with the provided
@@ -38,11 +48,30 @@ func NewTransaction(from, to string, amount, fee, nonce uint64) *Transaction {
 // Hash returns the hex-encoded hash of the transaction contents excluding the
 // signature.  It is used as the message for signing and verification.
 func (t *Transaction) Hash() string {
-	h := sha256.Sum256([]byte(fmt.Sprintf("%s%s%d%d%d%d", t.From, t.To, t.Amount, t.Fee, t.Nonce, t.Timestamp)))
+	bio := hex.EncodeToString(t.BiometricHash)
+	h := sha256.Sum256([]byte(fmt.Sprintf("%s%s%d%d%d%d%s", t.From, t.To, t.Amount, t.Fee, t.Nonce, t.Timestamp, bio)))
 	return hex.EncodeToString(h[:])
 }
 
 // Verify checks the transaction's signature against the provided public key.
 func (t *Transaction) Verify(pub *ecdsa.PublicKey) bool {
 	return VerifySignature(t, t.Signature, pub)
+}
+
+// AttachBiometric verifies the provided biometric data for the given user
+// through the supplied BiometricService. If verification succeeds the biometric
+// hash is attached to the transaction and the transaction ID is recalculated to
+// include the biometric. This prevents replay or tampering with biometric data
+// after signing.
+func (t *Transaction) AttachBiometric(userID string, biometric []byte, svc *BiometricService) error {
+	if svc == nil {
+		return errors.New("biometric service not available")
+	}
+	if !svc.Verify(userID, biometric) {
+		return errors.New("biometric verification failed")
+	}
+	h := sha256.Sum256(biometric)
+	t.BiometricHash = h[:]
+	t.ID = t.Hash()
+	return nil
 }
