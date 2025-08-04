@@ -115,12 +115,7 @@ core/light_node.go:8:18: undefined: nodes.BlockHeader
 core/light_node.go:12:28: undefined: nodes.Address
 
 ### Stage 19
-core/light_node.go:17:39: undefined: nodes.BlockHeader
-core/light_node.go:20:43: undefined: nodes.BlockHeader
-core/light_node.go:22:16: undefined: nodes.BlockHeader
-core/full_node.go:22:27: undefined: nodes.Address
-core/gateway_node.go:22:30: undefined: nodes.Address
-core/ledger.go:127:26: tx.Fee undefined (type *Transaction has no field or method Fee)
+Stage 19 resolved.
 
 ### Stage 20
 core/ledger.go:132:2: invalid operation: l.balances[tx.To] += tx.Amount (mismatched types uint64 and float64)
