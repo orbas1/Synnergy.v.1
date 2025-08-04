@@ -11,16 +11,16 @@ import (
 	"synnergy/core"
 )
 
+var txCmd = &cobra.Command{
+	Use:   "tx",
+	Short: "Transaction utilities",
+}
 var (
 	feeCap   uint64
 	feeFloor uint64
 )
 
 func init() {
-	txCmd := &cobra.Command{
-		Use:   "tx",
-		Short: "Transaction utilities",
-	}
 
 	createCmd := &cobra.Command{
 		Use:   "create [from] [to] [amount] [fee] [nonce]",
