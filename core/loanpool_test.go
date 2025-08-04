@@ -23,6 +23,13 @@ func TestLoanPoolProposalLifecycle(t *testing.T) {
 	if stats.DisbursedCount != 1 {
 		t.Fatalf("expected disbursed count 1")
 	}
+	view, ok := lp.ProposalInfo(id)
+	if !ok || view.ID != id || view.Votes != 1 {
+		t.Fatalf("unexpected proposal view")
+	}
+	if len(lp.ProposalViews()) != 1 {
+		t.Fatalf("expected one proposal view")
+	}
 	appMgr := NewLoanPoolApply(lp)
 	appID := appMgr.Submit("alice", 50, 12, "test")
 	if err := appMgr.Vote("bob", appID); err != nil {
@@ -31,5 +38,12 @@ func TestLoanPoolProposalLifecycle(t *testing.T) {
 	appMgr.Process()
 	if err := appMgr.Disburse(appID); err != nil {
 		t.Fatalf("app disburse: %v", err)
+	}
+	appView, ok := appMgr.ApplicationInfo(appID)
+	if !ok || appView.ID != appID || appView.Votes != 1 {
+		t.Fatalf("unexpected application view")
+	}
+	if len(appMgr.ApplicationViews()) != 1 {
+		t.Fatalf("expected one application view")
 	}
 }
