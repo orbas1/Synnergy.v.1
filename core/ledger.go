@@ -1,20 +1,94 @@
 package core
 
 import (
+	"encoding/json"
 	"errors"
+	"os"
 	"sync"
 )
 
-
-// Ledger maintains account balances.
+// Ledger maintains account balances and block history. It persists blocks to a
+// simple write-ahead log so that a node can recover on restart. The WAL path is
+// optional; if empty the ledger operates purely in memory.
 type Ledger struct {
 	mu       sync.RWMutex
 	balances map[string]uint64
+	blocks   []*Block
+	walPath  string
 }
 
-// NewLedger creates a new empty ledger.
-func NewLedger() *Ledger {
-	return &Ledger{balances: make(map[string]uint64)}
+// NewLedger creates a new ledger. If a path is supplied it will replay any
+// existing WAL file to restore previous blocks.
+func NewLedger(path ...string) *Ledger {
+	l := &Ledger{balances: make(map[string]uint64), blocks: []*Block{}}
+	if len(path) > 0 {
+		l.walPath = path[0]
+		l.replayWAL()
+	}
+	return l
+}
+
+// replayWAL loads blocks from the write-ahead log if configured. Errors are
+// ignored which keeps recovery best-effort.
+func (l *Ledger) replayWAL() {
+	if l.walPath == "" {
+		return
+	}
+	f, err := os.Open(l.walPath)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	dec := json.NewDecoder(f)
+	for {
+		var b Block
+		if err := dec.Decode(&b); err != nil {
+			break
+		}
+		l.blocks = append(l.blocks, &b)
+	}
+}
+
+// appendWAL writes a block to the WAL if a path is configured.
+func (l *Ledger) appendWAL(b *Block) {
+	if l.walPath == "" {
+		return
+	}
+	f, err := os.OpenFile(l.walPath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	_ = json.NewEncoder(f).Encode(b)
+}
+
+// Head returns the current height and hash of the latest block.
+func (l *Ledger) Head() (int, string) {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	height := len(l.blocks)
+	if height == 0 {
+		return 0, ""
+	}
+	return height, l.blocks[height-1].Hash
+}
+
+// GetBlock returns the block at the provided 1-indexed height.
+func (l *Ledger) GetBlock(height int) (*Block, bool) {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	if height <= 0 || height > len(l.blocks) {
+		return nil, false
+	}
+	return l.blocks[height-1], true
+}
+
+// AddBlock appends a block to the chain and persists it to the WAL.
+func (l *Ledger) AddBlock(b *Block) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.blocks = append(l.blocks, b)
+	l.appendWAL(b)
 }
 
 // GetBalance returns the balance for a given address.
@@ -29,6 +103,19 @@ func (l *Ledger) Credit(addr string, amount uint64) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.balances[addr] += amount
+}
+
+// Mint is an exported helper that credits funds to an address. It mirrors the
+// CLI `mint` command.
+func (l *Ledger) Mint(addr string, amount uint64) {
+	l.Credit(addr, amount)
+}
+
+// Transfer moves funds from one address to another. A fee is deducted from the
+// sender. It returns an error if the sender lacks sufficient balance.
+func (l *Ledger) Transfer(from, to string, amount, fee uint64) error {
+	tx := NewTransaction(from, to, amount, fee, 0)
+	return l.ApplyTransaction(tx)
 }
 
 // ApplyTransaction applies a transaction to the ledger, deducting both amount
