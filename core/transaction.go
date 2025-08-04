@@ -23,6 +23,11 @@ type Transaction struct {
 	Timestamp int64
 	Signature []byte
 	Type      TransactionType
+
+	// Program holds optional bytecode instructions to be executed by the
+	// Synnergy Virtual Machine.  Traditional transfer transactions will
+	// leave this field nil.
+	Program []Instruction
 }
 
 // NewTransaction creates a new unsigned transaction with the provided
