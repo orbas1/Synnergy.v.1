@@ -10,10 +10,20 @@ func TestDAOProposal(t *testing.T) {
 	if prop.DAOID != dao.ID {
 		t.Fatalf("dao id mismatch")
 	}
-	if err := pm.Vote(prop.ID, "v1", 1, true); err != nil {
+	if err := pm.Vote(prop.ID, "v1", 4, true); err != nil {
 		t.Fatalf("vote: %v", err)
 	}
-	if prop.YesVotes["v1"] != 1 {
-		t.Fatalf("vote not recorded")
+	if err := pm.Vote(prop.ID, "v2", 1, false); err != nil {
+		t.Fatalf("vote: %v", err)
+	}
+	yes, no, err := pm.Results(prop.ID)
+	if err != nil || yes != 4 || no != 1 {
+		t.Fatalf("unexpected tally: %d %d %v", yes, no, err)
+	}
+	if err := pm.Execute(prop.ID); err != nil {
+		t.Fatalf("execute: %v", err)
+	}
+	if !prop.Executed {
+		t.Fatalf("proposal not marked executed")
 	}
 }
