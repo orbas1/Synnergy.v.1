@@ -1,9 +1,18 @@
 package core
 
-import "errors"
-
+import (
+	"errors"
+	"fmt"
+)
 // Node represents a participant in the network.
 type Node struct {
+
+	BaseNode         string
+}
+
+// Node represents a participant in the network.
+type BaseNode struct {
+
 	ID         string
 	Addr       string
 	Ledger     *Ledger
@@ -12,12 +21,12 @@ type Node struct {
 	Mempool    []*Transaction
 	Blockchain []*Block
 	Stakes     map[string]uint64
-
+	Slashed    map[string]bool
 }
 
 // NewNode creates a new node instance.
-func NewNode(id, addr string, ledger *Ledger) *Node {
-	return &Node{ID: id, Addr: addr, Ledger: ledger, Consensus: NewSynnergyConsensus(), VM: NewSNVM(), Stakes: make(map[string]uint64)}
+func NewNode(id, addr string, ledger *Ledger) *BaseNode {
+	return &Node{ID: id, Addr: addr, Ledger: ledger, Consensus: NewSynnergyConsensus(), VM: NewSNVM(), Stakes: make(map[string]uint64), Slashed: make(map[string]bool)}
 }
 
 // AddTransaction validates and adds a transaction to the mempool.
@@ -43,8 +52,14 @@ func (n *Node) MineBlock() *Block {
 	if len(n.Mempool) == 0 {
 		return nil
 	}
-	validator := n.Consensus.SelectValidator(n.Stakes)
+	validator := n.Consensus.SelectValidator(n.eligibleStakes())
+	if validator == "" {
+		return nil
+	}
 	sb := NewSubBlock(n.Mempool, validator)
+	if !sb.VerifySignature() {
+		return nil
+	}
 	n.Mempool = nil
 	prevHash := ""
 	if len(n.Blockchain) > 0 {
@@ -52,15 +67,63 @@ func (n *Node) MineBlock() *Block {
 	}
 	block := NewBlock([]*SubBlock{sb}, prevHash)
 	n.Consensus.MineBlock(block, 3)
+	var totalFees uint64
 	for _, tx := range sb.Transactions {
+		totalFees += tx.Fee
 		_ = n.Ledger.ApplyTransaction(tx)
 	}
 	n.Blockchain = append(n.Blockchain, block)
+
+	dist := DistributeFees(totalFees)
+	pool := AdjustForBlockUtilization(dist.ValidatorsMiners, len(sb.Transactions), n.MaxTxPerBlock)
+	weights := map[string]uint64{validator: n.Stakes[validator]}
+	weights[n.ID] = 1
+	shares := ShareProportional(pool, weights)
+	contract := NewFeeDistributionContract(n.Ledger)
+	contract.Distribute(shares)
 	return block
 }
 
-// SetStake assigns stake to an address for validator selection.
-func (n *Node) SetStake(addr string, amount uint64) {
-	n.Stakes[addr] = amount
+const MinStake uint64 = 1000
 
+// SetStake assigns stake to an address for validator selection while enforcing a minimum.
+func (n *Node) SetStake(addr string, amount uint64) error {
+	if amount < MinStake {
+		return fmt.Errorf("stake below minimum: %d", amount)
+	}
+	n.Stakes[addr] = amount
+	return nil
+}
+
+func (n *Node) eligibleStakes() map[string]uint64 {
+	eligible := make(map[string]uint64)
+	for addr, s := range n.Stakes {
+		if s >= MinStake && !n.Slashed[addr] {
+			eligible[addr] = s
+		}
+	}
+	return eligible
+}
+
+// ReportDoubleSign slashes a validator for double signing.
+func (n *Node) ReportDoubleSign(addr string) {
+	n.slash(addr)
+}
+
+// ReportDowntime slashes a validator for downtime.
+func (n *Node) ReportDowntime(addr string) {
+	n.slash(addr)
+}
+
+// Rehabilitate removes slashed status from a validator.
+func (n *Node) Rehabilitate(addr string) {
+	delete(n.Slashed, addr)
+}
+
+func (n *Node) slash(addr string) {
+	if stake, ok := n.Stakes[addr]; ok {
+		penalty := stake / 2
+		n.Stakes[addr] = stake - penalty
+		n.Slashed[addr] = true
+	}
 }

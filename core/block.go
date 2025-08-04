@@ -13,12 +13,14 @@ type SubBlock struct {
 	Validator    string
 	PohHash      string
 	Timestamp    int64
+	Signature    string
 }
 
 // NewSubBlock constructs a sub-block from the given transactions and validator.
 func NewSubBlock(txs []*Transaction, validator string) *SubBlock {
 	sb := &SubBlock{Transactions: txs, Validator: validator, Timestamp: time.Now().Unix()}
 	sb.PohHash = sb.Hash()
+	sb.Signature = signSubBlock(validator, sb.PohHash)
 	return sb
 }
 
@@ -32,6 +34,12 @@ func (sb *SubBlock) Hash() string {
 	h.Write([]byte(sb.Validator))
 	h.Write([]byte(fmt.Sprintf("%d", sb.Timestamp)))
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+// VerifySignature confirms the sub-block was signed by the stated validator.
+func (sb *SubBlock) VerifySignature() bool {
+	expected := signSubBlock(sb.Validator, sb.PohHash)
+	return sb.Signature == expected
 }
 
 // Block aggregates validated sub-blocks and is finalized via PoW.
@@ -58,4 +66,9 @@ func (b *Block) HeaderHash(nonce uint64) string {
 	}
 	h.Write([]byte(fmt.Sprintf("%d%d", b.Timestamp, nonce)))
 	return hex.EncodeToString(h.Sum(nil))
+}
+
+func signSubBlock(validator, msg string) string {
+	h := sha256.Sum256([]byte(validator + msg))
+	return hex.EncodeToString(h[:])
 }

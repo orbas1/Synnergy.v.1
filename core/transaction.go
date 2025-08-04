@@ -28,6 +28,11 @@ type Transaction struct {
 	// authorize this transaction. It ensures that the transaction is tied
 	// to a verified identity when biometric authentication is required.
 	BiometricHash []byte
+
+	// Program holds optional bytecode instructions to be executed by the
+	// Synnergy Virtual Machine.  Traditional transfer transactions will
+	// leave this field nil.
+	Program []Instruction
 }
 
 // NewTransaction creates a new unsigned transaction with the provided
