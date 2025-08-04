@@ -366,7 +366,7 @@ Every file under `core/` is listed below with a short description derived from i
 - **module_plugin.go** – OpcodeModule represents an external package that wishes to register additional
 - **molecular_node.go** – MolecularNode operates at the molecular level combining networking with ledger
 - **monomaniac_recovery.go** – Monomaniac account recovery module provides a 3-of-4 verification
-- **music_royalty_token.go** – MusicInfo captures the metadata for a music asset represented by SYN1600.
+- **syn1600.go** – MusicToken captures metadata and royalty splits for a SYN1600 music asset.
 - **nat_traversal.go** – NATManager manages NAT traversal using NAT-PMP or UPnP.
 - **network.go** – Package core implements P2P networking for Synnergy nodes.
 - **network_test.go** – Implements network test functionality.
