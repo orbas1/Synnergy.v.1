@@ -105,6 +105,9 @@ core/cross_chain.go:56:func (r *BridgeRegistry) GetBridge(id string) (*Bridge, b
 core/cross_chain.go:64:func (r *BridgeRegistry) AuthorizeRelayer(id, relayer string) error {
 core/cross_chain.go:79:func (r *BridgeRegistry) RevokeRelayer(id, relayer string) error {
 core/full_node.go:22:func NewFullNode(id nodes.Address, mode FullNodeMode) *FullNode {
+core/full_node.go:27:func (f *FullNode) SetMode(m FullNodeMode) {
+core/full_node.go:32:func (f *FullNode) CurrentMode() FullNodeMode {
+core/full_node.go:37:func (f *FullNode) IsArchive() bool {
 ai.go:42:func NewAIService() *AIService {
 ai.go:51:func (s *AIService) PredictFraud(txJSON []byte) (float64, error) {
 ai.go:61:func (s *AIService) OptimiseBaseFee(statsJSON []byte) (uint64, error) {
@@ -374,6 +377,8 @@ core/audit_node_test.go:12:func TestAuditNode_StartAndLog(t *testing.T) {
 core/gateway_node.go:22:func NewGatewayNode(id nodes.Address, cfg GatewayConfig) *GatewayNode {
 core/gateway_node.go:31:func (g *GatewayNode) RegisterEndpoint(name string, fn func([]byte) error) {
 core/gateway_node.go:36:func (g *GatewayNode) Handle(name string, data []byte) error {
+core/gateway_node.go:44:func (g *GatewayNode) RemoveEndpoint(name string) {
+core/gateway_node.go:49:func (g *GatewayNode) Endpoints() []string {
 core/loanpool_test.go:5:func TestLoanPoolProposalLifecycle(t *testing.T) {
 data_operations.go:19:func NewDataFeed(id string) *DataFeed {
 data_operations.go:24:func (f *DataFeed) Update(key, value string) {
@@ -532,6 +537,7 @@ core/bank_institutional_node.go:23:func (n *BankInstitutionalNode) IsRegistered(
 core/light_node.go:12:func NewLightNode(id nodes.Address) *LightNode {
 core/light_node.go:17:func (n *LightNode) AddHeader(h nodes.BlockHeader) { n.headers = append(n.headers, h) }
 core/light_node.go:20:func (n *LightNode) LatestHeader() (nodes.BlockHeader, bool) {
+core/light_node.go:28:func (n *LightNode) Headers() []nodes.BlockHeader {
 core/government_authority_node_test.go:5:func TestGovernmentAuthorityNode(t *testing.T) {
 core/token_syn130.go:40:func NewTangibleAssetRegistry() *TangibleAssetRegistry {
 core/token_syn130.go:45:func (r *TangibleAssetRegistry) Register(id, owner, meta string, value uint64) (*TangibleAsset, error) {
@@ -544,8 +550,9 @@ core/base_node.go:19:func NewBaseNode(id nodes.Address) *BaseNode {
 core/base_node.go:27:func (n *BaseNode) ID() nodes.Address { return n.id }
 core/base_node.go:30:func (n *BaseNode) Start() error {
 core/base_node.go:41:func (n *BaseNode) Stop() error {
-core/base_node.go:52:func (n *BaseNode) Peers() []nodes.Address {
-core/base_node.go:63:func (n *BaseNode) DialSeed(addr nodes.Address) error {
+core/base_node.go:52:func (n *BaseNode) IsRunning() bool {
+core/base_node.go:59:func (n *BaseNode) Peers() []nodes.Address {
+core/base_node.go:70:func (n *BaseNode) DialSeed(addr nodes.Address) error {
 core/cross_chain_test.go:5:func TestBridgeRegistry(t *testing.T) {
 core/consensus_difficulty_test.go:5:func TestDifficultyManager(t *testing.T) {
 core/biometric_security_node.go:14:func NewBiometricSecurityNode(base *Node, auth *BiometricsAuth) *BiometricSecurityNode {
@@ -600,7 +607,7 @@ core/dao_quadratic_voting.go:11:func (pm *ProposalManager) CastQuadraticVote(id,
 core/wallet.go:19:func NewWallet() (*Wallet, error) {
 core/wallet.go:29:func (w *Wallet) Sign(tx *Transaction) ([]byte, error) {
 core/wallet.go:45:func VerifySignature(tx *Transaction, sig []byte, pub *ecdsa.PublicKey) bool {
-core/node.go:12:func NewNodeAdapter(n *Node) *NodeAdapter {
+core/node_adapter.go:12:func NewNodeAdapter(n *Node) *NodeAdapter {
 core/syn223_token.go:20:func NewSYN223Token(name, symbol, owner string, supply uint64) *SYN223Token {
 core/syn223_token.go:34:func (t *SYN223Token) AddToWhitelist(addr string) {
 core/syn223_token.go:41:func (t *SYN223Token) RemoveFromWhitelist(addr string) {
@@ -846,16 +853,14 @@ core/cross_chain_connection.go:62:func (m *ChainConnectionManager) List() []*Cha
 core/dao_test.go:5:func TestDAOManager(t *testing.T) {
 core/dao_access_control_test.go:5:func TestDAOAccessControl(t *testing.T) {
 core/compliance_management_test.go:5:func TestComplianceManager(t *testing.T) {
-core/node_engine.go:23:func NewNode(id, addr string, ledger *Ledger) *Node {
-core/node_engine.go:38:func (n *Node) AddTransaction(tx *Transaction) error {
-core/node_engine.go:48:func (n *Node) ValidateTransaction(tx *Transaction) error {
-core/node_engine.go:59:func (n *Node) MineBlock() *Block {
-core/node_engine.go:98:func (n *Node) SetStake(addr string, amount uint64) error {
-core/node_engine.go:106:func (n *Node) eligibleStakes() map[string]uint64 {
-core/node_engine.go:117:func (n *Node) ReportDoubleSign(addr string) {
-core/node_engine.go:122:func (n *Node) ReportDowntime(addr string) {
-core/node_engine.go:127:func (n *Node) Rehabilitate(addr string) {
-core/node_engine.go:131:func (n *Node) slash(addr string) {
+core/node.go:23:func NewNode(id, addr string, ledger *Ledger) *Node {
+core/node.go:38:func (n *Node) AddTransaction(tx *Transaction) error {
+core/node.go:48:func (n *Node) ValidateTransaction(tx *Transaction) error {
+core/node.go:59:func (n *Node) MineBlock() *Block {
+core/node.go:98:func (n *Node) SetStake(addr string, amount uint64) error {
+core/node.go:117:func (n *Node) ReportDoubleSign(addr string) {
+core/node.go:122:func (n *Node) ReportDowntime(addr string) {
+core/node.go:127:func (n *Node) Rehabilitate(addr string) {
 core/syn500.go:23:func NewSYN500Token(name, symbol, owner string, decimals uint8, supply uint64) *SYN500Token {
 core/syn500.go:28:func (t *SYN500Token) Grant(addr string, tier int, max uint64) {
 core/syn500.go:33:func (t *SYN500Token) Use(addr string) error {
