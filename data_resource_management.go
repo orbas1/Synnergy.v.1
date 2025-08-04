@@ -51,6 +51,17 @@ func (m *DataResourceManager) Delete(key string) {
 	m.mu.Unlock()
 }
 
+// Keys returns a slice of all keys currently stored.
+func (m *DataResourceManager) Keys() []string {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	keys := make([]string, 0, len(m.store))
+	for k := range m.store {
+		keys = append(keys, k)
+	}
+	return keys
+}
+
 // Usage returns the total number of bytes currently stored.
 func (m *DataResourceManager) Usage() int64 {
 	m.mu.RLock()

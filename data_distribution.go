@@ -32,6 +32,30 @@ func (d *DataDistribution) Offer(nodeID string, meta ContentMeta) {
 	d.mu.Unlock()
 }
 
+// Revoke removes a node's offering for the dataset. When no nodes remain,
+// the dataset entry is deleted from the registry.
+func (d *DataDistribution) Revoke(nodeID, contentID string) {
+	d.mu.Lock()
+	if ds, ok := d.sets[contentID]; ok {
+		delete(ds.Nodes, nodeID)
+		if len(ds.Nodes) == 0 {
+			delete(d.sets, contentID)
+		}
+	}
+	d.mu.Unlock()
+}
+
+// Meta returns the ContentMeta associated with the contentID.
+func (d *DataDistribution) Meta(contentID string) (ContentMeta, bool) {
+	d.mu.RLock()
+	ds, ok := d.sets[contentID]
+	d.mu.RUnlock()
+	if !ok {
+		return ContentMeta{}, false
+	}
+	return ds.Meta, true
+}
+
 // Locations returns the ids of nodes currently hosting the specified dataset.
 func (d *DataDistribution) Locations(contentID string) []string {
 	d.mu.RLock()

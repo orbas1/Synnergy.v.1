@@ -29,6 +29,13 @@ func (n *ContentNetworkNode) Register(meta ContentMeta) {
 	n.mu.Unlock()
 }
 
+// Unregister removes a content item from this node's registry.
+func (n *ContentNetworkNode) Unregister(id string) {
+	n.mu.Lock()
+	delete(n.contents, id)
+	n.mu.Unlock()
+}
+
 // Content returns metadata for a hosted content item.
 func (n *ContentNetworkNode) Content(id string) (ContentMeta, bool) {
 	n.mu.RLock()
