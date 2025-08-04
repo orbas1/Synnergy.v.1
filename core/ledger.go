@@ -124,11 +124,13 @@ func (l *Ledger) Transfer(from, to string, amount, fee uint64) error {
 func (l *Ledger) ApplyTransaction(tx *Transaction) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	total := tx.Amount + tx.Fee
+	// Use explicit uint64 arithmetic to avoid accidental type promotion if
+	// transaction fields change in the future.
+	total := uint64(tx.Amount + tx.Fee)
 	if l.balances[tx.From] < total {
 		return errors.New("insufficient funds")
 	}
 	l.balances[tx.From] -= total
-	l.balances[tx.To] += tx.Amount
+	l.balances[tx.To] += uint64(tx.Amount)
 	return nil
 }

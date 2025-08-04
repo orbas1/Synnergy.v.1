@@ -46,7 +46,10 @@ func (n *Node) AddTransaction(tx *Transaction) error {
 // ValidateTransaction checks if a transaction is well-formed and the sender has
 // sufficient balance.
 func (n *Node) ValidateTransaction(tx *Transaction) error {
-	if n.Ledger.GetBalance(tx.From) < tx.Amount+tx.Fee {
+	// Ensure the fee is considered with the amount using explicit uint64
+	// arithmetic. This guards against future changes to transaction field
+	// types that might otherwise introduce float arithmetic.
+	if n.Ledger.GetBalance(tx.From) < uint64(tx.Amount+tx.Fee) {
 		return errors.New("insufficient funds")
 	}
 	return nil
