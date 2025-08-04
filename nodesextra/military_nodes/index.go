@@ -1,9 +1,20 @@
 package militarynodes
 
+import "time"
+
 // BaseNode defines minimal functionality expected from a network node.
 type BaseNode interface {
 	// GetID returns the node identifier.
 	GetID() string
+}
+
+// LogisticsRecord mirrors the structure used by concrete implementations
+// handling military logistics.
+type LogisticsRecord struct {
+	AssetID   string
+	Location  string
+	Status    string
+	Timestamp time.Time
 }
 
 // WarfareNode extends a base node with military specific operations.
@@ -19,4 +30,7 @@ type WarfareNode interface {
 	TrackLogistics(assetID, location, status string)
 	// ShareTactical distributes tactical information to allied nodes or systems.
 	ShareTactical(info string)
+	// Logistics returns a copy of stored logistics records for inspection or
+	// auditing purposes.
+	Logistics() []LogisticsRecord
 }

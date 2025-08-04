@@ -26,6 +26,11 @@ func (b *BiometricSecurityNode) Enroll(addr string, biometric []byte) {
 	b.Auth.Enroll(addr, biometric)
 }
 
+// Remove deletes biometric data associated with the address.
+func (b *BiometricSecurityNode) Remove(addr string) {
+	b.Auth.Remove(addr)
+}
+
 // Authenticate verifies biometric data for the address.
 func (b *BiometricSecurityNode) Authenticate(addr string, biometric []byte) bool {
 	return b.Auth.Verify(addr, biometric)

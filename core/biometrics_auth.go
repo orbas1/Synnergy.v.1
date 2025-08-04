@@ -40,3 +40,23 @@ func (b *BiometricsAuth) Remove(addr string) {
 	defer b.mu.Unlock()
 	delete(b.templates, addr)
 }
+
+// Enrolled returns true if biometric data has been enrolled for the address.
+func (b *BiometricsAuth) Enrolled(addr string) bool {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+	_, ok := b.templates[addr]
+	return ok
+}
+
+// List returns a snapshot of all addresses that have enrolled biometrics.
+// The returned slice is a copy and safe for the caller to modify.
+func (b *BiometricsAuth) List() []string {
+	b.mu.RLock()
+	defer b.mu.RUnlock()
+	addrs := make([]string, 0, len(b.templates))
+	for addr := range b.templates {
+		addrs = append(addrs, addr)
+	}
+	return addrs
+}

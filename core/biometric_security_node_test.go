@@ -27,4 +27,24 @@ func TestBiometricSecurityNode(t *testing.T) {
 	if len(base.Mempool) != 1 {
 		t.Fatal("unexpected transaction added")
 	}
+
+	// Test SecureExecute with correct and incorrect biometrics
+	if err := bsn.SecureExecute(admin, bio, func() error {
+		bsn.Node.ID = "updated"
+		return nil
+	}); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if bsn.Node.ID != "updated" {
+		t.Fatal("secure execute did not run")
+	}
+	if err := bsn.SecureExecute(admin, []byte("bad"), nil); err == nil {
+		t.Fatal("expected verification failure")
+	}
+
+	// Test removal of biometrics
+	bsn.Remove(admin)
+	if bsn.Auth.Enrolled(admin) {
+		t.Fatal("expected biometric data to be removed")
+	}
 }
