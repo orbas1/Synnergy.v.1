@@ -55,12 +55,7 @@ core/base_node.go:52:36: undefined: nodes.Address
 core/base_node.go:55:22: undefined: nodes.Address
 
 ### Stage 11
-core/base_node.go:63:40: undefined: nodes.Address
-core/charity.go:79:25: undefined: Address
-core/charity.go:80:25: undefined: Address
-core/charity.go:86:28: undefined: StringToAddress
-core/charity.go:91:32: undefined: StringToAddress
-core/charity.go:102:23: undefined: Address
+Stage 11 resolved.
 
 ### Stage 12
 core/charity.go:109:44: undefined: StateRW
