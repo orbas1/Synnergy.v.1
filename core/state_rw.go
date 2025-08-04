@@ -7,11 +7,12 @@ type StateIterator interface {
 	Value() []byte
 }
 
-// StateRW defines the read/write operations on chain state required by the
-// CharityPool. Implementations are provided elsewhere in the codebase.
+
+// StateRW abstracts the ledger access that CharityPool depends on. Only the
+// methods required by charity.go are included here.
 type StateRW interface {
 	Transfer(from, to Address, amount uint64) error
-	SetState(key []byte, value []byte)
+	SetState(key, value []byte)
 	GetState(key []byte) ([]byte, error)
 	HasState(key []byte) (bool, error)
 	PrefixIterator(prefix []byte) StateIterator

@@ -122,6 +122,18 @@ type CharityPool struct {
 	lastDaily int64
 }
 
+// CharityPool manages the collection of gas-fee donations and their
+// distribution to registered charities. It relies on a ledger interface for
+// state access and an electorate interface for voter verification.
+type CharityPool struct {
+	mu        sync.Mutex
+	logger    *logrus.Logger
+	led       StateRW
+	vote      electorate
+	genesis   time.Time
+	lastDaily int64
+}
+
 func NewCharityPool(lg *logrus.Logger, led StateRW, el electorate, genesis time.Time) *CharityPool {
 	return &CharityPool{logger: lg, led: led, vote: el, genesis: genesis}
 }

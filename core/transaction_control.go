@@ -49,12 +49,6 @@ func ReverseTransaction(l *Ledger, tx *Transaction) error {
 	return nil
 }
 
-// PrivateTransaction contains encrypted transaction payload.
-type PrivateTransaction struct {
-	Payload []byte
-	Nonce   []byte
-}
-
 // ConvertToPrivate encrypts the transaction using AES-CTR with the provided key.
 func ConvertToPrivate(tx *Transaction, key []byte) (*PrivateTransaction, error) {
 	block, err := aes.NewCipher(key)
