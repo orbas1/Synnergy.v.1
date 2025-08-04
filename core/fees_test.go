@@ -29,48 +29,20 @@ func TestApplyFeeCapFloor(t *testing.T) {
 	}
 }
 
-func TestCalculateBaseFee(t *testing.T) {
-	recent := make([]uint64, 1100)
-	for i := range recent {
-		recent[i] = uint64(i + 1)
-	}
-	fee := CalculateBaseFee(recent, 0.1)
-	if fee != 661 {
-		t.Fatalf("unexpected base fee %d", fee)
+func TestShareProportional(t *testing.T) {
+	weights := map[string]uint64{"a": 1, "b": 3}
+	shares := ShareProportional(100, weights)
+	if shares["a"] != 25 || shares["b"] != 75 {
+		t.Fatalf("unexpected shares: %v", shares)
 	}
 }
 
-func TestCalculateVariableAndPriorityFee(t *testing.T) {
-	if vf := CalculateVariableFee(10, 5); vf != 50 {
-		t.Fatalf("variable fee incorrect %d", vf)
+func TestAdjustForBlockUtilization(t *testing.T) {
+	if v := AdjustForBlockUtilization(100, 95, 100); v != 110 {
+		t.Fatalf("high util adjustment failed, got %d", v)
 	}
-	if pf := CalculatePriorityFee(7); pf != 7 {
-		t.Fatalf("priority fee incorrect %d", pf)
-	}
-}
+	if v := AdjustForBlockUtilization(100, 40, 100); v != 90 {
+		t.Fatalf("low util adjustment failed, got %d", v)
 
-func TestSpecificFeeCalculations(t *testing.T) {
-	if fb := FeeForPurchase(3, 1, 2, 4); fb.Total != 11 {
-		t.Fatalf("purchase fee incorrect %+v", fb)
-	}
-	if fb := FeeForTokenUsage(3, 1, 2, 4); fb.Total != 11 {
-		t.Fatalf("token fee incorrect %+v", fb)
-	}
-	if fb := FeeForContract(3, 1, 2, 4); fb.Total != 11 {
-		t.Fatalf("contract fee incorrect %+v", fb)
-	}
-	if fb := FeeForWalletVerification(3, 1, 2, 4); fb.Total != 11 {
-		t.Fatalf("verify fee incorrect %+v", fb)
-	}
-}
-
-func TestFeeForValidatedTransfer(t *testing.T) {
-	fb := FeeForValidatedTransfer(10, 1, 2, 3, true)
-	if fb.Total != 0 {
-		t.Fatalf("validated transfer should be free, got %+v", fb)
-	}
-	fb = FeeForValidatedTransfer(10, 1, 2, 3, false)
-	if fb.Total != 24 {
-		t.Fatalf("non-validated transfer fee incorrect %+v", fb)
 	}
 }

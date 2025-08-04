@@ -132,3 +132,66 @@ func ApplyFeeCapFloor(fee, cap, floor uint64) uint64 {
 	}
 	return fee
 }
+
+// ShareProportional splits total fees according to provided weights.
+// Remaining units from integer division are assigned to the first address.
+func ShareProportional(total uint64, weights map[string]uint64) map[string]uint64 {
+	shares := make(map[string]uint64)
+	var weightTotal uint64
+	var firstAddr string
+	var maxWeight uint64
+	for addr, w := range weights {
+		weightTotal += w
+		if firstAddr == "" || w > maxWeight || (w == maxWeight && addr < firstAddr) {
+			firstAddr = addr
+			maxWeight = w
+		}
+	}
+	if weightTotal == 0 {
+		return shares
+	}
+	var distributed uint64
+	for addr, w := range weights {
+		share := total * w / weightTotal
+		shares[addr] = share
+		distributed += share
+	}
+	if distributed < total {
+		shares[firstAddr] += total - distributed
+	}
+	return shares
+}
+
+// FeeDistributionContract simulates a smart contract that credits fee shares to the ledger.
+type FeeDistributionContract struct {
+	Ledger *Ledger
+}
+
+// NewFeeDistributionContract creates a distribution contract.
+func NewFeeDistributionContract(l *Ledger) *FeeDistributionContract {
+	return &FeeDistributionContract{Ledger: l}
+}
+
+// Distribute credits each participant with its fee share.
+func (f *FeeDistributionContract) Distribute(shares map[string]uint64) {
+	for addr, amt := range shares {
+		f.Ledger.Credit(addr, amt)
+	}
+}
+
+// AdjustForBlockUtilization modifies the validators/miners fee pool based on block usage.
+// A high utilization (>90%) increases rewards by 10% while low utilization (<50%) reduces by 10%.
+func AdjustForBlockUtilization(pool uint64, used, capacity int) uint64 {
+	if capacity == 0 {
+		return pool
+	}
+	ratio := float64(used) / float64(capacity)
+	switch {
+	case ratio > 0.9:
+		return uint64(float64(pool) * 1.1)
+	case ratio < 0.5:
+		return uint64(float64(pool) * 0.9)
+	default:
+		return pool
+	}
+}
