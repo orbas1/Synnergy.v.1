@@ -46,3 +46,27 @@ func (s *Swarm) Broadcast(tx *Transaction) {
 		_ = n.AddTransaction(tx)
 	}
 }
+
+// Peers returns the identifiers of nodes in the swarm.
+func (s *Swarm) Peers() []string {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	ids := make([]string, 0, len(s.nodes))
+	for id := range s.nodes {
+		ids = append(ids, id)
+	}
+	return ids
+}
+
+// StartConsensus triggers block production on all swarm members and returns the
+// mined blocks. Nodes without pending transactions simply skip mining.
+func (s *Swarm) StartConsensus() []*Block {
+	members := s.Members()
+	blocks := make([]*Block, 0, len(members))
+	for _, n := range members {
+		if b := n.MineBlock(); b != nil {
+			blocks = append(blocks, b)
+		}
+	}
+	return blocks
+}
