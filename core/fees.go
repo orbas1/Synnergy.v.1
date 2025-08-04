@@ -25,12 +25,20 @@ type FeeBreakdown struct {
 	Total    uint64
 }
 
-// CalculateBaseFee computes the base fee using the median of recent fees and
-// an adjustment factor representing current network load.
+// CalculateBaseFee computes the base fee using the median of the most recent
+// 1000 block fees and an adjustment factor representing current network load.
+//
+// If more than 1000 fee values are supplied only the latest 1000 are used,
+// allowing the caller to provide a rolling history without manual trimming.
 func CalculateBaseFee(recent []uint64, adjustment float64) uint64 {
 	if len(recent) == 0 {
 		return 0
 	}
+
+	if len(recent) > 1000 {
+		recent = recent[len(recent)-1000:]
+	}
+
 	data := append([]uint64(nil), recent...)
 	sort.Slice(data, func(i, j int) bool { return data[i] < data[j] })
 	median := data[len(data)/2]
@@ -78,6 +86,16 @@ func FeeForWalletVerification(securityLevel, baseFee, variableRate, tip uint64) 
 	variable := securityLevel * variableRate
 	total := baseFee + variable + tip
 	return FeeBreakdown{Base: baseFee, Variable: variable, Priority: tip, Total: total}
+}
+
+// FeeForValidatedTransfer returns zero fees for transfers that have been
+// validated as eligible for fee-less execution. If validated is false it
+// falls back to the standard transfer fee calculation.
+func FeeForValidatedTransfer(dataSize, baseFee, variableRate, tip uint64, validated bool) FeeBreakdown {
+	if validated {
+		return FeeBreakdown{}
+	}
+	return FeeForTransfer(dataSize, baseFee, variableRate, tip)
 }
 
 // FeeDistribution represents the allocation of fees across network
@@ -135,4 +153,96 @@ func (p FeePolicy) Enforce(fee uint64) (uint64, string) {
 		note = fmt.Sprintf("fee raised to floor %d", p.Floor)
 	}
 	return adjusted, note
+// AdjustFeeRates adjusts the base fee and variable rate according to the
+// provided network load factor. A load of 0 leaves the fees unchanged while a
+// load of 0.5 increases them by 50%.
+func AdjustFeeRates(baseFee, variableRate uint64, load float64) (uint64, uint64) {
+	if load < 0 {
+		load = 0
+	}
+	adjustedBase := uint64(float64(baseFee) * (1 + load))
+	adjustedVariable := uint64(float64(variableRate) * (1 + load))
+	return adjustedBase, adjustedVariable
+}
+
+// EstimateFee provides a generic fee estimation for any supported transaction
+// type. The units argument represents the metric relevant to the given
+// transaction type, such as data size for transfers or contract calls for
+// purchases.
+func EstimateFee(txType TransactionType, units, baseFee, variableRate, tip uint64) FeeBreakdown {
+	switch txType {
+	case TxTypeTransfer:
+		return FeeForTransfer(units, baseFee, variableRate, tip)
+	case TxTypePurchase:
+		return FeeForPurchase(units, baseFee, variableRate, tip)
+	case TxTypeTokenInteraction:
+		return FeeForTokenUsage(units, baseFee, variableRate, tip)
+	case TxTypeContract:
+		return FeeForContract(units, baseFee, variableRate, tip)
+	case TxTypeWalletVerification:
+		return FeeForWalletVerification(units, baseFee, variableRate, tip)
+	default:
+		total := baseFee + tip
+		return FeeBreakdown{Base: baseFee, Priority: tip, Total: total}
+// ShareProportional splits total fees according to provided weights.
+// Remaining units from integer division are assigned to the first address.
+func ShareProportional(total uint64, weights map[string]uint64) map[string]uint64 {
+	shares := make(map[string]uint64)
+	var weightTotal uint64
+	var firstAddr string
+	var maxWeight uint64
+	for addr, w := range weights {
+		weightTotal += w
+		if firstAddr == "" || w > maxWeight || (w == maxWeight && addr < firstAddr) {
+			firstAddr = addr
+			maxWeight = w
+		}
+	}
+	if weightTotal == 0 {
+		return shares
+	}
+	var distributed uint64
+	for addr, w := range weights {
+		share := total * w / weightTotal
+		shares[addr] = share
+		distributed += share
+	}
+	if distributed < total {
+		shares[firstAddr] += total - distributed
+	}
+	return shares
+}
+
+// FeeDistributionContract simulates a smart contract that credits fee shares to the ledger.
+type FeeDistributionContract struct {
+	Ledger *Ledger
+}
+
+// NewFeeDistributionContract creates a distribution contract.
+func NewFeeDistributionContract(l *Ledger) *FeeDistributionContract {
+	return &FeeDistributionContract{Ledger: l}
+}
+
+// Distribute credits each participant with its fee share.
+func (f *FeeDistributionContract) Distribute(shares map[string]uint64) {
+	for addr, amt := range shares {
+		f.Ledger.Credit(addr, amt)
+	}
+}
+
+// AdjustForBlockUtilization modifies the validators/miners fee pool based on block usage.
+// A high utilization (>90%) increases rewards by 10% while low utilization (<50%) reduces by 10%.
+func AdjustForBlockUtilization(pool uint64, used, capacity int) uint64 {
+	if capacity == 0 {
+		return pool
+	}
+	ratio := float64(used) / float64(capacity)
+	switch {
+	case ratio > 0.9:
+		return uint64(float64(pool) * 1.1)
+	case ratio < 0.5:
+		return uint64(float64(pool) * 0.9)
+	default:
+		return pool
+	}
 }
