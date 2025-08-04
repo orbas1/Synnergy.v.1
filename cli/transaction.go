@@ -11,6 +11,11 @@ import (
 	"synnergy/core"
 )
 
+var (
+	feeCap   uint64
+	feeFloor uint64
+)
+
 func init() {
 	txCmd := &cobra.Command{
 		Use:   "tx",
@@ -98,10 +103,18 @@ func init() {
 				fmt.Println("unknown type")
 				return
 			}
+			policy := core.FeePolicy{Cap: feeCap, Floor: feeFloor}
+			adj, note := policy.Enforce(fb.Total)
+			fb.Total = adj
+			if note != "" {
+				fmt.Println("note:", note)
+			}
 			dist := core.DistributeFees(fb.Total)
 			fmt.Printf("fee breakdown: %+v\nfee distribution: %+v\n", fb, dist)
 		},
 	}
+	feeCmd.Flags().Uint64Var(&feeCap, "cap", 0, "fee cap")
+	feeCmd.Flags().Uint64Var(&feeFloor, "floor", 0, "fee floor")
 
 	baseFeeCmd := &cobra.Command{
 		Use:   "basefee [adjustment] [fees...]",

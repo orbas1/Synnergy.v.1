@@ -29,6 +29,16 @@ func TestApplyFeeCapFloor(t *testing.T) {
 	}
 }
 
+func TestFeePolicyEnforce(t *testing.T) {
+	p := FeePolicy{Cap: 100, Floor: 10}
+	if fee, note := p.Enforce(120); fee != 100 || note == "" {
+		t.Fatalf("expected cap enforcement, got %d %q", fee, note)
+	}
+	if fee, note := p.Enforce(5); fee != 10 || note == "" {
+		t.Fatalf("expected floor enforcement, got %d %q", fee, note)
+	}
+	if fee, note := p.Enforce(50); fee != 50 || note != "" {
+		t.Fatalf("unexpected change %d %q", fee, note)
 func TestAdjustFeeRates(t *testing.T) {
 	base, variable := AdjustFeeRates(100, 10, 0.5)
 	if base != 150 || variable != 15 {
