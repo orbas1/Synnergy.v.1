@@ -1,3 +1,6 @@
+//go:build ignore
+// +build ignore
+
 package core
 
 // CharityPool – 5% cut from every gas fee routed to on-chain philanthropy.
