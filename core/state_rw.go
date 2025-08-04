@@ -1,11 +1,12 @@
 package core
 
-// StateIterator provides sequential access over key/value pairs stored in the
-// ledger. It is deliberately minimal for test compilation purposes.
+// StateIterator provides a minimal interface for iterating over state entries
+// with a common prefix.
 type StateIterator interface {
 	Next() bool
 	Value() []byte
 }
+
 
 // StateRW abstracts the ledger access that CharityPool depends on. Only the
 // methods required by charity.go are included here.

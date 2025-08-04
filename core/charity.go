@@ -101,9 +101,26 @@ type electorate interface {
 	IsIDTokenHolder(addr Address) bool
 }
 
-//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 // CharityPool struct
-//---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+type CharityRegistration struct {
+	Addr      Address
+	Name      string
+	Category  CharityCategory
+	Cycle     uint64
+	VoteCount uint64
+}
+
+// CharityPool coordinates charity registrations, voting and daily payouts.
+type CharityPool struct {
+	mu        sync.Mutex
+	logger    *logrus.Logger
+	led       StateRW
+	vote      electorate
+	genesis   time.Time
+	lastDaily int64
+}
 
 // CharityPool manages the collection of gas-fee donations and their
 // distribution to registered charities. It relies on a ledger interface for
@@ -119,6 +136,16 @@ type CharityPool struct {
 
 func NewCharityPool(lg *logrus.Logger, led StateRW, el electorate, genesis time.Time) *CharityPool {
 	return &CharityPool{logger: lg, led: led, vote: el, genesis: genesis}
+}
+
+// mustJSON marshals v to JSON and panics on error. It simplifies state storage
+// where failures are unrecoverable.
+func mustJSON(v interface{}) []byte {
+	b, err := json.Marshal(v)
+	if err != nil {
+		panic(err)
+	}
+	return b
 }
 
 //---------------------------------------------------------------------
@@ -348,6 +375,10 @@ func regKey(cycle uint64, addr Address) []byte {
 }
 
 func winKey(cycle uint64) []byte { return []byte(fmt.Sprintf("charity:winners:%d", cycle)) }
+
+func voteKey(cycle Hash, voter Address) []byte {
+	return []byte(fmt.Sprintf("charity:vote:%x:%s", cycle[:], voter.Hex()))
+}
 
 func (cp *CharityPool) countCategoryRegistrations(cycle uint64, cat CharityCategory) int {
 	iter := cp.led.PrefixIterator([]byte(fmt.Sprintf("charity:reg:%d:", cycle)))
