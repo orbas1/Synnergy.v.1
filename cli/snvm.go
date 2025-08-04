@@ -18,7 +18,7 @@ func init() {
 		Use:   "exec",
 		Short: "Execute a no-op transaction",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			tx := core.NewTransaction("", "", 0, 0)
+			tx := core.NewTransaction("", "", 0, 0, 0)
 			if err := vm.Execute(tx); err != nil {
 				return err
 			}

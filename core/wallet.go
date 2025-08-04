@@ -5,6 +5,7 @@ import (
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
+	"encoding/hex"
 	"math/big"
 )
 
@@ -24,20 +25,29 @@ func NewWallet() (*Wallet, error) {
 	return &Wallet{PrivateKey: pk, Address: string(addr[:])}, nil
 }
 
-// Sign signs the transaction data.
+// Sign signs the transaction hash with the wallet's private key.
 func (w *Wallet) Sign(tx *Transaction) ([]byte, error) {
-	h := sha256.Sum256([]byte(tx.From + tx.To))
-	r, s, err := ecdsa.Sign(rand.Reader, w.PrivateKey, h[:])
+	h, err := hex.DecodeString(tx.Hash())
 	if err != nil {
 		return nil, err
 	}
-	return append(r.Bytes(), s.Bytes()...), nil
+	r, s, err := ecdsa.Sign(rand.Reader, w.PrivateKey, h)
+	if err != nil {
+		return nil, err
+	}
+	sig := append(r.Bytes(), s.Bytes()...)
+	tx.Signature = sig
+	return sig, nil
 }
 
-// VerifySignature verifies the signature for the transaction.
+// VerifySignature verifies the signature for the transaction using the public
+// key provided.
 func VerifySignature(tx *Transaction, sig []byte, pub *ecdsa.PublicKey) bool {
-	h := sha256.Sum256([]byte(tx.From + tx.To))
+	h, err := hex.DecodeString(tx.Hash())
+	if err != nil {
+		return false
+	}
 	r := new(big.Int).SetBytes(sig[:len(sig)/2])
 	s := new(big.Int).SetBytes(sig[len(sig)/2:])
-	return ecdsa.Verify(pub, h[:], r, s)
+	return ecdsa.Verify(pub, h, r, s)
 }
