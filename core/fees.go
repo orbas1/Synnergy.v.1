@@ -114,3 +114,37 @@ func ApplyFeeCapFloor(fee, cap, floor uint64) uint64 {
 	}
 	return fee
 }
+
+// AdjustFeeRates adjusts the base fee and variable rate according to the
+// provided network load factor. A load of 0 leaves the fees unchanged while a
+// load of 0.5 increases them by 50%.
+func AdjustFeeRates(baseFee, variableRate uint64, load float64) (uint64, uint64) {
+	if load < 0 {
+		load = 0
+	}
+	adjustedBase := uint64(float64(baseFee) * (1 + load))
+	adjustedVariable := uint64(float64(variableRate) * (1 + load))
+	return adjustedBase, adjustedVariable
+}
+
+// EstimateFee provides a generic fee estimation for any supported transaction
+// type. The units argument represents the metric relevant to the given
+// transaction type, such as data size for transfers or contract calls for
+// purchases.
+func EstimateFee(txType TransactionType, units, baseFee, variableRate, tip uint64) FeeBreakdown {
+	switch txType {
+	case TxTypeTransfer:
+		return FeeForTransfer(units, baseFee, variableRate, tip)
+	case TxTypePurchase:
+		return FeeForPurchase(units, baseFee, variableRate, tip)
+	case TxTypeTokenInteraction:
+		return FeeForTokenUsage(units, baseFee, variableRate, tip)
+	case TxTypeContract:
+		return FeeForContract(units, baseFee, variableRate, tip)
+	case TxTypeWalletVerification:
+		return FeeForWalletVerification(units, baseFee, variableRate, tip)
+	default:
+		total := baseFee + tip
+		return FeeBreakdown{Base: baseFee, Priority: tip, Total: total}
+	}
+}

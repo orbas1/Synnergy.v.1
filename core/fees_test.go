@@ -28,3 +28,17 @@ func TestApplyFeeCapFloor(t *testing.T) {
 		t.Fatalf("floor not applied, got %d", got)
 	}
 }
+
+func TestAdjustFeeRates(t *testing.T) {
+	base, variable := AdjustFeeRates(100, 10, 0.5)
+	if base != 150 || variable != 15 {
+		t.Fatalf("unexpected adjusted rates: base=%d variable=%d", base, variable)
+	}
+}
+
+func TestEstimateFee(t *testing.T) {
+	fb := EstimateFee(TxTypePurchase, 2, 1, 3, 1)
+	if fb.Base != 1 || fb.Variable != 6 || fb.Priority != 1 || fb.Total != 8 {
+		t.Fatalf("unexpected estimate: %+v", fb)
+	}
+}
