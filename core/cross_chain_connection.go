@@ -1,67 +1,70 @@
 package core
 
 import (
-	"fmt"
+	"errors"
 	"sync"
 )
 
-// ChainConnection represents an active cross-chain connection between two chains.
-type ChainConnection struct {
-	ID          string
+// Connection describes a link between this chain and a remote chain.
+type Connection struct {
+	ID          int
 	LocalChain  string
 	RemoteChain string
-	Active      bool
+	Open        bool
 }
 
-// ConnectionRegistry tracks cross-chain connections.
-type ConnectionRegistry struct {
+// ConnectionManager handles connection lifecycle operations.
+type ConnectionManager struct {
 	mu          sync.RWMutex
-	seq         int
-	connections map[string]*ChainConnection
+	connections map[int]*Connection
+	nextID      int
 }
 
-// NewConnectionRegistry creates a new registry.
-func NewConnectionRegistry() *ConnectionRegistry {
-	return &ConnectionRegistry{connections: make(map[string]*ChainConnection)}
+// NewConnectionManager creates a new manager.
+func NewConnectionManager() *ConnectionManager {
+	return &ConnectionManager{connections: make(map[int]*Connection)}
 }
 
-// OpenConnection establishes a new connection.
-func (r *ConnectionRegistry) OpenConnection(local, remote string) (*ChainConnection, error) {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	r.seq++
-	id := fmt.Sprintf("conn-%d", r.seq)
-	c := &ChainConnection{ID: id, LocalChain: local, RemoteChain: remote, Active: true}
-	r.connections[id] = c
-	return c, nil
+// OpenConnection establishes a new connection and returns its ID.
+func (m *ConnectionManager) OpenConnection(local, remote string) int {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.nextID++
+	id := m.nextID
+	m.connections[id] = &Connection{ID: id, LocalChain: local, RemoteChain: remote, Open: true}
+	return id
 }
 
-// CloseConnection terminates a connection.
-func (r *ConnectionRegistry) CloseConnection(id string) error {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	c, ok := r.connections[id]
+// CloseConnection terminates an existing connection.
+func (m *ConnectionManager) CloseConnection(id int) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	c, ok := m.connections[id]
 	if !ok {
-		return fmt.Errorf("connection %s not found", id)
+		return errors.New("connection not found")
 	}
-	c.Active = false
+	c.Open = false
 	return nil
 }
 
-// GetConnection retrieves connection details.
-func (r *ConnectionRegistry) GetConnection(id string) (*ChainConnection, bool) {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-	c, ok := r.connections[id]
-	return c, ok
+// GetConnection retrieves a connection by ID.
+func (m *ConnectionManager) GetConnection(id int) (*Connection, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	c, ok := m.connections[id]
+	if !ok {
+		return nil, errors.New("connection not found")
+	}
+	return c, nil
 }
 
-// ListConnections lists all connections.
-func (r *ConnectionRegistry) ListConnections() []*ChainConnection {
-	r.mu.RLock()
-	defer r.mu.RUnlock()
-	out := make([]*ChainConnection, 0, len(r.connections))
-	for _, c := range r.connections {
+// ListConnections returns all known connections.
+func (m *ConnectionManager) ListConnections() []*Connection {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	out := make([]*Connection, 0, len(m.connections))
+	for _, c := range m.connections {
+
 		out = append(out, c)
 	}
 	return out

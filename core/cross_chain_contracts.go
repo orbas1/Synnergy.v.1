@@ -1,54 +1,65 @@
 package core
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
 
-// ContractMapping links a local contract address to a remote chain address.
+// ContractMapping links a local contract to a remote chain address.
 type ContractMapping struct {
-	LocalAddr   string
-	RemoteChain string
-	RemoteAddr  string
+	LocalAddress  string
+	RemoteChain   string
+	RemoteAddress string
 }
 
-// CrossChainContractRegistry manages cross-chain contract mappings.
-type CrossChainContractRegistry struct {
-        mu       sync.RWMutex
-        mappings map[string]*ContractMapping
+// ContractRegistry manages contract mappings for cross-chain calls.
+type ContractRegistry struct {
+	mu       sync.RWMutex
+	mappings map[string]ContractMapping
 }
 
-// NewCrossChainContractRegistry creates an empty registry.
-func NewCrossChainContractRegistry() *CrossChainContractRegistry {
-        return &CrossChainContractRegistry{mappings: make(map[string]*ContractMapping)}
+// NewContractRegistry creates a new registry.
+func NewContractRegistry() *ContractRegistry {
+	return &ContractRegistry{mappings: make(map[string]ContractMapping)}
 }
 
-// RegisterMapping registers a new contract mapping.
-func (r *CrossChainContractRegistry) RegisterMapping(local, remoteChain, remoteAddr string) {
-        r.mu.Lock()
-        defer r.mu.Unlock()
-        r.mappings[local] = &ContractMapping{LocalAddr: local, RemoteChain: remoteChain, RemoteAddr: remoteAddr}
+// RegisterMapping stores a new mapping in the registry.
+func (r *ContractRegistry) RegisterMapping(localAddr, remoteChain, remoteAddr string) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.mappings[localAddr] = ContractMapping{LocalAddress: localAddr, RemoteChain: remoteChain, RemoteAddress: remoteAddr}
 }
 
-// GetMapping retrieves a mapping by local address.
-func (r *CrossChainContractRegistry) GetMapping(local string) (*ContractMapping, bool) {
-        r.mu.RLock()
-        defer r.mu.RUnlock()
-        m, ok := r.mappings[local]
-        return m, ok
+// GetMapping retrieves mapping information for a local contract address.
+func (r *ContractRegistry) GetMapping(localAddr string) (ContractMapping, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	m, ok := r.mappings[localAddr]
+	if !ok {
+		return ContractMapping{}, errors.New("mapping not found")
+	}
+	return m, nil
 }
 
 // ListMappings returns all registered mappings.
-func (r *CrossChainContractRegistry) ListMappings() []*ContractMapping {
-        r.mu.RLock()
-        defer r.mu.RUnlock()
-        out := make([]*ContractMapping, 0, len(r.mappings))
-        for _, m := range r.mappings {
-                out = append(out, m)
-        }
-        return out
+func (r *ContractRegistry) ListMappings() []ContractMapping {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	out := make([]ContractMapping, 0, len(r.mappings))
+	for _, m := range r.mappings {
+		out = append(out, m)
+	}
+	return out
 }
 
-// RemoveMapping deletes a mapping by local address.
-func (r *CrossChainContractRegistry) RemoveMapping(local string) {
-        r.mu.Lock()
-        defer r.mu.Unlock()
-        delete(r.mappings, local)
+// RemoveMapping deletes a mapping from the registry.
+func (r *ContractRegistry) RemoveMapping(localAddr string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if _, ok := r.mappings[localAddr]; !ok {
+		return errors.New("mapping not found")
+	}
+	delete(r.mappings, localAddr)
+	return nil
+
 }

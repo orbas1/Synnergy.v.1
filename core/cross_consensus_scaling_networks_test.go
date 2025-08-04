@@ -2,13 +2,18 @@ package core
 
 import "testing"
 
-func TestCCSRegistry(t *testing.T) {
-	reg := NewCCSRegistry()
-	n := reg.RegisterNetwork("PoW", "PoS")
-	if _, ok := reg.GetNetwork(n.ID); !ok {
-		t.Fatalf("network not found")
+func TestConsensusNetworkManager(t *testing.T) {
+	m := NewConsensusNetworkManager()
+	id := m.RegisterNetwork("pos", "pow")
+	if id == 0 {
+		t.Fatalf("expected id")
 	}
-	if len(reg.ListNetworks()) != 1 {
-		t.Fatalf("list: expected 1 network")
+	n, err := m.GetNetwork(id)
+	if err != nil || n.SourceConsensus != "pos" {
+		t.Fatalf("get network failed: %#v err=%v", n, err)
+	}
+	if len(m.ListNetworks()) != 1 {
+		t.Fatalf("expected one network")
+
 	}
 }
