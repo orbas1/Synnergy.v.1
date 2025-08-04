@@ -1,3 +1,4 @@
+
 ### Stage 2
 core/gas_table.go:4:5: gasTable redeclared in this block
         core/gas.go:14:5: other declaration of gasTable
@@ -12,11 +13,11 @@ core/gas_table.go:26:6: initGasTable redeclared in this block
 core/gas_table.go:32:6: GasCost redeclared in this block
 
 ### Stage 4
-	core/gas.go:17:6: other declaration of GasCost
+        core/gas.go:17:6: other declaration of GasCost
 core/opcodes_basic.go:5:2: OpNoop redeclared in this block
-	core/opcodes_base.go:7:2: other declaration of OpNoop
+        core/opcodes_base.go:7:2: other declaration of OpNoop
 core/opcodes_basic.go:6:2: OpPush redeclared in this block
-	core/opcodes_base.go:8:2: other declaration of OpPush
+        core/opcodes_base.go:8:2: other declaration of OpPush
 core/opcodes_basic.go:7:2: OpAdd redeclared in this block
 
 ### Stage 5

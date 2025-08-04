@@ -52,3 +52,4 @@ func (a Address) Short() string {
 
 // String implements fmt.Stringer and returns the hexadecimal representation.
 func (a Address) String() string { return a.Hex() }
+

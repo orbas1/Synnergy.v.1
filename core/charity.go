@@ -1,5 +1,3 @@
-
-
 package core
 
 // CharityPool – 5% cut from every gas fee routed to on-chain philanthropy.
@@ -27,6 +25,7 @@ import (
 	"fmt"
 	"github.com/sirupsen/logrus"
 	"sort"
+	"sync"
 	"time"
 )
 
@@ -105,6 +104,18 @@ type electorate interface {
 //---------------------------------------------------------------------
 // CharityPool struct
 //---------------------------------------------------------------------
+
+// CharityPool manages the collection of gas-fee donations and their
+// distribution to registered charities. It relies on a ledger interface for
+// state access and an electorate interface for voter verification.
+type CharityPool struct {
+	mu        sync.Mutex
+	logger    *logrus.Logger
+	led       StateRW
+	vote      electorate
+	genesis   time.Time
+	lastDaily int64
+}
 
 func NewCharityPool(lg *logrus.Logger, led StateRW, el electorate, genesis time.Time) *CharityPool {
 	return &CharityPool{logger: lg, led: led, vote: el, genesis: genesis}

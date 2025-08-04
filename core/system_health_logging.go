@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	"synnergy/node_ext/watchtower"
+	"synnergy/nodesextra/watchtower"
 )
 
 // SystemHealthLogger collects runtime metrics for a node and exposes snapshots
