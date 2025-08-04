@@ -3,7 +3,6 @@ package cli
 import (
 	"fmt"
 	"strconv"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -30,5 +29,6 @@ func init() {
 	}
 
 	coinCmd.AddCommand(infoCmd, rewardCmd)
+
 	rootCmd.AddCommand(coinCmd)
 }

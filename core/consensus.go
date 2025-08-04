@@ -90,4 +90,5 @@ func clamp(v, min, max float64) float64 {
 		return max
 	}
 	return v
+
 }

@@ -20,3 +20,4 @@ func BlockReward(height uint64) uint64 {
 	reward := InitialBlockReward >> halvings
 	return reward
 }
+
