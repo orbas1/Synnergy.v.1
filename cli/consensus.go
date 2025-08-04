@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"strconv"
+
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -19,10 +20,10 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Mine a block",
 		Run: func(cmd *cobra.Command, args []string) {
-			sb := core.SubBlock{Transactions: []*core.Transaction{}}
-			b := core.Block{SubBlocks: []core.SubBlock{sb}}
-			diff, _ := strconv.ParseUint(args[0], 10, 64)
-			consensus.MineBlock(&b, diff)
+			sb := core.NewSubBlock([]*core.Transaction{}, "validator")
+			b := core.NewBlock([]*core.SubBlock{sb}, "")
+			diff, _ := strconv.ParseUint(args[0], 10, 8)
+			consensus.MineBlock(b, uint8(diff))
 			fmt.Println("block mined with nonce", b.Nonce)
 		},
 	}

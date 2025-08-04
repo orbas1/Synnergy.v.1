@@ -18,6 +18,6 @@ func (n *Network) AddNode(node *Node) {
 // Broadcast sends a transaction to all nodes.
 func (n *Network) Broadcast(tx *Transaction) {
 	for _, node := range n.nodes {
-		node.Ledger.ApplyTransaction(tx)
+		_ = node.AddTransaction(tx)
 	}
 }

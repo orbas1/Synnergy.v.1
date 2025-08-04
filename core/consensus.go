@@ -1,6 +1,11 @@
 package core
 
-import "math"
+import (
+	"math/rand"
+	"strings"
+	"time"
+)
+
 
 // SubBlock groups transactions validated via POS and POH.
 type SubBlock struct {
@@ -55,12 +60,6 @@ func NewSynnergyConsensus() *SynnergyConsensus {
 		PoSAvailable: true,
 		PoHAvailable: true,
 		PoWRewards:   true,
-		Weights: ConsensusWeights{PoW: 0.40, PoS: 0.30, PoH: 0.30},
-		Alpha:   0.5,
-		Beta:    0.5,
-		Gamma:   0.1,
-		Dmax:    1,
-		Smax:    1,
 	}
 }
 
@@ -150,6 +149,27 @@ func (sc *SynnergyConsensus) SetPoWRewards(enabled bool) {
 	sc.PoWRewards = enabled
 }
 
+// SelectValidator returns a validator address using a weighted random selection
+// based on the provided stake map.
+func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
+	if len(stakes) == 0 {
+		return ""
+	}
+	var total uint64
+	for _, s := range stakes {
+		total += s
+	}
+	r := rand.New(rand.NewSource(time.Now().UnixNano())).Uint64() % total
+	var cumulative uint64
+	for addr, s := range stakes {
+		cumulative += s
+		if r < cumulative {
+			return addr
+		}
+	}
+	return ""
+}
+
 
 // ValidateSubBlock performs POS and POH validation on a sub-block.  For the
 // prototype this simply returns true.
@@ -157,12 +177,21 @@ func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {
 	return true
 }
 
-// MineBlock performs POW to finalize a block.  This prototype implements a
-// trivial nonce incrementer rather than a full hashing routine.
-func (sc *SynnergyConsensus) MineBlock(b *Block, difficulty uint64) {
-	target := uint64(math.MaxUint64) / difficulty
-	for b.Nonce < target {
-		b.Nonce++
+// MineBlock performs a simple SHA-256 proof-of-work using the provided
+// difficulty, defined as the number of leading zeroes required in the block
+// hash.
+func (sc *SynnergyConsensus) MineBlock(b *Block, difficulty uint8) {
+	target := strings.Repeat("0", int(difficulty))
+	var nonce uint64
+	for {
+		hash := b.HeaderHash(nonce)
+		if strings.HasPrefix(hash, target) {
+			b.Nonce = nonce
+			b.Hash = hash
+			return
+		}
+		nonce++
+
 	}
 }
 

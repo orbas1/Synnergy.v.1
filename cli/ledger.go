@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
@@ -22,6 +23,15 @@ func init() {
 			fmt.Println(ledger.GetBalance(args[0]))
 		},
 	}
-	ledgerCmd.AddCommand(balanceCmd)
+	creditCmd := &cobra.Command{
+		Use:   "credit [address] [amount]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Credit an address",
+		Run: func(cmd *cobra.Command, args []string) {
+			amt, _ := strconv.ParseUint(args[1], 10, 64)
+			ledger.Credit(args[0], amt)
+		},
+	}
+	ledgerCmd.AddCommand(balanceCmd, creditCmd)
 	rootCmd.AddCommand(ledgerCmd)
 }

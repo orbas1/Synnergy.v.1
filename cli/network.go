@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
@@ -24,6 +25,18 @@ func init() {
 			fmt.Println("node added")
 		},
 	}
-	networkCmd.AddCommand(addCmd)
+	broadcastCmd := &cobra.Command{
+		Use:   "broadcast [from] [to] [amount] [fee] [nonce]",
+		Args:  cobra.ExactArgs(5),
+		Short: "Broadcast transaction to all nodes",
+		Run: func(cmd *cobra.Command, args []string) {
+			amt, _ := strconv.ParseUint(args[2], 10, 64)
+			fee, _ := strconv.ParseUint(args[3], 10, 64)
+			nonce, _ := strconv.ParseUint(args[4], 10, 64)
+			tx := core.NewTransaction(args[0], args[1], amt, fee, nonce)
+			network.Broadcast(tx)
+		},
+	}
+	networkCmd.AddCommand(addCmd, broadcastCmd)
 	rootCmd.AddCommand(networkCmd)
 }

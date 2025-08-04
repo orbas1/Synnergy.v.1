@@ -1,6 +1,7 @@
 package core
 
 import (
+	"crypto/ecdsa"
 	"crypto/sha256"
 	"encoding/hex"
 	"fmt"
@@ -37,5 +38,9 @@ func NewTransaction(from, to string, amount, fee, nonce uint64) *Transaction {
 func (t *Transaction) Hash() string {
 	h := sha256.Sum256([]byte(fmt.Sprintf("%s%s%d%d%d%d", t.From, t.To, t.Amount, t.Fee, t.Nonce, t.Timestamp)))
 	return hex.EncodeToString(h[:])
+}
 
+// Verify checks the transaction's signature against the provided public key.
+func (t *Transaction) Verify(pub *ecdsa.PublicKey) bool {
+	return VerifySignature(t, t.Signature, pub)
 }

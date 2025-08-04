@@ -1,6 +1,10 @@
 package core
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
+
 
 // Ledger maintains account balances.
 type Ledger struct {
@@ -20,10 +24,24 @@ func (l *Ledger) GetBalance(addr string) uint64 {
 	return l.balances[addr]
 }
 
-// ApplyTransaction applies a transaction to the ledger.
-func (l *Ledger) ApplyTransaction(tx *Transaction) {
+// Credit adds funds to an address.
+func (l *Ledger) Credit(addr string, amount uint64) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	l.balances[tx.From] -= tx.Amount
+	l.balances[addr] += amount
+}
+
+// ApplyTransaction applies a transaction to the ledger, deducting both amount
+// and fee from the sender. It returns an error if the sender lacks sufficient
+// funds.
+func (l *Ledger) ApplyTransaction(tx *Transaction) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	total := tx.Amount + tx.Fee
+	if l.balances[tx.From] < total {
+		return errors.New("insufficient funds")
+	}
+	l.balances[tx.From] -= total
 	l.balances[tx.To] += tx.Amount
+	return nil
 }
