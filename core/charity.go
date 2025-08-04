@@ -1,5 +1,3 @@
-
-
 package core
 
 // CharityPool – 5% cut from every gas fee routed to on-chain philanthropy.
@@ -22,13 +20,103 @@ package core
 import (
 	"crypto/sha256"
 	"encoding/binary"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"sort"
+	"strings"
+	"sync"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
+
+type Hash [32]byte
+
+// Address represents a simplified account address.
+type Address [20]byte
+
+// Bytes returns the address as a byte slice.
+func (a Address) Bytes() []byte {
+	b := make([]byte, len(a))
+	copy(b, a[:])
+	return b
+}
+
+// Hex returns the hex string form of the address.
+func (a Address) Hex() string { return fmt.Sprintf("0x%x", a[:]) }
+
+// Short returns a shortened hex representation used for logging.
+func (a Address) Short() string {
+	h := a.Hex()
+	if len(h) > 10 {
+		return h[:10]
+	}
+	return h
+}
+
+// StringToAddress converts a hex string to an Address type.
+func StringToAddress(s string) (Address, error) {
+	var a Address
+	s = strings.TrimPrefix(s, "0x")
+	b, err := hex.DecodeString(s)
+	if err != nil {
+		return a, err
+	}
+	if len(b) != len(a) {
+		return a, fmt.Errorf("invalid address length")
+	}
+	copy(a[:], b)
+	return a, nil
+}
+
+type StateIterator interface {
+	Next() bool
+	Key() []byte
+	Value() []byte
+}
+
+// StateRW abstracts state interactions for the charity pool.
+type StateRW interface {
+	Transfer(from, to Address, amount uint64) error
+	SetState(key, value []byte)
+	GetState(key []byte) ([]byte, error)
+	HasState(key []byte) (bool, error)
+	BalanceOf(addr Address) uint64
+	PrefixIterator(prefix []byte) StateIterator
+}
+
+// CharityRegistration stores registration details for a charity.
+type CharityRegistration struct {
+	Addr      Address
+	Name      string
+	Category  CharityCategory
+	Cycle     uint64
+	VoteCount uint64
+}
+
+// CharityPool tracks charity registrations and payouts.
+type CharityPool struct {
+	mu        sync.Mutex
+	logger    *logrus.Logger
+	led       StateRW
+	vote      electorate
+	genesis   time.Time
+	lastDaily int64
+}
+
+func mustJSON(v interface{}) []byte {
+	b, err := json.Marshal(v)
+	if err != nil {
+		panic(err)
+	}
+	return b
+}
+
+func voteKey(h Hash, voter Address) []byte {
+	return []byte(fmt.Sprintf("charity:vote:%x:%s", h[:], voter.Hex()))
+}
 
 //---------------------------------------------------------------------
 // Categories
