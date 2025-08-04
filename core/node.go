@@ -4,29 +4,34 @@ import (
 	"errors"
 	"fmt"
 )
+
 // Node represents a participant in the network.
 type Node struct {
-
-	BaseNode         string
-}
-
-// Node represents a participant in the network.
-type BaseNode struct {
-
-	ID         string
-	Addr       string
-	Ledger     *Ledger
-	Consensus  *SynnergyConsensus
-	VM         *SNVM
-	Mempool    []*Transaction
-	Blockchain []*Block
-	Stakes     map[string]uint64
-	Slashed    map[string]bool
+	ID            string
+	Addr          string
+	Ledger        *Ledger
+	Consensus     *SynnergyConsensus
+	VM            *SNVM
+	Mempool       []*Transaction
+	Blockchain    []*Block
+	Stakes        map[string]uint64
+	Slashed       map[string]bool
+	MaxTxPerBlock int
 }
 
 // NewNode creates a new node instance.
-func NewNode(id, addr string, ledger *Ledger) *BaseNode {
-	return &Node{ID: id, Addr: addr, Ledger: ledger, Consensus: NewSynnergyConsensus(), VM: NewSNVM(), Stakes: make(map[string]uint64), Slashed: make(map[string]bool)}
+func NewNode(id, addr string, ledger *Ledger) *Node {
+	return &Node{
+		ID:         id,
+		Addr:       addr,
+		Ledger:     ledger,
+		Consensus:  NewSynnergyConsensus(),
+		VM:         NewSNVM(),
+		Mempool:    []*Transaction{},
+		Blockchain: []*Block{},
+		Stakes:     make(map[string]uint64),
+		Slashed:    make(map[string]bool),
+	}
 }
 
 // AddTransaction validates and adds a transaction to the mempool.
@@ -84,7 +89,7 @@ func (n *Node) MineBlock() *Block {
 	return block
 }
 
-const MinStake uint64 = 1000
+const MinStake uint64 = 1
 
 // SetStake assigns stake to an address for validator selection while enforcing a minimum.
 func (n *Node) SetStake(addr string, amount uint64) error {

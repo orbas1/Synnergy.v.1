@@ -153,6 +153,8 @@ func (p FeePolicy) Enforce(fee uint64) (uint64, string) {
 		note = fmt.Sprintf("fee raised to floor %d", p.Floor)
 	}
 	return adjusted, note
+}
+
 // AdjustFeeRates adjusts the base fee and variable rate according to the
 // provided network load factor. A load of 0 leaves the fees unchanged while a
 // load of 0.5 increases them by 50%.
@@ -184,6 +186,9 @@ func EstimateFee(txType TransactionType, units, baseFee, variableRate, tip uint6
 	default:
 		total := baseFee + tip
 		return FeeBreakdown{Base: baseFee, Priority: tip, Total: total}
+	}
+}
+
 // ShareProportional splits total fees according to provided weights.
 // Remaining units from integer division are assigned to the first address.
 func ShareProportional(total uint64, weights map[string]uint64) map[string]uint64 {

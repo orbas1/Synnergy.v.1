@@ -39,6 +39,9 @@ func TestFeePolicyEnforce(t *testing.T) {
 	}
 	if fee, note := p.Enforce(50); fee != 50 || note != "" {
 		t.Fatalf("unexpected change %d %q", fee, note)
+	}
+}
+
 func TestAdjustFeeRates(t *testing.T) {
 	base, variable := AdjustFeeRates(100, 10, 0.5)
 	if base != 150 || variable != 15 {
@@ -50,6 +53,9 @@ func TestEstimateFee(t *testing.T) {
 	fb := EstimateFee(TxTypePurchase, 2, 1, 3, 1)
 	if fb.Base != 1 || fb.Variable != 6 || fb.Priority != 1 || fb.Total != 8 {
 		t.Fatalf("unexpected estimate: %+v", fb)
+	}
+}
+
 func TestShareProportional(t *testing.T) {
 	weights := map[string]uint64{"a": 1, "b": 3}
 	shares := ShareProportional(100, weights)
@@ -64,6 +70,5 @@ func TestAdjustForBlockUtilization(t *testing.T) {
 	}
 	if v := AdjustForBlockUtilization(100, 40, 100); v != 90 {
 		t.Fatalf("low util adjustment failed, got %d", v)
-
 	}
 }
