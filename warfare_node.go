@@ -8,19 +8,13 @@ import (
 	militarynodes "synnergy/nodes/military_nodes"
 )
 
-// LogisticsRecord captures movement or status updates for military assets.
-type LogisticsRecord struct {
-	AssetID   string
-	Location  string
-	Status    string
-	Timestamp time.Time
-}
-
 // WarfareNode provides military focused extensions on top of a base node.
+// Logistics are kept in-memory and protected by a RWMutex to allow
+// concurrent reads while serialising writes.
 type WarfareNode struct {
 	id        string
 	mu        sync.RWMutex
-	logistics []LogisticsRecord
+	logistics []militarynodes.LogisticsRecord
 }
 
 // NewWarfareNode constructs a new WarfareNode with the given identifier.
@@ -44,7 +38,7 @@ func (w *WarfareNode) SecureCommand(cmd string) error {
 func (w *WarfareNode) TrackLogistics(assetID, location, status string) {
 	w.mu.Lock()
 	defer w.mu.Unlock()
-	rec := LogisticsRecord{
+	rec := militarynodes.LogisticsRecord{
 		AssetID:   assetID,
 		Location:  location,
 		Status:    status,
@@ -60,11 +54,27 @@ func (w *WarfareNode) ShareTactical(info string) {
 }
 
 // Logistics returns a copy of stored logistics records.
-func (w *WarfareNode) Logistics() []LogisticsRecord {
+func (w *WarfareNode) Logistics() []militarynodes.LogisticsRecord {
 	w.mu.RLock()
 	defer w.mu.RUnlock()
-	cp := make([]LogisticsRecord, len(w.logistics))
+	cp := make([]militarynodes.LogisticsRecord, len(w.logistics))
 	copy(cp, w.logistics)
+	return cp
+}
+
+// LogisticsByAsset filters stored logistics records for a specific asset ID.
+// The returned slice is a copy and may be safely modified by the caller.
+func (w *WarfareNode) LogisticsByAsset(assetID string) []militarynodes.LogisticsRecord {
+	w.mu.RLock()
+	defer w.mu.RUnlock()
+	var res []militarynodes.LogisticsRecord
+	for _, r := range w.logistics {
+		if r.AssetID == assetID {
+			res = append(res, r)
+		}
+	}
+	cp := make([]militarynodes.LogisticsRecord, len(res))
+	copy(cp, res)
 	return cp
 }
 
