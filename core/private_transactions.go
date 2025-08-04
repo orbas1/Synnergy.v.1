@@ -45,9 +45,11 @@ func Decrypt(key, data []byte) ([]byte, error) {
 	return gcm.Open(nil, nonce, cipherText, nil)
 }
 
-// PrivateTransaction holds an encrypted payload.
+// PrivateTransaction holds an encrypted payload along with the nonce used
+// during encryption. The nonce is required for successful decryption.
 type PrivateTransaction struct {
 	Payload []byte
+	Nonce   []byte
 }
 
 // PrivateTxManager manages private transactions.
