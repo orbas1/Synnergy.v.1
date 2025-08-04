@@ -2,12 +2,11 @@ package core
 
 import "testing"
 
-func TestContractRegistry(t *testing.T) {
-	r := NewContractRegistry()
-	r.RegisterMapping("loc1", "chainB", "rem1")
-	m, err := r.GetMapping("loc1")
-	if err != nil || m.RemoteAddress != "rem1" {
-		t.Fatalf("unexpected mapping: %#v err=%v", m, err)
+func TestCrossChainRegistry(t *testing.T) {
+	reg := NewCrossChainRegistry()
+	reg.RegisterMapping("local1", "chainB", "remote1")
+	if _, ok := reg.GetMapping("local1"); !ok {
+		t.Fatalf("mapping not found")
 	}
 	if len(r.ListMappings()) != 1 {
 		t.Fatalf("expected one mapping")

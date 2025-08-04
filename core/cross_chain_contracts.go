@@ -11,27 +11,26 @@ type ContractMapping struct {
 	RemoteChain   string
 	RemoteAddress string
 }
-
-// ContractRegistry manages contract mappings for cross-chain calls.
-type ContractRegistry struct {
+// CrossChainRegistry manages cross-chain contract mappings.
+type CrossChainRegistry struct {
 	mu       sync.RWMutex
 	mappings map[string]ContractMapping
 }
 
-// NewContractRegistry creates a new registry.
-func NewContractRegistry() *ContractRegistry {
-	return &ContractRegistry{mappings: make(map[string]ContractMapping)}
+// NewCrossChainRegistry creates an empty registry.
+func NewCrossChainRegistry() *CrossChainRegistry {
+	return &CrossChainRegistry{mappings: make(map[string]*ContractMapping)}
 }
 
-// RegisterMapping stores a new mapping in the registry.
-func (r *ContractRegistry) RegisterMapping(localAddr, remoteChain, remoteAddr string) {
+// RegisterMapping registers a new contract mapping.
+func (r *CrossChainRegistry) RegisterMapping(local, remoteChain, remoteAddr string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.mappings[localAddr] = ContractMapping{LocalAddress: localAddr, RemoteChain: remoteChain, RemoteAddress: remoteAddr}
 }
 
-// GetMapping retrieves mapping information for a local contract address.
-func (r *ContractRegistry) GetMapping(localAddr string) (ContractMapping, error) {
+// GetMapping retrieves a mapping by local address.
+func (r *CrossChainRegistry) GetMapping(local string) (*ContractMapping, bool) {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	m, ok := r.mappings[localAddr]
@@ -42,7 +41,7 @@ func (r *ContractRegistry) GetMapping(localAddr string) (ContractMapping, error)
 }
 
 // ListMappings returns all registered mappings.
-func (r *ContractRegistry) ListMappings() []ContractMapping {
+func (r *CrossChainRegistry) ListMappings() []*ContractMapping {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	out := make([]ContractMapping, 0, len(r.mappings))
@@ -52,8 +51,8 @@ func (r *ContractRegistry) ListMappings() []ContractMapping {
 	return out
 }
 
-// RemoveMapping deletes a mapping from the registry.
-func (r *ContractRegistry) RemoveMapping(localAddr string) error {
+// RemoveMapping deletes a mapping by local address.
+func (r *CrossChainRegistry) RemoveMapping(local string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, ok := r.mappings[localAddr]; !ok {
