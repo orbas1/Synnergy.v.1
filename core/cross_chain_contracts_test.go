@@ -2,17 +2,19 @@ package core
 
 import "testing"
 
-func TestCrossChainContractRegistry(t *testing.T) {
-        reg := NewCrossChainContractRegistry()
+func TestCrossChainRegistry(t *testing.T) {
+	reg := NewCrossChainRegistry()
 	reg.RegisterMapping("local1", "chainB", "remote1")
 	if _, ok := reg.GetMapping("local1"); !ok {
 		t.Fatalf("mapping not found")
 	}
-	if len(reg.ListMappings()) != 1 {
-		t.Fatalf("list: expected 1 mapping")
+	if len(r.ListMappings()) != 1 {
+		t.Fatalf("expected one mapping")
 	}
-	reg.RemoveMapping("local1")
-	if _, ok := reg.GetMapping("local1"); ok {
-		t.Fatalf("mapping should be removed")
+	if err := r.RemoveMapping("loc1"); err != nil {
+		t.Fatalf("remove failed: %v", err)
+	}
+	if _, err := r.GetMapping("loc1"); err == nil {
+		t.Fatalf("expected error after removal")
 	}
 }

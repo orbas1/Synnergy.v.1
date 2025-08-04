@@ -1,3 +1,4 @@
+
 ### Stage 2
 core/gas_table.go:4:5: gasTable redeclared in this block
         core/gas.go:14:5: other declaration of gasTable
@@ -12,11 +13,11 @@ core/gas_table.go:26:6: initGasTable redeclared in this block
 core/gas_table.go:32:6: GasCost redeclared in this block
 
 ### Stage 4
-	core/gas.go:17:6: other declaration of GasCost
+        core/gas.go:17:6: other declaration of GasCost
 core/opcodes_basic.go:5:2: OpNoop redeclared in this block
-	core/opcodes_base.go:7:2: other declaration of OpNoop
+        core/opcodes_base.go:7:2: other declaration of OpNoop
 core/opcodes_basic.go:6:2: OpPush redeclared in this block
-	core/opcodes_base.go:8:2: other declaration of OpPush
+        core/opcodes_base.go:8:2: other declaration of OpPush
 core/opcodes_basic.go:7:2: OpAdd redeclared in this block
 
 ### Stage 5
@@ -55,12 +56,7 @@ core/base_node.go:52:36: undefined: nodes.Address
 core/base_node.go:55:22: undefined: nodes.Address
 
 ### Stage 11
-core/base_node.go:63:40: undefined: nodes.Address
-core/charity.go:79:25: undefined: Address
-core/charity.go:80:25: undefined: Address
-core/charity.go:86:28: undefined: StringToAddress
-core/charity.go:91:32: undefined: StringToAddress
-core/charity.go:102:23: undefined: Address
+Stage 11 resolved.
 
 ### Stage 12
 core/charity.go:109:44: undefined: StateRW

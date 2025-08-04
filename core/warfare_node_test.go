@@ -1,7 +1,7 @@
 package core
 
 import (
-	militarynodes "synnergy/node_ext/military_nodes"
+	militarynodes "synnergy/nodesextra/military_nodes"
 	"testing"
 )
 
