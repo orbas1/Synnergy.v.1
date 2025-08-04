@@ -4,6 +4,7 @@ import (
 	"errors"
 	"math/rand"
 	"sort"
+	"sync"
 	"time"
 )
 
@@ -16,6 +17,7 @@ type AuthorityNode struct {
 
 // AuthorityNodeRegistry manages authority nodes and voting.
 type AuthorityNodeRegistry struct {
+	mu    sync.RWMutex
 	index *AuthorityNodeIndex
 }
 
@@ -26,6 +28,8 @@ func NewAuthorityNodeRegistry() *AuthorityNodeRegistry {
 
 // Register adds a candidate as an authority node.
 func (r *AuthorityNodeRegistry) Register(addr, role string) (*AuthorityNode, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	if _, exists := r.index.Get(addr); exists {
 		return nil, errors.New("authority node already exists")
 	}
@@ -36,6 +40,8 @@ func (r *AuthorityNodeRegistry) Register(addr, role string) (*AuthorityNode, err
 
 // Vote casts a vote for a candidate authority node.
 func (r *AuthorityNodeRegistry) Vote(voterAddr, candidateAddr string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	node, ok := r.index.Get(candidateAddr)
 	if !ok {
 		return errors.New("candidate not found")
@@ -46,7 +52,9 @@ func (r *AuthorityNodeRegistry) Vote(voterAddr, candidateAddr string) error {
 
 // Electorate samples up to size authority nodes weighted by votes.
 func (r *AuthorityNodeRegistry) Electorate(size int) []string {
+	r.mu.RLock()
 	nodes := r.index.List()
+	r.mu.RUnlock()
 	sort.Slice(nodes, func(i, j int) bool { return len(nodes[i].Votes) > len(nodes[j].Votes) })
 	if size > len(nodes) {
 		size = len(nodes)
@@ -64,12 +72,16 @@ func (r *AuthorityNodeRegistry) Electorate(size int) []string {
 
 // IsAuthorityNode checks if addr is a registered authority node.
 func (r *AuthorityNodeRegistry) IsAuthorityNode(addr string) bool {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	_, ok := r.index.Get(addr)
 	return ok
 }
 
 // Info returns details for an authority node.
 func (r *AuthorityNodeRegistry) Info(addr string) (*AuthorityNode, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	n, ok := r.index.Get(addr)
 	if !ok {
 		return nil, errors.New("authority node not found")
@@ -79,10 +91,14 @@ func (r *AuthorityNodeRegistry) Info(addr string) (*AuthorityNode, error) {
 
 // List returns all authority nodes.
 func (r *AuthorityNodeRegistry) List() []*AuthorityNode {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	return r.index.List()
 }
 
 // Deregister removes an authority node and its votes.
 func (r *AuthorityNodeRegistry) Deregister(addr string) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	r.index.Remove(addr)
 }

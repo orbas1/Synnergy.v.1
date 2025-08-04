@@ -3,6 +3,7 @@ package core
 import (
 	"errors"
 	"fmt"
+	"sync"
 	"time"
 )
 
@@ -20,6 +21,7 @@ type AuthorityApplication struct {
 
 // AuthorityApplicationManager tracks authority node applications.
 type AuthorityApplicationManager struct {
+	mu       sync.RWMutex
 	apps     map[string]*AuthorityApplication
 	nextID   int
 	registry *AuthorityNodeRegistry
@@ -38,6 +40,8 @@ func NewAuthorityApplicationManager(reg *AuthorityNodeRegistry, ttl time.Duratio
 
 // Submit creates a new application and returns its ID.
 func (m *AuthorityApplicationManager) Submit(candidate, role, desc string) string {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	id := m.nextID
 	m.nextID++
 	app := &AuthorityApplication{
@@ -55,6 +59,8 @@ func (m *AuthorityApplicationManager) Submit(candidate, role, desc string) strin
 
 // Vote records a vote on an application.
 func (m *AuthorityApplicationManager) Vote(voter, id string, approve bool) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	app, ok := m.apps[id]
 	if !ok {
 		return errors.New("application not found")
@@ -74,6 +80,8 @@ func (m *AuthorityApplicationManager) Vote(voter, id string, approve bool) error
 
 // Finalize concludes an application and registers the node if approved.
 func (m *AuthorityApplicationManager) Finalize(id string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	app, ok := m.apps[id]
 	if !ok {
 		return errors.New("application not found")
@@ -91,6 +99,8 @@ func (m *AuthorityApplicationManager) Finalize(id string) error {
 
 // Tick removes expired applications.
 func (m *AuthorityApplicationManager) Tick(now time.Time) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	for id, app := range m.apps {
 		if app.Finalized || now.After(app.ExpiresAt) {
 			delete(m.apps, id)
@@ -100,6 +110,8 @@ func (m *AuthorityApplicationManager) Tick(now time.Time) {
 
 // Get returns an application by ID.
 func (m *AuthorityApplicationManager) Get(id string) (*AuthorityApplication, error) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	app, ok := m.apps[id]
 	if !ok {
 		return nil, errors.New("application not found")
@@ -109,6 +121,8 @@ func (m *AuthorityApplicationManager) Get(id string) (*AuthorityApplication, err
 
 // List returns all applications.
 func (m *AuthorityApplicationManager) List() []*AuthorityApplication {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	out := make([]*AuthorityApplication, 0, len(m.apps))
 	for _, app := range m.apps {
 		out = append(out, app)
