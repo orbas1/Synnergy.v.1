@@ -12,6 +12,7 @@ type Node struct {
 	Mempool    []*Transaction
 	Blockchain []*Block
 	Stakes     map[string]uint64
+
 }
 
 // NewNode creates a new node instance.
@@ -61,4 +62,5 @@ func (n *Node) MineBlock() *Block {
 // SetStake assigns stake to an address for validator selection.
 func (n *Node) SetStake(addr string, amount uint64) {
 	n.Stakes[addr] = amount
+
 }

@@ -2,6 +2,7 @@ package core
 
 import "math"
 
+
 const (
 	// CoinName represents the name of the native coin.
 	CoinName = "Synthron"
@@ -83,3 +84,4 @@ func LockupDuration(base, V, threshold, sigma float64) float64 {
 func PriceToSupplyRatio(price float64, height uint64) float64 {
 	return price / math.Max(float64(CirculatingSupply(height)), 1)
 }
+
