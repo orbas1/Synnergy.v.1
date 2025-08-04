@@ -20,13 +20,13 @@ var (
 )
 
 func opcodeByName(name string) Opcode {
-	b, err := ToBytecode(name)
-	if err != nil {
-		panic(err)
-	}
-	op, err := ParseOpcode(b)
-	if err != nil {
-		panic(err)
-	}
-	return op
+        b, err := ToBytecode(name)
+        if err != nil {
+                return 0
+        }
+        op, err := ParseOpcode(b)
+        if err != nil {
+                return 0
+        }
+        return op
 }

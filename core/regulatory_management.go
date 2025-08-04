@@ -7,10 +7,10 @@ import (
 
 // Regulation defines a basic rule for transaction oversight.
 type Regulation struct {
-	ID           string
-	Jurisdiction string
-	Description  string
-	MaxAmount    float64
+        ID           string
+        Jurisdiction string
+        Description  string
+        MaxAmount    uint64
 }
 
 // RegulatoryManager stores and evaluates regulations.

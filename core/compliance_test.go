@@ -18,9 +18,9 @@ func TestComplianceServiceKYCAndRisk(t *testing.T) {
 }
 
 func TestComplianceServiceMonitorTransaction(t *testing.T) {
-	svc := NewComplianceService()
-	tx := Transaction{ID: "tx1", From: "a", Amount: 100}
-	if !svc.MonitorTransaction(tx, 50) {
-		t.Fatalf("expected anomaly detection")
-	}
+        svc := NewComplianceService()
+        tx := ComplianceTransaction{ID: "tx1", From: "a", Amount: 100}
+        if !svc.MonitorTransaction(tx, 50) {
+                t.Fatalf("expected anomaly detection")
+        }
 }
