@@ -127,10 +127,5 @@ core/gateway_node.go:22:30: undefined: nodes.Address
 core/ledger.go:127:26: tx.Fee undefined (type *Transaction has no field or method Fee)
 
 ### Stage 20
-core/ledger.go:132:2: invalid operation: l.balances[tx.To] += tx.Amount (mismatched types uint64 and float64)
-core/node.go:15:31: undefined: nodes.Address
-core/node_engine.go:49:49: tx.Fee undefined (type *Transaction has no field or method Fee)
-core/node_engine.go:77:19: tx.Fee undefined (type *Transaction has no field or method Fee)
-core/snvm.go:21:25: tx.Program undefined (type *Transaction has no field or method Program)
-core/wallet.go:39:5: tx.Signature undefined (type *Transaction has no field or method Signature)
+Stage 20 resolved.
 
