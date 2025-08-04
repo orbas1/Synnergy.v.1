@@ -3,8 +3,6 @@ package cli
 import (
 	"fmt"
 	"strconv"
-
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -60,6 +58,52 @@ func init() {
 		},
 	}
 
-	consensusCmd.AddCommand(mineCmd, weightsCmd, adjustCmd, thresholdCmd)
+	transitionCmd := &cobra.Command{
+		Use:   "transition [demand] [threat] [stake]",
+		Args:  cobra.ExactArgs(3),
+		Short: "Compute full transition threshold",
+		Run: func(cmd *cobra.Command, args []string) {
+			d, _ := strconv.ParseFloat(args[0], 64)
+			t, _ := strconv.ParseFloat(args[1], 64)
+			s, _ := strconv.ParseFloat(args[2], 64)
+			fmt.Println("transition threshold:", consensus.TransitionThreshold(d, t, s))
+		},
+	}
+
+	difficultyCmd := &cobra.Command{
+		Use:   "difficulty [old] [actual] [expected]",
+		Args:  cobra.ExactArgs(3),
+		Short: "Adjust mining difficulty",
+		Run: func(cmd *cobra.Command, args []string) {
+			old, _ := strconv.ParseFloat(args[0], 64)
+			actual, _ := strconv.ParseFloat(args[1], 64)
+			expected, _ := strconv.ParseFloat(args[2], 64)
+			fmt.Println("new difficulty:", consensus.DifficultyAdjust(old, actual, expected))
+		},
+	}
+
+	availabilityCmd := &cobra.Command{
+		Use:   "availability [pow] [pos] [poh]",
+		Args:  cobra.ExactArgs(3),
+		Short: "Set validator availability flags",
+		Run: func(cmd *cobra.Command, args []string) {
+			pow := args[0] == "true"
+			pos := args[1] == "true"
+			poh := args[2] == "true"
+			consensus.SetAvailability(pow, pos, poh)
+		},
+	}
+
+	powRewardsCmd := &cobra.Command{
+		Use:   "powrewards [enabled]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Toggle PoW rewards availability",
+		Run: func(cmd *cobra.Command, args []string) {
+			en := args[0] == "true"
+			consensus.SetPoWRewards(en)
+		},
+	}
+
+	consensusCmd.AddCommand(mineCmd, weightsCmd, adjustCmd, thresholdCmd, transitionCmd, difficultyCmd, availabilityCmd, powRewardsCmd)
 	rootCmd.AddCommand(consensusCmd)
 }
