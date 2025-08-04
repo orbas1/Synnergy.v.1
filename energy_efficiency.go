@@ -56,3 +56,19 @@ func (t *EnergyEfficiencyTracker) NetworkAverage() float64 {
 	}
 	return float64(totalTx) / totalEnergy
 }
+
+// Stats returns the raw efficiency record for a validator.
+// The boolean result reports whether metrics were recorded for the validator.
+func (t *EnergyEfficiencyTracker) Stats(validator string) (EfficiencyRecord, bool) {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+	r, ok := t.stats[validator]
+	return r, ok
+}
+
+// Reset removes all tracked metrics for the given validator.
+func (t *EnergyEfficiencyTracker) Reset(validator string) {
+	t.mu.Lock()
+	delete(t.stats, validator)
+	t.mu.Unlock()
+}
