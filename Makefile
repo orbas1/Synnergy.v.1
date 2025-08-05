@@ -12,3 +12,11 @@ govulncheck:
 
 security: staticcheck gosec govulncheck
 
+
+.PHONY: docs docs-serve
+
+docs:
+	mkdocs build
+
+docs-serve:
+	mkdocs serve

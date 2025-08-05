@@ -79,7 +79,7 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Implemented a GitHub Actions workflow that builds, tests, lints, and packages binaries.
     - Enabled caching for modules and test results to speed up builds.
 
-11. **Documentation Standardization**  
+11. **Documentation Standardization ✅**  
     - Move guides into a `docs/` directory.  
     - Use a documentation generator (e.g., MkDocs) to produce a docs site.  
     - Maintain ADRs for architectural decisions.
