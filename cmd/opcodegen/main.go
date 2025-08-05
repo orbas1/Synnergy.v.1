@@ -1,11 +1,12 @@
 package main
 
 import (
-	"bufio"
-	"fmt"
-	"os"
-	"regexp"
-	"sort"
+        "bufio"
+        "fmt"
+        "os"
+        "regexp"
+        "sort"
+        "strings"
 )
 
 func main() {
@@ -15,15 +16,19 @@ func main() {
 	}
 	defer f.Close()
 
-	re := regexp.MustCompile(`func\s+([A-Za-z0-9_]+)\s*\(`)
-	uniq := make(map[string]struct{})
-	scanner := bufio.NewScanner(f)
-	for scanner.Scan() {
-		line := scanner.Text()
-		if m := re.FindStringSubmatch(line); m != nil {
-			uniq[m[1]] = struct{}{}
-		}
-	}
+        re := regexp.MustCompile(`^([^:]+):.*func\s+(?:\([^)]*\)\s+)?([A-Za-z0-9_]+)\s*\(`)
+        uniq := make(map[string]struct{})
+        scanner := bufio.NewScanner(f)
+        for scanner.Scan() {
+                line := scanner.Text()
+                if m := re.FindStringSubmatch(line); m != nil {
+                        path, fn := m[1], m[2]
+                        if strings.Contains(path, "_test.go") || strings.HasPrefix(path, "cli/") || strings.HasPrefix(path, "cmd/") {
+                                continue
+                        }
+                        uniq[fn] = struct{}{}
+                }
+        }
 	if err := scanner.Err(); err != nil {
 		panic(err)
 	}
