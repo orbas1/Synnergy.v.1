@@ -11,13 +11,16 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
    - Group token implementations under `internal/tokens/`.  
    - Update import paths accordingly.
 
-3. **Create `cmd/` Entrypoints**  
-   - Maintain a dedicated `cmd/` directory for all binaries (e.g., node, tooling).  
+3. **Create `cmd/` Entrypoints**
+   - Maintain a dedicated `cmd/` directory for all binaries (e.g., node, tooling).
    - Each binary receives its own subdirectory with a `main.go` entrypoint.
 
-4. **Introduce Dependency Management**  
-   - Use Go modules (already present) with versioned releases.  
-   - Pin external dependencies and enable automatic updates via Dependabot or Renovate.
+4. **Introduce Dependency Management**
+   - Use Go modules with explicit versioning and keep `go.mod`/`go.sum` under version control.
+   - Enforce clean dependency graphs with `go mod tidy` and integrity checks via `go mod verify`.
+   - Provide `Makefile` targets (`tidy`, `verify`, `update`) to standardize dependency maintenance.
+   - Configure Dependabot in `.github/dependabot.yml` to automatically open pull requests for Go modules and GitHub Actions.
+   - Establish a review policy for dependency changes, including security scanning before merge.
 
 5. **Implement Configuration Management**  
    - Centralize configuration logic under `internal/config/`.  
