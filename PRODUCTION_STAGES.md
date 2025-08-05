@@ -28,9 +28,20 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
    - Create an `internal/log` package and ensure all components use it.  
    - Add metrics with Prometheus exporters.
 
-7. **Error Handling and Observability**  
-   - Standardize error types and wrapping using `errors` package.  
-   - Introduce tracing with OpenTelemetry for cross-service visibility.
+7. **Error Handling and Observability**
+   - Create an `internal/errors` package that defines typed errors, error
+     codes, and helper functions for wrapping with `%w`.
+   - Replace panics with structured error propagation and enforce
+     consistent handling using `errors.Is`/`errors.As`.
+   - Attach contextual metadata (component, operation, severity) to
+     errors so they can be correlated in logs and metrics.
+   - Integrate OpenTelemetry across all modules to emit traces, metrics,
+     and logs; propagate `context.Context` to carry trace identifiers.
+   - Provide reference deployments for OTLP collectors (e.g., Jaeger) and
+     dashboard templates in Prometheus/Grafana with alerting on error
+     rates and latency.
+   - Document error-handling conventions and observability setup for
+     contributors and operators.
 
 8. **Security Hardening**  
    - Add static analysis tools (`gosec`, `staticcheck`).  
