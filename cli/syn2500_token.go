@@ -75,6 +75,24 @@ func init() {
 	}
 	cmd.AddCommand(delCmd)
 
+	updateCmd := &cobra.Command{
+		Use:   "update <id> <power>",
+		Short: "Update voting power for a member",
+		Args:  cobra.ExactArgs(2),
+		Run: func(cmd *cobra.Command, args []string) {
+			m, ok := syn2500.GetMember(args[0])
+			if !ok {
+				fmt.Println("not found")
+				return
+			}
+			var power uint64
+			fmt.Sscanf(args[1], "%d", &power)
+			m.UpdateVotingPower(power)
+			fmt.Println("voting power updated")
+		},
+	}
+	cmd.AddCommand(updateCmd)
+
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List members",
