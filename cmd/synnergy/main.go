@@ -1,14 +1,19 @@
 package main
 
 import (
-	"log"
 	"os"
+
+	"github.com/sirupsen/logrus"
+	"github.com/subosito/gotenv"
 
 	"synnergy/cli"
 	"synnergy/internal/config"
 )
 
 func main() {
+	// Load variables from .env if present to mirror the setup guides.
+	gotenv.Load()
+
 	cfgPath := os.Getenv("SYN_CONFIG")
 	if cfgPath == "" {
 		cfgPath = config.DefaultConfigPath
@@ -16,11 +21,19 @@ func main() {
 
 	cfg, err := config.Load(cfgPath)
 	if err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
-	log.Printf("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
+
+	// Configure logging based on loaded configuration.
+	lvl, err := logrus.ParseLevel(cfg.LogLevel)
+	if err != nil {
+		logrus.Fatalf("invalid log level: %v", err)
+	}
+	logrus.SetLevel(lvl)
+
+	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 
 	if err := cli.Execute(); err != nil {
-		log.Fatal(err)
+		logrus.Fatal(err)
 	}
 }
