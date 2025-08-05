@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"context"
 	"fmt"
-	"strconv"
+	"os/signal"
+	"syscall"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
@@ -11,46 +13,61 @@ import (
 var network = core.NewNetwork(biometricSvc)
 
 func init() {
-	networkCmd := &cobra.Command{
+	netCmd := &cobra.Command{
 		Use:   "network",
-		Short: "Network operations",
+		Short: "Control networking stack",
 	}
-	addCmd := &cobra.Command{
-		Use:   "add [id] [addr]",
-		Args:  cobra.ExactArgs(2),
-		Short: "Add node to network",
-		Run: func(cmd *cobra.Command, args []string) {
-			n := core.NewNode(args[0], args[1], core.NewLedger())
-			network.AddNode(n)
-			fmt.Println("node added")
-		},
+
+	startCmd := &cobra.Command{
+		Use:   "start",
+		Short: "Start network services",
+		Run:   func(cmd *cobra.Command, args []string) { network.Start() },
 	}
-	relayCmd := &cobra.Command{
-		Use:   "relay [id] [addr]",
-		Args:  cobra.ExactArgs(2),
-		Short: "Add relay node to network",
-		Run: func(cmd *cobra.Command, args []string) {
-			n := core.NewNode(args[0], args[1], core.NewLedger())
-			network.AddRelay(n)
-			fmt.Println("relay node added")
-		},
+
+	stopCmd := &cobra.Command{
+		Use:   "stop",
+		Short: "Stop network services",
+		Run:   func(cmd *cobra.Command, args []string) { network.Stop() },
 	}
-	broadcastCmd := &cobra.Command{
-		Use:   "broadcast [userID] [biometric] [from] [to] [amount] [fee] [nonce]",
-		Args:  cobra.ExactArgs(7),
-		Short: "Broadcast transaction with biometric verification",
+
+	peersCmd := &cobra.Command{
+		Use:   "peers",
+		Short: "List peers",
 		Run: func(cmd *cobra.Command, args []string) {
-			amt, _ := strconv.ParseUint(args[4], 10, 64)
-			fee, _ := strconv.ParseUint(args[5], 10, 64)
-			nonce, _ := strconv.ParseUint(args[6], 10, 64)
-			tx := core.NewTransaction(args[2], args[3], amt, fee, nonce)
-			if err := network.Broadcast(tx, args[0], []byte(args[1])); err != nil {
-				fmt.Println("broadcast failed:", err)
-				return
+			for _, p := range network.Peers() {
+				fmt.Println(p)
 			}
-			fmt.Println("transaction queued for broadcast")
 		},
 	}
-	networkCmd.AddCommand(addCmd, relayCmd, broadcastCmd)
-	rootCmd.AddCommand(networkCmd)
+
+	broadcastCmd := &cobra.Command{
+		Use:   "broadcast [topic] [data]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Publish data on the network",
+		Run: func(cmd *cobra.Command, args []string) {
+			network.Publish(args[0], []byte(args[1]))
+		},
+	}
+
+	subscribeCmd := &cobra.Command{
+		Use:   "subscribe [topic]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Subscribe and print messages for a topic",
+		Run: func(cmd *cobra.Command, args []string) {
+			ch := network.Subscribe(args[0])
+			ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+			defer stop()
+			for {
+				select {
+				case msg := <-ch:
+					fmt.Println(string(msg))
+				case <-ctx.Done():
+					return
+				}
+			}
+		},
+	}
+
+	netCmd.AddCommand(startCmd, stopCmd, peersCmd, broadcastCmd, subscribeCmd)
+	rootCmd.AddCommand(netCmd)
 }
