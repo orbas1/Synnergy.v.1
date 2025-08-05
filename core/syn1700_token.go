@@ -1,6 +1,9 @@
 package core
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 // EventMetadata holds event information and issued tickets for SYN1700 tokens.
 type EventMetadata struct {
@@ -11,6 +14,7 @@ type EventMetadata struct {
 	End         int64
 	Supply      uint64
 
+	mu           sync.RWMutex
 	nextTicketID uint64
 	Tickets      map[uint64]*Ticket
 }
@@ -39,6 +43,8 @@ func NewEvent(name, desc, location string, start, end int64, supply uint64) *Eve
 
 // IssueTicket issues a ticket to an owner if supply allows and returns its ID.
 func (e *EventMetadata) IssueTicket(owner, class, ticketType string, price uint64) (uint64, error) {
+	e.mu.Lock()
+	defer e.mu.Unlock()
 	if uint64(len(e.Tickets)) >= e.Supply {
 		return 0, errors.New("ticket supply exhausted")
 	}
@@ -50,6 +56,8 @@ func (e *EventMetadata) IssueTicket(owner, class, ticketType string, price uint6
 
 // TransferTicket transfers ownership of a ticket.
 func (e *EventMetadata) TransferTicket(id uint64, from, to string) error {
+	e.mu.Lock()
+	defer e.mu.Unlock()
 	t, ok := e.Tickets[id]
 	if !ok || t.Owner != from {
 		return errors.New("ticket not owned by sender")
@@ -60,6 +68,8 @@ func (e *EventMetadata) TransferTicket(id uint64, from, to string) error {
 
 // VerifyTicket checks if a holder owns the ticket.
 func (e *EventMetadata) VerifyTicket(id uint64, holder string) bool {
+	e.mu.RLock()
+	defer e.mu.RUnlock()
 	t, ok := e.Tickets[id]
 	return ok && t.Owner == holder
 }

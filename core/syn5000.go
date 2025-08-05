@@ -1,6 +1,9 @@
 package core
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 // BetRecord stores betting activity for SYN5000 tokens.
 type BetRecord struct {
@@ -19,6 +22,7 @@ type SYN5000Token struct {
 	Symbol   string
 	Decimals uint8
 
+	mu        sync.RWMutex
 	nextBetID uint64
 	bets      map[uint64]*BetRecord
 }
@@ -30,6 +34,8 @@ func NewSYN5000Token(name, symbol string, decimals uint8) *SYN5000Token {
 
 // PlaceBet records a new bet and returns its ID.
 func (t *SYN5000Token) PlaceBet(bettor string, amount uint64, odds float64, game string) uint64 {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	t.nextBetID++
 	id := t.nextBetID
 	t.bets[id] = &BetRecord{ID: id, Bettor: bettor, Amount: amount, Odds: odds, Game: game}
@@ -38,6 +44,8 @@ func (t *SYN5000Token) PlaceBet(bettor string, amount uint64, odds float64, game
 
 // ResolveBet resolves a bet and returns the payout if won.
 func (t *SYN5000Token) ResolveBet(betID uint64, win bool) (uint64, error) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	b, ok := t.bets[betID]
 	if !ok {
 		return 0, errors.New("bet not found")
@@ -55,8 +63,14 @@ func (t *SYN5000Token) ResolveBet(betID uint64, win bool) (uint64, error) {
 
 // GetBet returns a bet record by ID.
 func (t *SYN5000Token) GetBet(betID uint64) (*BetRecord, bool) {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
 	b, ok := t.bets[betID]
-	return b, ok
+	if !ok {
+		return nil, false
+	}
+	cp := *b
+	return &cp, true
 }
 
 var _ GamblingToken = (*SYN5000Token)(nil)
