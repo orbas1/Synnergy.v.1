@@ -56,18 +56,24 @@ func NewSimpleVM(modes ...VMMode) *SimpleVM {
 		capacity = 1
 	}
 
-	vm := &SimpleVM{
-		mode:    mode,
-		limiter: make(chan struct{}, capacity),
-	}
-	vm.handlers = map[uint32]opcodeHandler{
+	handlers := map[uint32]opcodeHandler{
 		0x000000: func(b []byte) ([]byte, error) { // NOP/echo
 			out := make([]byte, len(b))
 			copy(out, b)
 			return out, nil
 		},
 	}
-	vm.defaultH = vm.handlers[0x000000]
+	defaultH := handlers[0x000000]
+	for _, op := range SNVMOpcodes {
+		handlers[op.Code] = defaultH
+	}
+
+	vm := &SimpleVM{
+		mode:     mode,
+		limiter:  make(chan struct{}, capacity),
+		handlers: handlers,
+		defaultH: defaultH,
+	}
 	return vm
 }
 
@@ -98,6 +104,17 @@ func (vm *SimpleVM) Status() bool {
 	vm.mu.RLock()
 	defer vm.mu.RUnlock()
 	return vm.running
+}
+
+// RegisterOpcode associates an opcode with a handler. Nil handlers
+// fallback to the VM's default no-op implementation.
+func (vm *SimpleVM) RegisterOpcode(code uint32, h opcodeHandler) {
+	vm.mu.Lock()
+	defer vm.mu.Unlock()
+	if h == nil {
+		h = vm.defaultH
+	}
+	vm.handlers[code] = h
 }
 
 // Execute interprets the provided bytecode as a sequence of 24-bit opcodes and
