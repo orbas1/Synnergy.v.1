@@ -146,3 +146,197 @@ func TestSYN2369ItemRegistry(t *testing.T) {
 		t.Fatalf("expected 1 item got %d", len(items))
 	}
 }
+
+func TestSYN223Token(t *testing.T) {
+	tok := NewSYN223Token("Token", "TKN", "alice", 100)
+	tok.AddToWhitelist("bob")
+	if err := tok.Transfer("alice", "bob", 20); err != nil {
+		t.Fatalf("transfer: %v", err)
+	}
+	if bal := tok.BalanceOf("bob"); bal != 20 {
+		t.Fatalf("unexpected balance %d", bal)
+	}
+	tok.AddToBlacklist("bob")
+	if err := tok.Transfer("alice", "bob", 10); err == nil {
+		t.Fatalf("expected blacklist error")
+	}
+	tok.RemoveFromBlacklist("bob")
+	if err := tok.Transfer("alice", "bob", 10); err != nil {
+		t.Fatalf("transfer2: %v", err)
+	}
+	tok.RemoveFromWhitelist("bob")
+	if err := tok.Transfer("alice", "bob", 1); err == nil {
+		t.Fatalf("expected whitelist error")
+	}
+}
+
+func TestSyn2500RegistryOperations(t *testing.T) {
+	reg := NewSyn2500Registry()
+	m := NewSyn2500Member("1", "alice", 10, map[string]string{"role": "admin"})
+	reg.AddMember(m)
+	got, ok := reg.GetMember("1")
+	if !ok || got.Address != "alice" || got.Metadata["role"] != "admin" {
+		t.Fatalf("unexpected member data: %+v", got)
+	}
+	m.UpdateVotingPower(20)
+	got, _ = reg.GetMember("1")
+	if got.VotingPower != 20 {
+		t.Fatalf("unexpected voting power %d", got.VotingPower)
+	}
+	members := reg.ListMembers()
+	if len(members) != 1 {
+		t.Fatalf("expected 1 member got %d", len(members))
+	}
+	reg.RemoveMember("1")
+	if _, ok := reg.GetMember("1"); ok {
+		t.Fatalf("member not removed")
+	}
+}
+
+func TestSYN300Token(t *testing.T) {
+	tok := NewSYN300Token(map[string]uint64{"alice": 100, "bob": 50})
+	tok.Delegate("bob", "alice")
+	if pow := tok.VotingPower("alice"); pow != 150 {
+		t.Fatalf("unexpected voting power %d", pow)
+	}
+	tok.RevokeDelegation("bob")
+	if pow := tok.VotingPower("alice"); pow != 100 {
+		t.Fatalf("unexpected power after revoke %d", pow)
+	}
+	tok.Delegate("bob", "alice")
+	id := tok.CreateProposal("alice", "test")
+	if err := tok.Vote(id, "alice", true); err != nil {
+		t.Fatalf("vote: %v", err)
+	}
+	if err := tok.Execute(id, 150); err != nil {
+		t.Fatalf("execute: %v", err)
+	}
+	if err := tok.Execute(id, 150); err == nil {
+		t.Fatalf("expected execute error")
+	}
+	status, err := tok.ProposalStatus(id)
+	if err != nil || !status.Executed {
+		t.Fatalf("proposal not executed")
+	}
+	id2 := tok.CreateProposal("alice", "second")
+	if err := tok.Vote(id2, "bob", true); err != nil {
+		t.Fatalf("vote2: %v", err)
+	}
+	if err := tok.Execute(id2, 60); err == nil {
+		t.Fatalf("expected quorum error")
+	}
+}
+
+func TestSYN3500Token(t *testing.T) {
+	tok := NewSYN3500Token("USD Token", "USDT", "issuer", 1.0)
+	tok.Mint("alice", 100)
+	tok.SetRate(1.2)
+	sym, issuer, rate := tok.Info()
+	if sym != "USDT" || issuer != "issuer" || rate != 1.2 {
+		t.Fatalf("unexpected info %s %s %f", sym, issuer, rate)
+	}
+	if err := tok.Redeem("alice", 40); err != nil {
+		t.Fatalf("redeem: %v", err)
+	}
+	if bal := tok.BalanceOf("alice"); bal != 60 {
+		t.Fatalf("unexpected balance %d", bal)
+	}
+	if err := tok.Redeem("alice", 100); err == nil {
+		t.Fatalf("expected redeem error")
+	}
+}
+
+func TestSYN3700Token(t *testing.T) {
+	tok := NewSYN3700Token("Index", "INDX")
+	tok.AddComponent("BTC", 0.5)
+	tok.AddComponent("ETH", 0.5)
+	comps := tok.ListComponents()
+	if len(comps) != 2 {
+		t.Fatalf("expected 2 components got %d", len(comps))
+	}
+	val := tok.Value(map[string]float64{"BTC": 10000, "ETH": 2000})
+	if val != 6000 {
+		t.Fatalf("unexpected value %f", val)
+	}
+	if err := tok.RemoveComponent("BTC"); err != nil {
+		t.Fatalf("remove: %v", err)
+	}
+	if err := tok.RemoveComponent("BTC"); err == nil {
+		t.Fatalf("expected remove error")
+	}
+}
+
+func TestSYN4200Token(t *testing.T) {
+	tok := NewSYN4200Token()
+	tok.Donate("HELP", "alice", 100, "Food")
+	tok.Donate("HELP", "bob", 50, "Food")
+	raised, ok := tok.CampaignProgress("HELP")
+	if !ok || raised != 150 {
+		t.Fatalf("unexpected progress %d", raised)
+	}
+	camp, ok := tok.Campaign("HELP")
+	if !ok || camp.Raised != 150 || camp.Donations["alice"] != 100 {
+		t.Fatalf("unexpected campaign %+v", camp)
+	}
+}
+
+func TestSYN4700LegalToken(t *testing.T) {
+	expiry := time.Now().Add(24 * time.Hour)
+	tok := NewLegalToken("L1", "Doc", "DOC", "contract", "hash", "alice", expiry, 100, []string{"alice", "bob"})
+	if err := tok.Sign("alice", "sigA"); err != nil {
+		t.Fatalf("sign: %v", err)
+	}
+	if err := tok.Sign("charlie", "sigC"); err == nil {
+		t.Fatalf("expected unknown party error")
+	}
+	if err := tok.Sign("bob", "sigB"); err != nil {
+		t.Fatalf("sign bob: %v", err)
+	}
+	tok.RevokeSignature("bob")
+	tok.UpdateStatus(LegalTokenStatusActive)
+	tok.Dispute("breach", "resolved")
+	reg := NewLegalTokenRegistry()
+	reg.Add(tok)
+	got, ok := reg.Get("L1")
+	if !ok || got.Status != LegalTokenStatusDisputed || len(got.Signatures) != 1 {
+		t.Fatalf("unexpected token %+v", got)
+	}
+	list := reg.List()
+	if len(list) != 1 {
+		t.Fatalf("expected 1 token got %d", len(list))
+	}
+	reg.Remove("L1")
+	if _, ok := reg.Get("L1"); ok {
+		t.Fatalf("token not removed")
+	}
+}
+
+func TestSYN70Token(t *testing.T) {
+	tok := NewSYN70Token(1, "Game", "GM", 0)
+	if err := tok.RegisterAsset("A1", "alice", "Sword", "GameX"); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	if bal := tok.BalanceOf("alice"); bal != 1 {
+		t.Fatalf("unexpected balance %d", bal)
+	}
+	if err := tok.TransferAsset("A1", "bob"); err != nil {
+		t.Fatalf("transfer: %v", err)
+	}
+	if bal := tok.BalanceOf("bob"); bal != 1 {
+		t.Fatalf("bob balance %d", bal)
+	}
+	if err := tok.SetAttribute("A1", "atk", "10"); err != nil {
+		t.Fatalf("set attr: %v", err)
+	}
+	if err := tok.AddAchievement("A1", "First"); err != nil {
+		t.Fatalf("add achievement: %v", err)
+	}
+	info, err := tok.AssetInfo("A1")
+	if err != nil || info.Owner != "bob" || info.Attributes["atk"] != "10" || len(info.Achievements) != 1 {
+		t.Fatalf("unexpected asset info %+v err %v", info, err)
+	}
+	assets := tok.ListAssets()
+	if len(assets) != 1 {
+		t.Fatalf("expected 1 asset got %d", len(assets))
+	}
+}
