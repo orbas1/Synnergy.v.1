@@ -5,6 +5,7 @@ go 1.24.3
 require github.com/spf13/cobra v1.9.1
 
 require (
+	github.com/flynn/noise v1.1.0
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/viper v1.20.1
