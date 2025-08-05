@@ -84,6 +84,7 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Use a documentation generator (e.g., MkDocs) to produce a docs site.
     - Maintain ADRs for architectural decisions.
 
+
 12. **API and RPC Layer**
     - Define versioned gRPC and REST interfaces for all node and service interactions, ensuring backward compatibility as the protocol evolves.
     - Organize protobuf definitions under `api/` with clear package boundaries and generate client/server stubs using a reproducible toolchain (e.g., `buf` or `protoc`).
@@ -99,6 +100,7 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
 13. **Configuration of Build Tags and Environments**
     - Use build tags for optional features (e.g., experimental nodes).
     - Provide separate configs for dev/test/production environments.
+
 
 14. **Containerization**  
     - Create Dockerfiles for each binary.  
