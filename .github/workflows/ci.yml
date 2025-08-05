@@ -38,6 +38,18 @@ jobs:
       - name: Run tests
         run: go test ./...
 
+      - name: Benchmark Transaction Manager
+        run: |
+          go test -bench=TransactionManager -benchmem -run ^$ . | tee benchmarks/current.txt
+          go install golang.org/x/perf/cmd/benchstat@latest
+          benchstat benchmarks/transaction_manager.txt benchmarks/current.txt | tee benchmarks/benchstat.txt
+          if awk 'NR==2 {gsub(/%/,"",$5); if ($5 > 10) exit 1}' benchmarks/benchstat.txt; then
+            echo "Benchmark within budget"
+          else
+            echo "Performance regression exceeds 10%"
+            exit 1
+          fi
+
       - name: Build binaries
         run: |
           mkdir -p dist

@@ -1,4 +1,6 @@
-.PHONY: staticcheck gosec govulncheck security build build-experimental build-dev build-test build-prod
+
+.PHONY: staticcheck gosec govulncheck security bench
+
 
 staticcheck:
 	staticcheck ./...
@@ -10,6 +12,10 @@ govulncheck:
 	govulncheck ./...
 
 security: staticcheck gosec govulncheck
+
+
+bench:
+	go test -bench=TransactionManager -benchmem -run ^$ . | tee benchmarks/current.txt
 
 
 
@@ -35,5 +41,6 @@ build-test:
 
 build-prod:
 	go build -tags prod ./...
+
 
 
