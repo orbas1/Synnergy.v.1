@@ -2,9 +2,9 @@
 
 This document outlines a 20-stage roadmap for reorganizing the repository and preparing it for production-grade deployment. The stages can be executed in parallel by separate teams but are ordered to show overall dependencies.
 
-1. **Establish Module Boundaries**  
-   - Audit existing packages and identify domain groupings (core, nodes, tokens, cross-chain, security, etc.).  
-   - Create `internal/` and `pkg/` directories to separate internal code from reusable libraries.
+1. **Establish Module Boundaries** ✅
+   - Audit existing packages and identify domain groupings (core, nodes, tokens, cross-chain, security, etc.). *(completed)*
+   - Create `internal/` and `pkg/` directories to separate internal code from reusable libraries. *(completed)*
 
 2. **Relocate Domain Packages**  
    - Move node-related code into `internal/nodes/` with subpackages per node type.  
