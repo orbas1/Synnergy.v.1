@@ -2,50 +2,45 @@ package cli
 
 import (
 	"fmt"
-	"strconv"
 
 	"github.com/spf13/cobra"
-	optnodes "synnergy/internal/nodes/extra/optimization_nodes"
+	"strings"
+	on "synnergy/internal/nodes/optimization_nodes"
 )
 
-var optimizer = &optnodes.SimpleOptimizer{}
+var feeOpt on.FeeOptimizer
 
 func init() {
 	cmd := &cobra.Command{
-		Use:   "optimization",
-		Short: "Optimization node utilities",
+		Use:   "optimize",
+		Short: "Transaction optimisation utilities",
 	}
 
-	suggestCmd := &cobra.Command{
-		Use:   "suggest [cpu] [mem] [latency] [throughput]",
-		Args:  cobra.ExactArgs(4),
-		Short: "Get scaling suggestion",
+	feeCmd := &cobra.Command{
+		Use:   "fee <tx...>",
+		Short: "Order transactions by fee density",
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			cpu, err := strconv.ParseFloat(args[0], 64)
-			if err != nil {
-				fmt.Println("invalid cpu usage:", err)
-				return
+			txs := make([]on.Transaction, 0, len(args))
+			for _, a := range args {
+				parts := strings.Split(a, ":")
+				if len(parts) != 3 {
+					fmt.Println("invalid tx format")
+					return
+				}
+				var fee uint64
+				var size int
+				fmt.Sscanf(parts[1], "%d", &fee)
+				fmt.Sscanf(parts[2], "%d", &size)
+				txs = append(txs, on.Transaction{Hash: parts[0], Fee: fee, Size: size})
 			}
-			mem, err := strconv.ParseFloat(args[1], 64)
-			if err != nil {
-				fmt.Println("invalid memory usage:", err)
-				return
+			res := feeOpt.Optimize(txs)
+			for _, tx := range res {
+				fmt.Printf("%s:%d:%d\n", tx.Hash, tx.Fee, tx.Size)
 			}
-			lat, err := strconv.ParseFloat(args[2], 64)
-			if err != nil {
-				fmt.Println("invalid latency:", err)
-				return
-			}
-			th, err := strconv.ParseFloat(args[3], 64)
-			if err != nil {
-				fmt.Println("invalid throughput:", err)
-				return
-			}
-			s := optimizer.Optimize(optnodes.Metrics{CPUUsage: cpu, MemoryUsage: mem, LatencyMS: lat, Throughput: th})
-			fmt.Printf("scale=%v notes=%s\n", s.ScaleResources, s.Notes)
 		},
 	}
+	cmd.AddCommand(feeCmd)
 
-	cmd.AddCommand(suggestCmd)
 	rootCmd.AddCommand(cmd)
 }
