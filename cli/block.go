@@ -1,0 +1,75 @@
+package cli
+
+import (
+	"fmt"
+	"strconv"
+
+	"github.com/spf13/cobra"
+	"synnergy/core"
+)
+
+var (
+	sbList    []*core.SubBlock
+	lastBlock *core.Block
+)
+
+func init() {
+	blockCmd := &cobra.Command{
+		Use:   "block",
+		Short: "Sub-block and block utilities",
+	}
+
+	subCreateCmd := &cobra.Command{
+		Use:   "sub-create [validator] [from] [to] [amount] [fee] [nonce]",
+		Args:  cobra.ExactArgs(6),
+		Short: "Create a sub-block with a single transaction",
+		Run: func(cmd *cobra.Command, args []string) {
+			amt, _ := strconv.ParseUint(args[3], 10, 64)
+			fee, _ := strconv.ParseUint(args[4], 10, 64)
+			nonce, _ := strconv.ParseUint(args[5], 10, 64)
+			tx := core.NewTransaction(args[1], args[2], amt, fee, nonce)
+			sb := core.NewSubBlock([]*core.Transaction{tx}, args[0])
+			sbList = append(sbList, sb)
+			fmt.Println(sb.PohHash)
+		},
+	}
+
+	subVerifyCmd := &cobra.Command{
+		Use:   "sub-verify",
+		Short: "Verify the latest sub-block signature",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(sbList) == 0 {
+				fmt.Println("no sub-blocks")
+				return
+			}
+			fmt.Println(sbList[len(sbList)-1].VerifySignature())
+		},
+	}
+
+	blockCreateCmd := &cobra.Command{
+		Use:   "create [prevhash]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Create a block from existing sub-blocks",
+		Run: func(cmd *cobra.Command, args []string) {
+			lastBlock = core.NewBlock(sbList, args[0])
+			fmt.Printf("block with %d sub-blocks created\n", len(sbList))
+		},
+	}
+
+	headerCmd := &cobra.Command{
+		Use:   "header [nonce]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Compute header hash for the latest block",
+		Run: func(cmd *cobra.Command, args []string) {
+			if lastBlock == nil {
+				fmt.Println("no block")
+				return
+			}
+			nonce, _ := strconv.ParseUint(args[0], 10, 64)
+			fmt.Println(lastBlock.HeaderHash(nonce))
+		},
+	}
+
+	blockCmd.AddCommand(subCreateCmd, subVerifyCmd, blockCreateCmd, headerCmd)
+	rootCmd.AddCommand(blockCmd)
+}
