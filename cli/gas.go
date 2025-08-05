@@ -7,13 +7,15 @@ import (
 	"synnergy/core"
 )
 
-var gasTable = core.DefaultGasTable()
-
-func init() {
-	gasCmd := &cobra.Command{
+var (
+	gasTable = core.DefaultGasTable()
+	gasCmd   = &cobra.Command{
 		Use:   "gas",
 		Short: "Interact with gas table",
 	}
+)
+
+func init() {
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List gas costs",
