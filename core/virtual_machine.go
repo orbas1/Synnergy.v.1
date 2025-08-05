@@ -32,9 +32,18 @@ type SimpleVM struct {
 	running  bool
 	mode     VMMode
 	limiter  chan struct{}
-	handlers map[uint32]opcodeHandler
-	defaultH opcodeHandler
+        handlers map[uint32]opcodeHandler
+        defaultH opcodeHandler
 }
+
+// Call implements the OpContext interface used by the global opcode dispatcher.
+// For now it simply acts as a stub; higher-level integration can wire this to
+// actual protocol functionality.
+func (vm *SimpleVM) Call(string) error { return nil }
+
+// Gas satisfies the OpContext interface. The lightweight VM does not meter gas
+// beyond counting opcodes, so this is a no-op placeholder.
+func (vm *SimpleVM) Gas(uint64) error { return nil }
 
 // NewSimpleVM creates a new stopped virtual machine instance.  An optional
 // mode can be supplied to configure resource limits; by default a light VM is
@@ -60,15 +69,15 @@ func NewSimpleVM(modes ...VMMode) *SimpleVM {
 		mode:    mode,
 		limiter: make(chan struct{}, capacity),
 	}
-	vm.handlers = map[uint32]opcodeHandler{
-		0x000000: func(b []byte) ([]byte, error) { // NOP/echo
-			out := make([]byte, len(b))
-			copy(out, b)
-			return out, nil
-		},
-	}
-	vm.defaultH = vm.handlers[0x000000]
-	return vm
+        vm.handlers = map[uint32]opcodeHandler{
+                0x000000: func(b []byte) ([]byte, error) { // NOP/echo
+                        out := make([]byte, len(b))
+                        copy(out, b)
+                        return out, nil
+                },
+        }
+        vm.defaultH = vm.handlers[0x000000]
+        return vm
 }
 
 // Start marks the VM as running. It is safe to call multiple times.
@@ -140,17 +149,29 @@ func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit ui
 		if i+2 < len(wasm) {
 			b2 = wasm[i+2]
 		}
-		opcode := uint32(b0)<<16 | uint32(b1)<<8 | uint32(b2)
-		handler, ok := vm.handlers[opcode]
-		if !ok {
-			handler = vm.defaultH
-		}
-		var err error
-		out, err = handler(out)
-		if err != nil {
-			return nil, gasUsed, fmt.Errorf("opcode 0x%06x failed: %w", opcode, err)
-		}
-	}
+                opcode := uint32(b0)<<16 | uint32(b1)<<8 | uint32(b2)
+
+                // Fast path: built-in handlers (currently only NOP/echo)
+                if handler, ok := vm.handlers[opcode]; ok {
+                        var err error
+                        out, err = handler(out)
+                        if err != nil {
+                                return nil, gasUsed, fmt.Errorf("opcode 0x%06x failed: %w", opcode, err)
+                        }
+                        continue
+                }
+
+                // Delegate all other opcodes to the global dispatcher. If the
+                // dispatcher doesn't recognise the opcode we silently treat it
+                // as a no-op to preserve deterministic behaviour for random or
+                // future instructions.
+                if opcode != 0 {
+                        if err := Dispatch(vm, Opcode(opcode)); err != nil {
+                                // unknown opcode -> noop
+                                continue
+                        }
+                }
+        }
 
 	// simulate execution delay to keep behaviour deterministic
 	time.Sleep(time.Millisecond)
