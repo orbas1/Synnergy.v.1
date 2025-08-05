@@ -63,10 +63,17 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
    - Enforce code scanning in CI and address findings.  
    - Perform dependency vulnerability scans.
 
-9. **Testing Framework**  
-   - Achieve high unit-test coverage for all packages.  
-   - Add integration tests for cross-chain and token flows.  
-   - Use GitHub Actions to run tests on each push.
+9. **Testing Framework**
+   - Standardize test layout using table-driven tests and shared `testdata/` fixtures.
+   - Achieve at least 80% unit-test coverage across all packages with coverage reports gated in CI.
+   - Utilize mocks and fakes (e.g., `testify`, `gomock`) to isolate external dependencies.
+   - Add integration tests for cross-chain, token, security, and node workflows.
+   - Provide end-to-end tests orchestrated with `docker-compose` to simulate multi-node networks.
+   - Incorporate fuzz and property-based testing for critical components.
+   - Run race detector (`go test -race`) and `go vet` as part of the test pipeline.
+   - Publish test and coverage reports to services like Codecov for visibility.
+   - Document testing guidelines and assign ownership for maintaining test quality.
+   - Use GitHub Actions to execute the full test suite on each push and pull request.
 
 10. **CI/CD Pipeline (Completed)**
     - Implemented a GitHub Actions workflow that builds, tests, lints, and packages binaries.
