@@ -49,9 +49,13 @@ func ReverseTransaction(l *Ledger, tx *Transaction) error {
 	return nil
 }
 
-// ConvertToPrivate encrypts the transaction using AES-CTR with the provided key.
+// ConvertToPrivate encrypts the transaction using AES-GCM with the provided key.
 func ConvertToPrivate(tx *Transaction, key []byte) (*PrivateTransaction, error) {
 	block, err := aes.NewCipher(key)
+	if err != nil {
+		return nil, err
+	}
+	gcm, err := cipher.NewGCM(block)
 	if err != nil {
 		return nil, err
 	}
@@ -59,13 +63,11 @@ func ConvertToPrivate(tx *Transaction, key []byte) (*PrivateTransaction, error) 
 	if err != nil {
 		return nil, err
 	}
-	nonce := make([]byte, aes.BlockSize)
+	nonce := make([]byte, gcm.NonceSize())
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
 		return nil, err
 	}
-	stream := cipher.NewCTR(block, nonce)
-	payload := make([]byte, len(b))
-	stream.XORKeyStream(payload, b)
+	payload := gcm.Seal(nil, nonce, b, nil)
 	return &PrivateTransaction{Payload: payload, Nonce: nonce}, nil
 }
 
@@ -76,9 +78,14 @@ func (pt *PrivateTransaction) Decrypt(key []byte) (*Transaction, error) {
 	if err != nil {
 		return nil, err
 	}
-	stream := cipher.NewCTR(block, pt.Nonce)
-	b := make([]byte, len(pt.Payload))
-	stream.XORKeyStream(b, pt.Payload)
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return nil, err
+	}
+	b, err := gcm.Open(nil, pt.Nonce, pt.Payload, nil)
+	if err != nil {
+		return nil, err
+	}
 	var tx Transaction
 	if err := json.Unmarshal(b, &tx); err != nil {
 		return nil, err

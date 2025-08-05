@@ -21,7 +21,10 @@ func NewWallet() (*Wallet, error) {
 	if err != nil {
 		return nil, err
 	}
-	addr := sha256.Sum256(elliptic.Marshal(elliptic.P256(), pk.PublicKey.X, pk.PublicKey.Y))
+	xBytes := pk.PublicKey.X.Bytes()
+	yBytes := pk.PublicKey.Y.Bytes()
+	pub := append(append([]byte{0x04}, xBytes...), yBytes...)
+	addr := sha256.Sum256(pub)
 	return &Wallet{PrivateKey: pk, Address: string(addr[:])}, nil
 }
 

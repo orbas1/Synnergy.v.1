@@ -1,13 +1,14 @@
-.PHONY: tidy verify update deps
 
-tidy:
-	go mod tidy
+.PHONY: staticcheck gosec govulncheck security
 
-verify:
-	go mod verify
+staticcheck:
+	staticcheck ./...
 
-update:
-	go get -u ./...
-	go mod tidy
+gosec:
+	gosec ./...
 
-deps: tidy verify
+govulncheck:
+	govulncheck ./...
+
+security: staticcheck gosec govulncheck
+
