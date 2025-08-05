@@ -26,10 +26,22 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
    - Centralize configuration logic under `internal/config/`.  
    - Support environment variables and configuration files (YAML/JSON) with validation.
 
-6. **Logging and Instrumentation**  
-   - Adopt a structured logging library (`zap` or `logrus`).  
-   - Create an `internal/log` package and ensure all components use it.  
-   - Add metrics with Prometheus exporters.
+6. **Logging and Instrumentation**
+   - Standardize structured logging across the codebase using a high-performance library such as `zap` or `logrus`.
+   - Create an `internal/log` package that wraps the chosen logger and exposes helper functions for common patterns.
+   - Ensure every package obtains loggers via dependency injection or context and avoid global state.
+   - Define log levels (debug, info, warn, error, fatal) and allow them to be configured through configuration files and environment variables.
+   - Emit logs in JSON format with timestamps, component names, and key–value pairs to ease parsing by log aggregators.
+   - Include correlation IDs and request context in log entries to enable end-to-end tracing of operations.
+   - Support multiple log sinks (stdout, rotating files, and remote endpoints like ELK/Loki/Splunk) with pluggable backends.
+   - Provide log rotation, retention policies, and size limits for long-running services.
+   - Document usage guidelines so new modules follow consistent logging practices.
+   - Instrument application metrics using Prometheus, exposing a `/metrics` HTTP endpoint.
+   - Capture counters, gauges, and histograms for key operations (transaction throughput, block processing latency, resource utilization, error rates).
+   - Export standard Go runtime metrics and add custom collectors where necessary.
+   - Supply starter Grafana dashboards and alerting rules for common metrics.
+   - Add health and readiness probes backed by metrics to integrate with orchestration platforms like Kubernetes.
+   - Write unit tests verifying that the logging facade initializes correctly and that metrics are registered without conflict.
 
 7. **Error Handling and Observability**  
    - Standardize error types and wrapping using `errors` package.  
