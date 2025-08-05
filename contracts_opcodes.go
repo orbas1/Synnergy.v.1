@@ -1,8 +1,14 @@
 package synnergy
 
-// Contracts-related opcode identifiers. The numeric values are arbitrary but
-// stable for testing and documentation purposes.
-const (
+// ContractOpcode defines a mapping between a function name and its opcode.
+type ContractOpcode struct {
+	Name string
+	Code uint32
+}
+
+// ContractOpcodes enumerates all supported contract opcodes. The numeric values are
+// arbitrary but stable for testing and documentation purposes.
+var ContractOpcodes = []ContractOpcode{
 	// AI (0x01)
 	{"DeployAIContract", 0x010001},
 	{"InvokeAIContract", 0x010002},
@@ -1394,4 +1400,22 @@ const (
 	{"Witness_GetBlock", 0x1F0005},
 }
 
+var (
+	OpInitContracts    = opcodeByName("InitContracts")
+	OpPauseContract    = opcodeByName("PauseContract")
+	OpResumeContract   = opcodeByName("ResumeContract")
+	OpUpgradeContract  = opcodeByName("UpgradeContract")
+	OpContractInfo     = opcodeByName("ContractInfo")
+	OpDeployAIContract = opcodeByName("DeployAIContract")
+	OpInvokeAIContract = opcodeByName("InvokeAIContract")
+)
 
+// opcodeByName looks up the opcode value for a given function name.
+func opcodeByName(name string) uint32 {
+	for _, op := range ContractOpcodes {
+		if op.Name == name {
+			return op.Code
+		}
+	}
+	return 0
+}
