@@ -1,3 +1,4 @@
+
 .PHONY: staticcheck gosec govulncheck security
 
 staticcheck:
@@ -10,3 +11,4 @@ govulncheck:
 	govulncheck ./...
 
 security: staticcheck gosec govulncheck
+

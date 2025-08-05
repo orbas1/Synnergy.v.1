@@ -3,7 +3,7 @@ package core
 import (
 	"fmt"
 
-	"synnergy/nodes"
+	"synnergy/internal/nodes"
 )
 
 // GatewayConfig bundles dependencies required for a GatewayNode.

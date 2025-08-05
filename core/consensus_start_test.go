@@ -19,7 +19,16 @@ func TestConsensusServiceStartStop(t *testing.T) {
 	}
 	svc := NewConsensusService(node)
 	svc.Start(10 * time.Millisecond)
-	time.Sleep(50 * time.Millisecond)
+
+	// wait up to one second for a block to be mined
+	deadline := time.Now().Add(1 * time.Second)
+	for time.Now().Before(deadline) {
+		if h, _ := svc.Info(); h > 0 {
+			break
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+
 	svc.Stop()
 	height, running := svc.Info()
 	if running {

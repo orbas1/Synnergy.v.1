@@ -3,7 +3,7 @@ package nodes
 import (
 	"time"
 
-	an "synnergy/nodes/authority_nodes"
+	an "synnergy/internal/nodes/authority_nodes"
 )
 
 // ElectedAuthorityNode represents an authority node with a fixed term.
