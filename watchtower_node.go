@@ -7,7 +7,7 @@ import (
 	"sync"
 	"time"
 
-	watchtower "synnergy/nodes/watchtower"
+	watchtower "synnergy/internal/nodes/watchtower"
 )
 
 // WatchtowerNode observes the network, records system health metrics and reports

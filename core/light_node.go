@@ -1,6 +1,6 @@
 package core
 
-import "synnergy/nodes"
+import "synnergy/internal/nodes"
 
 // LightNode maintains a minimal view of the chain using block headers only.
 type LightNode struct {

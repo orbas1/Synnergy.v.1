@@ -3,7 +3,7 @@ package core
 import (
 	"errors"
 	"sync"
-	nodes "synnergy/nodes"
+	nodes "synnergy/internal/nodes"
 )
 
 // HistoricalNode provides archival functionality for serving historical
