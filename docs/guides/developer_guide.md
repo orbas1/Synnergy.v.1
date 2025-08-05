@@ -5,7 +5,7 @@ Synnergy is a research blockchain exploring modular components for
 decentralised finance, data storage and AI‑powered compliance.  It is written in
 Go and ships a collection of command line utilities alongside the core
 libraries.  The project focuses on extensibility rather than production
-readiness.  Further background can be found in [`WHITEPAPER.md`](WHITEPAPER.md).
+readiness.  Further background can be found in [`WHITEPAPER.md`](../../WHITEPAPER.md).
 
 The primary entrypoint is the `synnergy` binary which exposes a large set of
 sub‑commands through the
@@ -51,11 +51,11 @@ The repository is organised as follows:
 
 | Path | Description |
 |------|-------------|
-| `core/` | Core blockchain modules such as consensus, storage, networking and smart contract logic. See [`core/module_guide.md`](core/module_guide.md) for a file-by-file summary. |
+| `core/` | Core blockchain modules such as consensus, storage, networking and smart contract logic. See [`module_guide.md`](module_guide.md) for a file-by-file summary. |
 | `cmd/cli/` | CLI command implementations using Cobra. Each file registers a command group. |
 | `cmd/config/` | Default YAML configuration files and schema documentation. |
 | `cmd/synnergy/` | Entry point for the `synnergy` binary and network setup walkthroughs. |
-| `cmd/scripts/` | Shell helpers for common development tasks. See [`cmd/scripts/script_guide.md`](cmd/scripts/script_guide.md). |
+| `cmd/scripts/` | Shell helpers for common development tasks. See [`script_guide.md`](script_guide.md). |
 | `cmd/smart_contracts/` | Example WebAssembly contracts bundled with the CLI. |
 | `scripts/` | Top-level scripts to start local devnets or testnets. |
 | `tests/` | Go unit tests covering each module. Run with `go test ./...`. |
@@ -67,7 +67,7 @@ The repository is organised as follows:
 | `third_party/` | Vendored dependencies such as a libp2p fork used during early development. |
 | `setup_synn.sh` | Convenience script that installs Go and builds the CLI. |
 | `Synnergy.env.sh` | Optional environment bootstrap script that downloads tools and loads variables from `.env`. |
-| `WHITEPAPER.md` | Project vision and design goals. |
+| `../../WHITEPAPER.md` | Project vision and design goals. |
 
 ## Environment Setup
 
@@ -256,13 +256,13 @@ Quadratic voting allows token holders to weight their governance votes by the
 square root of the staked amount. The `qvote` command submits these weighted
 votes and queries results alongside standard governance commands.
 
-More details for each command can be found in `cmd/cli/cli_guide.md`.
+More details for each command can be found in `cli_guide.md`.
 
 ## Core Modules
 
 The Go packages under `core/` implement the blockchain runtime. Key modules
 include consensus, storage, networking and the virtual machine.  A summary of
-every file is maintained in [`core/module_guide.md`](core/module_guide.md). New
+every file is maintained in [`module_guide.md`](module_guide.md). New
 contributors should review that document to understand dependencies between
 packages.
 
@@ -272,7 +272,7 @@ Runtime settings are defined using YAML files in `cmd/config/`.  The CLI loads
 `default.yaml` by default and merges any environment specific file if the
 `SYNN_ENV` environment variable is set (for example `SYNN_ENV=prod`).
 `bootstrap.yaml` provides a template for running a dedicated bootstrap node. You can launch it via `synnergy bootstrap start` and point other nodes to its address.
-The configuration schema is documented in [`cmd/config/config_guide.md`](cmd/config/config_guide.md).
+The configuration schema is documented in [`config_guide.md`](config_guide.md).
 
 ## Running a Local Network
 
@@ -307,7 +307,7 @@ configuration. Both build the CLI automatically and clean up all processes on
 Reusable shell helpers in `cmd/scripts` automate common tasks such as funding
 accounts (`faucet_fund.sh`), deploying contracts (`contracts_deploy.sh`),
 starting network services and more. The complete reference is available in
-[`cmd/scripts/script_guide.md`](cmd/scripts/script_guide.md).
+[`script_guide.md`](script_guide.md).
 
 Top level scripts are provided for multi-node setups:
 

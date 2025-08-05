@@ -101,9 +101,9 @@ Ensure all tests pass before deploying contracts on a live network.
 
 ## Further Reading
 
-- [`cli_guide.md`](cmd/cli/cli_guide.md) – overview of all CLI command groups.
-- [`module_guide.md`](core/module_guide.md) – descriptions of core modules including the VM and ledger.
-- [`config_guide.md`](cmd/config/config_guide.md) – details on configuring a Synnergy node.
+- [`cli_guide.md`](cli_guide.md) – overview of all CLI command groups.
+- [`module_guide.md`](module_guide.md) – descriptions of core modules including the VM and ledger.
+- [`config_guide.md`](config_guide.md) – details on configuring a Synnergy node.
 - `tests/` – unit tests demonstrating module usage.
 
 With these resources you can author robust smart contracts on Synnergy, deploy them to the ledger and interact with them via the provided CLI.

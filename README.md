@@ -1,6 +1,10 @@
 # Synnergy Network Repository
 
 Synnergy is an experimental blockchain written in Go. This repository contains the command line applications, core packages, GUI front‑ends and example smart contracts used to simulate a full network. The code is primarily intended for research and learning. For the vision and background see [`synnergy-network/WHITEPAPER.md`](synnergy-network/WHITEPAPER.md).
+## Documentation
+
+All guides and architecture decision records are located under the `docs/` directory and are built with MkDocs. Run `mkdocs serve` for a live server or `mkdocs build` to generate the static site.
+
 
 ## Repository Layout
 
@@ -17,11 +21,11 @@ Inside `synnergy-network` you will find:
 | Path | Description |
 |------|-------------|
 | `cmd/` | CLI source code organised into many command groups. See [`synnergy-network/README.md`](synnergy-network/README.md) for a detailed list. |
-| `core/` | Core blockchain modules implementing consensus, ledger management, networking and the virtual machine. Each file is summarised in [`core/module_guide.md`](synnergy-network/core/module_guide.md). |
+| `core/` | Core blockchain modules implementing consensus, ledger management, networking and the virtual machine. Each file is summarised in [`docs/guides/module_guide.md`](docs/guides/module_guide.md). |
 | `GUI/` | Web interfaces such as the wallet and explorers. Subprojects include `wallet`, `explorer`, `ai-marketplace`, `storage-marketplace`, `nft_marketplace` and more. |
 | `walletserver/` | Go HTTP backend powering the wallet GUI. |
 | `tests/` | Unit tests for the core packages. |
-| `smart_contract_guide.md` | Guide to writing and deploying smart contracts on Synnergy. |
+| `docs/guides/smart_contract_guide.md` | Guide to writing and deploying smart contracts on Synnergy. |
 | `internal/` | Shared utilities for the CLI and services. |
 
 ## Building
@@ -73,7 +77,7 @@ The Dockerfile can build a containerised node which runs the networking, consens
 
 ## CLI Overview
 
-The CLI exposes dozens of commands grouped by module: AI management, token operations, governance tools, cross‑chain utilities and many more. Each file under `cmd/cli` registers a command group. Refer to [`synnergy-network/README.md`](synnergy-network/README.md) and `cmd/cli/cli_guide.md` for the full catalogue and examples.
+The CLI exposes dozens of commands grouped by module: AI management, token operations, governance tools, cross‑chain utilities and many more. Each file under `cmd/cli` registers a command group. Refer to [`synnergy-network/README.md`](synnergy-network/README.md) and `docs/guides/cli_guide.md` for the full catalogue and examples.
 
 ## Authority Node Policies
 
@@ -106,7 +110,7 @@ SYN‑10/11/12 tokens or authorising regulated financial instruments.
 
 ## Core Modules
 
-The Go packages in `core/` implement the blockchain runtime. Important modules include consensus, ledger storage, networking layers, data replication, sharding and the virtual machine. Development helpers in `core/helpers.go` allow the CLI to run without a full node. A summary of every file lives in [`core/module_guide.md`](synnergy-network/core/module_guide.md).
+The Go packages in `core/` implement the blockchain runtime. Important modules include consensus, ledger storage, networking layers, data replication, sharding and the virtual machine. Development helpers in `core/helpers.go` allow the CLI to run without a full node. A summary of every file lives in [`docs/guides/module_guide.md`](docs/guides/module_guide.md).
 
 ## AI Integration
 
@@ -142,7 +146,7 @@ Web front‑ends are provided under `GUI/`. Each directory contains a standalone
 
 ## Smart Contracts
 
-Example contracts demonstrating Synnergy's opcode catalogue are located throughout `smart_contract_guide.md` and under various GUI directories. They illustrate token faucets, storage markets, DAO governance and more. Contracts are compiled to WebAssembly and deployed via the CLI. See [`synnergy-network/smart_contract_guide.md`](synnergy-network/smart_contract_guide.md) for a step‑by‑step tutorial.
+Example contracts demonstrating Synnergy's opcode catalogue are located throughout `docs/guides/smart_contract_guide.md` and under various GUI directories. They illustrate token faucets, storage markets, DAO governance and more. Contracts are compiled to WebAssembly and deployed via the CLI. See [`docs/guides/smart_contract_guide.md`](docs/guides/smart_contract_guide.md) for a step‑by‑step tutorial.
 
 ## Opcode Tooling and Plugins
 
