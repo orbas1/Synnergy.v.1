@@ -79,18 +79,28 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Implemented a GitHub Actions workflow that builds, tests, lints, and packages binaries.
     - Enabled caching for modules and test results to speed up builds.
 
-11. **Documentation Standardization**  
-    - Move guides into a `docs/` directory.  
-    - Use a documentation generator (e.g., MkDocs) to produce a docs site.  
+11. **Documentation Standardization**
+    - Move guides into a `docs/` directory.
+    - Use a documentation generator (e.g., MkDocs) to produce a docs site.
     - Maintain ADRs for architectural decisions.
 
-12. **API and RPC Layer**  
-    - Define gRPC/REST interfaces for node communication.  
-    - Use protobuf definitions under `api/` and auto-generate stubs.
 
-13. **Configuration of Build Tags and Environments**  
-    - Use build tags for optional features (e.g., experimental nodes).  
+12. **API and RPC Layer**
+    - Define versioned gRPC and REST interfaces for all node and service interactions, ensuring backward compatibility as the protocol evolves.
+    - Organize protobuf definitions under `api/` with clear package boundaries and generate client/server stubs using a reproducible toolchain (e.g., `buf` or `protoc`).
+    - Generate OpenAPI/Swagger specifications for the REST layer and publish language-specific client SDKs.
+    - Expose streaming endpoints (gRPC streaming or WebSockets) for real-time events and data feeds.
+    - Authenticate and authorize requests using JWT/OAuth2 and mutual TLS for gRPC; support API keys for service-to-service calls.
+    - Enforce request validation, rate limiting, and quotas via an API gateway layer to protect nodes from abuse and DoS attacks.
+    - Standardize error codes and response envelopes to provide machine-parseable failures and rich debugging information.
+    - Instrument RPC handlers with structured logs, Prometheus metrics, and OpenTelemetry traces for observability.
+    - Provide health-check and reflection endpoints for service discovery and automated tooling.
+    - Include integration tests validating RPC contracts and backward compatibility guarantees.
+
+13. **Configuration of Build Tags and Environments**
+    - Use build tags for optional features (e.g., experimental nodes).
     - Provide separate configs for dev/test/production environments.
+
 
 14. **Containerization**  
     - Create Dockerfiles for each binary.  
@@ -107,22 +117,32 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Establish performance baselines and set budgets.  
     - Monitor regressions in CI.
 
-17. **Persistence and State Management**  
-    - Abstract database interactions into interfaces.  
-    - Support multiple backends (e.g., Postgres, LevelDB).  
-    - Add migration tooling.
+17. **Persistence and State Management**
+    - Introduce an `internal/storage` layer that exposes clean interfaces for CRUD operations and transactions, allowing services to remain database agnostic.
+    - Provide adapters for multiple backends (e.g., Postgres via `database/sql`, LevelDB, in-memory) with pluggable drivers and configurable connection pooling, TLS, and authentication.
+    - Support ACID transactions and both optimistic and pessimistic locking while honoring context deadlines for timeouts and cancellation.
+    - Add migration tooling (e.g., `golang-migrate` or `atlas`) with versioned DDL files, rollback capability, and CI hooks to verify schema consistency.
+    - Include schema compatibility tests for each backend and enforce migrations through automated checks before deployment.
+    - Implement a caching layer (such as Redis) behind an interface, featuring TTL controls and cache invalidation strategies to keep reads fast and consistent.
+    - Document backup/restore, replication, and snapshot procedures, and emit metrics for query latency, cache hit rates, and failure conditions.
+    - Provide configuration and operational runbooks for development, testing, and production environments.
 
 18. **Networking and P2P Layer**  
     - Encapsulate networking code under `internal/p2p/`.  
     - Support secure transports (TLS, Noise protocol) and peer discovery.
 
-19. **Governance and Access Control**  
-    - Centralize RBAC logic in `internal/auth/`.  
+19. **Governance and Access Control** ✅
+    - Centralize RBAC logic in `internal/auth/`.
     - Implement policy enforcement and audit logging.
 
-20. **Packaging and Distribution**  
-    - Provide install scripts and homebrew formulas.  
-    - Publish Docker images and binary tarballs for supported platforms.
+20. **Packaging and Distribution**
+    - Offer install scripts and shell-based installers for quick setup on new systems.
+    - Maintain package manager integrations including Homebrew (macOS), APT/YUM (Linux), and Scoop/Chocolatey (Windows).
+    - Produce signed binaries for Linux, macOS, and Windows across `amd64` and `arm64` architectures with checksum files and GPG signatures.
+    - Publish Docker images for every release to public and private registries with SBOM metadata.
+    - Generate versioned binary tarballs and OS-specific packages (`.deb`, `.rpm`, `.msi`) via GitHub Releases.
+    - Automate packaging and artifact publishing in CI/CD with distinct stable and pre-release channels.
+    - Document installation, upgrade, and rollback procedures and verify packages through integration tests.
 
 These stages, once completed, will transition the repository from a prototype into a maintainable, production-grade codebase suitable for enterprise deployment.
 

@@ -1,0 +1,7 @@
+environment: production
+log_level: info
+server:
+  host: "0.0.0.0"
+  port: 80
+database:
+  url: "https://prod-db.example.com"
