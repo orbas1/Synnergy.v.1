@@ -107,10 +107,15 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Establish performance baselines and set budgets.  
     - Monitor regressions in CI.
 
-17. **Persistence and State Management**  
-    - Abstract database interactions into interfaces.  
-    - Support multiple backends (e.g., Postgres, LevelDB).  
-    - Add migration tooling.
+17. **Persistence and State Management**
+    - Introduce an `internal/storage` layer that exposes clean interfaces for CRUD operations and transactions, allowing services to remain database agnostic.
+    - Provide adapters for multiple backends (e.g., Postgres via `database/sql`, LevelDB, in-memory) with pluggable drivers and configurable connection pooling, TLS, and authentication.
+    - Support ACID transactions and both optimistic and pessimistic locking while honoring context deadlines for timeouts and cancellation.
+    - Add migration tooling (e.g., `golang-migrate` or `atlas`) with versioned DDL files, rollback capability, and CI hooks to verify schema consistency.
+    - Include schema compatibility tests for each backend and enforce migrations through automated checks before deployment.
+    - Implement a caching layer (such as Redis) behind an interface, featuring TTL controls and cache invalidation strategies to keep reads fast and consistent.
+    - Document backup/restore, replication, and snapshot procedures, and emit metrics for query latency, cache hit rates, and failure conditions.
+    - Provide configuration and operational runbooks for development, testing, and production environments.
 
 18. **Networking and P2P Layer**  
     - Encapsulate networking code under `internal/p2p/`.  
