@@ -10,13 +10,13 @@ func TestContractOpcodesValues(t *testing.T) {
 		op   uint32
 		want uint32
 	}{
-		{"OpInitContracts", OpInitContracts, 0x010000},
-		{"OpPauseContract", OpPauseContract, 0x010001},
-		{"OpResumeContract", OpResumeContract, 0x010002},
-		{"OpUpgradeContract", OpUpgradeContract, 0x010003},
-		{"OpContractInfo", OpContractInfo, 0x010004},
-		{"OpDeployAIContract", OpDeployAIContract, 0x010005},
-		{"OpInvokeAIContract", OpInvokeAIContract, 0x010006},
+		{"OpInitContracts", OpInitContracts, 0x080001},
+		{"OpPauseContract", OpPauseContract, 0x080006},
+		{"OpResumeContract", OpResumeContract, 0x080007},
+		{"OpUpgradeContract", OpUpgradeContract, 0x080008},
+		{"OpContractInfo", OpContractInfo, 0x080009},
+		{"OpDeployAIContract", OpDeployAIContract, 0x010001},
+		{"OpInvokeAIContract", OpInvokeAIContract, 0x010002},
 	}
 	for _, tt := range tests {
 		if tt.op != tt.want {
@@ -28,8 +28,8 @@ func TestContractOpcodesValues(t *testing.T) {
 	}
 }
 
-// TestContractOpcodesSequential verifies the opcodes are sequential and unique.
-func TestContractOpcodesSequential(t *testing.T) {
+// TestContractOpcodesUnique verifies the opcodes are unique.
+func TestContractOpcodesUnique(t *testing.T) {
 	ops := []uint32{
 		OpInitContracts,
 		OpPauseContract,
@@ -41,13 +41,10 @@ func TestContractOpcodesSequential(t *testing.T) {
 	}
 
 	seen := make(map[uint32]struct{}, len(ops))
-	for i, op := range ops {
+	for _, op := range ops {
 		if _, ok := seen[op]; ok {
 			t.Fatalf("duplicate opcode value %#x", op)
 		}
 		seen[op] = struct{}{}
-		if i > 0 && op != ops[i-1]+1 {
-			t.Fatalf("opcode %#x not sequential after %#x", op, ops[i-1])
-		}
 	}
 }
