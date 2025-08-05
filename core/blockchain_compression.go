@@ -5,6 +5,7 @@ import (
 	"compress/gzip"
 	"encoding/json"
 	"os"
+	"path/filepath"
 )
 
 // ledgerSnapshot is a helper type used for serializing the ledger. It exposes
@@ -64,16 +65,18 @@ func DecompressLedger(data []byte) (*Ledger, error) {
 
 // SaveCompressedSnapshot writes a compressed snapshot of the ledger to the given path.
 func SaveCompressedSnapshot(l *Ledger, path string) error {
+	clean := filepath.Clean(path)
 	data, err := CompressLedger(l)
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(path, data, 0o644)
+	return os.WriteFile(clean, data, 0o600)
 }
 
 // LoadCompressedSnapshot reads a compressed snapshot from disk and returns the decoded ledger.
 func LoadCompressedSnapshot(path string) (*Ledger, error) {
-	data, err := os.ReadFile(path)
+	clean := filepath.Clean(path)
+	data, err := os.ReadFile(clean)
 	if err != nil {
 		return nil, err
 	}

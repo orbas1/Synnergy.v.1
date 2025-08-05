@@ -73,7 +73,7 @@ func (l *Ledger) appendWAL(b *Block) {
 	if l.walPath == "" {
 		return
 	}
-	f, err := os.OpenFile(l.walPath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o644)
+	f, err := os.OpenFile(l.walPath, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0o600)
 	if err != nil {
 		return
 	}

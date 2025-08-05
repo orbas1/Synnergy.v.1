@@ -1,9 +1,9 @@
 package core
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
 	"strings"
-	"time"
 )
 
 // ConsensusWeights holds the relative weights assigned to each consensus
@@ -146,7 +146,12 @@ func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
 	for _, s := range stakes {
 		total += s
 	}
-	r := rand.New(rand.NewSource(time.Now().UnixNano())).Uint64() % total
+	limit := new(big.Int).SetUint64(total)
+	rBig, err := rand.Int(rand.Reader, limit)
+	if err != nil {
+		return ""
+	}
+	r := rBig.Uint64()
 	var cumulative uint64
 	for addr, s := range stakes {
 		cumulative += s

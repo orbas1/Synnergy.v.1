@@ -64,8 +64,8 @@ func (r *AuthorityNodeRegistry) Electorate(size int) []string {
 		selected = append(selected, nodes[i].Address)
 	}
 	if size > 1 {
-		rand.Seed(time.Now().UnixNano())
-		rand.Shuffle(len(selected), func(i, j int) { selected[i], selected[j] = selected[j], selected[i] })
+		r := rand.New(rand.NewSource(time.Now().UnixNano()))
+		r.Shuffle(len(selected), func(i, j int) { selected[i], selected[j] = selected[j], selected[i] })
 	}
 	return selected
 }

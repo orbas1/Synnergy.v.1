@@ -35,7 +35,12 @@ func DefaultGasTable() GasTable {
 // names and numeric gas costs.
 func parseGasGuide() map[string]uint64 {
 	_, filename, _, _ := runtime.Caller(0)
-	path := filepath.Join(filepath.Dir(filename), "..", "gas_table_list.md")
+	coreDir := filepath.Dir(filename)
+	rootDir := filepath.Dir(coreDir)
+	path := filepath.Clean(filepath.Join(rootDir, "gas_table_list.md"))
+	if !strings.HasPrefix(path, rootDir) {
+		return nil
+	}
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil

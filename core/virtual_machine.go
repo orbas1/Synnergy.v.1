@@ -121,7 +121,7 @@ func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit ui
 		return nil, 0, errors.New("bytecode required")
 	}
 
-	opCount := uint64((len(wasm) + 2) / 3) // number of 24-bit opcodes
+	opCount := (uint64(len(wasm)) + 2) / 3 // number of 24-bit opcodes
 	gasUsed := opCount
 	if gasUsed == 0 {
 		gasUsed = 1
