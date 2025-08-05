@@ -12,6 +12,7 @@ type bankNodeAdapter struct{ *core.BankInstitutionalNode }
 func (a *bankNodeAdapter) ID() nodes.Address                 { return nodes.Address(a.Node.ID) }
 func (a *bankNodeAdapter) Start() error                      { return nil }
 func (a *bankNodeAdapter) Stop() error                       { return nil }
+func (a *bankNodeAdapter) IsRunning() bool                   { return true }
 func (a *bankNodeAdapter) Peers() []nodes.Address            { return nil }
 func (a *bankNodeAdapter) DialSeed(addr nodes.Address) error { return nil }
 
@@ -20,6 +21,7 @@ type centralBankNodeAdapter struct{ *core.CentralBankingNode }
 func (a *centralBankNodeAdapter) ID() nodes.Address                 { return nodes.Address(a.Node.ID) }
 func (a *centralBankNodeAdapter) Start() error                      { return nil }
 func (a *centralBankNodeAdapter) Stop() error                       { return nil }
+func (a *centralBankNodeAdapter) IsRunning() bool                   { return true }
 func (a *centralBankNodeAdapter) Peers() []nodes.Address            { return nil }
 func (a *centralBankNodeAdapter) DialSeed(addr nodes.Address) error { return nil }
 
@@ -28,6 +30,7 @@ type custodialNodeAdapter struct{ *core.CustodialNode }
 func (a *custodialNodeAdapter) ID() nodes.Address                 { return nodes.Address(a.Node.ID) }
 func (a *custodialNodeAdapter) Start() error                      { return nil }
 func (a *custodialNodeAdapter) Stop() error                       { return nil }
+func (a *custodialNodeAdapter) IsRunning() bool                   { return true }
 func (a *custodialNodeAdapter) Peers() []nodes.Address            { return nil }
 func (a *custodialNodeAdapter) DialSeed(addr nodes.Address) error { return nil }
 
