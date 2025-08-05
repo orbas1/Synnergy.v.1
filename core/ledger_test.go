@@ -20,3 +20,25 @@ func TestLedgerApplyTransaction(t *testing.T) {
 		t.Fatalf("expected insufficient funds error")
 	}
 }
+
+func TestLedgerUTXOAndPool(t *testing.T) {
+	l := NewLedger()
+	l.Mint("alice", 50)
+	if utxos := l.GetUTXOs("alice"); len(utxos) != 1 || utxos[0].Amount != 50 {
+		t.Fatalf("unexpected utxo state: %+v", utxos)
+	}
+	tx := NewTransaction("alice", "bob", 20, 0, 0)
+	l.AddToPool(tx)
+	if pool := l.Pool(); len(pool) != 1 {
+		t.Fatalf("expected pool size 1 got %d", len(pool))
+	}
+	if err := l.ApplyTransaction(tx); err != nil {
+		t.Fatalf("apply failed: %v", err)
+	}
+	if utxos := l.GetUTXOs("alice"); len(utxos) != 1 || utxos[0].Amount != 30 {
+		t.Fatalf("unexpected alice utxo: %+v", utxos)
+	}
+	if utxos := l.GetUTXOs("bob"); len(utxos) != 1 || utxos[0].Amount != 20 {
+		t.Fatalf("unexpected bob utxo: %+v", utxos)
+	}
+}

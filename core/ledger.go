@@ -3,6 +3,7 @@ package core
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"sync"
 )
@@ -10,17 +11,35 @@ import (
 // Ledger maintains account balances and block history. It persists blocks to a
 // simple write-ahead log so that a node can recover on restart. The WAL path is
 // optional; if empty the ledger operates purely in memory.
+// UTXO represents an unspent transaction output owned by an address.
+type UTXO struct {
+	ID     string `json:"id"`
+	Amount uint64 `json:"amount"`
+}
+
+// Ledger maintains account balances, a simple UTXO view and block history. It
+// persists blocks to a simple write-ahead log so that a node can recover on
+// restart. The WAL path is optional; if empty the ledger operates purely in
+// memory.
 type Ledger struct {
 	mu       sync.RWMutex
 	balances map[string]uint64
 	blocks   []*Block
 	walPath  string
+	utxos    map[string][]*UTXO
+	mempool  []*Transaction
+	nextUTXO uint64
 }
 
 // NewLedger creates a new ledger. If a path is supplied it will replay any
 // existing WAL file to restore previous blocks.
 func NewLedger(path ...string) *Ledger {
-	l := &Ledger{balances: make(map[string]uint64), blocks: []*Block{}}
+	l := &Ledger{
+		balances: make(map[string]uint64),
+		blocks:   []*Block{},
+		utxos:    make(map[string][]*UTXO),
+		mempool:  []*Transaction{},
+	}
 	if len(path) > 0 {
 		l.walPath = path[0]
 		l.replayWAL()
@@ -98,11 +117,24 @@ func (l *Ledger) GetBalance(addr string) uint64 {
 	return l.balances[addr]
 }
 
-// Credit adds funds to an address.
+// GetUTXOs returns a copy of the unspent outputs for an address.
+func (l *Ledger) GetUTXOs(addr string) []UTXO {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	outs := l.utxos[addr]
+	res := make([]UTXO, len(outs))
+	for i, u := range outs {
+		res[i] = *u
+	}
+	return res
+}
+
+// Credit adds funds to an address and updates the UTXO view.
 func (l *Ledger) Credit(addr string, amount uint64) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.balances[addr] += amount
+	l.updateUTXO(addr)
 }
 
 // Mint is an exported helper that credits funds to an address. It mirrors the
@@ -124,13 +156,43 @@ func (l *Ledger) Transfer(from, to string, amount, fee uint64) error {
 func (l *Ledger) ApplyTransaction(tx *Transaction) error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	// Use explicit uint64 arithmetic to avoid accidental type promotion if
-	// transaction fields change in the future.
 	total := uint64(tx.Amount + tx.Fee)
 	if l.balances[tx.From] < total {
 		return errors.New("insufficient funds")
 	}
 	l.balances[tx.From] -= total
 	l.balances[tx.To] += uint64(tx.Amount)
+	l.updateUTXO(tx.From)
+	l.updateUTXO(tx.To)
 	return nil
+}
+
+// AddToPool appends a transaction to the mem-pool.
+func (l *Ledger) AddToPool(tx *Transaction) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.mempool = append(l.mempool, tx)
+}
+
+// Pool returns a snapshot of the current mem-pool transactions.
+func (l *Ledger) Pool() []*Transaction {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	out := make([]*Transaction, len(l.mempool))
+	copy(out, l.mempool)
+	return out
+}
+
+func (l *Ledger) newUTXO(amount uint64) *UTXO {
+	u := &UTXO{ID: fmt.Sprintf("u%d", l.nextUTXO), Amount: amount}
+	l.nextUTXO++
+	return u
+}
+
+func (l *Ledger) updateUTXO(addr string) {
+	if l.balances[addr] == 0 {
+		delete(l.utxos, addr)
+		return
+	}
+	l.utxos[addr] = []*UTXO{l.newUTXO(l.balances[addr])}
 }
