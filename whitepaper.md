@@ -98,7 +98,7 @@ The supply inflates annually by 2% to maintain incentives and fund new initiativ
 The repository includes many sample token contracts and node variants beyond the basic coin and validator roles. Token examples cover gaming assets, stablecoins, debt instruments and fractional real estate among others. Node types range from energy-efficient and quantum-resistant nodes to watchtowers, historical archives and holographic nodes used for research. An integration registry keeps track of these specialised roles so operators can discover compatible services.
 
 ## Full CLI Guide and Index
-Synnergy comes with a powerful CLI built using the Cobra framework. Commands are grouped into modules mirroring the codebase. Below is a concise index; see `cmd/cli/cli_guide.md` for the detailed usage of each command group:
+Synnergy comes with a powerful CLI built using the Cobra framework. Commands are grouped into modules mirroring the codebase. Below is a concise index; see `docs/guides/cli_guide.md` for the detailed usage of each command group:
 - `ai` – Publish machine learning models and run inference jobs.
 - `ai_contract` – Deploy and interact with AI-enhanced contracts.
 - `ai_mgmt` – Manage listings in the AI model marketplace.

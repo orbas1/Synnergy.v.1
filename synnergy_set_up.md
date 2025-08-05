@@ -56,7 +56,7 @@ Runtime settings are defined in the `cmd/config` directory.  The CLI loads
 addition to `default.yaml`.
 
 Configuration options include network parameters, consensus settings, virtual
-machine limits and logging preferences.  See `cmd/config/config_guide.md` for a
+machine limits and logging preferences.  See `docs/guides/config_guide.md` for a
 full description of each field.
 
 ## 5. Environment Variables
@@ -104,7 +104,7 @@ To start components manually:
 
 At this point you may explore command groups such as `contracts` for deploying
 WebAssembly code, `tokens` for managing ERC‑20 style assets or `transactions`
-for building and broadcasting raw transactions.  See `cmd/cli/cli_guide.md` for
+for building and broadcasting raw transactions.  See `docs/guides/cli_guide.md` for
 a description of every available command.
 
 ## 7. Running Unit Tests
@@ -132,9 +132,9 @@ For larger deployments consider the following practices:
 
 ## 9. Additional Resources
 
-- **Command Reference:** `cmd/cli/cli_guide.md`
-- **Scripting Examples:** `cmd/scripts/script_guide.md`
-- **Core Modules Overview:** `core/module_guide.md`
+- **Command Reference:** `docs/guides/cli_guide.md`
+- **Scripting Examples:** `docs/guides/script_guide.md`
+- **Core Modules Overview:** `docs/guides/module_guide.md`
 - **Whitepaper:** `WHITEPAPER.md`
 
 These documents provide further background on the Synnergy architecture and the
