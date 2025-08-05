@@ -133,9 +133,14 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Centralize RBAC logic in `internal/auth/`.  
     - Implement policy enforcement and audit logging.
 
-20. **Packaging and Distribution**  
-    - Provide install scripts and homebrew formulas.  
-    - Publish Docker images and binary tarballs for supported platforms.
+20. **Packaging and Distribution**
+    - Offer install scripts and shell-based installers for quick setup on new systems.
+    - Maintain package manager integrations including Homebrew (macOS), APT/YUM (Linux), and Scoop/Chocolatey (Windows).
+    - Produce signed binaries for Linux, macOS, and Windows across `amd64` and `arm64` architectures with checksum files and GPG signatures.
+    - Publish Docker images for every release to public and private registries with SBOM metadata.
+    - Generate versioned binary tarballs and OS-specific packages (`.deb`, `.rpm`, `.msi`) via GitHub Releases.
+    - Automate packaging and artifact publishing in CI/CD with distinct stable and pre-release channels.
+    - Document installation, upgrade, and rollback procedures and verify packages through integration tests.
 
 These stages, once completed, will transition the repository from a prototype into a maintainable, production-grade codebase suitable for enterprise deployment.
 
