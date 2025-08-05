@@ -79,17 +79,25 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Implemented a GitHub Actions workflow that builds, tests, lints, and packages binaries.
     - Enabled caching for modules and test results to speed up builds.
 
-11. **Documentation Standardization**  
-    - Move guides into a `docs/` directory.  
-    - Use a documentation generator (e.g., MkDocs) to produce a docs site.  
+11. **Documentation Standardization**
+    - Move guides into a `docs/` directory.
+    - Use a documentation generator (e.g., MkDocs) to produce a docs site.
     - Maintain ADRs for architectural decisions.
 
-12. **API and RPC Layer**  
-    - Define gRPC/REST interfaces for node communication.  
-    - Use protobuf definitions under `api/` and auto-generate stubs.
+12. **API and RPC Layer**
+    - Define versioned gRPC and REST interfaces for all node and service interactions, ensuring backward compatibility as the protocol evolves.
+    - Organize protobuf definitions under `api/` with clear package boundaries and generate client/server stubs using a reproducible toolchain (e.g., `buf` or `protoc`).
+    - Generate OpenAPI/Swagger specifications for the REST layer and publish language-specific client SDKs.
+    - Expose streaming endpoints (gRPC streaming or WebSockets) for real-time events and data feeds.
+    - Authenticate and authorize requests using JWT/OAuth2 and mutual TLS for gRPC; support API keys for service-to-service calls.
+    - Enforce request validation, rate limiting, and quotas via an API gateway layer to protect nodes from abuse and DoS attacks.
+    - Standardize error codes and response envelopes to provide machine-parseable failures and rich debugging information.
+    - Instrument RPC handlers with structured logs, Prometheus metrics, and OpenTelemetry traces for observability.
+    - Provide health-check and reflection endpoints for service discovery and automated tooling.
+    - Include integration tests validating RPC contracts and backward compatibility guarantees.
 
-13. **Configuration of Build Tags and Environments**  
-    - Use build tags for optional features (e.g., experimental nodes).  
+13. **Configuration of Build Tags and Environments**
+    - Use build tags for optional features (e.g., experimental nodes).
     - Provide separate configs for dev/test/production environments.
 
 14. **Containerization**  
