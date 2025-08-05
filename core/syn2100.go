@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"sync"
 	"time"
 )
 
@@ -20,6 +21,7 @@ type FinancialDocument struct {
 
 // TradeFinanceToken manages financial documents and liquidity pools for SYN2100.
 type TradeFinanceToken struct {
+	mu        sync.RWMutex
 	Documents map[string]*FinancialDocument
 	Liquidity map[string]uint64
 }
@@ -34,6 +36,8 @@ func NewTradeFinanceToken() *TradeFinanceToken {
 
 // RegisterDocument registers a financing document.
 func (t *TradeFinanceToken) RegisterDocument(docID, issuer, recipient string, amount uint64, issue, due time.Time, desc string) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	t.Documents[docID] = &FinancialDocument{
 		DocID:       docID,
 		Issuer:      issuer,
@@ -47,6 +51,8 @@ func (t *TradeFinanceToken) RegisterDocument(docID, issuer, recipient string, am
 
 // FinanceDocument marks a document as financed by a financier.
 func (t *TradeFinanceToken) FinanceDocument(docID, financier string) error {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	d, ok := t.Documents[docID]
 	if !ok {
 		return errors.New("document not found")
@@ -61,26 +67,39 @@ func (t *TradeFinanceToken) FinanceDocument(docID, financier string) error {
 
 // GetDocument fetches a document by ID.
 func (t *TradeFinanceToken) GetDocument(docID string) (*FinancialDocument, bool) {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
 	d, ok := t.Documents[docID]
-	return d, ok
+	if !ok {
+		return nil, false
+	}
+	cp := *d
+	return &cp, true
 }
 
 // ListDocuments returns all registered documents.
 func (t *TradeFinanceToken) ListDocuments() []*FinancialDocument {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
 	res := make([]*FinancialDocument, 0, len(t.Documents))
 	for _, d := range t.Documents {
-		res = append(res, d)
+		cp := *d
+		res = append(res, &cp)
 	}
 	return res
 }
 
 // AddLiquidity adds funds to the liquidity pool from an address.
 func (t *TradeFinanceToken) AddLiquidity(addr string, amt uint64) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	t.Liquidity[addr] += amt
 }
 
 // RemoveLiquidity removes funds from the liquidity pool.
 func (t *TradeFinanceToken) RemoveLiquidity(addr string, amt uint64) error {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	if t.Liquidity[addr] < amt {
 		return errors.New("insufficient liquidity")
 	}

@@ -1,6 +1,9 @@
 package core
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 // BenefitRecord holds metadata for a government benefit token issuance.
 type BenefitRecord struct {
@@ -13,6 +16,7 @@ type BenefitRecord struct {
 
 // BenefitRegistry manages benefit records.
 type BenefitRegistry struct {
+	mu       sync.RWMutex
 	benefits map[uint64]*BenefitRecord
 	nextID   uint64
 }
@@ -24,6 +28,8 @@ func NewBenefitRegistry() *BenefitRegistry {
 
 // RegisterBenefit records a new benefit and returns its ID.
 func (r *BenefitRegistry) RegisterBenefit(recipient, program string, amount uint64) uint64 {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	r.nextID++
 	id := r.nextID
 	r.benefits[id] = &BenefitRecord{ID: id, Recipient: recipient, Program: program, Amount: amount}
@@ -32,6 +38,8 @@ func (r *BenefitRegistry) RegisterBenefit(recipient, program string, amount uint
 
 // Claim marks the benefit as claimed.
 func (r *BenefitRegistry) Claim(id uint64) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	b, ok := r.benefits[id]
 	if !ok {
 		return errors.New("benefit not found")
@@ -45,6 +53,12 @@ func (r *BenefitRegistry) Claim(id uint64) error {
 
 // GetBenefit retrieves a benefit by ID.
 func (r *BenefitRegistry) GetBenefit(id uint64) (*BenefitRecord, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	b, ok := r.benefits[id]
-	return b, ok
+	if !ok {
+		return nil, false
+	}
+	cp := *b
+	return &cp, true
 }
