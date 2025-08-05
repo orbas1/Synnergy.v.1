@@ -10,9 +10,7 @@ import (
 )
 
 var (
-	contractVM       = core.NewSimpleVM()
-	contractRegistry = core.NewContractRegistry(contractVM)
-	contractMgr      = core.NewContractManager(contractRegistry)
+	contractMgr = core.NewContractManager(contractRegistry)
 )
 
 func init() {
