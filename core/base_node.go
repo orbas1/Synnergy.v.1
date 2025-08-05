@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"synnergy/nodes"
+	"synnergy/internal/nodes"
 )
 
 // BaseNode wraps a NodeInterface and exposes common networking behaviour.

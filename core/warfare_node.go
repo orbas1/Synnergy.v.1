@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	militarynodes "synnergy/nodes/military_nodes"
+	militarynodes "synnergy/internal/nodes/military_nodes"
 )
 
 // WarfareNode provides military focused extensions on top of a base Node.

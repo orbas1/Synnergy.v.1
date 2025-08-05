@@ -1,6 +1,6 @@
 package core
 
-import "synnergy/nodes"
+import "synnergy/internal/nodes"
 
 // FullNodeMode specifies the storage strategy of a full node.
 type FullNodeMode int
