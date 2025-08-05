@@ -116,8 +116,8 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Encapsulate networking code under `internal/p2p/`.  
     - Support secure transports (TLS, Noise protocol) and peer discovery.
 
-19. **Governance and Access Control**  
-    - Centralize RBAC logic in `internal/auth/`.  
+19. **Governance and Access Control** ✅
+    - Centralize RBAC logic in `internal/auth/`.
     - Implement policy enforcement and audit logging.
 
 20. **Packaging and Distribution**  
