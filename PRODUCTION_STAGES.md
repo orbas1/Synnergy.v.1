@@ -88,9 +88,9 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Define gRPC/REST interfaces for node communication.  
     - Use protobuf definitions under `api/` and auto-generate stubs.
 
-13. **Configuration of Build Tags and Environments**  
-    - Use build tags for optional features (e.g., experimental nodes).  
-    - Provide separate configs for dev/test/production environments.
+13. **Configuration of Build Tags and Environments** ✅
+    - Use build tags for optional features (e.g., experimental nodes). *(completed)*
+    - Provide separate configs for dev/test/production environments. *(completed)*
 
 14. **Containerization**  
     - Create Dockerfiles for each binary.  

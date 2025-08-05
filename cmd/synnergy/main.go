@@ -9,7 +9,12 @@ import (
 )
 
 func main() {
-	cfg, err := config.Load(os.Getenv("SYN_CONFIG"))
+	cfgPath := os.Getenv("SYN_CONFIG")
+	if cfgPath == "" {
+		cfgPath = config.DefaultConfigPath
+	}
+
+	cfg, err := config.Load(cfgPath)
 	if err != nil {
 		log.Fatal(err)
 	}
