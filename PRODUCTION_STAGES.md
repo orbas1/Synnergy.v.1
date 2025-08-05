@@ -42,9 +42,9 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
    - Add integration tests for cross-chain and token flows.  
    - Use GitHub Actions to run tests on each push.
 
-10. **CI/CD Pipeline**  
-    - Implement a GitHub Actions workflow that builds, tests, lints, and packages binaries.  
-    - Enable caching for modules and test results to speed up builds.
+10. **CI/CD Pipeline (Completed)**
+    - Implemented a GitHub Actions workflow that builds, tests, lints, and packages binaries.
+    - Enabled caching for modules and test results to speed up builds.
 
 11. **Documentation Standardization**  
     - Move guides into a `docs/` directory.  
