@@ -1,0 +1,10 @@
+goos: linux
+goarch: amd64
+pkg: synnergy
+cpu: Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz
+BenchmarkTransactionManagerLockAndMint-5        	  292596	      4094 ns/op	     744 B/op	       7 allocs/op
+BenchmarkTransactionManagerBurnAndRelease-5     	  468196	      3661 ns/op	     863 B/op	       9 allocs/op
+BenchmarkTransactionManagerListTransactions-5   	   10000	    857290 ns/op	 1286145 B/op	       1 allocs/op
+BenchmarkTransactionManagerGetTransaction-5     	 2920796	       447.5 ns/op	       0 B/op	       0 allocs/op
+PASS
+ok  	synnergy	29.126s

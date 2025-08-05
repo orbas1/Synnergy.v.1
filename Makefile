@@ -1,5 +1,4 @@
-
-.PHONY: staticcheck gosec govulncheck security
+.PHONY: staticcheck gosec govulncheck security bench
 
 staticcheck:
 	staticcheck ./...
@@ -12,3 +11,5 @@ govulncheck:
 
 security: staticcheck gosec govulncheck
 
+bench:
+	go test -bench=TransactionManager -benchmem -run ^$ . | tee benchmarks/current.txt
