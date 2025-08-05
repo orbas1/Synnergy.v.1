@@ -1,0 +1,75 @@
+project_name: synnergy
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: synnergy
+    main: ./cmd/synnergy
+    binary: synnergy
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+  - id: opcodegen
+    main: ./cmd/opcodegen
+    binary: opcodegen
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+  - id: watchtower
+    main: ./cmd/watchtower
+    binary: watchtower
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - id: archive
+    builds:
+      - synnergy
+      - opcodegen
+      - watchtower
+    format: tar.gz
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: "{{ .ProjectName }}_checksums.txt"
+
+signs:
+  - artifacts: checksum
+    cmd: gpg
+    signature: "${artifact}.sig"
+    args: ["--detach-sign", "--armor", "--output", "${signature}", "${artifact}"]
+
+changelog:
+  use: git
+  sort: desc
+  filters:
+    exclude:
+      - '^docs:'
+      - '^test:'
+
+release:
+  footer: |
+    See CHANGELOG.md for details.
