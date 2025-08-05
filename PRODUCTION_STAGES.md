@@ -92,10 +92,10 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Use build tags for optional features (e.g., experimental nodes).  
     - Provide separate configs for dev/test/production environments.
 
-14. **Containerization**  
-    - Create Dockerfiles for each binary.  
-    - Use multi-stage builds for minimal runtime images.  
-    - Provide a `docker-compose.yml` for local orchestration.
+14. **Containerization** ✅
+    - Create Dockerfiles for each binary. *(completed)*
+    - Use multi-stage builds for minimal runtime images. *(completed)*
+    - Provide a `docker-compose.yml` for local orchestration. *(completed)*
 
 15. **Release Management**  
     - Adopt semantic versioning.  
