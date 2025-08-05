@@ -1,6 +1,6 @@
 package banknodes
 
-import "synnergy/nodes"
+import "synnergy/internal/nodes"
 
 // BankInstitutionalNode defines behaviour for institutional banking nodes.
 // It extends the generic NodeInterface with methods to manage participating institutions.

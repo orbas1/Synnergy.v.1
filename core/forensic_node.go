@@ -2,7 +2,7 @@ package core
 
 import (
 	"sync"
-	nodes "synnergy/nodes"
+	nodes "synnergy/internal/nodes"
 )
 
 // ForensicNode captures lightweight transaction data and network traces for

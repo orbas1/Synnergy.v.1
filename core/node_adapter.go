@@ -1,6 +1,6 @@
 package core
 
-import "synnergy/nodes"
+import "synnergy/internal/nodes"
 
 // NodeAdapter adapts the consensus Node to the generic nodes.NodeInterface.
 type NodeAdapter struct {

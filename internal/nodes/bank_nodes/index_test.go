@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"synnergy/core"
-	"synnergy/nodes"
+	"synnergy/internal/nodes"
 )
 
 type bankNodeAdapter struct{ *core.BankInstitutionalNode }
