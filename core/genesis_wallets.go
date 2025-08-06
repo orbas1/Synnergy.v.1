@@ -14,6 +14,7 @@ type GenesisWallets struct {
 	LoanPool            string
 	PassiveIncome       string
 	ValidatorsMiners    string
+	AuthorityNodes      string
 	NodeHosts           string
 	CreatorWallet       string
 }
@@ -34,6 +35,7 @@ func DefaultGenesisWallets() GenesisWallets {
 		LoanPool:            hashAddress("loan_pool"),
 		PassiveIncome:       hashAddress("passive_income"),
 		ValidatorsMiners:    hashAddress("validators_miners"),
+		AuthorityNodes:      hashAddress("authority_node_rewards"),
 		NodeHosts:           hashAddress("node_hosts"),
 		CreatorWallet:       hashAddress("creator_wallet"),
 	}
@@ -50,6 +52,7 @@ func AllocateToGenesisWallets(total uint64, wallets GenesisWallets) map[string]u
 		wallets.LoanPool:            dist.LoanPool,
 		wallets.PassiveIncome:       dist.PassiveIncome,
 		wallets.ValidatorsMiners:    dist.ValidatorsMiners,
+		wallets.AuthorityNodes:      dist.AuthorityNodes,
 		wallets.NodeHosts:           dist.NodeHosts,
 		wallets.CreatorWallet:       dist.CreatorWallet,
 	}

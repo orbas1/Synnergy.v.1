@@ -29,6 +29,7 @@ func TestAllocateToGenesisWallets(t *testing.T) {
 		{wallets.LoanPool, dist.LoanPool},
 		{wallets.PassiveIncome, dist.PassiveIncome},
 		{wallets.ValidatorsMiners, dist.ValidatorsMiners},
+		{wallets.AuthorityNodes, dist.AuthorityNodes},
 		{wallets.NodeHosts, dist.NodeHosts},
 		{wallets.CreatorWallet, dist.CreatorWallet},
 	}
@@ -40,7 +41,7 @@ func TestAllocateToGenesisWallets(t *testing.T) {
 		}
 		sum += alloc[tt.addr]
 	}
-	expected := dist.InternalDevelopment + dist.InternalCharity + dist.ExternalCharity + dist.LoanPool + dist.PassiveIncome + dist.ValidatorsMiners + dist.NodeHosts + dist.CreatorWallet
+	expected := dist.InternalDevelopment + dist.InternalCharity + dist.ExternalCharity + dist.LoanPool + dist.PassiveIncome + dist.ValidatorsMiners + dist.AuthorityNodes + dist.NodeHosts + dist.CreatorWallet
 	if sum != expected {
 		t.Fatalf("total allocation mismatch: got %d want %d", sum, expected)
 	}

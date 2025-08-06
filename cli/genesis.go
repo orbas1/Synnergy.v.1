@@ -27,6 +27,7 @@ func init() {
 			fmt.Printf("LoanPool: %s\n", genesisWallets.LoanPool)
 			fmt.Printf("PassiveIncome: %s\n", genesisWallets.PassiveIncome)
 			fmt.Printf("ValidatorsMiners: %s\n", genesisWallets.ValidatorsMiners)
+			fmt.Printf("AuthorityNodes: %s\n", genesisWallets.AuthorityNodes)
 			fmt.Printf("NodeHosts: %s\n", genesisWallets.NodeHosts)
 			fmt.Printf("CreatorWallet: %s\n", genesisWallets.CreatorWallet)
 		},
