@@ -13,6 +13,7 @@ nav:
       - Node: guides/node_guide.md
       - Opcode and Gas: guides/opcode_and_gas_guide.md
       - Scripts: guides/script_guide.md
+      - Server Setup: guides/server_setup_guide.md
       - Smart Contracts: guides/smart_contract_guide.md
       - Tokens: guides/token_guide.md
       - Transactions: guides/transaction_guide.md
