@@ -107,6 +107,7 @@ type FeeDistribution struct {
 	LoanPool            uint64
 	PassiveIncome       uint64
 	ValidatorsMiners    uint64
+	AuthorityNodes      uint64
 	NodeHosts           uint64
 	CreatorWallet       uint64
 }
@@ -119,7 +120,8 @@ func DistributeFees(total uint64) FeeDistribution {
 		ExternalCharity:     total * 5 / 100,
 		LoanPool:            total * 5 / 100,
 		PassiveIncome:       total * 5 / 100,
-		ValidatorsMiners:    total * 69 / 100,
+		ValidatorsMiners:    total * 64 / 100,
+		AuthorityNodes:      total * 5 / 100,
 		NodeHosts:           total * 5 / 100,
 		CreatorWallet:       total * 1 / 100,
 	}

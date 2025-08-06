@@ -1,0 +1,38 @@
+network:
+  id: synnergy-devnet
+  chain_id: 1215
+  max_peers: 50
+  genesis_file: configs/genesis.json
+  rpc_enabled: true
+  p2p_port: 30303
+  listen_addr: "/ip4/0.0.0.0/tcp/4001"
+  discovery_tag: synnergy-mesh
+  bootstrap_peers: []
+
+consensus:
+  type: pos
+  block_time_ms: 3000
+  validators_required: 3
+
+vm:
+  max_gas_per_block: 8000000
+  opcode_debug: false
+
+storage:
+  db_path: ./data/db
+  prune: true
+
+logging:
+  level: info
+  file: logs/synnergy.log
+
+nodes:
+  - id: validator1
+    type: validator
+    address: d22b7fffcb6a72c94713f5c2e2f2142565b8402299842eb4c1039cea3c293ff0
+  - id: authority1
+    type: authority
+    address: 5baf968c0972eab52046bbca74763d61c923d6e81e549f0f7f0db66f8cfddad9
+  - id: host1
+    type: node_host
+    address: 20d2698d356868e08411ce2ea8ac824d07011aebe788a6458d33e244172b8c34
