@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
-set -e
-SCRIPT_DIR="$(dirname "$0")/../cmd/scripts"
-"$SCRIPT_DIR/start_synnergy_network.sh" "$@"
+set -euo pipefail
+IFS=$'\n\t'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TARGET="$SCRIPT_DIR/../cmd/scripts/start_synnergy_network.sh"
+"$TARGET" "$@"
