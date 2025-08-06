@@ -1,5 +1,5 @@
 network:
-  id: synnergy-devnet
+  id: synnergy-mainnet
   chain_id: 1215
   max_peers: 50
   genesis_file: configs/genesis.json
@@ -10,9 +10,22 @@ network:
   bootstrap_peers: []
 
 consensus:
-  type: pos
+  type: synnergy
   block_time_ms: 3000
   validators_required: 3
+  weights:
+    pow: 0.4
+    pos: 0.3
+    poh: 0.3
+  alpha: 0.5
+  beta: 0.5
+  gamma: 0.1
+  dmax: 1
+  smax: 1
+  pow_available: true
+  pos_available: true
+  poh_available: true
+  pow_rewards: true
 
 vm:
   max_gas_per_block: 8000000
@@ -36,3 +49,39 @@ nodes:
   - id: host1
     type: node_host
     address: 20d2698d356868e08411ce2ea8ac824d07011aebe788a6458d33e244172b8c34
+  - id: miner1
+    type: mining
+    address: 82adcfc72951114bb359e583093aba3b7cae333838d4f56fc2461387e9c4fab3
+  - id: staker1
+    type: staking
+    address: 9af19c1c99cefad1c422b67f9e77ea9899748fefb69e850e817025383c1e378c
+  - id: indexer1
+    type: indexing
+    address: 340b28483ed6df75c53200a646945a26706733135ce76efec902ea994ab869f4
+  - id: regulator1
+    type: regulatory
+    address: 62b55e6e9b2878655dcbd57c9ff3092d9cab7a914baa68b16034e1b5dbf5e4d6
+  - id: environmental1
+    type: environmental_monitoring
+    address: 895c4f6e3c93bc1c1be68e906ff57faea4e2d97e1c2df7b908e5c89e76f54258
+  - id: geospatial1
+    type: geospatial
+    address: 7b51312fe078da1fd6ea28c88299f2fc3bdc58f60d1a6c5d9f39acd9a9da2a42
+  - id: watchtower1
+    type: watchtower
+    address: bdad61483e8218f0de445dbbdd6b9296d875be1b927a7690c24a76d8b3a9d8f7
+  - id: energy1
+    type: energy_efficient
+    address: 76295a5e0524b1631faaf6bf792825092e2f3a6043e797d761529f860958ef85
+  - id: content1
+    type: content
+    address: 35020a87d16c5c659b85551f647e70cb98eb98ec1055909e6bce267a1885be94
+  - id: mobile_miner1
+    type: mobile_mining
+    address: f837e5c58b3ba56f96e763b735af924a2d49f48a0c041545985581df6d14aa65
+  - id: biometric1
+    type: biometric_security
+    address: 06917aa80544080fdc6bfa948740b9298bb84475aca795ba06a49b53f8f27e07
+  - id: warfare1
+    type: warfare
+    address: f73dcec5a308c8229f0e325831e3a84997363a5d4b52fe89f7227a1ff58b82b9
