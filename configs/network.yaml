@@ -1,5 +1,5 @@
 network:
-  id: synnergy-devnet
+  id: synnergy-mainnet
   chain_id: 1215
   max_peers: 50
   genesis_file: configs/genesis.json
