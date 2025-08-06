@@ -10,3 +10,6 @@ var rootCmd = &cobra.Command{
 
 // Execute runs the root command.
 func Execute() error { return rootCmd.Execute() }
+
+// RootCmd exposes the root command for documentation generation and tooling.
+func RootCmd() *cobra.Command { return rootCmd }
