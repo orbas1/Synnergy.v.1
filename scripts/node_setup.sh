@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-set -e
-BIN="$(dirname "$0")/../cmd/scripts/synnergy"
-PORT=${1:-3030}
+set -euo pipefail
+IFS=$'\n\t'
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BIN="$SCRIPT_DIR/../cmd/scripts/synnergy"
+
+PORT="${1:-3030}"
 "$BIN" network start --port "$PORT"
