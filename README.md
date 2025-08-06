@@ -3,7 +3,7 @@
 Synnergy is an experimental blockchain written in Go. This repository contains the command line applications, core packages, GUI front‑ends and example smart contracts used to simulate a full network. The code is primarily intended for research and learning. For the vision and background see [`synnergy-network/WHITEPAPER.md`](synnergy-network/WHITEPAPER.md).
 ## Documentation
 
-All guides and architecture decision records are located under the `docs/` directory and are built with MkDocs. Run `mkdocs serve` for a live server or `mkdocs build` to generate the static site.
+All guides and architecture decision records are located under the `docs/` directory and are built with MkDocs. Run `mkdocs serve` for a live server or `mkdocs build` to generate the static site. For deploying and exercising the full test suite on a server, see [`docs/guides/server_setup_guide.md`](docs/guides/server_setup_guide.md).
 
 
 ## Repository Layout
