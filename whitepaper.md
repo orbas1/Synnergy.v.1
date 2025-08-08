@@ -35,6 +35,8 @@ compression allows historic segments of the chain to be archived efficiently.
 A transaction distribution service splits fees between block producers and
 community pools.
 
+The ledger is maintained as an append‑only chain of blocks rather than a general‑purpose database.  Every state transition is derived from block execution, preserving the blockchain's immutable history.
+
 ### Virtual Machine and Gas Accounting
 Smart contracts execute inside a dedicated virtual machine. Every protocol
 function is assigned a 24‑bit opcode and priced using a deterministic gas table.

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/sirupsen/logrus"
@@ -13,6 +14,8 @@ import (
 func main() {
 	// Load variables from .env if present to mirror the setup guides.
 	gotenv.Load()
+
+	printBanner()
 
 	cfgPath := os.Getenv("SYN_CONFIG")
 	if cfgPath == "" {
@@ -36,4 +39,10 @@ func main() {
 	if err := cli.Execute(); err != nil {
 		logrus.Fatal(err)
 	}
+}
+
+func printBanner() {
+	fmt.Println("==============================")
+	fmt.Println("      Synnergy Network CLI     ")
+	fmt.Println("==============================")
 }
