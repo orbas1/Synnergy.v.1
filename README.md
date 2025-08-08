@@ -52,6 +52,8 @@ export SYN_CONFIG=configs/dev.yaml
 ```
 Helper scripts in `scripts/` can launch multi‑node devnets or testnets for experimentation.
 
+To inspect the opcode catalogue during startup, set `SYN_DEBUG_OPCODES=1` before running the binary.  By default opcode details are suppressed to keep the CLI output concise.
+
 ## Testing and security checks
 Run the unit tests and static analysis tools before submitting changes:
 ```

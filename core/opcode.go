@@ -31,6 +31,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"os"
 	"sync"
 )
 
@@ -1612,6 +1613,8 @@ func init() {
 	// next keeps track of the next ordinal for each category byte.
 	next := make(map[byte]uint32)
 
+	debug := os.Getenv("SYN_DEBUG_OPCODES") != ""
+
 	for i, entry := range catalogue {
 		// Derive the category from the high byte of the provided opcode.
 		cat := byte(entry.op >> 16)
@@ -1624,15 +1627,18 @@ func init() {
 		nameToOp[entry.name] = op
 		Register(op, wrap(entry.name))
 
-		bin := []byte{byte(op >> 16), byte(op >> 8), byte(op)}
-		log.Printf("[OPCODES] %-32s = %08b = 0x%06X",
-			entry.name, bin, op)
+		if debug {
+			bin := []byte{byte(op >> 16), byte(op >> 8), byte(op)}
+			log.Printf("[OPCODES] %-32s = %08b = 0x%06X",
+				entry.name, bin, op)
+		}
 	}
 
 	// Build the gas table once opcodes have been normalised.
 	initGasTable()
-
-	log.Printf("[OPCODES] %d opcodes registered; %d gas-priced", len(opcodeTable), len(gasTable))
+	if debug {
+		log.Printf("[OPCODES] %d opcodes registered; %d gas-priced", len(opcodeTable), len(gasTable))
+	}
 }
 
 // Hex returns the canonical hexadecimal representation (upper-case, 6 digits).
