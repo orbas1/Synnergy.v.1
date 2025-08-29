@@ -142,9 +142,15 @@ func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
 	if len(stakes) == 0 {
 		return ""
 	}
-	var total uint64
+	var total, max uint64
 	for _, s := range stakes {
 		total += s
+		if s > max {
+			max = s
+		}
+	}
+	if len(stakes) > 1 && max*2 > total {
+		return ""
 	}
 	limit := new(big.Int).SetUint64(total)
 	rBig, err := rand.Int(rand.Reader, limit)
@@ -162,10 +168,14 @@ func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
 	return ""
 }
 
-// ValidateSubBlock performs POS and POH validation on a sub-block.  For the
-// prototype this simply returns true.
+// ValidateSubBlock performs simple PoS and PoH validation on a sub-block.
+// It verifies that the sub-block is non-nil, contains transactions and has a
+// valid signature from its declared validator.
 func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {
-	return true
+	if sb == nil || len(sb.Transactions) == 0 {
+		return false
+	}
+	return sb.VerifySignature()
 }
 
 // MineBlock performs a simple SHA-256 proof-of-work using the provided
