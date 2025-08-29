@@ -65,7 +65,7 @@ func (n *Node) MineBlock() *Block {
 		return nil
 	}
 	sb := NewSubBlock(n.Mempool, validator)
-	if !sb.VerifySignature() {
+	if !n.Consensus.ValidateSubBlock(sb) {
 		return nil
 	}
 	n.Mempool = nil
@@ -89,6 +89,7 @@ func (n *Node) MineBlock() *Block {
 	shares := ShareProportional(pool, weights)
 	contract := NewFeeDistributionContract(n.Ledger)
 	contract.Distribute(shares)
+	n.Stakes[validator]++ // reward validator with additional stake
 	return block
 }
 
