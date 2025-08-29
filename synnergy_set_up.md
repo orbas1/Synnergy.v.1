@@ -69,6 +69,7 @@ configuration files.  The most common variables are:
 - `P2P_BOOTSTRAP` – comma-separated list of bootstrap peers
 - `KEYSTORE_PATH` – directory containing node and validator keys
 - `SECURITY_API_ADDR` – address of the security daemon
+- `SYN_DEBUG_OPCODES` – if set, enable verbose opcode logging on startup
 
 Create a `.env` file with these values or export them in your shell before
 running commands.  The `Synnergy.env.sh` script automatically loads a
