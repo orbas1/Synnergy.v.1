@@ -70,6 +70,12 @@ graph TD
         SN --> ST[TotalStaked]
     end
 
+    subgraph ZeroTrust
+        ZE[NewZeroTrustEngine] --> ZO[OpenChannel]
+        ZO --> ZS[Send]
+        ZS --> ZR[Receive]
+    end
+
     subgraph Regulatory
         RN[NewRegulatoryNode] --> RA[ApproveTransaction]
         RN --> RF[FlagEntity]
@@ -110,6 +116,7 @@ graph TD
     CrossChain --> Consensus
     PrivateTransactions --> Consensus
     Staking --> Consensus
+    ZeroTrust --> Compliance
     Regulatory --> CrossChain
     Compliance --> Regulatory
     Compliance --> Consensus

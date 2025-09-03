@@ -17,13 +17,20 @@ func init() {
 	}
 
 	approveCmd := &cobra.Command{
-		Use:   "approve [amount]",
-		Args:  cobra.ExactArgs(1),
-		Short: "Approve or reject a transaction by amount",
+		Use:   "approve [from] [amount]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Approve or reject a transaction",
 		Run: func(cmd *cobra.Command, args []string) {
-			amt, _ := strconv.ParseUint(args[0], 10, 64)
-			tx := core.Transaction{Amount: amt}
-			fmt.Println(regNode.ApproveTransaction(tx))
+			amt, _ := strconv.ParseUint(args[1], 10, 64)
+			tx := core.Transaction{From: args[0], Amount: amt}
+			if regNode.ApproveTransaction(tx) {
+				fmt.Println("approved")
+				return
+			}
+			fmt.Println("rejected")
+			for _, l := range regNode.Logs(args[0]) {
+				fmt.Println("-", l)
+			}
 		},
 	}
 

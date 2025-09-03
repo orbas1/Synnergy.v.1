@@ -24,15 +24,15 @@ func TestZeroTrustEngineBasicFlow(t *testing.T) {
 	if bytes.Equal(ct, payload) {
 		t.Fatalf("ciphertext should differ from plaintext")
 	}
-	pt, err := Decrypt(key, ct)
+	pt, err := eng.Receive("ch1", 0)
 	if err != nil {
-		t.Fatalf("decrypt: %v", err)
+		t.Fatalf("receive: %v", err)
 	}
 	if !bytes.Equal(pt, payload) {
 		t.Fatalf("expected %q got %q", payload, pt)
 	}
 	msgs := eng.Messages("ch1")
-	if len(msgs) != 1 || !bytes.Equal(msgs[0], ct) {
+	if len(msgs) != 1 || !bytes.Equal(msgs[0].Cipher, ct) {
 		t.Fatalf("message retrieval failed")
 	}
 	if err := eng.CloseChannel("ch1"); err != nil {
@@ -89,9 +89,9 @@ func TestZeroTrustEngineMessagesIsolation(t *testing.T) {
 	if len(msgs) != 1 {
 		t.Fatalf("expected 1 message, got %d", len(msgs))
 	}
-	msgs[0][0] ^= 0xFF // mutate returned slice
+	msgs[0].Cipher[0] ^= 0xFF // mutate returned slice
 	msgs2 := eng.Messages("iso")
-	if !bytes.Equal(msgs2[0], ct) {
+	if !bytes.Equal(msgs2[0].Cipher, ct) {
 		t.Fatalf("internal message mutated via external modification")
 	}
 }

@@ -15,4 +15,4 @@ Security modules enforce network protection mechanisms including firewalls, anom
 - cli/stake_penalty.go
 - cli/zero_trust_data_channels.go
 
-Collectively, these components harden the platform against threats and enforce secure communication channels.
+Collectively, these components harden the platform against threats and enforce secure communication channels. Stage 13 upgrades the zero trust engine with ed25519 signatures layered over AES-GCM encryption so that every message is both confidential and authenticated.

@@ -75,6 +75,10 @@ func main() {
 	_ = core.NewWarfareNode(core.NewNode("cli-war", "cli-war", core.NewLedger()))
 	_ = core.NewWatchtowerNode("cli-watchtower", nil)
 
+	// Preload stage 13 modules for secure channels and compliance checks.
+	_ = core.NewZeroTrustEngine()
+	_ = core.NewRegulatoryNode("cli-regnode", core.NewRegulatoryManager())
+
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 
 	if err := cli.Execute(); err != nil {
