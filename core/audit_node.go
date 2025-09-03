@@ -34,6 +34,9 @@ func (n *AuditNode) LogEvent(address, event string, metadata map[string]string) 
 	if n.Manager == nil {
 		return errors.New("audit manager not configured")
 	}
+	if address == "" || event == "" {
+		return ErrInvalidAuditEntry
+	}
 	return n.Manager.Log(address, event, metadata)
 }
 

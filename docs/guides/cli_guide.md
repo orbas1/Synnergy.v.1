@@ -4,6 +4,12 @@
 
 Synnergy blockchain CLI
 
+### Stage 2 – AI contracts and audit modules
+
+Commands `synnergy ai_contract`, `synnergy audit` and `synnergy audit_node`
+provide AI-enhanced contract deployment and on-chain audit logging. Their
+`list` subcommands accept `--json` to emit machine-readable output.
+
 ### Options
 
 ```

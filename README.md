@@ -11,6 +11,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Pluggable node types for mining, staking, authority, regulatory, watchtower and other roles.
 - Extensive CLI built with [Cobra](https://github.com/spf13/cobra) located under `cli/`.
 - AI modules for model management, inference analysis and anomaly detection.
+- AI-enhanced contract registry with on-chain audit logging.
 - Cross‑chain bridge and protocol support.
 - Role‑based access control with validated address utilities.
 - YAML based configuration for development, test and production environments.

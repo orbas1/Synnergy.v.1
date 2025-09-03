@@ -62,7 +62,10 @@ AI features are first‑class citizens. Modules such as
 `ai_model_management.go`, `ai_training.go`, `ai_inference_analysis.go` and
 `ai_drift_monitor.go` allow models to be trained, evaluated and deployed on
 chain. Secure storage keeps parameters encrypted and an anomaly detection module
-scans transactions for fraud patterns or KYC signals.
+scans transactions for fraud patterns or KYC signals. An AI-enhanced contract
+registry exposes models as on-chain contracts with deterministic gas pricing,
+while an accompanying audit subsystem records tamper-evident logs accessible
+through specialised audit nodes.
 
 ### Cross‑Chain and Interoperability
 Synnergy ships with extensive cross‑chain tooling. Packages including

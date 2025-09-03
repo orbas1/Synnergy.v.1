@@ -36,7 +36,8 @@
 | `ApproveTransaction` | `1` |
 | `ArchiveBlock` | `1` |
 | `AttachBiometric` | `1` |
-| `AuditTrail` | `1` |
+| `Audit_Log` | `100` |
+| `Audit_Events` | `20` |
 | `Authenticate` | `1` |
 | `AuthorizeRelayer` | `1` |
 | `Balance` | `1` |
@@ -90,7 +91,7 @@
 | `Delegate` | `1` |
 | `Delete` | `1` |
 | `Deploy` | `1` |
-| `DeployAIContract` | `1` |
+| `DeployAIContract` | `5000` |
 | `Deposit` | `1` |
 | `Deregister` | `1` |
 | `DialSeed` | `1` |
@@ -183,7 +184,7 @@
 | `Info` | `1` |
 | `InitialPrice` | `1` |
 | `Invoke` | `1` |
-| `InvokeAIContract` | `1` |
+| `InvokeAIContract` | `750` |
 | `IsActive` | `1` |
 | `IsAllowed` | `1` |
 | `IsAnomalous` | `1` |

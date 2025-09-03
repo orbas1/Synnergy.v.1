@@ -71,6 +71,12 @@ how specialised assets can be modelled on top of the base abstractions:
 
 These examples can be used as templates when designing new token types.
 
+## AI model access tokens
+
+Stage 2 introduces AI-enhanced contracts and audit modules. Projects can mint
+tokens that meter access to deployed models or audit logs, leveraging the
+standard registry and `BaseToken` abstractions.
+
 ## Creating a new token
 
 1. Decide whether the token is fungible.  For fungible tokens embed `*BaseToken`.

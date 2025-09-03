@@ -34,6 +34,7 @@ func main() {
 
 	// Warm up caches for shared resources.
 	synn.LoadGasTable()
+	logrus.Debug("gas table loaded")
 
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 

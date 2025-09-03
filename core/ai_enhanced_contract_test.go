@@ -1,20 +1,26 @@
 package core
 
-import "testing"
+import (
+	"testing"
+
+	synnergy "synnergy"
+)
 
 func TestAIContractRegistry(t *testing.T) {
 	vm := NewSimpleVM()
 	_ = vm.Start()
 	base := NewContractRegistry(vm)
 	aiReg := NewAIContractRegistry(base)
-	addr, err := aiReg.DeployAIContract([]byte{0x01}, "modelhash", "", 5, "owner")
+	deployGas := synnergy.GasCost("DeployAIContract")
+	addr, err := aiReg.DeployAIContract([]byte{0x01}, "modelhash", "", deployGas, "owner")
 	if err != nil {
 		t.Fatalf("deploy: %v", err)
 	}
 	if h, ok := aiReg.ModelHash(addr); !ok || h != "modelhash" {
 		t.Fatalf("model hash mismatch")
 	}
-	out, _, err := aiReg.InvokeAIContract(addr, []byte("input"), 5)
+	invokeGas := synnergy.GasCost("InvokeAIContract")
+	out, _, err := aiReg.InvokeAIContract(addr, []byte("input"), invokeGas)
 	if err != nil {
 		t.Fatalf("invoke: %v", err)
 	}

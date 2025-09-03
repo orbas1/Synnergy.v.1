@@ -6,6 +6,8 @@ AI modules support intelligent contract capabilities, model management, and anom
 - ai.go
 - ai_drift_monitor.go
 - ai_enhanced_contract.go
+- audit_management.go
+- audit_node.go
 - ai_inference_analysis.go
 - ai_model_management.go
 - ai_secure_storage.go
@@ -14,5 +16,8 @@ AI modules support intelligent contract capabilities, model management, and anom
 
 **Related CLI Files**
 - cli/ai_contract.go
+- cli/audit.go
+- cli/audit_node.go
 
-These modules integrate machine learning features with contract execution and monitoring services.
+These modules integrate machine learning features with contract execution and
+provide on-chain audit logging through dedicated audit nodes.
