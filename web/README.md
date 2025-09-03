@@ -27,3 +27,9 @@ Deploy the `web` directory to Vercel. API routes used by the interface include:
 - `POST /api/run` – execute a command with arguments
 
 Restrict access appropriately when exposing this interface in production environments.
+
+## Stage 3 additions
+
+An example page at `/authority` demonstrates how the JSON‑emitting CLI can power
+custom dashboards. It lists authority nodes by invoking `synnergy authority list
+--json` via the existing API layer.

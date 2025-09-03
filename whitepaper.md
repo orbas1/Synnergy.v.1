@@ -75,6 +75,15 @@ connections to external networks, register contract mappings and relay
 transactions. An agnostic protocol layer enables heterogeneous chains to
 communicate without trusting a central intermediary.
 
+### Authority and Banking Nodes
+Stage 3 introduces governance‑focused modules. The `AuthorityNodeRegistry` and
+`AuthorityApplicationManager` coordinate admission of validator candidates with
+auditable voting. `BankInstitutionalNode` models regulated financial
+participants, allowing institutions to register and interface with the ledger
+under permissioned rules. These components expose JSON‑emitting CLI commands and
+corresponding opcodes so that web interfaces, wallets and governance tools can
+query network state deterministically.
+
 ### Specialised Nodes
 Beyond standard validators the repository defines numerous node variants such as
 mining, mobile mining, energy‑efficient, environmental monitoring, geospatial,

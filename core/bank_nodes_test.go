@@ -12,9 +12,18 @@ func TestBankNodes(t *testing.T) {
 	if c.MonetaryPolicy != "policy" {
 		t.Fatal("policy not set")
 	}
-	s := NewCustodialNode("id3", "addr3", ledger)
-	s.Custody("user", 10)
-	if ok := s.Release("user", 5); !ok {
-		t.Fatal("release failed")
-	}
+        s := NewCustodialNode("id3", "addr3", ledger)
+        s.Custody("user", 10)
+        if ok := s.Release("user", 5); !ok {
+                t.Fatal("release failed")
+        }
+
+        b.RegisterInstitution("inst1")
+        if !b.IsRegistered("inst1") {
+                t.Fatal("institution not registered")
+        }
+        b.RemoveInstitution("inst1")
+        if b.IsRegistered("inst1") {
+                t.Fatal("institution still present")
+        }
 }

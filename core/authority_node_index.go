@@ -1,6 +1,9 @@
 package core
 
-import "sync"
+import (
+        "encoding/json"
+        "sync"
+)
 
 // AuthorityNodeIndex maintains a lookup of authority nodes by address.
 type AuthorityNodeIndex struct {
@@ -47,4 +50,20 @@ func (idx *AuthorityNodeIndex) List() []*AuthorityNode {
 		out = append(out, n)
 	}
 	return out
+}
+
+// Snapshot returns a copy of the underlying map for safe iteration.
+func (idx *AuthorityNodeIndex) Snapshot() map[string]*AuthorityNode {
+        idx.mu.RLock()
+        defer idx.mu.RUnlock()
+        out := make(map[string]*AuthorityNode, len(idx.nodes))
+        for k, v := range idx.nodes {
+                out[k] = v
+        }
+        return out
+}
+
+// MarshalJSON emits the index as an array for easier consumption via the CLI.
+func (idx *AuthorityNodeIndex) MarshalJSON() ([]byte, error) {
+        return json.Marshal(idx.List())
 }

@@ -1,10 +1,11 @@
 package core
 
 import (
-	"errors"
-	"fmt"
-	"sync"
-	"time"
+        "encoding/json"
+        "errors"
+        "fmt"
+        "sync"
+        "time"
 )
 
 // AuthorityApplication represents a request to become an authority node.
@@ -40,21 +41,24 @@ func NewAuthorityApplicationManager(reg *AuthorityNodeRegistry, ttl time.Duratio
 
 // Submit creates a new application and returns its ID.
 func (m *AuthorityApplicationManager) Submit(candidate, role, desc string) string {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	id := m.nextID
-	m.nextID++
-	app := &AuthorityApplication{
-		ID:         fmt.Sprintf("%d", id),
-		Candidate:  candidate,
-		Role:       role,
-		Desc:       desc,
-		Approvals:  make(map[string]bool),
-		Rejections: make(map[string]bool),
-		ExpiresAt:  time.Now().Add(m.ttl),
-	}
-	m.apps[app.ID] = app
-	return app.ID
+        m.mu.Lock()
+        defer m.mu.Unlock()
+        if candidate == "" || role == "" {
+                return ""
+        }
+        id := m.nextID
+        m.nextID++
+        app := &AuthorityApplication{
+                ID:         fmt.Sprintf("%d", id),
+                Candidate:  candidate,
+                Role:       role,
+                Desc:       desc,
+                Approvals:  make(map[string]bool),
+                Rejections: make(map[string]bool),
+                ExpiresAt:  time.Now().Add(m.ttl),
+        }
+        m.apps[app.ID] = app
+        return app.ID
 }
 
 // Vote records a vote on an application.
@@ -89,12 +93,14 @@ func (m *AuthorityApplicationManager) Finalize(id string) error {
 	if app.Finalized {
 		return errors.New("already finalised")
 	}
-	app.Finalized = true
-	if len(app.Approvals) > len(app.Rejections) {
-		_, err := m.registry.Register(app.Candidate, app.Role)
-		return err
-	}
-	return nil
+        app.Finalized = true
+        approved := len(app.Approvals) > len(app.Rejections)
+        if approved {
+                if _, err := m.registry.Register(app.Candidate, app.Role); err != nil {
+                        return err
+                }
+        }
+        return nil
 }
 
 // Tick removes expired applications.
@@ -128,4 +134,18 @@ func (m *AuthorityApplicationManager) List() []*AuthorityApplication {
 		out = append(out, app)
 	}
 	return out
+}
+
+// MarshalJSON provides deterministic output for CLI and GUI integration.
+func (a *AuthorityApplication) MarshalJSON() ([]byte, error) {
+        type alias AuthorityApplication
+        return json.Marshal(&struct {
+                Approvals int `json:"approvals"`
+                Rejections int `json:"rejections"`
+                *alias
+        }{
+                Approvals:  len(a.Approvals),
+                Rejections: len(a.Rejections),
+                alias:      (*alias)(a),
+        })
 }

@@ -22,3 +22,21 @@ func TestAuthorityNodeRegistry(t *testing.T) {
 		t.Fatalf("deregister failed")
 	}
 }
+
+func TestAuthorityNodeJSONAndRemoveVote(t *testing.T) {
+        reg := NewAuthorityNodeRegistry()
+        node, err := reg.Register("addr1", "validator")
+        if err != nil {
+                t.Fatalf("register: %v", err)
+        }
+        if err := reg.Vote("voter", "addr1"); err != nil {
+                t.Fatalf("vote: %v", err)
+        }
+        reg.RemoveVote("voter", "addr1")
+        if node.TotalVotes() != 0 {
+                t.Fatalf("expected votes cleared")
+        }
+        if _, err := node.MarshalJSON(); err != nil {
+                t.Fatalf("marshal: %v", err)
+        }
+}

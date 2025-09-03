@@ -19,3 +19,19 @@ func TestAuthorityApplication(t *testing.T) {
 		t.Fatalf("candidate not registered after finalise")
 	}
 }
+
+func TestAuthorityApplicationJSON(t *testing.T) {
+        reg := NewAuthorityNodeRegistry()
+        mgr := NewAuthorityApplicationManager(reg, time.Hour)
+        id := mgr.Submit("cand1", "validator", "test")
+        if id == "" {
+                t.Fatalf("empty application id")
+        }
+        app, err := mgr.Get(id)
+        if err != nil {
+                t.Fatalf("get: %v", err)
+        }
+        if _, err := app.MarshalJSON(); err != nil {
+                t.Fatalf("marshal: %v", err)
+        }
+}

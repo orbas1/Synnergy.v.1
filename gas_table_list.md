@@ -613,3 +613,7 @@
 | `sqrt` | `1` |
 | `votingPowerLocked` | `1` |
 | `wrap` | `1` |
+| `BankNode_ListInstitutions` | `200` |
+| `BankNode_RegisterInstitution` | `250` |
+| `BankNode_RemoveInstitution` | `250` |
+| `RemoveVote` | `150` |

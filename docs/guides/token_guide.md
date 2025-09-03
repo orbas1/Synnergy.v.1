@@ -77,6 +77,14 @@ Stage 2 introduces AI-enhanced contracts and audit modules. Projects can mint
 tokens that meter access to deployed models or audit logs, leveraging the
 standard registry and `BaseToken` abstractions.
 
+## Institutional and governance tokens
+
+Stage 3 adds authority and banking node modules. Tokens representing voting
+power or institutional membership can be combined with the `AuthorityNodeRegistry`
+and `BankInstitutionalNode` to restrict transfers or confer special privileges.
+The CLI outputs JSON, allowing web interfaces to track tokenised governance
+rights alongside registered financial institutions.
+
 ## Creating a new token
 
 1. Decide whether the token is fungible.  For fungible tokens embed `*BaseToken`.
