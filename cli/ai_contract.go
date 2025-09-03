@@ -2,6 +2,7 @@ package cli
 
 import (
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"strconv"
@@ -83,16 +84,32 @@ func init() {
 		},
 	}
 
+	var listJSON bool
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List deployed AI contracts",
 		Run: func(cmd *cobra.Command, args []string) {
+			if listJSON {
+				type item struct {
+					Address   string `json:"address"`
+					ModelHash string `json:"model_hash"`
+				}
+				var out []item
+				for _, c := range baseReg.List() {
+					h, _ := aiRegistry.ModelHash(c.Address)
+					out = append(out, item{c.Address, h})
+				}
+				b, _ := json.MarshalIndent(out, "", "  ")
+				fmt.Println(string(b))
+				return
+			}
 			for _, c := range baseReg.List() {
 				h, _ := aiRegistry.ModelHash(c.Address)
 				fmt.Printf("%s %s\n", c.Address, h)
 			}
 		},
 	}
+	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	aiCmd.AddCommand(deployCmd, invokeCmd, modelCmd, listCmd)
 	rootCmd.AddCommand(aiCmd)

@@ -219,8 +219,8 @@ Operations related to compliance.
 | `Compliance_MonitorTx` | `0` |
 | `Compliance_VerifyZKP` | `0` |
 | `Audit_Init` | `0` |
-| `Audit_Log` | `0` |
-| `Audit_Events` | `0` |
+| `Audit_Log` | `100` |
+| `Audit_Events` | `20` |
 | `Audit_Close` | `0` |
 | `InitComplianceManager` | `1000` |
 | `SuspendAccount` | `400` |
@@ -990,8 +990,8 @@ Operations related to networking.
 | `NewAuditNode` | `0` |
 | `AuditNode_Start` | `0` |
 | `AuditNode_Stop` | `0` |
-| `AuditNode_Log` | `0` |
-| `AuditNode_Events` | `0` |
+| `AuditNode_Log` | `100` |
+| `AuditNode_Events` | `20` |
 | `NewConnPool` | `800` |
 | `AcquireConn` | `50` |
 | `ReleaseConn` | `20` |

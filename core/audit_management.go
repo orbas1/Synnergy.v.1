@@ -1,6 +1,7 @@
 package core
 
 import (
+	"errors"
 	"sync"
 	"time"
 )
@@ -20,6 +21,9 @@ type AuditManager struct {
 	records map[string][]AuditEntry
 }
 
+// ErrInvalidAuditEntry is returned when required fields are missing.
+var ErrInvalidAuditEntry = errors.New("address and event required")
+
 // NewAuditManager creates a new AuditManager instance.
 func NewAuditManager() *AuditManager {
 	return &AuditManager{records: make(map[string][]AuditEntry)}
@@ -27,6 +31,12 @@ func NewAuditManager() *AuditManager {
 
 // Log records an audit event for the given address.
 func (m *AuditManager) Log(address, event string, metadata map[string]string) error {
+	if address == "" || event == "" {
+		return ErrInvalidAuditEntry
+	}
+	if metadata == nil {
+		metadata = make(map[string]string)
+	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	entry := AuditEntry{

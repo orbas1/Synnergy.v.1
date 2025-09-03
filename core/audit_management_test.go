@@ -19,3 +19,10 @@ func TestAuditManager_LogAndList(t *testing.T) {
 		t.Fatalf("metadata not stored")
 	}
 }
+
+func TestAuditManager_Invalid(t *testing.T) {
+	m := NewAuditManager()
+	if err := m.Log("", "evt", nil); err == nil {
+		t.Fatalf("expected error for empty fields")
+	}
+}

@@ -3,6 +3,7 @@ package synnergy
 import (
 	"bufio"
 	"bytes"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -30,6 +31,7 @@ func loadGasTable() {
 	path := filepath.Join(filepath.Dir(filename), "gas_table_list.md")
 	data, err := os.ReadFile(path)
 	if err != nil {
+		log.Printf("gas_table: %v", err)
 		gasCache = tbl
 		return
 	}

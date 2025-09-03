@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 
@@ -31,17 +32,24 @@ func init() {
 		},
 	}
 
+	var jsonOut bool
 	listCmd := &cobra.Command{
 		Use:   "list [address]",
 		Args:  cobra.ExactArgs(1),
 		Short: "List audit events for an address",
 		Run: func(cmd *cobra.Command, args []string) {
 			entries := auditManager.List(args[0])
+			if jsonOut {
+				b, _ := json.MarshalIndent(entries, "", "  ")
+				fmt.Println(string(b))
+				return
+			}
 			for _, e := range entries {
 				fmt.Printf("%s %s %v\n", e.Timestamp.Format("2006-01-02T15:04:05"), e.Event, e.Metadata)
 			}
 		},
 	}
+	listCmd.Flags().BoolVar(&jsonOut, "json", false, "output as JSON")
 
 	auditCmd.AddCommand(logCmd, listCmd)
 	rootCmd.AddCommand(auditCmd)
