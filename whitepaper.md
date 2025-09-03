@@ -69,6 +69,11 @@ network lifecycle management, peer discovery and address utilities. Commands now
 propagate errors to calling environments and emit structured output, aligning CLI
 operations with the gas‑priced virtual machine and consensus layers.
 
+Stage 22 extends these improvements to AI contract and audit tooling. The
+associated CLI modules expose JSON output and consistent error handling so that
+web dashboards and automated workflows can interact with contract registries and
+audit logs with minimal coupling.
+
 ### Virtual Machine and Gas Accounting
 Smart contracts execute inside a dedicated virtual machine. Every protocol
 function is assigned a 24‑bit opcode and priced using a deterministic gas table.

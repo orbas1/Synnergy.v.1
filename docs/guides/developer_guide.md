@@ -25,6 +25,8 @@ implemented incrementally.
   support enterprise decision making.
 - **Extensive GUI suite** – wallet, explorers and marketplaces provide rich web
   interfaces backed by REST services.
+- **Structured CLI output** – contract and audit commands emit JSON and return
+  errors, easing automation and integration with external dashboards.
 
 ## Role-based Financial Controls
 
