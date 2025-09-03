@@ -4,6 +4,8 @@
 
 Synnergy blockchain CLI
 
+> Stage 6 introduces structured logging for compliance, connection pool and consensus commands.
+
 ### Options
 
 ```

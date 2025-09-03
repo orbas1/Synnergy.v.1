@@ -3,13 +3,14 @@ package synnergy
 import (
 	"bufio"
 	"bytes"
-	"log"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strconv"
 	"strings"
 	"sync"
+
+	ilog "synnergy/internal/log"
 )
 
 // GasTable maps opcode names to their base gas cost.
@@ -20,9 +21,9 @@ type GasTable map[string]uint64
 const DefaultGasCost uint64 = 1
 
 var (
-        gasOnce  sync.Once
-        gasCache GasTable
-        gasMu    sync.RWMutex
+	gasOnce  sync.Once
+	gasCache GasTable
+	gasMu    sync.RWMutex
 )
 
 // loadGasTable parses gas_table_list.md and caches the result.
@@ -32,7 +33,7 @@ func loadGasTable() {
 	path := filepath.Join(filepath.Dir(filename), "gas_table_list.md")
 	data, err := os.ReadFile(path)
 	if err != nil {
-		log.Printf("gas_table: %v", err)
+		ilog.Error("gas_table_load", "error", err)
 		gasCache = tbl
 		return
 	}
@@ -52,6 +53,7 @@ func loadGasTable() {
 			tbl[name] = cost
 		} else {
 			tbl[name] = DefaultGasCost
+			ilog.Error("gas_table_parse", "opcode", name)
 		}
 	}
 	gasCache = tbl
@@ -59,29 +61,29 @@ func loadGasTable() {
 
 // LoadGasTable returns the cached gas table, loading it on first use.
 func LoadGasTable() GasTable {
-        gasOnce.Do(loadGasTable)
-        gasMu.RLock()
-        defer gasMu.RUnlock()
-        return gasCache
+	gasOnce.Do(loadGasTable)
+	gasMu.RLock()
+	defer gasMu.RUnlock()
+	return gasCache
 }
 
 // GasCost returns the gas price for a given opcode name. If the opcode is not
 // present in the table, DefaultGasCost is returned.
 func GasCost(opcode string) uint64 {
-        tbl := LoadGasTable()
-        if c, ok := tbl[opcode]; ok {
-                return c
-        }
-        return DefaultGasCost
+	tbl := LoadGasTable()
+	if c, ok := tbl[opcode]; ok {
+		return c
+	}
+	return DefaultGasCost
 }
 
 // RegisterGasCost allows the CLI or tests to inject additional opcode pricing
 // at runtime. It is safe for concurrent use.
 func RegisterGasCost(name string, cost uint64) {
-        gasMu.Lock()
-        defer gasMu.Unlock()
-        if gasCache == nil {
-                gasCache = make(GasTable)
-        }
-        gasCache[name] = cost
+	gasMu.Lock()
+	defer gasMu.Unlock()
+	if gasCache == nil {
+		gasCache = make(GasTable)
+	}
+	gasCache[name] = cost
 }

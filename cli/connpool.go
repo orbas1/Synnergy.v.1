@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"synnergy/core"
+	ilog "synnergy/internal/log"
 )
 
 var pool = core.NewConnectionPool(8)
@@ -13,16 +14,23 @@ func init() {
 
 	statsCmd := &cobra.Command{Use: "stats", Short: "Show pool statistics", Run: func(cmd *cobra.Command, args []string) {
 		s := pool.Stats()
+		ilog.Info("cli_pool_stats", "active", s.Active, "capacity", s.Capacity)
 		fmt.Printf("active: %d capacity: %d\n", s.Active, s.Capacity)
 	}}
 
 	dialCmd := &cobra.Command{Use: "dial [addr]", Args: cobra.ExactArgs(1), Short: "Dial an address using the pool", RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := pool.Dial(args[0])
+		if err == nil {
+			ilog.Info("cli_pool_dial", "id", args[0])
+		} else {
+			ilog.Error("cli_pool_dial", "error", err)
+		}
 		return err
 	}}
 
 	closeCmd := &cobra.Command{Use: "close", Short: "Close the pool", Run: func(cmd *cobra.Command, args []string) {
 		pool.Close()
+		ilog.Info("cli_pool_close")
 	}}
 
 	poolCmd.AddCommand(statsCmd, dialCmd, closeCmd)

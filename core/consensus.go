@@ -4,6 +4,8 @@ import (
 	"crypto/rand"
 	"math/big"
 	"strings"
+
+	ilog "synnergy/internal/log"
 )
 
 // ConsensusWeights holds the relative weights assigned to each consensus
@@ -83,6 +85,7 @@ func (sc *SynnergyConsensus) AdjustWeights(D, S float64) {
 	sc.Weights.PoW /= total
 	sc.Weights.PoS /= total
 	sc.Weights.PoH /= total
+	ilog.Info("adjust_weights", "pow", sc.Weights.PoW, "pos", sc.Weights.PoS, "poh", sc.Weights.PoH)
 }
 
 // Tload computes the network-load component of the transition threshold.
@@ -129,17 +132,20 @@ func (sc *SynnergyConsensus) SetAvailability(pow, pos, poh bool) {
 	sc.PoWAvailable = pow
 	sc.PoSAvailable = pos
 	sc.PoHAvailable = poh
+	ilog.Info("set_availability", "pow", pow, "pos", pos, "poh", poh)
 }
 
 // SetPoWRewards indicates whether mining rewards remain for PoW miners.
 func (sc *SynnergyConsensus) SetPoWRewards(enabled bool) {
 	sc.PoWRewards = enabled
+	ilog.Info("set_pow_rewards", "enabled", enabled)
 }
 
 // SelectValidator returns a validator address using a weighted random selection
 // based on the provided stake map.
 func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
 	if len(stakes) == 0 {
+		ilog.Info("select_validator", "result", "")
 		return ""
 	}
 	var total, max uint64
@@ -150,6 +156,7 @@ func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
 		}
 	}
 	if len(stakes) > 1 && max*2 > total {
+		ilog.Info("select_validator", "result", "")
 		return ""
 	}
 	limit := new(big.Int).SetUint64(total)
@@ -162,9 +169,11 @@ func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
 	for addr, s := range stakes {
 		cumulative += s
 		if r < cumulative {
+			ilog.Info("select_validator", "result", addr)
 			return addr
 		}
 	}
+	ilog.Info("select_validator", "result", "")
 	return ""
 }
 
@@ -189,6 +198,7 @@ func (sc *SynnergyConsensus) MineBlock(b *Block, difficulty uint8) {
 		if strings.HasPrefix(hash, target) {
 			b.Nonce = nonce
 			b.Hash = hash
+			ilog.Info("mine_block", "nonce", nonce)
 			return
 		}
 		nonce++

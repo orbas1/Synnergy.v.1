@@ -3,6 +3,8 @@ package core
 import (
 	"errors"
 	"sync"
+
+	ilog "synnergy/internal/log"
 )
 
 // Connection represents a lightweight placeholder for an outbound connection.
@@ -31,13 +33,16 @@ func (p *ConnectionPool) Acquire(id string) (*Connection, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if c, ok := p.conns[id]; ok {
+		ilog.Info("conn_reuse", "id", id)
 		return c, nil
 	}
 	if len(p.conns) >= p.max {
+		ilog.Error("conn_acquire", "error", "pool_exhausted")
 		return nil, errors.New("connection pool exhausted")
 	}
 	c := &Connection{ID: id}
 	p.conns[id] = c
+	ilog.Info("conn_new", "id", id)
 	return c, nil
 }
 
@@ -46,20 +51,27 @@ func (p *ConnectionPool) Release(id string) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	delete(p.conns, id)
+	ilog.Info("conn_release", "id", id)
 }
 
 // Size returns the current number of active connections.
 func (p *ConnectionPool) Size() int {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	return len(p.conns)
+	size := len(p.conns)
+	ilog.Info("conn_size", "size", size)
+	return size
 }
 
 // Dial is a convenience wrapper around Acquire used by the CLI. It either
 // returns an existing connection for the address or creates a new one if
 // capacity allows.
 func (p *ConnectionPool) Dial(addr string) (*Connection, error) {
-	return p.Acquire(addr)
+	c, err := p.Acquire(addr)
+	if err == nil {
+		ilog.Info("conn_dial", "id", addr)
+	}
+	return c, err
 }
 
 // Close removes all connections from the pool, effectively resetting it.
@@ -67,6 +79,7 @@ func (p *ConnectionPool) Close() {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	p.conns = make(map[string]*Connection)
+	ilog.Info("conn_close")
 }
 
 // PoolStats summarises connection usage and capacity for diagnostic output.
@@ -79,5 +92,7 @@ type PoolStats struct {
 func (p *ConnectionPool) Stats() PoolStats {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	return PoolStats{Active: len(p.conns), Capacity: p.max}
+	stats := PoolStats{Active: len(p.conns), Capacity: p.max}
+	ilog.Info("conn_stats", "active", stats.Active, "capacity", stats.Capacity)
+	return stats
 }

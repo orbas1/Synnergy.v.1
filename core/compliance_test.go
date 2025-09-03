@@ -1,6 +1,10 @@
 package core
 
-import "testing"
+import (
+	"crypto/sha256"
+	"encoding/hex"
+	"testing"
+)
 
 func TestComplianceServiceKYCAndRisk(t *testing.T) {
 	svc := NewComplianceService()
@@ -18,9 +22,18 @@ func TestComplianceServiceKYCAndRisk(t *testing.T) {
 }
 
 func TestComplianceServiceMonitorTransaction(t *testing.T) {
-        svc := NewComplianceService()
-        tx := ComplianceTransaction{ID: "tx1", From: "a", Amount: 100}
-        if !svc.MonitorTransaction(tx, 50) {
-                t.Fatalf("expected anomaly detection")
-        }
+	svc := NewComplianceService()
+	tx := ComplianceTransaction{ID: "tx1", From: "a", Amount: 100}
+	if !svc.MonitorTransaction(tx, 50) {
+		t.Fatalf("expected anomaly detection")
+	}
+}
+
+func TestComplianceServiceVerifyZKP(t *testing.T) {
+	svc := NewComplianceService()
+	blob := []byte("data")
+	h := sha256.Sum256(blob)
+	if !svc.VerifyZKP(blob, hex.EncodeToString(h[:]), "unused") {
+		t.Fatalf("expected verification success")
+	}
 }

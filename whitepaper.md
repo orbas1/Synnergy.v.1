@@ -59,6 +59,9 @@ additional verification for sensitive workflows. Templates are hashed and
 bound to ECDSA public keys so that enrollment and verification require
 cryptographic signatures, preventing tampering or replay attacks.
 
+### Logging and Instrumentation
+Stage 6 introduces a unified logging facade that emits JSON structured events across compliance, consensus and networking modules. Operators can stream these logs to external observability stacks for auditing and real-time monitoring.
+
 ### AI Services
 AI features are first‑class citizens. Modules such as
 `ai_model_management.go`, `ai_training.go`, `ai_inference_analysis.go` and

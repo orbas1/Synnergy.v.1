@@ -8,6 +8,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
+	ilog "synnergy/internal/log"
 )
 
 var compliance = core.NewComplianceService()
@@ -35,6 +36,7 @@ func init() {
 			if err != nil {
 				return err
 			}
+			ilog.Info("cli_validate_kyc", "address", input.Address)
 			fmt.Println("commitment:", commit)
 			return nil
 		},
@@ -46,6 +48,7 @@ func init() {
 		Short: "Remove a user's KYC data.",
 		Run: func(cmd *cobra.Command, args []string) {
 			compliance.EraseKYC(args[0])
+			ilog.Info("cli_erase_kyc", "address", args[0])
 		},
 	}
 
@@ -56,6 +59,7 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			sev, _ := strconv.Atoi(args[1])
 			compliance.RecordFraud(args[0], sev)
+			ilog.Info("cli_fraud", "address", args[0], "severity", sev)
 		},
 	}
 
@@ -64,7 +68,9 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Retrieve accumulated fraud risk score.",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(compliance.RiskScore(args[0]))
+			score := compliance.RiskScore(args[0])
+			ilog.Info("cli_risk", "address", args[0], "score", score)
+			fmt.Println(score)
 		},
 	}
 
@@ -77,6 +83,7 @@ func init() {
 				b, _ := json.Marshal(e)
 				fmt.Println(string(b))
 			}
+			ilog.Info("cli_audit", "address", args[0])
 		},
 	}
 
@@ -95,8 +102,10 @@ func init() {
 			}
 			thr, _ := strconv.ParseFloat(args[1], 64)
 			if compliance.MonitorTransaction(tx, thr) {
+				ilog.Info("cli_monitor", "id", tx.ID, "anomaly", true)
 				fmt.Println("anomaly detected")
 			} else {
+				ilog.Info("cli_monitor", "id", tx.ID, "anomaly", false)
 				fmt.Println("ok")
 			}
 			return nil
@@ -113,6 +122,7 @@ func init() {
 				return err
 			}
 			ok := compliance.VerifyZKP(b, args[1], args[2])
+			ilog.Info("cli_verify_zkp", "result", ok)
 			fmt.Println(ok)
 			return nil
 		},
