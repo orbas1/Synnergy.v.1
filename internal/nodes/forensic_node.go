@@ -1,6 +1,9 @@
 package nodes
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 // TransactionLite represents the minimal transaction information captured by
 // a forensic node without requiring full ledger access.
@@ -33,3 +36,56 @@ type ForensicNodeInterface interface {
 	// NetworkTraces returns the list of captured network traces.
 	NetworkTraces() []NetworkTrace
 }
+
+// ForensicNode provides an in-memory implementation of ForensicNodeInterface
+// backed by a BasicNode for standard lifecycle management. Data recorded by the
+// node is stored in-memory and therefore only intended for testing and
+// development networks.
+type ForensicNode struct {
+	*BasicNode
+	mu     sync.RWMutex
+	txs    []TransactionLite
+	traces []NetworkTrace
+}
+
+// NewForensicNode creates a new forensic node with the provided identifier.
+func NewForensicNode(id Address) *ForensicNode {
+	return &ForensicNode{BasicNode: NewBasicNode(id)}
+}
+
+// RecordTransaction saves a transaction snapshot for later inspection.
+func (n *ForensicNode) RecordTransaction(tx TransactionLite) error {
+	n.mu.Lock()
+	n.txs = append(n.txs, tx)
+	n.mu.Unlock()
+	return nil
+}
+
+// RecordNetworkTrace stores a network trace event.
+func (n *ForensicNode) RecordNetworkTrace(trace NetworkTrace) error {
+	n.mu.Lock()
+	n.traces = append(n.traces, trace)
+	n.mu.Unlock()
+	return nil
+}
+
+// Transactions returns a copy of all recorded transactions.
+func (n *ForensicNode) Transactions() []TransactionLite {
+	n.mu.RLock()
+	out := make([]TransactionLite, len(n.txs))
+	copy(out, n.txs)
+	n.mu.RUnlock()
+	return out
+}
+
+// NetworkTraces returns a copy of all captured network traces.
+func (n *ForensicNode) NetworkTraces() []NetworkTrace {
+	n.mu.RLock()
+	out := make([]NetworkTrace, len(n.traces))
+	copy(out, n.traces)
+	n.mu.RUnlock()
+	return out
+}
+
+// Ensure ForensicNode implements ForensicNodeInterface.
+var _ ForensicNodeInterface = (*ForensicNode)(nil)
