@@ -1,12 +1,13 @@
 package cli
 
 import (
-	"fmt"
-	"strconv"
-	"time"
+        "encoding/json"
+        "fmt"
+        "strconv"
+        "time"
 
-	"github.com/spf13/cobra"
-	"synnergy/core"
+        "github.com/spf13/cobra"
+        "synnergy/core"
 )
 
 var (
@@ -50,29 +51,45 @@ func init() {
 		},
 	}
 
-	getCmd := &cobra.Command{
-		Use:   "get [id]",
-		Args:  cobra.ExactArgs(1),
-		Short: "Get application details",
-		Run: func(cmd *cobra.Command, args []string) {
-			app, err := applyManager.Get(args[0])
-			if err != nil {
-				fmt.Println("error:", err)
-				return
-			}
-			fmt.Printf("%s %s approvals:%d rejections:%d finalized:%v\n", app.ID, app.Candidate, len(app.Approvals), len(app.Rejections), app.Finalized)
-		},
-	}
+        var getJSON bool
+        var listJSON bool
 
-	listCmd := &cobra.Command{
-		Use:   "list",
-		Short: "List applications",
-		Run: func(cmd *cobra.Command, args []string) {
-			for _, app := range applyManager.List() {
-				fmt.Printf("%s %s finalized:%v\n", app.ID, app.Candidate, app.Finalized)
-			}
-		},
-	}
+        getCmd := &cobra.Command{
+                Use:   "get [id]",
+                Args:  cobra.ExactArgs(1),
+                Short: "Get application details",
+                Run: func(cmd *cobra.Command, args []string) {
+                        app, err := applyManager.Get(args[0])
+                        if err != nil {
+                                fmt.Println("error:", err)
+                                return
+                        }
+                        if getJSON {
+                                enc, _ := json.Marshal(app)
+                                fmt.Println(string(enc))
+                                return
+                        }
+                        fmt.Printf("%s %s approvals:%d rejections:%d finalized:%v\n", app.ID, app.Candidate, len(app.Approvals), len(app.Rejections), app.Finalized)
+                },
+        }
+        getCmd.Flags().BoolVar(&getJSON, "json", false, "output as JSON")
+
+        listCmd := &cobra.Command{
+                Use:   "list",
+                Short: "List applications",
+                Run: func(cmd *cobra.Command, args []string) {
+                        apps := applyManager.List()
+                        if listJSON {
+                                enc, _ := json.Marshal(apps)
+                                fmt.Println(string(enc))
+                                return
+                        }
+                        for _, app := range apps {
+                                fmt.Printf("%s %s finalized:%v\n", app.ID, app.Candidate, app.Finalized)
+                        }
+                },
+        }
+        listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	tickCmd := &cobra.Command{
 		Use:   "tick",

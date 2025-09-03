@@ -1,10 +1,11 @@
 package cli
 
 import (
-	"fmt"
+        "encoding/json"
+        "fmt"
 
-	"github.com/spf13/cobra"
-	"synnergy/core"
+        "github.com/spf13/cobra"
+        "synnergy/core"
 )
 
 var bankInstNode = core.NewBankInstitutionalNode("bank1", "addr1", ledger)
@@ -24,15 +25,22 @@ func init() {
 		},
 	}
 
-	listCmd := &cobra.Command{
-		Use:   "list",
-		Short: "List registered institutions",
-		Run: func(cmd *cobra.Command, args []string) {
-			for name := range bankInstNode.Institutions {
-				fmt.Println(name)
-			}
-		},
-	}
+        var listJSON bool
+        listCmd := &cobra.Command{
+                Use:   "list",
+                Short: "List registered institutions",
+                Run: func(cmd *cobra.Command, args []string) {
+                        if listJSON {
+                                enc, _ := json.Marshal(bankInstNode.ListInstitutions())
+                                fmt.Println(string(enc))
+                                return
+                        }
+                        for name := range bankInstNode.Institutions {
+                                fmt.Println(name)
+                        }
+                },
+        }
+        listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	isCmd := &cobra.Command{
 		Use:   "is [name]",

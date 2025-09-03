@@ -4,12 +4,6 @@
 
 Synnergy blockchain CLI
 
-### Stage 2 – AI contracts and audit modules
-
-Commands `synnergy ai_contract`, `synnergy audit` and `synnergy audit_node`
-provide AI-enhanced contract deployment and on-chain audit logging. Their
-`list` subcommands accept `--json` to emit machine-readable output.
-
 ### Options
 
 ```
@@ -180,9 +174,6 @@ provide AI-enhanced contract deployment and on-chain audit logging. Their
 
 Role based access control
 
-All subcommands validate addresses and provide helpful error messages when input
-is malformed.
-
 ### Options
 
 ```
@@ -201,8 +192,6 @@ is malformed.
 ## synnergy access grant
 
 Grant a role to an address
-
-Returns an error if the role is empty or the address is invalid.
 
 ```
 synnergy access grant [role] [addr] [flags]
@@ -223,8 +212,6 @@ synnergy access grant [role] [addr] [flags]
 
 Check if address has role
 
-Outputs `true` or `false` after validating inputs.
-
 ```
 synnergy access has [role] [addr] [flags]
 ```
@@ -244,8 +231,6 @@ synnergy access has [role] [addr] [flags]
 
 List roles for an address
 
-Displays all roles assigned to a valid address.
-
 ```
 synnergy access list [addr] [flags]
 ```
@@ -264,8 +249,6 @@ synnergy access list [addr] [flags]
 ## synnergy access revoke
 
 Revoke a role from an address
-
-Silently succeeds if the role was not previously granted.
 
 ```
 synnergy access revoke [role] [addr] [flags]
@@ -481,6 +464,7 @@ synnergy ai_contract list [flags]
 
 ```
   -h, --help   help for list
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -536,6 +520,7 @@ synnergy audit list [address] [flags]
 
 ```
   -h, --help   help for list
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -592,6 +577,7 @@ synnergy audit_node list [address] [flags]
 
 ```
   -h, --help   help for list
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -709,6 +695,7 @@ synnergy authority info [address] [flags]
 
 ```
   -h, --help   help for info
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -747,6 +734,7 @@ synnergy authority list [flags]
 
 ```
   -h, --help   help for list
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -844,6 +832,7 @@ synnergy authority_apply get [id] [flags]
 
 ```
   -h, --help   help for get
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -863,6 +852,7 @@ synnergy authority_apply list [flags]
 
 ```
   -h, --help   help for list
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -977,6 +967,7 @@ synnergy authority_index get [address] [flags]
 
 ```
   -h, --help   help for get
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -996,6 +987,7 @@ synnergy authority_index list [flags]
 
 ```
   -h, --help   help for list
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -1071,6 +1063,7 @@ synnergy bankinst list [flags]
 
 ```
   -h, --help   help for list
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -1125,6 +1118,7 @@ synnergy banknodes types [flags]
 
 ```
   -h, --help   help for types
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -10726,9 +10720,9 @@ synnergy syn12 init [flags]
       --discount float    discount rate
       --face uint         face value
   -h, --help              help for init
-      --issue string      issue date RFC3339 (default "2025-08-06T17:21:46Z")
+      --issue string      issue date RFC3339 (default "2025-09-03T16:38:47Z")
       --issuer string     issuer
-      --maturity string   maturity date RFC3339 (default "2025-09-05T17:21:46Z")
+      --maturity string   maturity date RFC3339 (default "2025-10-03T16:38:47Z")
       --name string       token name
       --symbol string     token symbol
 ```
@@ -11008,7 +11002,7 @@ synnergy syn1401 issue [flags]
 ```
   -h, --help             help for issue
       --id string        investment id
-      --maturity int     maturity unix time (default 1754500906)
+      --maturity int     maturity unix time (default 1756917527)
       --owner string     owner
       --principal uint   principal
       --rate float       annual rate
@@ -12226,7 +12220,7 @@ synnergy syn2600 issue [flags]
 
 ```
       --asset string    underlying asset
-      --expiry string   expiry time (default "2025-08-07T17:21:46Z")
+      --expiry string   expiry time (default "2025-09-04T16:38:47Z")
   -h, --help            help for issue
       --owner string    owner address
       --shares uint     share quantity
@@ -12441,11 +12435,11 @@ synnergy syn2800 issue [flags]
 ```
       --beneficiary string   beneficiary
       --coverage uint        coverage amount
-      --end string           end time (default "2025-08-07T17:21:46Z")
+      --end string           end time (default "2025-09-04T16:38:47Z")
   -h, --help                 help for issue
       --insured string       insured party
       --premium uint         premium amount
-      --start string         start time (default "2025-08-06T17:21:46Z")
+      --start string         start time (default "2025-09-03T16:38:47Z")
 ```
 
 ### SEE ALSO
@@ -12560,14 +12554,14 @@ synnergy syn2900 issue [flags]
 ```
       --coverage string   coverage type
       --deductible uint   deductible
-      --end string        end time (default "2025-08-07T17:21:46Z")
+      --end string        end time (default "2025-09-04T16:38:47Z")
   -h, --help              help for issue
       --holder string     policy holder
       --id string         policy id
       --limit uint        limit
       --payout uint       payout amount
       --premium uint      premium amount
-      --start string      start time (default "2025-08-06T17:21:46Z")
+      --start string      start time (default "2025-09-03T16:38:47Z")
 ```
 
 ### SEE ALSO
@@ -12821,7 +12815,7 @@ synnergy syn3200 create [flags]
 
 ```
       --amount uint     amount
-      --due string      due time (default "2025-08-07T17:21:46Z")
+      --due string      due time (default "2025-09-04T16:38:47Z")
   -h, --help            help for create
       --id string       bill id
       --issuer string   issuer
@@ -13138,7 +13132,7 @@ synnergy syn3600 create [flags]
 ### Options
 
 ```
-      --expiration string   expiration time (default "2025-08-07T17:21:46Z")
+      --expiration string   expiration time (default "2025-09-04T16:38:47Z")
   -h, --help                help for create
       --price uint          price per unit
       --qty uint            quantity

@@ -1,11 +1,12 @@
 package core
 
 import (
-	"errors"
-	"math/rand"
-	"sort"
-	"sync"
-	"time"
+        "encoding/json"
+        "errors"
+        "math/rand"
+        "sort"
+        "sync"
+        "time"
 )
 
 // AuthorityNode represents a node eligible for governance actions.
@@ -13,6 +14,21 @@ type AuthorityNode struct {
 	Address string
 	Role    string
 	Votes   map[string]bool // voter address -> approved
+}
+
+// TotalVotes returns the number of unique voters for the node.
+func (n *AuthorityNode) TotalVotes() int { return len(n.Votes) }
+
+// MarshalJSON outputs the node with aggregated vote count for external consumers.
+func (n *AuthorityNode) MarshalJSON() ([]byte, error) {
+        type alias AuthorityNode
+        return json.Marshal(&struct {
+                Votes int `json:"votes"`
+                *alias
+        }{
+                Votes: len(n.Votes),
+                alias: (*alias)(n),
+        })
 }
 
 // AuthorityNodeRegistry manages authority nodes and voting.
@@ -48,6 +64,15 @@ func (r *AuthorityNodeRegistry) Vote(voterAddr, candidateAddr string) error {
 	}
 	node.Votes[voterAddr] = true
 	return nil
+}
+
+// RemoveVote removes a previous vote by a voter for a candidate.
+func (r *AuthorityNodeRegistry) RemoveVote(voterAddr, candidateAddr string) {
+        r.mu.Lock()
+        defer r.mu.Unlock()
+        if node, ok := r.index.Get(candidateAddr); ok {
+                delete(node.Votes, voterAddr)
+        }
 }
 
 // Electorate samples up to size authority nodes weighted by votes.

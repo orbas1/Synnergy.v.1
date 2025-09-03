@@ -151,6 +151,7 @@ Operations related to authority / validator-set.
 |---|---|
 | `NewAuthoritySet` | `2000` |
 | `RecordVote` | `300` |
+| `RemoveVote` | `150` |
 | `RegisterCandidate` | `800` |
 | `RandomElectorate` | `400` |
 | `IsAuthority` | `80` |
@@ -2727,6 +2728,9 @@ Operations related to bank institutional node.
 | `BankNode_ConnectFinNet` | `300` |
 | `BankNode_UpdateRules` | `250` |
 | `BankNode_SubmitTx` | `300` |
+| `BankNode_RegisterInstitution` | `250` |
+| `BankNode_RemoveInstitution` | `250` |
+| `BankNode_ListInstitutions` | `200` |
 
 
 ### Custodial Node
