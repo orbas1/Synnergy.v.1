@@ -632,6 +632,9 @@
 | `wrap` | `0x100261` |
 | `DeploySmartContract` | `0x100262` |
 | `TradeContract` | `0x100263` |
+| `MintNFT` | `0x100264` |
+| `ListNFT` | `0x100265` |
+| `BuyNFT` | `0x100266` |
 | `RegisterBridge` | `0xF10001` |
 | `BridgeDeposit` | `0xF10002` |
 | `BridgeClaim` | `0xF10003` |

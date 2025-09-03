@@ -83,6 +83,10 @@ func main() {
 	synn.RegisterGasCost("IPFS_Add", synn.GasCost("IPFS_Add"))
 	synn.RegisterGasCost("IPFS_Get", synn.GasCost("IPFS_Get"))
 	synn.RegisterGasCost("IPFS_Unpin", synn.GasCost("IPFS_Unpin"))
+	// Stage 36 NFT marketplace operations
+	synn.RegisterGasCost("MintNFT", synn.GasCost("MintNFT"))
+	synn.RegisterGasCost("ListNFT", synn.GasCost("ListNFT"))
+	synn.RegisterGasCost("BuyNFT", synn.GasCost("BuyNFT"))
 	// Wallet operations used by GUI clients
 	synn.RegisterGasCost("NewWallet", synn.GasCost("NewWallet"))
 	synn.RegisterGasCost("Sign", synn.GasCost("Sign"))
@@ -135,6 +139,8 @@ func main() {
 	_ = tokens.NewSYN3900Token()
 	_ = tokens.NewSYN500Token()
 	_ = tokens.NewSYN5000Token()
+	// Preload stage 36 NFT marketplace
+	_ = core.NewNFTMarketplace()
 
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 

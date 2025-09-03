@@ -20,6 +20,9 @@ tokenised contracts to be deployed and traded through the same CLI surface,
 demonstrating how assets can change ownership without leaving the network.
 Stage 35 introduces a storage marketplace where capacity is tokenised and traded
 through CLI and GUI components, enabling decentralised data leasing.
+Stage 36 debuts an NFT marketplace module allowing unique assets to be minted
+and exchanged through unified CLI and GUI workflows with deterministic gas
+costs.
 Stage 11 ensures token operations execute inside managed VM sandboxes with explicit cleanup semantics and idle sandboxes are automatically purged once their TTL expires.
 Stage 13 links token flows with regulatory nodes, allowing non-compliant transfers to be flagged in real time for audit trails.
 Stage 16 makes the base token and registry concurrency‑safe and includes micro‑benchmarks to monitor transfer throughput.

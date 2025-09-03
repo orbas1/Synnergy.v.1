@@ -91,6 +91,7 @@ Synnergy blockchain CLI
 * [synnergy loanproposal](#synnergy-loanproposal)	 - Work with standalone loan proposals
 * [synnergy marketplace](#synnergy-marketplace)	 - Deploy and trade smart contracts
 * [synnergy storage_marketplace](#synnergy-storage_marketplace)  - Manage decentralized storage listings
+* [synnergy nft](#synnergy-nft)  - Mint and trade NFTs
 * [synnergy mining](#synnergy-mining)	 - Control a mining node
 * [synnergy mobile_mining](#synnergy-mobile-mining)	 - Operate a mobile mining node
 * [synnergy nat](#synnergy-nat)	 - Manage NAT port mappings
@@ -21039,3 +21040,44 @@ synnergy storage_marketplace deal [listingID] [buyer] [flags]
 
 * [synnergy storage_marketplace](#synnergy-storage_marketplace)  - Manage decentralized storage listings
 
+
+## synnergy nft
+
+Mint and trade NFTs
+
+### Options
+
+```
+  -h, --help   help for nft
+```
+
+### SEE ALSO
+
+* [synnergy](#synnergy)
+* [synnergy nft mint](#synnergy-nft-mint)  - Mint a new NFT
+* [synnergy nft list](#synnergy-nft-list)  - Show NFT details
+* [synnergy nft buy](#synnergy-nft-buy)  - Transfer ownership of an NFT
+
+## synnergy nft mint
+
+Mint a new NFT
+
+```
+synnergy nft mint [id] [owner] [metadata] [price]
+```
+
+## synnergy nft list
+
+Show NFT details
+
+```
+synnergy nft list [id]
+```
+
+## synnergy nft buy
+
+Transfer ownership of an NFT
+
+```
+synnergy nft buy [id] [newOwner]
+```
