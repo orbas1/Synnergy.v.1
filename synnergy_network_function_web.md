@@ -33,6 +33,10 @@ Stage 29 introduces smart contract templates accessible through the CLI. Dashboa
 can list and deploy precompiled modules such as token faucets, storage markets,
 DAO governance systems, NFT minters and AI model exchanges directly from the
 function web.
+Stage 30 expands this catalog with utility contracts for escrow payments,
+cross‑chain bridges, multisig wallets and regulatory compliance workflows,
+ensuring dashboards and CLI users can assemble more complex decentralized
+applications from vetted building blocks.
 
 ## Diagram
 
