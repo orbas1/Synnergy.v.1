@@ -3,6 +3,8 @@ package cli
 import (
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
@@ -120,6 +122,49 @@ func init() {
 		},
 	}
 
-	contractsCmd.AddCommand(compileCmd, deployCmd, invokeCmd, listCmd, infoCmd)
+	var templateName, templateOwner string
+	var templateGas uint64
+	deployTemplateCmd := &cobra.Command{
+		Use:   "deploy-template",
+		Short: "Deploy a predefined smart contract template",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if templateName == "" {
+				return fmt.Errorf("--name required")
+			}
+			path := filepath.Join("smart-contracts", templateName+".wasm")
+			wasm, err := os.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			addr, err := contractRegistry.Deploy(wasm, "", templateGas, templateOwner)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintln(cmd.OutOrStdout(), addr)
+			return nil
+		},
+	}
+	deployTemplateCmd.Flags().StringVar(&templateName, "name", "", "Template name (token_faucet, storage_market, dao_governance, nft_minting, ai_model_market)")
+	deployTemplateCmd.Flags().StringVar(&templateOwner, "owner", "", "Owner address")
+	deployTemplateCmd.Flags().Uint64Var(&templateGas, "gas", 100000, "Gas limit")
+
+	listTemplatesCmd := &cobra.Command{
+		Use:   "list-templates",
+		Short: "List available contract templates",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			entries, err := os.ReadDir("smart-contracts")
+			if err != nil {
+				return err
+			}
+			for _, e := range entries {
+				if !e.IsDir() && strings.HasSuffix(e.Name(), ".wasm") {
+					fmt.Fprintln(cmd.OutOrStdout(), strings.TrimSuffix(e.Name(), ".wasm"))
+				}
+			}
+			return nil
+		},
+	}
+
+	contractsCmd.AddCommand(compileCmd, deployCmd, invokeCmd, listCmd, infoCmd, deployTemplateCmd, listTemplatesCmd)
 	rootCmd.AddCommand(contractsCmd)
 }

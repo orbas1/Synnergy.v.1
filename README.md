@@ -56,6 +56,7 @@ All guides and architecture decision records are located under the `docs/` direc
   governance tools can consume pricing data directly from the CLI.
 - Stage 27 adds developer and testnet automation scripts, covering network bootstrapping, contract deployment, linting and test execution for streamlined workflows.
 - Stage 28 introduces release packaging, documentation generation, CI setup and ledger backup scripts for reproducible builds and disaster recovery.
+- Stage 29 adds deployable smart contract templates for token faucets, storage markets, DAO governance, NFT minting and AI model marketplaces. These templates are accessible via CLI with gas-priced opcodes.
 
 ## Repository layout
 ```

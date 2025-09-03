@@ -97,6 +97,8 @@ opcodes. A sandbox manager isolates execution environments so contracts can be
 run with predefined resource limits.
 Stage 11 extends this layer with a context-aware execution engine and lifecycle management for sandboxes, allowing operators to enforce timeouts and remove instances once processing completes. Sandboxes include an inactivity TTL so automated maintenance tasks can purge stale environments and reclaim capacity without manual intervention.
 
+Stage 29 introduces a library of deployable smart contract templates covering token faucets, storage markets, DAO governance, NFT minting and AI model exchanges. Templates are shipped as precompiled WASM modules and can be instantiated via the CLI with predictable gas costs.
+
 ### Data and Storage Layer
 Synnergy integrates an IPFS‑style storage system for off‑chain assets. The data
 layer includes modules for distribution, resource allocation, provenance

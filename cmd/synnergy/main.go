@@ -61,6 +61,12 @@ func main() {
 	synn.RegisterGasCost("ShareTactical", synn.GasCost("ShareTactical"))
 	synn.RegisterGasCost("ReportFork", synn.GasCost("ReportFork"))
 	synn.RegisterGasCost("Metrics", synn.GasCost("Metrics"))
+	// Stage 29 smart contract templates
+	synn.RegisterGasCost("DeployTokenFaucetTemplate", synn.GasCost("DeployTokenFaucetTemplate"))
+	synn.RegisterGasCost("DeployStorageMarketTemplate", synn.GasCost("DeployStorageMarketTemplate"))
+	synn.RegisterGasCost("DeployDAOGovernanceTemplate", synn.GasCost("DeployDAOGovernanceTemplate"))
+	synn.RegisterGasCost("DeployNFTMintingTemplate", synn.GasCost("DeployNFTMintingTemplate"))
+	synn.RegisterGasCost("DeployAIModelMarketTemplate", synn.GasCost("DeployAIModelMarketTemplate"))
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.

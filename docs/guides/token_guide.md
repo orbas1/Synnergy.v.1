@@ -31,6 +31,10 @@ burning directly to operators.
 Stage 24 exposes cross-chain bridge and Plasma controls with deterministic gas
 charges so token transfers across networks remain predictable.
 
+Stage 29 provides ready-made contract templates including token faucets and DAO
+governance modules. These templates simplify token bootstrapping and are
+accessible via `synnergy contracts deploy-template`.
+
 ## Package layout
 
 Token code lives under `internal/tokens`.  Key files are:

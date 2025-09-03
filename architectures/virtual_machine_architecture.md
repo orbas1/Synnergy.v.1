@@ -1,3 +1,9 @@
 # Virtual Machine Architecture
 
 Stage 11 formalises the Synnergy VM (SVM) as a modular execution engine. Each VM instance enforces resource limits through an internal sandbox manager and supports context-aware timeouts for contract calls. Sandboxes can be deleted once processing completes, ensuring that long-running contracts do not leak memory or gas accounting state.
+
+Stage 29 builds on this by packaging common smart contract templates as
+precompiled WASM modules. The VM exposes opcodes to deploy these templates with
+predictable gas costs, allowing operators to instantiate token faucets, storage
+markets, DAO governance systems, NFT minters and AI model exchanges without
+writing custom bytecode.

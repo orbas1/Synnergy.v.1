@@ -29,6 +29,11 @@ directly from the CLI.
 Stage 27 layers in automation scripts for devnets and testnets, contract deployment helpers and quality gates, letting dashboards orchestrate network lifecycles through the CLI.
 Stage 28 adds release packaging, documentation generation, CI preparation and ledger backup tooling so user interfaces can trigger builds, publish docs and safeguard chain data via the function web.
 
+Stage 29 introduces smart contract templates accessible through the CLI. Dashboards
+can list and deploy precompiled modules such as token faucets, storage markets,
+DAO governance systems, NFT minters and AI model exchanges directly from the
+function web.
+
 ## Diagram
 
 ```mermaid
