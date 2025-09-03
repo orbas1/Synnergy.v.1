@@ -60,6 +60,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 30 introduces utility smart contract modules including escrow payments, cross-chain bridges, multisig wallets and regulatory compliance contracts. Each template ships precompiled as WASM and can be deployed through the CLI and VM.
 - Stage 31 debuts a TypeScript GUI wallet that interacts with the CLI. Wallets are generated locally, encrypted with scrypt-derived AES-GCM keys and can query ledger balances through JSON emitting commands.
 - Stage 32 adds a CLI-backed Explorer GUI that displays chain height and block data.
+- Stage 33 introduces an AI Marketplace GUI that deploys AI-enhanced contracts through the CLI.
 - The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
 
 ## Repository layout
