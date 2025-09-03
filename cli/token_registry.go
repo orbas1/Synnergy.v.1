@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"synnergy/internal/tokens"
 )
@@ -17,9 +18,10 @@ func init() {
 	nextCmd := &cobra.Command{
 		Use:   "nextid",
 		Short: "Generate next token ID",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			id := tokenRegistry.NextID()
-			fmt.Println(id)
+			fmt.Fprintln(cmd.OutOrStdout(), id)
+			return nil
 		},
 	}
 	cmd.AddCommand(nextCmd)
@@ -27,13 +29,13 @@ func init() {
 	registerBaseCmd := &cobra.Command{
 		Use:   "register-base",
 		Short: "Register the base token",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if baseToken == nil {
-				fmt.Println("base token not initialised")
-				return
+				return fmt.Errorf("base token not initialised")
 			}
 			tokenRegistry.Register(baseToken)
-			fmt.Println("base token registered")
+			fmt.Fprintln(cmd.OutOrStdout(), "base token registered")
+			return nil
 		},
 	}
 	cmd.AddCommand(registerBaseCmd)
@@ -42,15 +44,15 @@ func init() {
 		Use:   "info <id>",
 		Short: "Show token info by ID",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			var id uint64
 			fmt.Sscanf(args[0], "%d", &id)
 			info, ok := tokenRegistry.Info(tokens.TokenID(id))
 			if !ok {
-				fmt.Println("token not found")
-				return
+				return fmt.Errorf("token not found")
 			}
-			fmt.Printf("ID:%d Name:%s Symbol:%s Decimals:%d Supply:%d\n", info.ID, info.Name, info.Symbol, info.Decimals, info.TotalSupply)
+			fmt.Fprintf(cmd.OutOrStdout(), "ID:%d Name:%s Symbol:%s Decimals:%d Supply:%d\n", info.ID, info.Name, info.Symbol, info.Decimals, info.TotalSupply)
+			return nil
 		},
 	}
 	cmd.AddCommand(infoCmd)
@@ -58,11 +60,12 @@ func init() {
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all registered tokens",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			infos := tokenRegistry.List()
 			for _, i := range infos {
-				fmt.Printf("ID:%d Name:%s Symbol:%s Supply:%d\n", i.ID, i.Name, i.Symbol, i.TotalSupply)
+				fmt.Fprintf(cmd.OutOrStdout(), "ID:%d Name:%s Symbol:%s Supply:%d\n", i.ID, i.Name, i.Symbol, i.TotalSupply)
 			}
+			return nil
 		},
 	}
 	cmd.AddCommand(listCmd)

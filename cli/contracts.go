@@ -35,7 +35,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Println(hash)
+			fmt.Fprintln(cmd.OutOrStdout(), hash)
 			return nil
 		},
 	}
@@ -66,7 +66,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Println(addr)
+			fmt.Fprintln(cmd.OutOrStdout(), addr)
 			return nil
 		},
 	}
@@ -87,7 +87,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("output: %s\ngas: %d\n", string(out), gas)
+			fmt.Fprintf(cmd.OutOrStdout(), "output: %s\ngas: %d\n", string(out), gas)
 			return nil
 		},
 	}
@@ -98,10 +98,11 @@ func init() {
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List deployed contracts",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			for _, c := range contractRegistry.List() {
-				fmt.Printf("%s owner=%s gas=%d paused=%v\n", c.Address, c.Owner, c.GasLimit, c.Paused)
+				fmt.Fprintf(cmd.OutOrStdout(), "%s owner=%s gas=%d paused=%v\n", c.Address, c.Owner, c.GasLimit, c.Paused)
 			}
+			return nil
 		},
 	}
 
@@ -114,7 +115,7 @@ func init() {
 			if !ok {
 				return fmt.Errorf("contract not found")
 			}
-			fmt.Println(c.Manifest)
+			fmt.Fprintln(cmd.OutOrStdout(), c.Manifest)
 			return nil
 		},
 	}

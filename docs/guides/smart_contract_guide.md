@@ -11,7 +11,9 @@ Contracts can be written in any language that compiles to WASM64. The repository
 - `core/contracts.go` – runtime registry and deployment helpers.
 - `core/virtual_machine.go` – virtual machine interfaces and in-memory state used during execution.
 - `core/contracts_opcodes.go` – opcode constants reserved for contract operations.
-- `cmd/cli/contracts.go` – CLI commands for compiling, deploying and invoking contracts.
+- `cli/contracts.go` – CLI commands for compiling, deploying and invoking contracts.
+- `cli/ai_contract.go` – Deploy and invoke AI-enhanced contracts with model tracking.
+- `cli/audit.go` and `cli/audit_node.go` – Record and query audit logs from the CLI.
 - `cmd/smart_contracts/` – example Solidity contracts demonstrating custom opcodes.
 
 Review these files for implementation details and additional inline comments.

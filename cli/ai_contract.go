@@ -26,23 +26,21 @@ func init() {
 		Use:   "deploy [wasm_file] [model_hash] [manifest] [gas_limit] [owner]",
 		Args:  cobra.ExactArgs(5),
 		Short: "Deploy an AI enhanced contract",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			wasm, err := ioutil.ReadFile(args[0])
 			if err != nil {
-				fmt.Println("read error:", err)
-				return
+				return err
 			}
 			gas, err := strconv.ParseUint(args[3], 10, 64)
 			if err != nil {
-				fmt.Println("gas error:", err)
-				return
+				return err
 			}
 			addr, err := aiRegistry.DeployAIContract(wasm, args[1], args[2], gas, args[4])
 			if err != nil {
-				fmt.Println("deploy error:", err)
-				return
+				return err
 			}
-			fmt.Println("contract:", addr)
+			fmt.Fprintln(cmd.OutOrStdout(), "contract:", addr)
+			return nil
 		},
 	}
 
@@ -50,23 +48,21 @@ func init() {
 		Use:   "invoke [addr] [input_hex] [gas_limit]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Invoke infer method on AI contract",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			input, err := hex.DecodeString(args[1])
 			if err != nil {
-				fmt.Println("input error:", err)
-				return
+				return err
 			}
 			gas, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
-				fmt.Println("gas error:", err)
-				return
+				return err
 			}
 			out, used, err := aiRegistry.InvokeAIContract(args[0], input, gas)
 			if err != nil {
-				fmt.Println("invoke error:", err)
-				return
+				return err
 			}
-			fmt.Printf("output=%s gas=%d\n", hex.EncodeToString(out), used)
+			fmt.Fprintf(cmd.OutOrStdout(), "output=%s gas=%d\n", hex.EncodeToString(out), used)
+			return nil
 		},
 	}
 
@@ -74,13 +70,13 @@ func init() {
 		Use:   "model [addr]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show model hash for a contract",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			h, ok := aiRegistry.ModelHash(args[0])
 			if !ok {
-				fmt.Println("not found")
-				return
+				return fmt.Errorf("not found")
 			}
-			fmt.Println(h)
+			fmt.Fprintln(cmd.OutOrStdout(), h)
+			return nil
 		},
 	}
 
@@ -88,7 +84,7 @@ func init() {
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List deployed AI contracts",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if listJSON {
 				type item struct {
 					Address   string `json:"address"`
@@ -99,14 +95,18 @@ func init() {
 					h, _ := aiRegistry.ModelHash(c.Address)
 					out = append(out, item{c.Address, h})
 				}
-				b, _ := json.MarshalIndent(out, "", "  ")
-				fmt.Println(string(b))
-				return
+				b, err := json.MarshalIndent(out, "", "  ")
+				if err != nil {
+					return err
+				}
+				fmt.Fprintln(cmd.OutOrStdout(), string(b))
+				return nil
 			}
 			for _, c := range baseReg.List() {
 				h, _ := aiRegistry.ModelHash(c.Address)
-				fmt.Printf("%s %s\n", c.Address, h)
+				fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n", c.Address, h)
 			}
+			return nil
 		},
 	}
 	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")

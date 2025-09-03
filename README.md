@@ -40,6 +40,8 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 21 streamlines core CLI operations for network, node and access
   management, adding structured output and error propagation for peer
   discovery, staking and address utilities.
+- Stage 22 refines AI contract and audit CLI modules, providing consistent error
+  handling and JSON-formatted output for integration with external tooling.
 
 ## Repository layout
 ```
