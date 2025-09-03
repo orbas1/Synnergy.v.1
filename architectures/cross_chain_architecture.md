@@ -21,3 +21,8 @@ Cross-chain modules enable interoperability with external networks through bridg
 - cli/cross_consensus_scaling_networks.go
 
 These components coordinate communication and asset transfers across multiple blockchains.
+
+Stage 8 hardens these modules for production use.  Each manager is concurrency
+safe, exposes deterministic gas‑priced opcodes and is accessible through the
+`synnergy` CLI.  Registries and bridge transfers persist in memory but are
+designed to be swapped with database backends for fault‑tolerant deployments.

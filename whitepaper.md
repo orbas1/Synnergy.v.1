@@ -82,6 +82,10 @@ connections to external networks, register contract mappings and relay
 transactions. An agnostic protocol layer enables heterogeneous chains to
 communicate without trusting a central intermediary.
 
+Stage 8 elevates these components with gas‑priced opcodes and accompanying CLI
+commands. Registries for bridges, contracts and transfers are concurrency safe
+and can be backed by persistent stores for fault‑tolerant deployments.
+
 ### Authority and Banking Nodes
 Stage 3 introduces governance‑focused modules. The `AuthorityNodeRegistry` and
 `AuthorityApplicationManager` coordinate admission of validator candidates with

@@ -336,31 +336,25 @@ Operations related to cross-chain.
 | Opcode | Gas Cost |
 |---|---|
 | `RegisterBridge` | `2000` |
-| `AssertRelayer` | `500` |
-| `Iterator` | `200` |
-| `LockAndMint` | `3000` |
-| `BurnAndRelease` | `3000` |
+| `AuthorizeRelayer` | `500` |
+| `RevokeRelayer` | `500` |
+| `LockMint` | `3000` |
+| `BurnRelease` | `3000` |
 | `GetBridge` | `100` |
-| `RegisterXContract` | `2200` |
-| `GetXContract` | `100` |
-| `ListXContracts` | `120` |
-| `RemoveXContract` | `500` |
-| `RecordCrossChainTx` | `2500` |
-| `GetCrossChainTx` | `200` |
-| `ListCrossChainTx` | `300` |
-| `OpenChainConnection` | `1000` |
-| `CloseChainConnection` | `500` |
-| `GetChainConnection` | `100` |
-| `ListChainConnections` | `200` |
+| `ListBridges` | `120` |
+| `RegisterMapping` | `2200` |
+| `GetMapping` | `100` |
+| `ListMappings` | `120` |
+| `RemoveMapping` | `500` |
+| `GetTransfer` | `100` |
+| `ListTransfers` | `200` |
+| `OpenConnection` | `1000` |
+| `CloseConnection` | `500` |
+| `GetConnection` | `100` |
+| `ListConnections` | `200` |
 | `RegisterProtocol` | `2000` |
 | `ListProtocols` | `200` |
 | `GetProtocol` | `100` |
-| `ProtocolDeposit` | `3000` |
-| `ProtocolWithdraw` | `3000` |
-| `StartBridgeTransfer` | `2500` |
-| `CompleteBridgeTransfer` | `2500` |
-| `GetBridgeTransfer` | `100` |
-| `ListBridgeTransfers` | `200` |
 
 
 ### Cross-Consensus Scaling Networks

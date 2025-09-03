@@ -7,6 +7,7 @@ Synnergy blockchain CLI
 > Stage 6 introduces structured logging for compliance, connection pool and consensus commands.
 >
 > Stage 7 adds coded error handling and OpenTelemetry tracing for consensus and contract management commands.
+> Stage 8 exposes contract and cross-chain modules through persistent CLI commands and gas table integration.
 
 ### Options
 
