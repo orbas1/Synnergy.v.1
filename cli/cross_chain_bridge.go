@@ -1,10 +1,12 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
+	synnergy "synnergy"
 	"synnergy/core"
 )
 
@@ -15,6 +17,9 @@ func init() {
 		Use:   "cross_chain_bridge",
 		Short: "Manage cross-chain token transfers",
 	}
+
+	var listJSON bool
+	var getJSON bool
 
 	depositCmd := &cobra.Command{
 		Use:   "deposit <bridge_id> <from> <to> <amount> [tokenID]",
@@ -33,7 +38,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Println(t.ID)
+			fmt.Printf("%s gas:%d\n", t.ID, synnergy.GasCost("BridgeDeposit"))
 			return nil
 		},
 	}
@@ -43,7 +48,11 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Release assets using a proof",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return transferManager.Claim(args[0], args[1])
+			if err := transferManager.Claim(args[0], args[1]); err != nil {
+				return err
+			}
+			fmt.Printf("gas:%d\n", synnergy.GasCost("BridgeClaim"))
+			return nil
 		},
 	}
 
@@ -56,20 +65,33 @@ func init() {
 			if !ok {
 				return fmt.Errorf("transfer not found")
 			}
+			if getJSON {
+				enc, _ := json.Marshal(t)
+				fmt.Println(string(enc))
+				return nil
+			}
 			fmt.Printf("%s: bridge=%s from=%s to=%s amount=%d token=%s status=%s\n", t.ID, t.BridgeID, t.From, t.To, t.Amount, t.TokenID, t.Status)
 			return nil
 		},
 	}
+	getCmd.Flags().BoolVar(&getJSON, "json", false, "output as JSON")
 
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all transfers",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, t := range transferManager.ListTransfers() {
+			ts := transferManager.ListTransfers()
+			if listJSON {
+				enc, _ := json.Marshal(ts)
+				fmt.Println(string(enc))
+				return
+			}
+			for _, t := range ts {
 				fmt.Printf("%s: bridge=%s from=%s to=%s amount=%d token=%s status=%s\n", t.ID, t.BridgeID, t.From, t.To, t.Amount, t.TokenID, t.Status)
 			}
 		},
 	}
+	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	cmd.AddCommand(depositCmd, claimCmd, getCmd, listCmd)
 	rootCmd.AddCommand(cmd)

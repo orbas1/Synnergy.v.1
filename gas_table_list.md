@@ -693,3 +693,15 @@
 | `internal_tokens_syn5000_NewSYN5000Token` | `1` |
 | `internal_tokens_syn5000_Mint` | `1` |
 | `internal_tokens_syn5000_Transfer` | `1` |
+| `RegisterBridge` | `1` |
+| `BridgeDeposit` | `1` |
+| `BridgeClaim` | `1` |
+| `OpenConnection` | `1` |
+| `CloseConnection` | `1` |
+| `RegisterProtocol` | `1` |
+| `RegisterXContract` | `1` |
+| `RemoveXContract` | `1` |
+| `LockMint` | `1` |
+| `BurnRelease` | `1` |
+| `PlasmaPause` | `1` |
+| `PlasmaResume` | `1` |

@@ -629,3 +629,15 @@
 | `sqrt` | `0x10025F` |
 | `votingPowerLocked` | `0x100260` |
 | `wrap` | `0x100261` |
+| `RegisterBridge` | `0xF10001` |
+| `BridgeDeposit` | `0xF10002` |
+| `BridgeClaim` | `0xF10003` |
+| `OpenConnection` | `0xF10004` |
+| `CloseConnection` | `0xF10005` |
+| `RegisterProtocol` | `0xF10006` |
+| `RegisterXContract` | `0xF10007` |
+| `RemoveXContract` | `0xF10008` |
+| `LockMint` | `0xF10009` |
+| `BurnRelease` | `0xF1000A` |
+| `PlasmaPause` | `0xF1000B` |
+| `PlasmaResume` | `0xF1000C` |

@@ -1,9 +1,11 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/spf13/cobra"
+	synnergy "synnergy"
 	"synnergy/core"
 )
 
@@ -15,12 +17,16 @@ func init() {
 		Short: "Register cross-chain contract mappings",
 	}
 
+	var listJSON bool
+	var getJSON bool
+
 	registerCmd := &cobra.Command{
 		Use:   "register <local_addr> <remote_chain> <remote_addr>",
 		Args:  cobra.ExactArgs(3),
 		Short: "Register a contract mapping",
 		Run: func(cmd *cobra.Command, args []string) {
 			crossContractRegistry.RegisterMapping(args[0], args[1], args[2])
+			fmt.Printf("gas:%d\n", synnergy.GasCost("RegisterXContract"))
 		},
 	}
 
@@ -28,11 +34,18 @@ func init() {
 		Use:   "list",
 		Short: "List registered mappings",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, m := range crossContractRegistry.ListMappings() {
+			maps := crossContractRegistry.ListMappings()
+			if listJSON {
+				enc, _ := json.Marshal(maps)
+				fmt.Println(string(enc))
+				return
+			}
+			for _, m := range maps {
 				fmt.Printf("%s -> %s:%s\n", m.LocalAddress, m.RemoteChain, m.RemoteAddress)
 			}
 		},
 	}
+	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	getCmd := &cobra.Command{
 		Use:   "get <local_addr>",
@@ -43,17 +56,27 @@ func init() {
 			if !ok {
 				return fmt.Errorf("mapping not found")
 			}
+			if getJSON {
+				enc, _ := json.Marshal(m)
+				fmt.Println(string(enc))
+				return nil
+			}
 			fmt.Printf("%s -> %s:%s\n", m.LocalAddress, m.RemoteChain, m.RemoteAddress)
 			return nil
 		},
 	}
+	getCmd.Flags().BoolVar(&getJSON, "json", false, "output as JSON")
 
 	removeCmd := &cobra.Command{
 		Use:   "remove <local_addr>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Delete a mapping",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return crossContractRegistry.RemoveMapping(args[0])
+			if err := crossContractRegistry.RemoveMapping(args[0]); err != nil {
+				return err
+			}
+			fmt.Printf("gas:%d\n", synnergy.GasCost("RemoveXContract"))
+			return nil
 		},
 	}
 

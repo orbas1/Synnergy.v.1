@@ -1,9 +1,11 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"github.com/spf13/cobra"
+	synnergy "synnergy"
 	"synnergy/core"
 )
 
@@ -15,6 +17,9 @@ func init() {
 		Short: "Manage cross-chain bridges",
 	}
 
+	var listJSON bool
+	var getJSON bool
+
 	registerCmd := &cobra.Command{
 		Use:   "register <source_chain> <target_chain> <relayer_addr>",
 		Args:  cobra.ExactArgs(3),
@@ -24,7 +29,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Println(b.ID)
+			fmt.Printf("%s gas:%d\n", b.ID, synnergy.GasCost("RegisterBridge"))
 			return nil
 		},
 	}
@@ -33,11 +38,18 @@ func init() {
 		Use:   "list",
 		Short: "List registered bridges",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, b := range bridgeRegistry.ListBridges() {
+			bridges := bridgeRegistry.ListBridges()
+			if listJSON {
+				enc, _ := json.Marshal(bridges)
+				fmt.Println(string(enc))
+				return
+			}
+			for _, b := range bridges {
 				fmt.Printf("%s: %s -> %s\n", b.ID, b.SourceChain, b.TargetChain)
 			}
 		},
 	}
+	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	getCmd := &cobra.Command{
 		Use:   "get <bridge_id>",
@@ -48,10 +60,16 @@ func init() {
 			if !ok {
 				return fmt.Errorf("bridge not found")
 			}
+			if getJSON {
+				enc, _ := json.Marshal(b)
+				fmt.Println(string(enc))
+				return nil
+			}
 			fmt.Printf("%s: %s -> %s relayers=%d\n", b.ID, b.SourceChain, b.TargetChain, len(b.Relayers))
 			return nil
 		},
 	}
+	getCmd.Flags().BoolVar(&getJSON, "json", false, "output as JSON")
 
 	authorizeCmd := &cobra.Command{
 		Use:   "authorize <bridge_id> <relayer_addr>",

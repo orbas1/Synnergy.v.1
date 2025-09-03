@@ -25,6 +25,8 @@ administrators to deactivate assets through the CLI.
 Stage 23 integrates DAO token ledger operations with gas-aware CLI commands,
 allowing governance tokens to report the cost of minting, transferring and
 burning directly to operators.
+Stage 24 exposes cross-chain bridge and Plasma controls with deterministic gas
+charges so token transfers across networks remain predictable.
 
 ## Package layout
 

@@ -39,6 +39,9 @@ Stage 23 adds dedicated pricing for consensus mining and DAO governance
 operations. CLI commands such as `consensus mine` and `dao create` now surface
 their respective costs using the values from `gas_table_list.md`, allowing
 operators to estimate fees before execution.
+Stage 24 extends the table with cross-chain bridge deposits, protocol
+registration and Plasma management. These opcodes allow the CLI to surface gas
+usage for inter-chain transfers and bridge administration.
 
 The VM charges gas **before** executing an opcode.  Dynamic portions – such as per‑word memory fees or refunds for resource release – are handled by the VM's gas meter.
 

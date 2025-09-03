@@ -5,7 +5,10 @@ import (
 	"synnergy/core"
 )
 
-var plasmaBridge = core.NewPlasmaBridge()
+var (
+	plasmaBridge = core.NewPlasmaBridge()
+	plasmaJSON   bool
+)
 
 var plasmaCmd = &cobra.Command{
 	Use:   "plasma",
@@ -13,5 +16,6 @@ var plasmaCmd = &cobra.Command{
 }
 
 func init() {
+	plasmaCmd.PersistentFlags().BoolVar(&plasmaJSON, "json", false, "output as JSON")
 	rootCmd.AddCommand(plasmaCmd)
 }

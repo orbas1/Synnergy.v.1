@@ -26,3 +26,6 @@ Stage 8 hardens these modules for production use.  Each manager is concurrency
 safe, exposes deterministic gas‑priced opcodes and is accessible through the
 `synnergy` CLI.  Registries and bridge transfers persist in memory but are
 designed to be swapped with database backends for fault‑tolerant deployments.
+Stage 24 layers enterprise CLI tooling on top. Cross-chain bridges, protocol
+registries and Plasma controls emit gas metrics and optional JSON output so
+dashboards and automation can coordinate transfers across networks.
