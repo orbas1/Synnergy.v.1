@@ -73,6 +73,14 @@ how specialised assets can be modelled on top of the base abstractions:
 
 These examples can be used as templates when designing new token types.
 
+## Native coin
+
+The native asset **Synthron** is defined in `core/coin.go`. It exposes helper
+functions for block rewards, supply tracking and staking economics. The `coin`
+CLI command surfaces these utilities and provides JSON output for web
+dashboards. Minting beyond the capped supply is prevented by the
+`CentralBankingNode` which enforces checks against `RemainingSupply`.
+
 ## AI model access tokens
 
 Stage 2 introduces AI-enhanced contracts and audit modules. Projects can mint

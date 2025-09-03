@@ -1,6 +1,9 @@
 package core
 
-import "sync"
+import (
+	"fmt"
+	"sync"
+)
 
 // SyncManager coordinates block download and verification to keep a node's
 // ledger in sync with the network. The implementation here tracks state in
@@ -42,6 +45,9 @@ func (s *SyncManager) Status() (bool, int) {
 func (s *SyncManager) Once() error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if !s.running {
+		return fmt.Errorf("synchronization not running")
+	}
 	h, _ := s.ledger.Head()
 	s.lastHeight = h
 	return nil

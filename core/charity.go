@@ -78,6 +78,12 @@ func (cp *CharityPool) Deposit(from Address, amount uint64) error {
 	if cp.led == nil {
 		return fmt.Errorf("ledger not configured")
 	}
+	if amount == 0 {
+		return fmt.Errorf("amount must be greater than zero")
+	}
+	if cp.led.BalanceOf(from) < amount {
+		return fmt.Errorf("insufficient balance")
+	}
 	return cp.led.Transfer(from, CharityPoolAccount, amount)
 }
 
@@ -85,6 +91,9 @@ func (cp *CharityPool) Deposit(from Address, amount uint64) error {
 func (cp *CharityPool) Register(addr Address, name string, cat CharityCategory) error {
 	cp.mu.Lock()
 	defer cp.mu.Unlock()
+	if name == "" {
+		return fmt.Errorf("name required")
+	}
 	key := []byte(fmt.Sprintf("charity:reg:%s", addr.Hex()))
 	reg := CharityRegistration{Addr: addr, Name: name, Category: cat}
 	cp.led.SetState(key, mustJSON(reg))
@@ -96,6 +105,9 @@ func (cp *CharityPool) Register(addr Address, name string, cat CharityCategory) 
 func (cp *CharityPool) Vote(voter, charity Address) error {
 	cp.mu.Lock()
 	defer cp.mu.Unlock()
+	if cp.vote != nil && !cp.vote.IsIDTokenHolder(voter) {
+		return fmt.Errorf("ineligible voter")
+	}
 	key := []byte(fmt.Sprintf("charity:vote:%s:%s", voter.Hex(), charity.Hex()))
 	cp.led.SetState(key, []byte(charity.Hex()))
 	return nil

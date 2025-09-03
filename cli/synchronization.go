@@ -1,15 +1,20 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
+
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
 
 var syncMgr = core.NewSyncManager(ledger)
+var syncJSON bool
 
 func init() {
 	syncCmd := &cobra.Command{Use: "synchronization", Short: "Blockchain synchronization"}
+	syncCmd.PersistentFlags().BoolVar(&syncJSON, "json", false, "output as JSON")
 
 	startCmd := &cobra.Command{Use: "start", Short: "Start the sync manager", Run: func(cmd *cobra.Command, args []string) { syncMgr.Start() }}
 
@@ -17,7 +22,11 @@ func init() {
 
 	statusCmd := &cobra.Command{Use: "status", Short: "Show sync status", Run: func(cmd *cobra.Command, args []string) {
 		running, h := syncMgr.Status()
-		fmt.Printf("running: %v height: %d\n", running, h)
+		if syncJSON {
+			_ = json.NewEncoder(os.Stdout).Encode(map[string]interface{}{"running": running, "height": h})
+		} else {
+			fmt.Printf("running: %v height: %d\n", running, h)
+		}
 	}}
 
 	onceCmd := &cobra.Command{Use: "once", Short: "Run one sync round", RunE: func(cmd *cobra.Command, args []string) error {

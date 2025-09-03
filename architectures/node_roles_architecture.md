@@ -16,6 +16,7 @@ Various modules define specialized node behaviors and responsibilities across th
 - energy_efficient_node.go
 - geospatial_node.go
 - indexing_node.go
+- central_banking_node.go
 
 **Related CLI Files**
 - cli/authority_nodes.go
@@ -28,5 +29,6 @@ Various modules define specialized node behaviors and responsibilities across th
 - cli/regulatory_node.go
 - cli/watchtower_node.go
 - cli/geospatial.go
+- cli/centralbank.go
 
 Together they orchestrate different node types to handle governance, institutional banking, mining, regulation, monitoring, and geographic services. JSON output flags on the CLI facilitate integration with web interfaces and automation.

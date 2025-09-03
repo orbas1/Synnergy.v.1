@@ -74,6 +74,14 @@ cost := GasCostByName("Add")
 Biometric authentication opcodes added in Stage 4 follow the same pricing
 model and are listed in `gas_table_list.md` alongside other functions.
 
+## Ledger synchronization and compression
+
+Stage 5 introduces opcodes for `CompressLedger`, `DecompressLedger` and the
+`SyncManager` (`Start`, `Stop`, `Status`, `Once`). Central bank and charity
+modules (`Mint`, `UpdatePolicy`, `Register`, `Vote`) also receive dedicated
+codes. Their base gas costs are defined in `gas_table_list.md` ensuring the VM
+and CLI can accurately meter usage.
+
 Lowering fees is therefore a matter of choosing cheaper opcodes, batching writes and avoiding default‑priced unknown operations.
 
 ## Efficiency Patterns

@@ -68,7 +68,7 @@
 | `CloseChannel` | `1` |
 | `Collect` | `1` |
 | `CompileWASM` | `1` |
-| `CompressLedger` | `1` |
+| `CompressLedger` | `25` |
 | `Connect` | `1` |
 | `Content` | `1` |
 | `ConvertToPrivate` | `1` |
@@ -84,7 +84,7 @@
 | `Custody` | `1` |
 | `DebugDump` | `1` |
 | `Decimals` | `1` |
-| `DecompressLedger` | `1` |
+| `DecompressLedger` | `25` |
 | `Decrypt` | `1` |
 | `DefaultGasTable` | `1` |
 | `DefaultGenesisWallets` | `1` |
@@ -242,7 +242,7 @@
 | `Mine` | `1` |
 | `MineBlock` | `1` |
 | `MinimumStake` | `1` |
-| `Mint` | `1` |
+| `Mint` | `10` |
 | `MintAsset` | `1` |
 | `Mode` | `1` |
 | `ModelHash` | `1` |
@@ -570,7 +570,7 @@
 | `UpdateAttributes` | `1` |
 | `UpdateBaseline` | `1` |
 | `UpdateConfig` | `1` |
-| `UpdatePolicy` | `1` |
+| `UpdatePolicy` | `2` |
 | `UpdateRate` | `1` |
 | `UpdateStatus` | `1` |
 | `UpdateValuation` | `1` |
