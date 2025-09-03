@@ -51,6 +51,9 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 25 adds comprehensive node management. Full, light, mining, mobile,
   optimisation, staking, watchtower and warfare nodes expose JSON emitting CLI
   operations for integration with GUIs and automation.
+- Stage 26 enhances operational utilities. Gas table management now allows
+  runtime opcode price adjustments and JSON snapshots so dashboards and
+  governance tools can consume pricing data directly from the CLI.
 
 ## Repository layout
 ```

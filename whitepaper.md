@@ -45,6 +45,10 @@ Stage 25 focuses on operational tooling. Node management commands for full,
 light, mining, mobile, optimisation, staking, watchtower and warfare roles now
 emit structured JSON and have explicit gas pricing so that enterprise dashboards
 can monitor and orchestrate infrastructure reliably.
+Stage 26 extends these tools with runtime gas table management. Operators can
+adjust opcode costs without recompiling the network and export the entire
+schedule as JSON, giving auditors and governance systems direct visibility into
+fee policies.
 
 ### Wallets and Network Monitoring
 Stage 12 introduces a hardened wallet with hex-encoded addressing and ECDSA signatures for transaction authorization.  Alongside the wallet, new warfare and watchtower node roles extend the network with logistics tracking and real-time fork detection.  These modules expose CLI endpoints and feed telemetry back into the consensus layer for improved operational awareness.
