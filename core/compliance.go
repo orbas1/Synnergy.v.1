@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	ilog "synnergy/internal/log"
 )
 
 // KYCRecord stores the commitment for an address and when it was recorded.
@@ -53,6 +55,7 @@ func NewComplianceService() *ComplianceService {
 // ValidateKYC validates and stores a KYC document commitment for an address.
 func (s *ComplianceService) ValidateKYC(address string, kycData []byte) (string, error) {
 	if address == "" {
+		ilog.Error("validate_kyc", "error", "address required")
 		return "", errors.New("address required")
 	}
 	hash := sha256.Sum256(kycData)
@@ -61,6 +64,7 @@ func (s *ComplianceService) ValidateKYC(address string, kycData []byte) (string,
 	s.kycs[address] = KYCRecord{Commitment: commitment, Timestamp: time.Now()}
 	s.appendAudit(address, "kyc_validated", nil)
 	s.mu.Unlock()
+	ilog.Info("kyc_validated", "address", address)
 	return commitment, nil
 }
 
@@ -70,6 +74,7 @@ func (s *ComplianceService) EraseKYC(address string) {
 	delete(s.kycs, address)
 	s.appendAudit(address, "kyc_erased", nil)
 	s.mu.Unlock()
+	ilog.Info("kyc_erased", "address", address)
 }
 
 // RecordFraud records a fraud signal and updates the risk score.
@@ -81,6 +86,7 @@ func (s *ComplianceService) RecordFraud(address string, severity int) {
 	meta := map[string]string{"severity": fmt.Sprintf("%d", severity)}
 	s.appendAudit(address, "fraud_signal", meta)
 	s.mu.Unlock()
+	ilog.Info("fraud_signal", "address", address, "severity", severity)
 }
 
 // RiskScore returns the accumulated fraud risk score for an address.
@@ -88,6 +94,7 @@ func (s *ComplianceService) RiskScore(address string) int {
 	s.mu.RLock()
 	score := s.riskScores[address]
 	s.mu.RUnlock()
+	ilog.Info("risk_score_query", "address", address, "score", score)
 	return score
 }
 
@@ -108,8 +115,10 @@ func (s *ComplianceService) MonitorTransaction(tx ComplianceTransaction, thresho
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	s.appendAudit(tx.From, "tx_monitored", map[string]string{"id": tx.ID})
+	ilog.Info("tx_monitored", "from", tx.From, "amount", tx.Amount)
 	if tx.Amount > threshold {
 		s.appendAudit(tx.From, "tx_anomaly", map[string]string{"id": tx.ID})
+		ilog.Info("tx_anomaly", "from", tx.From, "amount", tx.Amount)
 		return true
 	}
 	return false
@@ -118,7 +127,9 @@ func (s *ComplianceService) MonitorTransaction(tx ComplianceTransaction, thresho
 // VerifyZKP verifies a simple commitment for demonstration purposes.
 func (s *ComplianceService) VerifyZKP(blob []byte, commitmentHex, proofHex string) bool {
 	hash := sha256.Sum256(blob)
-	return hex.EncodeToString(hash[:]) == commitmentHex
+	ok := hex.EncodeToString(hash[:]) == commitmentHex
+	ilog.Info("verify_zkp", "result", ok)
+	return ok
 }
 
 func (s *ComplianceService) appendAudit(addr, event string, metadata map[string]string) {

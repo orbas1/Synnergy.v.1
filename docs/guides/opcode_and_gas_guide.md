@@ -33,7 +33,7 @@ The VM charges gas **before** executing an opcode.  Dynamic portions – such as
 
 ```go
 // gas_table.go
-const DefaultGasCost uint64 = 100_000
+const DefaultGasCost uint64 = 1
 ```
 
 ### Fee calculation
@@ -49,7 +49,7 @@ func (d *DynamicGasCalculator) Estimate(payload []byte) (uint64, error) {
 }
 ```
 
-`GasCost` performs a concurrent lookup in the in‑memory table and falls back to the default when an opcode is unknown.
+`GasCost` performs a concurrent lookup in the in‑memory table and falls back to the default when an opcode is unknown. Stage 6 added structured logging so missing entries are reported for auditing.
 
 ```go
 // gas_table.go

@@ -15,3 +15,4 @@ These modules handle legal compliance, regulatory oversight, and related node ro
 - cli/regulatory_node.go
 
 They ensure the network adheres to external regulations and internal governance policies.
+Stage 6 adds structured logging across these modules for traceability and integrates connection pool metrics for fault tolerance.

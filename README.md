@@ -21,6 +21,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Built-in ledger synchronization and snapshot compression utilities with
   central bank and charity pool modules enforcing capped supply and donation
   tracking.
+- Structured JSON logging with pluggable backends for compliance, connection and consensus modules.
 
 ## Repository layout
 ```

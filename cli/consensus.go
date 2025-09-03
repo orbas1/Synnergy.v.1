@@ -6,6 +6,7 @@ import (
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
+	ilog "synnergy/internal/log"
 )
 
 var consensus = core.NewSynnergyConsensus()
@@ -24,6 +25,7 @@ func init() {
 			b := core.NewBlock([]*core.SubBlock{sb}, "")
 			diff, _ := strconv.ParseUint(args[0], 10, 8)
 			consensus.MineBlock(b, uint8(diff))
+			ilog.Info("cli_mine", "nonce", b.Nonce)
 			fmt.Println("block mined with nonce", b.Nonce)
 		},
 	}
@@ -32,6 +34,7 @@ func init() {
 		Use:   "weights",
 		Short: "Show current consensus weights",
 		Run: func(cmd *cobra.Command, args []string) {
+			ilog.Info("cli_weights", "pow", consensus.Weights.PoW, "pos", consensus.Weights.PoS, "poh", consensus.Weights.PoH)
 			fmt.Printf("PoW: %.2f PoS: %.2f PoH: %.2f\n", consensus.Weights.PoW, consensus.Weights.PoS, consensus.Weights.PoH)
 		},
 	}
@@ -44,6 +47,7 @@ func init() {
 			d, _ := strconv.ParseFloat(args[0], 64)
 			s, _ := strconv.ParseFloat(args[1], 64)
 			consensus.AdjustWeights(d, s)
+			ilog.Info("cli_adjust", "pow", consensus.Weights.PoW, "pos", consensus.Weights.PoS, "poh", consensus.Weights.PoH)
 			fmt.Printf("new weights -> PoW: %.2f PoS: %.2f PoH: %.2f\n", consensus.Weights.PoW, consensus.Weights.PoS, consensus.Weights.PoH)
 		},
 	}
@@ -55,7 +59,9 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			d, _ := strconv.ParseFloat(args[0], 64)
 			s, _ := strconv.ParseFloat(args[1], 64)
-			fmt.Println("threshold:", consensus.Threshold(d, s))
+			th := consensus.Threshold(d, s)
+			ilog.Info("cli_threshold", "value", th)
+			fmt.Println("threshold:", th)
 		},
 	}
 
@@ -67,7 +73,9 @@ func init() {
 			d, _ := strconv.ParseFloat(args[0], 64)
 			t, _ := strconv.ParseFloat(args[1], 64)
 			s, _ := strconv.ParseFloat(args[2], 64)
-			fmt.Println("transition threshold:", consensus.TransitionThreshold(d, t, s))
+			thr := consensus.TransitionThreshold(d, t, s)
+			ilog.Info("cli_transition", "value", thr)
+			fmt.Println("transition threshold:", thr)
 		},
 	}
 
@@ -79,7 +87,9 @@ func init() {
 			old, _ := strconv.ParseFloat(args[0], 64)
 			actual, _ := strconv.ParseFloat(args[1], 64)
 			expected, _ := strconv.ParseFloat(args[2], 64)
-			fmt.Println("new difficulty:", consensus.DifficultyAdjust(old, actual, expected))
+			nd := consensus.DifficultyAdjust(old, actual, expected)
+			ilog.Info("cli_difficulty", "value", nd)
+			fmt.Println("new difficulty:", nd)
 		},
 	}
 
@@ -92,6 +102,7 @@ func init() {
 			pos := args[1] == "true"
 			poh := args[2] == "true"
 			consensus.SetAvailability(pow, pos, poh)
+			ilog.Info("cli_availability", "pow", pow, "pos", pos, "poh", poh)
 		},
 	}
 
@@ -102,6 +113,7 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			en := args[0] == "true"
 			consensus.SetPoWRewards(en)
+			ilog.Info("cli_pow_rewards", "enabled", en)
 		},
 	}
 

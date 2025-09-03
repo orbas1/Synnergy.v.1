@@ -17,4 +17,7 @@ func TestConnectionPool(t *testing.T) {
 	if p.Size() != 0 {
 		t.Fatalf("release failed")
 	}
+	if stats := p.Stats(); stats.Capacity != 1 || stats.Active != 0 {
+		t.Fatalf("unexpected stats %+v", stats)
+	}
 }

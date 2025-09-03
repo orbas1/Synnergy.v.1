@@ -6,6 +6,7 @@ import (
 	"github.com/spf13/cobra"
 	"os"
 	"synnergy/core"
+	ilog "synnergy/internal/log"
 )
 
 var complianceMgr = core.NewComplianceManager()
@@ -15,22 +16,27 @@ func init() {
 
 	suspendCmd := &cobra.Command{Use: "suspend [addr]", Args: cobra.ExactArgs(1), Short: "Suspend an address", Run: func(cmd *cobra.Command, args []string) {
 		complianceMgr.Suspend(args[0])
+		ilog.Info("cli_suspend", "address", args[0])
 	}}
 
 	resumeCmd := &cobra.Command{Use: "resume [addr]", Args: cobra.ExactArgs(1), Short: "Lift a suspension", Run: func(cmd *cobra.Command, args []string) {
 		complianceMgr.Resume(args[0])
+		ilog.Info("cli_resume", "address", args[0])
 	}}
 
 	whitelistCmd := &cobra.Command{Use: "whitelist [addr]", Args: cobra.ExactArgs(1), Short: "Add an address to the whitelist", Run: func(cmd *cobra.Command, args []string) {
 		complianceMgr.Whitelist(args[0])
+		ilog.Info("cli_whitelist", "address", args[0])
 	}}
 
 	unwhitelistCmd := &cobra.Command{Use: "unwhitelist [addr]", Args: cobra.ExactArgs(1), Short: "Remove an address from the whitelist", Run: func(cmd *cobra.Command, args []string) {
 		complianceMgr.Unwhitelist(args[0])
+		ilog.Info("cli_unwhitelist", "address", args[0])
 	}}
 
 	statusCmd := &cobra.Command{Use: "status [addr]", Args: cobra.ExactArgs(1), Short: "Show suspension and whitelist status", Run: func(cmd *cobra.Command, args []string) {
 		s, w := complianceMgr.Status(args[0])
+		ilog.Info("cli_status", "address", args[0], "suspended", s, "whitelisted", w)
 		fmt.Printf("suspended: %v whitelisted: %v\n", s, w)
 	}}
 
@@ -44,8 +50,10 @@ func init() {
 			return err
 		}
 		if err := complianceMgr.ReviewTransaction(tx); err != nil {
+			ilog.Error("cli_review", "error", err)
 			return err
 		}
+		ilog.Info("cli_review", "from", tx.From, "to", tx.To)
 		fmt.Println("ok")
 		return nil
 	}}

@@ -66,6 +66,17 @@ graph TD
         RN --> RL[Logs]
     end
 
+    subgraph Compliance
+        CS[NewComplianceService] --> CK[ValidateKYC]
+        CS --> CF[RecordFraud]
+        CMG[NewComplianceManager] --> CSu[Suspend]
+    end
+
+    subgraph ConnectionPool
+        CPoo[NewConnectionPool] --> CA[Acquire]
+        CPoo --> CR[Release]
+    end
+
     subgraph Consensus
         CH[NewConsensusHopper] --> CM[Mode]
     end
@@ -77,6 +88,9 @@ graph TD
     PrivateTransactions --> Consensus
     Staking --> Consensus
     Regulatory --> CrossChain
+    Compliance --> Regulatory
+    Compliance --> Consensus
+    ConnectionPool --> Consensus
     CentralBank --> Consensus
     Charity --> Consensus
     Synchronization --> Consensus

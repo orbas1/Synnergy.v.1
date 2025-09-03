@@ -4,6 +4,8 @@ This guide explains how tokens are organised and implemented in the Synnergy Net
 It summarises the core token abstractions, the registry used to manage them and the
 built-in token standards provided by the project.
 
+Stage 6 integrates compliance checks into token operations via the new logging subsystem, allowing auditors to trace token transactions.
+
 ## Package layout
 
 Token code lives under `internal/tokens`.  Key files are:
