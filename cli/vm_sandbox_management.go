@@ -108,5 +108,15 @@ func init() {
 	}
 	cmd.AddCommand(listCmd)
 
+	purgeCmd := &cobra.Command{
+		Use:   "purge",
+		Short: "Remove stopped sandboxes past TTL",
+		Run: func(cmd *cobra.Command, args []string) {
+			sandboxMgr.PurgeInactive()
+			fmt.Println("purge complete")
+		},
+	}
+	cmd.AddCommand(purgeCmd)
+
 	rootCmd.AddCommand(cmd)
 }

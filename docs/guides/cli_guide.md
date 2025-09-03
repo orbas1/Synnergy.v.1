@@ -9105,11 +9105,30 @@ Manage VM sandboxes
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy sandbox delete](#synnergy-sandbox-delete)	 - Delete a sandbox
 * [synnergy sandbox list](#synnergy-sandbox-list)	 - List sandboxes
+* [synnergy sandbox purge](#synnergy-sandbox-purge)	 - Purge inactive sandboxes
 * [synnergy sandbox reset](#synnergy-sandbox-reset)	 - Reset sandbox timer
 * [synnergy sandbox start](#synnergy-sandbox-start)	 - Start a sandbox
 * [synnergy sandbox status](#synnergy-sandbox-status)	 - Show sandbox status
 * [synnergy sandbox stop](#synnergy-sandbox-stop)	 - Stop a sandbox
 
+
+## synnergy sandbox purge
+
+Purge inactive sandboxes
+
+```
+synnergy sandbox purge [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for purge
+```
+
+### SEE ALSO
+
+* [synnergy sandbox](#synnergy-sandbox)  - Manage VM sandboxes
 
 ## synnergy sandbox delete
 

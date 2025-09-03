@@ -27,7 +27,7 @@ Complex logic can be decomposed into multiple small opcodes or combined into a b
 
 ## Gas Accounting and Fees
 
-Gas prices are defined in [`gas_table.go`](gas_table.go).  Each opcode has a deterministic base cost reflecting CPU, storage and network impact.  Missing entries are charged `DefaultGasCost`.
+Gas prices are defined in [`gas_table.go`](gas_table.go).  Each opcode has a deterministic base cost reflecting CPU, storage and network impact.  From Stage 11 the table is populated at start-up by parsing [`gas_table_list.md`](../../gas_table_list.md), allowing operators to override prices without recompiling binaries.  Missing entries are charged `DefaultGasCost`.
 
 The VM charges gas **before** executing an opcode.  Dynamic portions – such as per‑word memory fees or refunds for resource release – are handled by the VM's gas meter.
 

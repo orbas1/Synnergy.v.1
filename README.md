@@ -25,7 +25,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 7 adds a unified errors package and OpenTelemetry tracing for consensus and contract management components, improving diagnostics across the CLI and services.
 - Stage 8 introduces a contract registry and cross‑chain transaction managers with full CLI access and gas‑priced opcodes for deterministic execution.
 - Stage 9 adds DAO governance, custodial nodes and cross-consensus network tooling with gas-priced opcodes and CLI support.
-- Stage 11 introduces a context-aware virtual machine and sandbox manager, enabling contract execution with timeouts and full lifecycle control through the CLI.
+- Stage 11 introduces a context-aware virtual machine and sandbox manager, enabling contract execution with timeouts and full lifecycle control through the CLI. Inactive sandboxes can be purged automatically via `synnergy sandbox purge` to reclaim resources.
 
 ## Repository layout
 ```

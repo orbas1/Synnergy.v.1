@@ -81,6 +81,23 @@ func NewSimpleVM(modes ...VMMode) *SimpleVM {
 	return vm
 }
 
+// RegisterHandler allows callers to inject or override opcode handlers at
+// runtime.  It is safe for concurrent use and enables higher level modules or
+// tests to extend the VM without recompilation.
+func (vm *SimpleVM) RegisterHandler(op uint32, h opcodeHandler) {
+	vm.mu.Lock()
+	if vm.handlers == nil {
+		vm.handlers = make(map[uint32]opcodeHandler)
+	}
+	vm.handlers[op] = h
+	vm.mu.Unlock()
+}
+
+// Concurrency returns the maximum number of executions the VM will run in
+// parallel based on its current limiter capacity.  This is primarily exported
+// for monitoring and tests.
+func (vm *SimpleVM) Concurrency() int { return cap(vm.limiter) }
+
 // Start marks the VM as running. It is safe to call multiple times.
 func (vm *SimpleVM) Start() error {
 	vm.mu.Lock()
