@@ -12,3 +12,6 @@ Stage 34 introduces a Smart-Contract Marketplace GUI that leverages the new
 `marketplace` CLI commands to deploy generic WebAssembly contracts and trade
 their ownership. It serves as a reference for integrating contract workflows
 into web applications.
+Stage 35 introduces a Storage Marketplace GUI enabling users to list and lease storage through the CLI while inheriting the runtime's sandboxing and gas accounting.
+Stage 36 debuts an NFT Marketplace GUI for minting and trading NFTs via CLI commands, showcasing opcode-priced asset workflows.
+Stage 37 adds a DAO Explorer GUI that manages decentralised autonomous organisations by spawning the `synnergy dao` commands to create, join, leave and inspect governance groups.

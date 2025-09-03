@@ -65,6 +65,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 34 introduces a Smart-Contract Marketplace GUI enabling contract deployment and trading via the CLI.
 - Stage 35 adds a Storage Marketplace GUI where users can list and lease storage through the CLI.
 - Stage 36 debuts an NFT Marketplace GUI for minting and trading NFTs via the CLI with gas-priced opcodes.
+- Stage 37 debuts a DAO Explorer GUI that manages DAO creation and membership via the CLI.
 - The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
 
 ## Repository layout
