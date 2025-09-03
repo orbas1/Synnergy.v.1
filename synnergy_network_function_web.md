@@ -80,6 +80,7 @@ graph TD
     subgraph VirtualMachine
         VM[NewLightVM] --> VMExec[Execute]
         SMgr[NewSandboxManager] --> SDel[DeleteSandbox]
+        SMgr --> SPurge[PurgeInactive]
     end
 
     subgraph Consensus

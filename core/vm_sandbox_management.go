@@ -23,11 +23,18 @@ type SandboxInfo struct {
 type SandboxManager struct {
 	mu        sync.RWMutex
 	sandboxes map[string]*SandboxInfo
+	ttl       time.Duration
 }
 
-// NewSandboxManager returns an empty manager.
-func NewSandboxManager() *SandboxManager {
-	return &SandboxManager{sandboxes: make(map[string]*SandboxInfo)}
+// NewSandboxManager returns an empty manager. A default time-to-live of one hour
+// is applied to inactive sandboxes unless overridden. Expired sandboxes are
+// removed when PurgeInactive is invoked.
+func NewSandboxManager(ttls ...time.Duration) *SandboxManager {
+	ttl := time.Hour
+	if len(ttls) > 0 {
+		ttl = ttls[0]
+	}
+	return &SandboxManager{sandboxes: make(map[string]*SandboxInfo), ttl: ttl}
 }
 
 // StartSandbox creates a new sandbox for the given contract address.
@@ -83,6 +90,23 @@ func (m *SandboxManager) DeleteSandbox(id string) error {
 	}
 	delete(m.sandboxes, id)
 	return nil
+}
+
+// PurgeInactive deletes sandboxes that have been stopped and remained idle
+// beyond the configured TTL.  It is safe to call concurrently with other
+// manager operations.
+func (m *SandboxManager) PurgeInactive() {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	now := time.Now()
+	for id, sb := range m.sandboxes {
+		if sb.Active {
+			continue
+		}
+		if now.Sub(sb.LastReset) > m.ttl {
+			delete(m.sandboxes, id)
+		}
+	}
 }
 
 // SandboxStatus returns sandbox information by ID.

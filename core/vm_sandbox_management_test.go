@@ -1,9 +1,12 @@
 package core
 
-import "testing"
+import (
+	"testing"
+	"time"
+)
 
 func TestSandboxManager(t *testing.T) {
-	m := NewSandboxManager()
+	m := NewSandboxManager(time.Millisecond)
 	sb, err := m.StartSandbox("sb1", "addr", 10, 64)
 	if err != nil {
 		t.Fatalf("start: %v", err)
@@ -25,5 +28,13 @@ func TestSandboxManager(t *testing.T) {
 	}
 	if _, ok := m.SandboxStatus("sb1"); ok {
 		t.Fatalf("sandbox should be removed")
+	}
+	// verify purge removes stopped sandboxes past TTL
+	sb, _ = m.StartSandbox("sb2", "addr", 1, 1)
+	_ = m.StopSandbox("sb2")
+	time.Sleep(2 * time.Millisecond)
+	m.PurgeInactive()
+	if _, ok := m.SandboxStatus("sb2"); ok {
+		t.Fatalf("expected sb2 purged")
 	}
 }

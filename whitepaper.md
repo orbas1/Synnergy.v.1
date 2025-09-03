@@ -48,7 +48,7 @@ function is assigned a 24‑bit opcode and priced using a deterministic gas tabl
 The dispatcher rejects unknown codes and supports pluggable modules for custom
 opcodes. A sandbox manager isolates execution environments so contracts can be
 run with predefined resource limits.
-Stage 11 extends this layer with a context-aware execution engine and lifecycle management for sandboxes, allowing operators to enforce timeouts and remove instances once processing completes.
+Stage 11 extends this layer with a context-aware execution engine and lifecycle management for sandboxes, allowing operators to enforce timeouts and remove instances once processing completes. Sandboxes include an inactivity TTL so automated maintenance tasks can purge stale environments and reclaim capacity without manual intervention.
 
 ### Data and Storage Layer
 Synnergy integrates an IPFS‑style storage system for off‑chain assets. The data

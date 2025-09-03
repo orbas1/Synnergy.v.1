@@ -59,3 +59,18 @@ func TestVMContextCancel(t *testing.T) {
 		t.Fatalf("expected cancellation error")
 	}
 }
+
+// TestVMCustomHandler ensures dynamically registered opcode handlers execute
+// correctly and override existing entries.
+func TestVMCustomHandler(t *testing.T) {
+	vm := NewSimpleVM()
+	_ = vm.Start()
+	vm.RegisterHandler(0xFFFFFF, func(in []byte) ([]byte, error) { return append(in, 0xAA), nil })
+	out, _, err := vm.Execute([]byte{0xFF, 0xFF, 0xFF}, "", []byte{0x01}, 10)
+	if err != nil {
+		t.Fatalf("exec: %v", err)
+	}
+	if len(out) != 2 || out[1] != 0xAA {
+		t.Fatalf("handler not invoked")
+	}
+}
