@@ -15390,7 +15390,7 @@ Wallet operations
 
 ## synnergy wallet new
 
-Generate a new wallet
+Generate a new wallet and print its hex-encoded address
 
 ```
 synnergy wallet new [flags]
