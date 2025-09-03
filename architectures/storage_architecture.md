@@ -15,4 +15,7 @@ Storage-related modules handle data operations, secure storage, and sandboxed en
 - cli/state_rw.go
 - cli/zero_trust_data_channels.go
 
+**Scripts**
+- scripts/backup_ledger.sh
+
 These modules provide robust data handling, ensuring integrity and isolation for contract and node storage requirements.
