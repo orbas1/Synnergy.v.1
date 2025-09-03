@@ -1,10 +1,12 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
+	synnergy "synnergy"
 	"synnergy/core"
 )
 
@@ -16,13 +18,16 @@ func init() {
 		Short: "Create and monitor chain connections",
 	}
 
+	var listJSON bool
+	var getJSON bool
+
 	openCmd := &cobra.Command{
 		Use:   "open <local_chain> <remote_chain>",
 		Args:  cobra.ExactArgs(2),
 		Short: "Establish a new connection",
 		Run: func(cmd *cobra.Command, args []string) {
 			id := connectionManager.Open(args[0], args[1])
-			fmt.Println(id)
+			fmt.Printf("%d gas:%d\n", id, synnergy.GasCost("OpenConnection"))
 		},
 	}
 
@@ -35,7 +40,11 @@ func init() {
 			if err != nil {
 				return err
 			}
-			return connectionManager.Close(id)
+			if err := connectionManager.Close(id); err != nil {
+				return err
+			}
+			fmt.Printf("gas:%d\n", synnergy.GasCost("CloseConnection"))
+			return nil
 		},
 	}
 
@@ -52,20 +61,33 @@ func init() {
 			if err != nil {
 				return err
 			}
+			if getJSON {
+				enc, _ := json.Marshal(c)
+				fmt.Println(string(enc))
+				return nil
+			}
 			fmt.Printf("%d: %s <-> %s open=%v\n", c.ID, c.LocalChain, c.RemoteChain, c.Open)
 			return nil
 		},
 	}
+	getCmd.Flags().BoolVar(&getJSON, "json", false, "output as JSON")
 
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List active and historic connections",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, c := range connectionManager.List() {
+			cs := connectionManager.List()
+			if listJSON {
+				enc, _ := json.Marshal(cs)
+				fmt.Println(string(enc))
+				return
+			}
+			for _, c := range cs {
 				fmt.Printf("%d: %s <-> %s open=%v\n", c.ID, c.LocalChain, c.RemoteChain, c.Open)
 			}
 		},
 	}
+	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	cmd.AddCommand(openCmd, closeCmd, getCmd, listCmd)
 	rootCmd.AddCommand(cmd)

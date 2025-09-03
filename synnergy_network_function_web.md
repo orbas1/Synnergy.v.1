@@ -15,6 +15,9 @@ the network through a consistent CLI surface.
 Stage 23 brings gas-aware consensus and DAO governance commands into the
 function web, enabling user interfaces to display the cost of mining blocks or
 managing proposals directly alongside execution results.
+Stage 24 extends cross-chain and Plasma management. The CLI now exposes bridge
+registration, connection tracking and gas-priced transfer operations that UIs
+can invoke for inter-network workflows.
 
 ## Diagram
 

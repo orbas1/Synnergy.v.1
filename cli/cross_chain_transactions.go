@@ -1,10 +1,12 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
+	synnergy "synnergy"
 	"synnergy/core"
 )
 
@@ -15,6 +17,9 @@ func init() {
 		Use:   "cross_tx",
 		Short: "Execute cross-chain asset transfers",
 	}
+
+	var listJSON bool
+	var getJSON bool
 
 	lockMintCmd := &cobra.Command{
 		Use:   "lockmint <bridge_id> <asset_id> <amount> <proof> --from <addr> --to <addr>",
@@ -31,7 +36,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Println(id)
+			fmt.Printf("%d gas:%d\n", id, synnergy.GasCost("LockMint"))
 			return nil
 		},
 	}
@@ -54,7 +59,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Println(id)
+			fmt.Printf("%d gas:%d\n", id, synnergy.GasCost("BurnRelease"))
 			return nil
 		},
 	}
@@ -74,20 +79,33 @@ func init() {
 			if err != nil {
 				return err
 			}
+			if getJSON {
+				enc, _ := json.Marshal(t)
+				fmt.Println(string(enc))
+				return nil
+			}
 			fmt.Printf("%d: bridge=%d from=%s to=%s asset=%s amount=%d type=%s completed=%v\n", t.ID, t.BridgeID, t.From, t.To, t.AssetID, t.Amount, t.Type, t.Completed)
 			return nil
 		},
 	}
+	getCmd.Flags().BoolVar(&getJSON, "json", false, "output as JSON")
 
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List cross-chain transfer records",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, t := range crossTxManager.ListTransfers() {
+			ts := crossTxManager.ListTransfers()
+			if listJSON {
+				enc, _ := json.Marshal(ts)
+				fmt.Println(string(enc))
+				return
+			}
+			for _, t := range ts {
 				fmt.Printf("%d: bridge=%d from=%s to=%s asset=%s amount=%d type=%s completed=%v\n", t.ID, t.BridgeID, t.From, t.To, t.AssetID, t.Amount, t.Type, t.Completed)
 			}
 		},
 	}
+	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	cmd.AddCommand(lockMintCmd, burnReleaseCmd, listCmd, getCmd)
 	rootCmd.AddCommand(cmd)

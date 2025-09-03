@@ -45,6 +45,9 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 23 adds gas-aware consensus and DAO governance commands. CLI operations
   such as block mining and DAO creation now emit their expected gas cost for
   better planning and integration with wallets and GUIs.
+- Stage 24 expands cross-chain bridges and Plasma management. CLI commands now
+  surface gas usage for inter-chain transfers and support JSON output for web
+  dashboards.
 
 ## Repository layout
 ```
