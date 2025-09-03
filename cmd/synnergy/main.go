@@ -67,6 +67,10 @@ func main() {
 	synn.RegisterGasCost("DeployDAOGovernanceTemplate", synn.GasCost("DeployDAOGovernanceTemplate"))
 	synn.RegisterGasCost("DeployNFTMintingTemplate", synn.GasCost("DeployNFTMintingTemplate"))
 	synn.RegisterGasCost("DeployAIModelMarketTemplate", synn.GasCost("DeployAIModelMarketTemplate"))
+	// Wallet operations used by GUI clients
+	synn.RegisterGasCost("NewWallet", synn.GasCost("NewWallet"))
+	synn.RegisterGasCost("Sign", synn.GasCost("Sign"))
+	synn.RegisterGasCost("VerifySignature", synn.GasCost("VerifySignature"))
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.

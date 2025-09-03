@@ -50,33 +50,34 @@ func init() {
 		},
 	}
 
-
 	initBlockCmd := &cobra.Command{
 		Use:   "init-block",
 		Short: "Initialise the chain's genesis block",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			stats, block, err := currentNode.InitGenesis(genesisWallets)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "hash: %s\n", block.Hash)
+			fmt.Fprintf(cmd.OutOrStdout(), "genesis block %s height %d\n", stats.Hash, stats.Height)
+			return nil
+		},
+	}
 
 	initCmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialise the genesis block",
-
 		RunE: func(cmd *cobra.Command, args []string) error {
 			stats, _, err := currentNode.InitGenesis(genesisWallets)
 			if err != nil {
 				return err
 			}
-
 			fmt.Fprintf(cmd.OutOrStdout(), "hash: %s\ncirculating: %d\nremaining: %d\n", stats.Hash, stats.Circulating, stats.Remaining)
-
 			fmt.Fprintf(cmd.OutOrStdout(), "genesis block %s height %d\n", stats.Hash, stats.Height)
-
 			return nil
 		},
 	}
 
-
-	genesisCmd.AddCommand(showCmd, allocateCmd, initBlockCmd)
-
-	genesisCmd.AddCommand(showCmd, allocateCmd, initCmd)
-
+	genesisCmd.AddCommand(showCmd, allocateCmd, initBlockCmd, initCmd)
 	rootCmd.AddCommand(genesisCmd)
 }

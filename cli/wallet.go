@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -12,6 +10,7 @@ func init() {
 		Use:   "wallet",
 		Short: "Wallet operations",
 	}
+	var outFile, password string
 	newCmd := &cobra.Command{
 		Use:   "new",
 		Short: "Generate a new wallet",
@@ -20,10 +19,17 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("address: %s\n", w.Address)
+			if outFile != "" {
+				if err := w.Save(outFile, password); err != nil {
+					return err
+				}
+			}
+			printOutput(map[string]string{"address": w.Address, "path": outFile})
 			return nil
 		},
 	}
+	newCmd.Flags().StringVar(&outFile, "out", "", "write encrypted wallet to file")
+	newCmd.Flags().StringVar(&password, "password", "", "encryption password for wallet file")
 	walletCmd.AddCommand(newCmd)
 	rootCmd.AddCommand(walletCmd)
 }

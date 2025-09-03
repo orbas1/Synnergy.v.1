@@ -20,7 +20,11 @@ func TestGenesisInitBlock(t *testing.T) {
 	// reset state for other tests
 	ledger = core.NewLedger()
 	currentNode = core.NewNode("node1", "localhost", ledger)
-)
+	t.Cleanup(func() {
+		ledger = core.NewLedger()
+		currentNode = core.NewNode("node1", "localhost", ledger)
+	})
+}
 
 func TestGenesisInitOnce(t *testing.T) {
 	out, err := execCommand("genesis", "init")

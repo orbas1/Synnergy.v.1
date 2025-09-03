@@ -2188,11 +2188,9 @@ Operations related to wallet / key-management.
 
 | Opcode | Gas Cost |
 |---|---|
-| `NewRandomWallet` | `1000` |
-| `WalletFromMnemonic` | `500` |
-| `NewHDWalletFromSeed` | `600` |
-| `PrivateKey` | `40` |
-| `NewAddress` | `50` |
+| `NewWallet` | `1` |
+| `Sign` | `1` |
+| `VerifySignature` | `1` |
 | `SignTx` | `300` |
 | `RegisterIDWallet` | `800` |
 | `IsIDWalletRegistered` | `50` |

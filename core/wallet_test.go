@@ -1,6 +1,9 @@
 package core
 
-import "testing"
+import (
+	"os"
+	"testing"
+)
 
 func TestWalletSignAndVerify(t *testing.T) {
 	w1, err := NewWallet()
@@ -30,5 +33,24 @@ func TestWalletSignAndVerify(t *testing.T) {
 	}
 	if !tx.Verify(&w1.PrivateKey.PublicKey) {
 		t.Fatalf("tx.Verify should succeed with correct key")
+	}
+}
+
+func TestWalletSaveLoad(t *testing.T) {
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("new wallet: %v", err)
+	}
+	path := "testwallet.json"
+	if err := w.Save(path, "pass"); err != nil {
+		t.Fatalf("save: %v", err)
+	}
+	defer os.Remove(path)
+	w2, err := LoadWallet(path, "pass")
+	if err != nil {
+		t.Fatalf("load: %v", err)
+	}
+	if w.Address != w2.Address {
+		t.Fatalf("addresses differ")
 	}
 }

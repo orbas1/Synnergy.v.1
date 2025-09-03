@@ -37,6 +37,9 @@ Stage 30 expands this catalog with utility contracts for escrow payments,
 cross‑chain bridges, multisig wallets and regulatory compliance workflows,
 ensuring dashboards and CLI users can assemble more complex decentralized
 applications from vetted building blocks.
+Stage 31 debuts a CLI‑driven GUI wallet that signs transactions locally and
+interacts with the function web via JSON responses, proving out end‑user
+workflows without trusting the browser with private keys.
 
 ## Diagram
 
