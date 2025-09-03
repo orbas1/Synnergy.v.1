@@ -62,6 +62,17 @@ func (m *SandboxManager) StopSandbox(id string) error {
 	return nil
 }
 
+// DeleteSandbox removes a sandbox entirely, freeing tracking resources.
+func (m *SandboxManager) DeleteSandbox(id string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if _, ok := m.sandboxes[id]; !ok {
+		return errors.New("sandbox not found")
+	}
+	delete(m.sandboxes, id)
+	return nil
+}
+
 // ResetSandbox updates the LastReset timestamp for a sandbox.
 func (m *SandboxManager) ResetSandbox(id string) error {
 	m.mu.Lock()

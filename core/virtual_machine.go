@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"sync"
@@ -32,8 +33,8 @@ type SimpleVM struct {
 	running  bool
 	mode     VMMode
 	limiter  chan struct{}
-        handlers map[uint32]opcodeHandler
-        defaultH opcodeHandler
+	handlers map[uint32]opcodeHandler
+	defaultH opcodeHandler
 }
 
 // Call implements the OpContext interface used by the global opcode dispatcher.
@@ -69,15 +70,15 @@ func NewSimpleVM(modes ...VMMode) *SimpleVM {
 		mode:    mode,
 		limiter: make(chan struct{}, capacity),
 	}
-        vm.handlers = map[uint32]opcodeHandler{
-                0x000000: func(b []byte) ([]byte, error) { // NOP/echo
-                        out := make([]byte, len(b))
-                        copy(out, b)
-                        return out, nil
-                },
-        }
-        vm.defaultH = vm.handlers[0x000000]
-        return vm
+	vm.handlers = map[uint32]opcodeHandler{
+		0x000000: func(b []byte) ([]byte, error) { // NOP/echo
+			out := make([]byte, len(b))
+			copy(out, b)
+			return out, nil
+		},
+	}
+	vm.defaultH = vm.handlers[0x000000]
+	return vm
 }
 
 // Start marks the VM as running. It is safe to call multiple times.
@@ -109,19 +110,20 @@ func (vm *SimpleVM) Status() bool {
 	return vm.running
 }
 
-// Execute interprets the provided bytecode as a sequence of 24-bit opcodes and
-// dispatches to the registered handlers. Unknown opcodes fall back to a default
-// echo handler so that tests remain deterministic. Gas is consumed per opcode.
-func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {
+// ExecuteContext interprets bytecode with context cancellation and gas limits.
+func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	if !vm.Status() {
 		return nil, 0, errors.New("vm not running")
 	}
 
-	// Bottleneck management: limit concurrent executions according to VM
-	// profile.
 	select {
 	case vm.limiter <- struct{}{}:
 		defer func() { <-vm.limiter }()
+	case <-ctx.Done():
+		return nil, 0, ctx.Err()
 	default:
 		return nil, 0, errors.New("vm busy")
 	}
@@ -130,7 +132,7 @@ func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit ui
 		return nil, 0, errors.New("bytecode required")
 	}
 
-	opCount := (uint64(len(wasm)) + 2) / 3 // number of 24-bit opcodes
+	opCount := (uint64(len(wasm)) + 2) / 3
 	gasUsed := opCount
 	if gasUsed == 0 {
 		gasUsed = 1
@@ -141,6 +143,9 @@ func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit ui
 
 	out := args
 	for i := 0; i < len(wasm); i += 3 {
+		if err := ctx.Err(); err != nil {
+			return nil, gasUsed, err
+		}
 		b0 := wasm[i]
 		var b1, b2 byte
 		if i+1 < len(wasm) {
@@ -149,32 +154,32 @@ func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit ui
 		if i+2 < len(wasm) {
 			b2 = wasm[i+2]
 		}
-                opcode := uint32(b0)<<16 | uint32(b1)<<8 | uint32(b2)
+		opcode := uint32(b0)<<16 | uint32(b1)<<8 | uint32(b2)
 
-                // Fast path: built-in handlers (currently only NOP/echo)
-                if handler, ok := vm.handlers[opcode]; ok {
-                        var err error
-                        out, err = handler(out)
-                        if err != nil {
-                                return nil, gasUsed, fmt.Errorf("opcode 0x%06x failed: %w", opcode, err)
-                        }
-                        continue
-                }
+		if handler, ok := vm.handlers[opcode]; ok {
+			var err error
+			out, err = handler(out)
+			if err != nil {
+				return nil, gasUsed, fmt.Errorf("opcode 0x%06x failed: %w", opcode, err)
+			}
+			continue
+		}
+		if opcode != 0 {
+			if err := Dispatch(vm, Opcode(opcode)); err != nil {
+				continue
+			}
+		}
+	}
 
-                // Delegate all other opcodes to the global dispatcher. If the
-                // dispatcher doesn't recognise the opcode we silently treat it
-                // as a no-op to preserve deterministic behaviour for random or
-                // future instructions.
-                if opcode != 0 {
-                        if err := Dispatch(vm, Opcode(opcode)); err != nil {
-                                // unknown opcode -> noop
-                                continue
-                        }
-                }
-        }
-
-	// simulate execution delay to keep behaviour deterministic
-	time.Sleep(time.Millisecond)
+	select {
+	case <-time.After(time.Millisecond):
+	case <-ctx.Done():
+		return nil, gasUsed, ctx.Err()
+	}
 
 	return out, gasUsed, nil
+}
+
+func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {
+	return vm.ExecuteContext(context.Background(), wasm, method, args, gasLimit)
 }

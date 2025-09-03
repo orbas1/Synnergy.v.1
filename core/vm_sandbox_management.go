@@ -74,6 +74,17 @@ func (m *SandboxManager) ResetSandbox(id string) error {
 	return nil
 }
 
+// DeleteSandbox removes a sandbox entirely, releasing its resources.
+func (m *SandboxManager) DeleteSandbox(id string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if _, ok := m.sandboxes[id]; !ok {
+		return errors.New("sandbox not found")
+	}
+	delete(m.sandboxes, id)
+	return nil
+}
+
 // SandboxStatus returns sandbox information by ID.
 func (m *SandboxManager) SandboxStatus(id string) (*SandboxInfo, bool) {
 	m.mu.RLock()

@@ -54,6 +54,20 @@ func init() {
 	}
 	cmd.AddCommand(stopCmd)
 
+	deleteCmd := &cobra.Command{
+		Use:   "delete <id>",
+		Args:  cobra.ExactArgs(1),
+		Short: "Delete a sandbox",
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := sandboxMgr.DeleteSandbox(args[0]); err != nil {
+				fmt.Println("delete error:", err)
+				return
+			}
+			fmt.Println("sandbox deleted")
+		},
+	}
+	cmd.AddCommand(deleteCmd)
+
 	resetCmd := &cobra.Command{
 		Use:   "reset <id>",
 		Args:  cobra.ExactArgs(1),

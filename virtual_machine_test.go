@@ -2,6 +2,7 @@ package synnergy
 
 import (
 	"bytes"
+	"context"
 	"testing"
 )
 
@@ -41,5 +42,18 @@ func TestSNVMOpcodeExecution(t *testing.T) {
 	}
 	if !bytes.Equal(out, args) {
 		t.Fatalf("opcode should echo args")
+	}
+}
+
+func TestVMContextCancel(t *testing.T) {
+	vm := NewSimpleVM()
+	if err := vm.Start(); err != nil {
+		t.Fatalf("start: %v", err)
+	}
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	_, _, err := vm.ExecuteContext(ctx, []byte{0, 0, 0}, "", nil, 10)
+	if err == nil {
+		t.Fatalf("expected context cancellation error")
 	}
 }

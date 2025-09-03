@@ -4,12 +4,6 @@
 
 Synnergy blockchain CLI
 
-> Stage 6 introduces structured logging for compliance, connection pool and consensus commands.
->
-> Stage 7 adds coded error handling and OpenTelemetry tracing for consensus and contract management commands.
-> Stage 8 exposes contract and cross-chain modules through persistent CLI commands and gas table integration.
-> Stage 9 introduces DAO governance, staking, custodial node operations and cross-consensus network management.
-
 ### Options
 
 ```
@@ -3446,6 +3440,7 @@ Manage cross-consensus scaling networks
 * [synnergy cross-consensus get](#synnergy-cross-consensus-get)	 - Get network by ID
 * [synnergy cross-consensus list](#synnergy-cross-consensus-list)	 - List networks
 * [synnergy cross-consensus register](#synnergy-cross-consensus-register)	 - Register a new network
+* [synnergy cross-consensus remove](#synnergy-cross-consensus-remove)	 - Remove network
 
 
 ## synnergy cross-consensus get
@@ -3498,6 +3493,25 @@ synnergy cross-consensus register <source> <target> [flags]
 
 ```
   -h, --help   help for register
+```
+
+### SEE ALSO
+
+* [synnergy cross-consensus](#synnergy-cross-consensus)	 - Manage cross-consensus scaling networks
+
+
+## synnergy cross-consensus remove
+
+Remove network
+
+```
+synnergy cross-consensus remove <id> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for remove
 ```
 
 ### SEE ALSO
@@ -4473,6 +4487,7 @@ DAO staking operations
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy dao-stake balance](#synnergy-dao-stake-balance)	 - Show staked balance
 * [synnergy dao-stake stake](#synnergy-dao-stake-stake)	 - Stake tokens
+* [synnergy dao-stake total](#synnergy-dao-stake-total)	 - Show total staked tokens
 * [synnergy dao-stake unstake](#synnergy-dao-stake-unstake)	 - Unstake tokens
 
 
@@ -4514,6 +4529,25 @@ synnergy dao-stake stake <addr> <amount> [flags]
 * [synnergy dao-stake](#synnergy-dao-stake)	 - DAO staking operations
 
 
+## synnergy dao-stake total
+
+Show total staked tokens
+
+```
+synnergy dao-stake total [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for total
+```
+
+### SEE ALSO
+
+* [synnergy dao-stake](#synnergy-dao-stake)	 - DAO staking operations
+
+
 ## synnergy dao-stake unstake
 
 Unstake tokens
@@ -4547,6 +4581,7 @@ DAO token ledger operations
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy dao-token balance](#synnergy-dao-token-balance)	 - Get token balance
+* [synnergy dao-token burn](#synnergy-dao-token-burn)	 - Burn tokens from an address
 * [synnergy dao-token mint](#synnergy-dao-token-mint)	 - Mint tokens to an address
 * [synnergy dao-token transfer](#synnergy-dao-token-transfer)	 - Transfer tokens
 
@@ -4563,6 +4598,25 @@ synnergy dao-token balance <addr> [flags]
 
 ```
   -h, --help   help for balance
+```
+
+### SEE ALSO
+
+* [synnergy dao-token](#synnergy-dao-token)	 - DAO token ledger operations
+
+
+## synnergy dao-token burn
+
+Burn tokens from an address
+
+```
+synnergy dao-token burn <addr> <amount> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for burn
 ```
 
 ### SEE ALSO
@@ -9049,11 +9103,31 @@ Manage VM sandboxes
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy sandbox delete](#synnergy-sandbox-delete)	 - Delete a sandbox
 * [synnergy sandbox list](#synnergy-sandbox-list)	 - List sandboxes
 * [synnergy sandbox reset](#synnergy-sandbox-reset)	 - Reset sandbox timer
 * [synnergy sandbox start](#synnergy-sandbox-start)	 - Start a sandbox
 * [synnergy sandbox status](#synnergy-sandbox-status)	 - Show sandbox status
 * [synnergy sandbox stop](#synnergy-sandbox-stop)	 - Stop a sandbox
+
+
+## synnergy sandbox delete
+
+Delete a sandbox
+
+```
+synnergy sandbox delete <id> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for delete
+```
+
+### SEE ALSO
+
+* [synnergy sandbox](#synnergy-sandbox)	 - Manage VM sandboxes
 
 
 ## synnergy sandbox list
@@ -9682,7 +9756,8 @@ synnergy simplevm exec <wasmHex> [argsHex] [gas] [flags]
 ### Options
 
 ```
-  -h, --help   help for exec
+  -h, --help          help for exec
+      --timeout int   execution timeout in ms (0 for none)
 ```
 
 ### SEE ALSO
@@ -10745,9 +10820,9 @@ synnergy syn12 init [flags]
       --discount float    discount rate
       --face uint         face value
   -h, --help              help for init
-      --issue string      issue date RFC3339 (default "2025-09-03T17:00:15Z")
+      --issue string      issue date RFC3339 (default "2025-09-03T18:22:55Z")
       --issuer string     issuer
-      --maturity string   maturity date RFC3339 (default "2025-10-03T17:00:15Z")
+      --maturity string   maturity date RFC3339 (default "2025-10-03T18:22:55Z")
       --name string       token name
       --symbol string     token symbol
 ```
@@ -11027,7 +11102,7 @@ synnergy syn1401 issue [flags]
 ```
   -h, --help             help for issue
       --id string        investment id
-      --maturity int     maturity unix time (default 1756918815)
+      --maturity int     maturity unix time (default 1756923775)
       --owner string     owner
       --principal uint   principal
       --rate float       annual rate
@@ -12245,7 +12320,7 @@ synnergy syn2600 issue [flags]
 
 ```
       --asset string    underlying asset
-      --expiry string   expiry time (default "2025-09-04T17:00:15Z")
+      --expiry string   expiry time (default "2025-09-04T18:22:55Z")
   -h, --help            help for issue
       --owner string    owner address
       --shares uint     share quantity
@@ -12460,11 +12535,11 @@ synnergy syn2800 issue [flags]
 ```
       --beneficiary string   beneficiary
       --coverage uint        coverage amount
-      --end string           end time (default "2025-09-04T17:00:15Z")
+      --end string           end time (default "2025-09-04T18:22:55Z")
   -h, --help                 help for issue
       --insured string       insured party
       --premium uint         premium amount
-      --start string         start time (default "2025-09-03T17:00:15Z")
+      --start string         start time (default "2025-09-03T18:22:55Z")
 ```
 
 ### SEE ALSO
@@ -12579,14 +12654,14 @@ synnergy syn2900 issue [flags]
 ```
       --coverage string   coverage type
       --deductible uint   deductible
-      --end string        end time (default "2025-09-04T17:00:15Z")
+      --end string        end time (default "2025-09-04T18:22:55Z")
   -h, --help              help for issue
       --holder string     policy holder
       --id string         policy id
       --limit uint        limit
       --payout uint       payout amount
       --premium uint      premium amount
-      --start string      start time (default "2025-09-03T17:00:15Z")
+      --start string      start time (default "2025-09-03T18:22:55Z")
 ```
 
 ### SEE ALSO
@@ -12840,7 +12915,7 @@ synnergy syn3200 create [flags]
 
 ```
       --amount uint     amount
-      --due string      due time (default "2025-09-04T17:00:15Z")
+      --due string      due time (default "2025-09-04T18:22:55Z")
   -h, --help            help for create
       --id string       bill id
       --issuer string   issuer
@@ -13157,7 +13232,7 @@ synnergy syn3600 create [flags]
 ### Options
 
 ```
-      --expiration string   expiration time (default "2025-09-04T17:00:15Z")
+      --expiration string   expiration time (default "2025-09-04T18:22:55Z")
   -h, --help                help for create
       --price uint          price per unit
       --qty uint            quantity

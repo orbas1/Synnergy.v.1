@@ -2,6 +2,7 @@ package core
 
 import (
 	"bytes"
+	"context"
 	"testing"
 )
 
@@ -41,22 +42,20 @@ func TestVMVariants(t *testing.T) {
 		t.Fatalf("heavy execute: %v", err)
 	}
 
-	errCh := make(chan error, 2)
-	go func() {
-		_, _, err := super.Execute([]byte{0, 0, 0}, "", nil, 5)
-		errCh <- err
-	}()
-	go func() {
-		_, _, err := super.Execute([]byte{0, 0, 0}, "", nil, 5)
-		errCh <- err
-	}()
-	busy := 0
-	for i := 0; i < 2; i++ {
-		if err := <-errCh; err != nil && err.Error() == "vm busy" {
-			busy++
-		}
-	}
-	if busy == 0 {
+	// occupy the only slot in super light VM
+	super.limiter <- struct{}{}
+	if _, _, err := super.Execute([]byte{0, 0, 0}, "", nil, 5); err == nil || err.Error() != "vm busy" {
 		t.Fatalf("expected busy error from super light VM")
+	}
+	<-super.limiter
+}
+
+func TestVMContextCancel(t *testing.T) {
+	vm := NewSimpleVM()
+	_ = vm.Start()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if _, _, err := vm.ExecuteContext(ctx, []byte{0, 0, 0}, "", nil, 5); err == nil {
+		t.Fatalf("expected cancellation error")
 	}
 }

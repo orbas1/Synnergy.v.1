@@ -97,3 +97,12 @@ func RegisterGasCost(name string, cost uint64) {
 	}
 	gasCache[name] = cost
 }
+
+// ResetGasTable clears the cached table. Primarily used in tests to reload
+// updated pricing without restarting the process.
+func ResetGasTable() {
+	gasMu.Lock()
+	gasCache = nil
+	gasMu.Unlock()
+	gasOnce = sync.Once{}
+}

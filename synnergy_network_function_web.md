@@ -77,6 +77,11 @@ graph TD
         CPoo --> CR[Release]
     end
 
+    subgraph VirtualMachine
+        VM[NewLightVM] --> VMExec[Execute]
+        SMgr[NewSandboxManager] --> SDel[DeleteSandbox]
+    end
+
     subgraph Consensus
         CH[NewConsensusHopper] --> CM[Mode]
         AM[NewAdaptiveManager] --> Adj[Adjust]
@@ -96,6 +101,7 @@ graph TD
     Compliance --> Regulatory
     Compliance --> Consensus
     ConnectionPool --> Consensus
+    VirtualMachine --> Consensus
     CentralBank --> Consensus
     Charity --> Consensus
     Synchronization --> Consensus

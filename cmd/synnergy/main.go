@@ -56,6 +56,9 @@ func main() {
 	_ = core.NewProtocolRegistry()
 	_ = core.NewCrossChainTxManager(core.NewLedger())
 
+	// Preload stage 11 modules for VM sandbox management.
+	_ = core.NewSandboxManager()
+
 	// Preload stage 9 modules so DAO-related CLI commands are ready for use.
 	_ = core.NewDAOManager()
 	_ = core.NewProposalManager()

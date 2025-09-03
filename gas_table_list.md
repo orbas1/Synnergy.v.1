@@ -90,6 +90,7 @@
 | `DefaultGenesisWallets` | `1` |
 | `Delegate` | `1` |
 | `Delete` | `1` |
+| `DeleteSandbox` | `1` |
 | `Deploy` | `1` |
 | `DeployAIContract` | `5000` |
 | `ContractInfo` | `100` |
