@@ -30,6 +30,10 @@ Complex logic can be decomposed into multiple small opcodes or combined into a b
 Gas prices are defined in [`gas_table.go`](gas_table.go).  Each opcode has a deterministic base cost reflecting CPU, storage and network impact.  From Stage 11 the table is populated at start-up by parsing [`gas_table_list.md`](../../gas_table_list.md), allowing operators to override prices without recompiling binaries.  Missing entries are charged `DefaultGasCost`.
 
 Stage 19 introduces additional opcodes for the reserve‑backed `SYN1000` stablecoin and its index manager. Gas costs for creating tokens, adjusting reserves and computing valuations are explicitly defined to ensure predictable execution fees.
+Stage 20 expands the opcode catalogue with dividend, convertible, governance,
+capped supply, vesting, loyalty and multi‑chain token primitives. Each function
+receives a deterministic gas price so these extensions remain affordable during
+execution.
 
 The VM charges gas **before** executing an opcode.  Dynamic portions – such as per‑word memory fees or refunds for resource release – are handled by the VM's gas meter.
 

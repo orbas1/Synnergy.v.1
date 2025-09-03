@@ -31,3 +31,6 @@ These modules define how smart contracts run and how tokens and transactions are
 
 Stage 16 introduces a concurrency‑safe token registry and base token with
 benchmarks to measure transfer performance across the network.
+Stage 20 extends the library with dividend, convertible, governance, capped
+ supply, vesting, loyalty and multi-chain token standards, all accessible via CLI
+ and VM opcodes.

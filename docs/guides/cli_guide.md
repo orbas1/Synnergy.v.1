@@ -4,6 +4,10 @@
 
 Synnergy blockchain CLI
 
+Stage 20 adds CLI access for new token extensions including dividend, convertible
+and multi-chain assets. These commands appear under the `token` subtree and are
+available once the corresponding modules are initialised.
+
 ### Options
 
 ```

@@ -87,6 +87,13 @@ how specialised assets can be modelled on top of the base abstractions:
 | `syn3500_token.go` | Fiat‑pegged currency token with mint and redeem operations. |
 | `syn3700_token.go` | Index token that aggregates multiple assets by weight. |
 | `syn4200_token.go` | Charity campaign token used for tracking donations. |
+| `syn2700.go` | Dividend token distributing rewards proportionally to holders. |
+| `syn3200.go` | Convertible token applying a dynamic conversion ratio. |
+| `syn3600.go` | Governance weight ledger for on‑chain voting schemes. |
+| `syn3800.go` | Capped supply token enforcing hard issuance limits. |
+| `syn3900.go` | Vesting token releasing grants after a specified time. |
+| `syn500.go` | Loyalty points token with expirations. |
+| `syn5000.go` | Multi‑chain token supporting cross‑chain transfers. |
 | `syn4700.go` | Legal document token recording parties, signatures and dispute status. |
 
 These examples can be used as templates when designing new token types.

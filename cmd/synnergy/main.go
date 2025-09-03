@@ -12,6 +12,7 @@ import (
 	"synnergy/cli"
 	"synnergy/core"
 	"synnergy/internal/config"
+	tokens "synnergy/internal/tokens"
 )
 
 func main() {
@@ -78,6 +79,16 @@ func main() {
 	// Preload stage 13 modules for secure channels and compliance checks.
 	_ = core.NewZeroTrustEngine()
 	_ = core.NewRegulatoryNode("cli-regnode", core.NewRegulatoryManager())
+
+	// Preload stage 20 token extensions for CLI and opcode availability.
+	_ = tokens.NewSYN223Token("cli", "S223", "cli", 0)
+	_ = tokens.NewSYN2700Token()
+	_ = tokens.NewSYN3200Token(1)
+	_ = tokens.NewSYN3600Token()
+	_ = tokens.NewSYN3800Token(0)
+	_ = tokens.NewSYN3900Token()
+	_ = tokens.NewSYN500Token()
+	_ = tokens.NewSYN5000Token()
 
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 

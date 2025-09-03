@@ -87,6 +87,13 @@ func GasCost(opcode string) uint64 {
 	return DefaultGasCost
 }
 
+// HasOpcode reports whether a gas price is defined for the opcode.
+func HasOpcode(name string) bool {
+	tbl := LoadGasTable()
+	_, ok := tbl[name]
+	return ok
+}
+
 // RegisterGasCost allows the CLI or tests to inject additional opcode pricing
 // at runtime. It is safe for concurrent use.
 func RegisterGasCost(name string, cost uint64) {
