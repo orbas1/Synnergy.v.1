@@ -45,6 +45,12 @@ Stage 9 introduces a lightweight governance layer backed by staking and quadrati
 voting. DAO modules provide proposal management, membership roles, token ledgers
 and custodial nodes, enabling permissioned organisations to coordinate on‑chain.
 
+### Token Standards
+Stage 17 expands the token library with standard contracts for central bank
+digital currencies, pausable utility assets and game items. Each implementation
+embeds the concurrency‑safe base token and surfaces dedicated CLI commands for
+minting, transferring and querying balances.
+
 ### Virtual Machine and Gas Accounting
 Smart contracts execute inside a dedicated virtual machine. Every protocol
 function is assigned a 24‑bit opcode and priced using a deterministic gas table.

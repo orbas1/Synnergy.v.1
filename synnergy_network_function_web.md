@@ -1,6 +1,9 @@
 # Synnergy Network Function Web
 
 This document provides a high-level function web for the Synnergy network, outlining major modules and their core functions. Stage 8 expands cross-chain registries and bridge managers with CLI access and gas‑priced opcodes. Stage 9 adds governance primitives, custodial nodes and cross-consensus network management. Stage 14 introduces a unified `internal/nodes` package with light, watchtower and logistics implementations. Stage 15 extends this package with forensic, geospatial, historical and holographic nodes for richer diagnostics and data distribution.
+Stage 17 standardises token contracts for CBDCs, pausable utility assets and
+gaming items, all backed by the thread-safe base token and accessible through
+the CLI.
 
 ## Diagram
 
@@ -46,6 +49,9 @@ graph TD
 
     subgraph Tokens
         TR[NewRegistry] --> BT[NewBaseToken]
+        BT --> ST10[NewSYN10Token]
+        BT --> ST20[NewSYN20Token]
+        BT --> ST70[NewSYN70Token]
     end
 
     subgraph PrivateTransactions
