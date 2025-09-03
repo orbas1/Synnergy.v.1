@@ -19,16 +19,17 @@ func init() {
 		Use:   "discover [topic]",
 		Args:  cobra.MaximumNArgs(1),
 		Short: "List known peers or those advertising a topic",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) == 1 {
 				for _, id := range peerMgr.Discover(args[0]) {
-					fmt.Println(id)
+					fmt.Fprintln(cmd.OutOrStdout(), id)
 				}
-				return
+				return nil
 			}
 			for _, id := range peerMgr.ListPeers() {
-				fmt.Println(id)
+				fmt.Fprintln(cmd.OutOrStdout(), id)
 			}
+			return nil
 		},
 	}
 
@@ -36,9 +37,10 @@ func init() {
 		Use:   "connect [addr]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Connect to a peer by address",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			id := peerMgr.Connect(args[0])
-			fmt.Println("connected", id)
+			fmt.Fprintln(cmd.OutOrStdout(), "connected", id)
+			return nil
 		},
 	}
 
@@ -46,8 +48,9 @@ func init() {
 		Use:   "advertise [topic]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Advertise current node on a topic",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			peerMgr.Advertise(currentNode.ID, args[0])
+			return nil
 		},
 	}
 

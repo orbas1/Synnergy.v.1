@@ -64,6 +64,11 @@ time‑locked vesting, loyalty points and multi‑chain balances. These primitiv
 share the concurrency guarantees of the base library and expose opcodes and CLI
 wrappers for seamless integration.
 
+Stage 21 streamlines the core command‑line interface, providing standardized
+network lifecycle management, peer discovery and address utilities. Commands now
+propagate errors to calling environments and emit structured output, aligning CLI
+operations with the gas‑priced virtual machine and consensus layers.
+
 ### Virtual Machine and Gas Accounting
 Smart contracts execute inside a dedicated virtual machine. Every protocol
 function is assigned a 24‑bit opcode and priced using a deterministic gas table.
