@@ -21,6 +21,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Mine a block",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("MineBlock")
 			sb := core.NewSubBlock([]*core.Transaction{}, "validator")
 			b := core.NewBlock([]*core.SubBlock{sb}, "")
 			diff, _ := strconv.ParseUint(args[0], 10, 8)
@@ -34,6 +35,7 @@ func init() {
 		Use:   "weights",
 		Short: "Show current consensus weights",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("Weights")
 			ilog.Info("cli_weights", "pow", consensus.Weights.PoW, "pos", consensus.Weights.PoS, "poh", consensus.Weights.PoH)
 			fmt.Printf("PoW: %.2f PoS: %.2f PoH: %.2f\n", consensus.Weights.PoW, consensus.Weights.PoS, consensus.Weights.PoH)
 		},
@@ -44,6 +46,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Adjust consensus weights",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("AdjustWeights")
 			d, _ := strconv.ParseFloat(args[0], 64)
 			s, _ := strconv.ParseFloat(args[1], 64)
 			consensus.AdjustWeights(d, s)
@@ -57,6 +60,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Calculate switching threshold",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("Threshold")
 			d, _ := strconv.ParseFloat(args[0], 64)
 			s, _ := strconv.ParseFloat(args[1], 64)
 			th := consensus.Threshold(d, s)
@@ -70,6 +74,7 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Compute full transition threshold",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TransitionThreshold")
 			d, _ := strconv.ParseFloat(args[0], 64)
 			t, _ := strconv.ParseFloat(args[1], 64)
 			s, _ := strconv.ParseFloat(args[2], 64)
@@ -84,6 +89,7 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Adjust mining difficulty",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("DifficultyAdjust")
 			old, _ := strconv.ParseFloat(args[0], 64)
 			actual, _ := strconv.ParseFloat(args[1], 64)
 			expected, _ := strconv.ParseFloat(args[2], 64)
@@ -98,6 +104,7 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Set validator availability flags",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("SetAvailability")
 			pow := args[0] == "true"
 			pos := args[1] == "true"
 			poh := args[2] == "true"
@@ -111,6 +118,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Toggle PoW rewards availability",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("SetPoWRewards")
 			en := args[0] == "true"
 			consensus.SetPoWRewards(en)
 			ilog.Info("cli_pow_rewards", "enabled", en)

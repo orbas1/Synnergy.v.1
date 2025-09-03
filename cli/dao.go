@@ -20,6 +20,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Create a new DAO",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("CreateDAO")
 			dao := daoMgr.Create(args[0], args[1])
 			if dao == nil {
 				fmt.Println("invalid parameters")
@@ -34,6 +35,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Join a DAO",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("JoinDAO")
 			if err := daoMgr.Join(args[0], args[1]); err != nil {
 				fmt.Println(err)
 			}
@@ -45,6 +47,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Leave a DAO",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LeaveDAO")
 			if err := daoMgr.Leave(args[0], args[1]); err != nil {
 				fmt.Println(err)
 			}
@@ -56,6 +59,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show DAO information",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("DAOInfo")
 			dao, err := daoMgr.Info(args[0])
 			if err != nil {
 				fmt.Println(err)
@@ -71,6 +75,7 @@ func init() {
 		Use:   "list",
 		Short: "List all DAOs",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ListDAOs")
 			for _, d := range daoMgr.List() {
 				fmt.Printf("%s %s\n", d.ID, d.Name)
 			}

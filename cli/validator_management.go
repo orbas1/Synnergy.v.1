@@ -23,6 +23,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Register validator with stake",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("AddValidator")
 			stake, _ := strconv.ParseUint(args[1], 10, 64)
 			if err := validatorMgr.Add(context.Background(), args[0], stake); err != nil {
 				if e, ok := err.(*ierr.Error); ok {
@@ -39,6 +40,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Remove validator",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("RemoveValidator")
 			validatorMgr.Remove(context.Background(), args[0])
 		},
 	}
@@ -48,6 +50,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Slash validator stake",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("SlashValidator")
 			validatorMgr.Slash(context.Background(), args[0])
 		},
 	}
@@ -56,6 +59,7 @@ func init() {
 		Use:   "eligible",
 		Short: "List eligible validators",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("Eligible")
 			for addr, stake := range validatorMgr.Eligible() {
 				fmt.Printf("%s:%d\n", addr, stake)
 			}
@@ -67,6 +71,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show validator stake",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("Stake")
 			fmt.Println(validatorMgr.Stake(args[0]))
 		},
 	}

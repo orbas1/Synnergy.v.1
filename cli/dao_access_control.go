@@ -17,6 +17,7 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Add member with role",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("AddMember")
 			dao, err := daoMgr.Info(args[0])
 			if err != nil {
 				fmt.Println(err)
@@ -35,6 +36,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Remove a member",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("RemoveMember")
 			dao, err := daoMgr.Info(args[0])
 			if err != nil {
 				fmt.Println(err)
@@ -53,6 +55,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Get member role",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("MemberRole")
 			dao, err := daoMgr.Info(args[0])
 			if err != nil {
 				fmt.Println(err)
@@ -72,6 +75,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "List members",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("MembersList")
 			dao, err := daoMgr.Info(args[0])
 			if err != nil {
 				fmt.Println(err)

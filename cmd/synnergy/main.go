@@ -39,8 +39,10 @@ func main() {
 	}
 	logrus.SetLevel(lvl)
 
-	// Warm up caches for shared resources.
+	// Warm up caches for shared resources and ensure stage 23 gas costs.
 	synn.LoadGasTable()
+	synn.RegisterGasCost("MineBlock", synn.GasCost("MineBlock"))
+	synn.RegisterGasCost("CreateDAO", synn.GasCost("CreateDAO"))
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.

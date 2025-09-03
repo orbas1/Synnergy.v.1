@@ -4,6 +4,10 @@
 
 Synnergy blockchain CLI
 
+Stage 23 introduces gas awareness for consensus and DAO commands. Running
+operations such as `synnergy consensus mine` or `synnergy dao create` prints the
+expected gas cost sourced from the on-chain `gas_table_list.md`.
+
 ### Options
 
 ```

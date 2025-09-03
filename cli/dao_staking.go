@@ -21,6 +21,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Stake tokens",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("DAO_Stake")
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				fmt.Println("invalid amount")
@@ -35,6 +36,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Unstake tokens",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("DAO_Unstake")
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				fmt.Println("invalid amount")
@@ -51,6 +53,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show staked balance",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("DAO_Staked")
 			fmt.Println(daoStaking.Balance(args[0]))
 		},
 	}
@@ -59,6 +62,7 @@ func init() {
 		Use:   "total",
 		Short: "Show total staked tokens",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("DAO_TotalStaked")
 			fmt.Println(daoStaking.TotalStaked())
 		},
 	}

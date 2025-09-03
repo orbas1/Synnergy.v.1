@@ -1,5 +1,6 @@
 package synnergy
 
+// Updated for Stage 23 to ensure consensus and governance opcodes remain in sync.
 // SNVMOpcode defines a mapping between a function identifier and its opcode.
 type SNVMOpcode struct {
 	Name string

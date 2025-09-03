@@ -22,6 +22,10 @@ registries, forex pairs, fiat‑pegged currencies, index funds, charity campaign
 and legal document tokens. Each contract validates inputs and allows
 administrators to deactivate assets through the CLI.
 
+Stage 23 integrates DAO token ledger operations with gas-aware CLI commands,
+allowing governance tokens to report the cost of minting, transferring and
+burning directly to operators.
+
 ## Package layout
 
 Token code lives under `internal/tokens`.  Key files are:
