@@ -41,3 +41,15 @@ func (l *DAOTokenLedger) Balance(addr string) uint64 {
 	defer l.mu.RUnlock()
 	return l.balances[addr]
 }
+
+// Burn removes tokens from an address.
+func (l *DAOTokenLedger) Burn(addr string, amount uint64) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	bal := l.balances[addr]
+	if bal < amount {
+		return errors.New("insufficient balance")
+	}
+	l.balances[addr] = bal - amount
+	return nil
+}

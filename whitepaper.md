@@ -37,6 +37,11 @@ community pools.
 
 Stage 7 formalises error handling and observability for these components. Validator and contract operations emit coded errors and OpenTelemetry traces, allowing operators to audit consensus behaviour across distributed deployments.
 
+### Governance and DAO
+Stage 9 introduces a lightweight governance layer backed by staking and quadratic
+voting. DAO modules provide proposal management, membership roles, token ledgers
+and custodial nodes, enabling permissioned organisations to coordinate on‑chain.
+
 ### Virtual Machine and Gas Accounting
 Smart contracts execute inside a dedicated virtual machine. Every protocol
 function is assigned a 24‑bit opcode and priced using a deterministic gas table.

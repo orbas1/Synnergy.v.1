@@ -12,15 +12,22 @@ func (d *DAO) AddMember(addr, role string) error {
 	if role != "member" && role != "admin" {
 		return errors.New("invalid role")
 	}
+	if _, ok := d.Members[addr]; ok {
+		return errors.New("member exists")
+	}
 	d.Members[addr] = role
 	return nil
 }
 
 // RemoveMember deletes a member from the DAO.
-func (d *DAO) RemoveMember(addr string) {
+func (d *DAO) RemoveMember(addr string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
+	if _, ok := d.Members[addr]; !ok {
+		return errors.New("member not found")
+	}
 	delete(d.Members, addr)
+	return nil
 }
 
 // MemberRole returns the role for a given address.

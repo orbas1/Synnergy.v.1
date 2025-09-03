@@ -56,6 +56,22 @@ func init() {
 		},
 	}
 
-	ccsnCmd.AddCommand(registerCmd, listCmd, getCmd)
+	removeCmd := &cobra.Command{
+		Use:   "remove <id>",
+		Args:  cobra.ExactArgs(1),
+		Short: "Remove network",
+		Run: func(cmd *cobra.Command, args []string) {
+			id, err := strconv.Atoi(args[0])
+			if err != nil {
+				fmt.Println("invalid id")
+				return
+			}
+			if err := consensusNetMgr.RemoveNetwork(id); err != nil {
+				fmt.Println(err)
+			}
+		},
+	}
+
+	ccsnCmd.AddCommand(registerCmd, listCmd, getCmd, removeCmd)
 	rootCmd.AddCommand(ccsnCmd)
 }

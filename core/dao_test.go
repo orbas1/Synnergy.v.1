@@ -14,4 +14,7 @@ func TestDAOManager(t *testing.T) {
 	if err := mgr.Leave(dao.ID, "user1"); err != nil {
 		t.Fatalf("leave: %v", err)
 	}
+	if err := mgr.Leave(dao.ID, "user1"); err == nil {
+		t.Fatalf("expected error for unknown member")
+	}
 }

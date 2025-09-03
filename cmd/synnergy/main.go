@@ -56,6 +56,14 @@ func main() {
 	_ = core.NewProtocolRegistry()
 	_ = core.NewCrossChainTxManager(core.NewLedger())
 
+	// Preload stage 9 modules so DAO-related CLI commands are ready for use.
+	_ = core.NewDAOManager()
+	_ = core.NewProposalManager()
+	_ = core.NewDAOStaking()
+	_ = core.NewDAOTokenLedger()
+	_ = core.NewConsensusNetworkManager()
+	_ = core.NewCustodialNode("cli-custodian", "cli-custodian", core.NewLedger())
+
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 
 	if err := cli.Execute(); err != nil {

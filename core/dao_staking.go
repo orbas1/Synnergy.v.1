@@ -41,3 +41,14 @@ func (s *DAOStaking) Balance(addr string) uint64 {
 	defer s.mu.RUnlock()
 	return s.stakes[addr]
 }
+
+// TotalStaked returns the sum of all staked tokens.
+func (s *DAOStaking) TotalStaked() uint64 {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	var total uint64
+	for _, amt := range s.stakes {
+		total += amt
+	}
+	return total
+}

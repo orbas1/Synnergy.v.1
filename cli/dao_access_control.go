@@ -24,7 +24,9 @@ func init() {
 			}
 			if err := dao.AddMember(args[1], args[2]); err != nil {
 				fmt.Println(err)
+				return
 			}
+			fmt.Println("member added")
 		},
 	}
 
@@ -38,7 +40,11 @@ func init() {
 				fmt.Println(err)
 				return
 			}
-			dao.RemoveMember(args[1])
+			if err := dao.RemoveMember(args[1]); err != nil {
+				fmt.Println(err)
+				return
+			}
+			fmt.Println("member removed")
 		},
 	}
 

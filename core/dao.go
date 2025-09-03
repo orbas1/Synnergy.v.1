@@ -30,6 +30,9 @@ func NewDAOManager() *DAOManager {
 
 // Create initialises a new DAO.
 func (m *DAOManager) Create(name, creator string) *DAO {
+	if name == "" || creator == "" {
+		return nil
+	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	id := fmt.Sprintf("%d", m.nextID)
@@ -66,6 +69,9 @@ func (m *DAOManager) Leave(id, addr string) error {
 	}
 	dao.mu.Lock()
 	defer dao.mu.Unlock()
+	if _, ok := dao.Members[addr]; !ok {
+		return errors.New("member not found")
+	}
 	delete(dao.Members, addr)
 	return nil
 }

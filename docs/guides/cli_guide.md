@@ -8,6 +8,7 @@ Synnergy blockchain CLI
 >
 > Stage 7 adds coded error handling and OpenTelemetry tracing for consensus and contract management commands.
 > Stage 8 exposes contract and cross-chain modules through persistent CLI commands and gas table integration.
+> Stage 9 introduces DAO governance, staking, custodial node operations and cross-consensus network management.
 
 ### Options
 

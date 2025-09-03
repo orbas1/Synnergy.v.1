@@ -9,6 +9,8 @@ Governance modules implement decentralized decision-making and staking mechanism
 - dao_quadratic_voting.go
 - dao_staking.go
 - dao_token.go
+- cross_consensus_scaling_networks.go
+- custodial_node.go
 
 **Related CLI Files**
 - cli/dao.go
@@ -17,5 +19,7 @@ Governance modules implement decentralized decision-making and staking mechanism
 - cli/dao_quadratic_voting.go
 - cli/dao_staking.go
 - cli/dao_token.go
+- cli/cross_consensus_scaling_networks.go
+- cli/custodial_node.go
 
-These components enable proposal submission, voting, staking, and tokenized governance.
+These components enable proposal submission, voting, staking, custodial asset management and cross-consensus network registration for scalable governance.
