@@ -1263,6 +1263,8 @@ var SNVMOpcodes = []SNVMOpcode{
 	{"internal_tokens_syn5000_NewSYN5000Token", 0x0004E3},
 	{"internal_tokens_syn5000_Mint", 0x0004E4},
 	{"internal_tokens_syn5000_Transfer", 0x0004E5},
+	{"gui_smart_contract_marketplace_DeployContract", 0x0004E6},
+	{"gui_smart_contract_marketplace_TradeContract", 0x0004E7},
 }
 
 // SNVMOpcodeByName returns the opcode for a given function identifier.

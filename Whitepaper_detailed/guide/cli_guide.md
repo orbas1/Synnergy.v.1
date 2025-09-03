@@ -69,7 +69,7 @@ Synnergy blockchain CLI
 * [synnergy fullnode](#synnergy-fullnode)	 - Manage full node configuration
 * [synnergy gas](#synnergy-gas)	 - Interact with gas table
 * [synnergy gateway](#synnergy-gateway)	 - Gateway node endpoint management
-* [synnergy genesis](#synnergy-genesis)	 - Genesis wallet utilities
+* [synnergy genesis](#synnergy-genesis)	 - Genesis utilities
 * [synnergy geospatial](#synnergy-geospatial)	 - Geospatial node operations
 * [synnergy government](#synnergy-government)	 - Government authority node operations
 * [synnergy highavailability](#synnergy-highavailability)	 - High availability failover management
@@ -89,6 +89,7 @@ Synnergy blockchain CLI
 * [synnergy loanpool](#synnergy-loanpool)	 - Manage loan pool proposals
 * [synnergy loanpool_apply](#synnergy-loanpool-apply)	 - Manage loan applications
 * [synnergy loanproposal](#synnergy-loanproposal)	 - Work with standalone loan proposals
+* [synnergy marketplace](#synnergy-marketplace)	 - Deploy and trade smart contracts
 * [synnergy mining](#synnergy-mining)	 - Control a mining node
 * [synnergy mobile_mining](#synnergy-mobile-mining)	 - Operate a mobile mining node
 * [synnergy nat](#synnergy-nat)	 - Manage NAT port mappings
@@ -6917,7 +6918,7 @@ synnergy gateway remove [name] [flags]
 
 ## synnergy genesis
 
-Genesis wallet utilities
+Genesis utilities
 
 ### Options
 
@@ -6935,6 +6936,7 @@ Genesis wallet utilities
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy genesis allocate](#synnergy-genesis-allocate)	 - Allocate fees to genesis wallets
+* [synnergy genesis init](#synnergy-genesis-init)	 - Initialise the genesis block
 * [synnergy genesis init-block](#synnergy-genesis-init-block)	 - Initialise the chain's genesis block
 * [synnergy genesis show](#synnergy-genesis-show)	 - Show default genesis wallet addresses
 
@@ -6961,7 +6963,32 @@ synnergy genesis allocate [total] [flags]
 
 ### SEE ALSO
 
-* [synnergy genesis](#synnergy-genesis)	 - Genesis wallet utilities
+* [synnergy genesis](#synnergy-genesis)	 - Genesis utilities
+
+
+## synnergy genesis init
+
+Initialise the genesis block
+
+```
+synnergy genesis init [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for init
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output results in JSON
+```
+
+### SEE ALSO
+
+* [synnergy genesis](#synnergy-genesis)	 - Genesis utilities
 
 
 ## synnergy genesis init-block
@@ -6986,7 +7013,7 @@ synnergy genesis init-block [flags]
 
 ### SEE ALSO
 
-* [synnergy genesis](#synnergy-genesis)	 - Genesis wallet utilities
+* [synnergy genesis](#synnergy-genesis)	 - Genesis utilities
 
 
 ## synnergy genesis show
@@ -7011,7 +7038,7 @@ synnergy genesis show [flags]
 
 ### SEE ALSO
 
-* [synnergy genesis](#synnergy-genesis)	 - Genesis wallet utilities
+* [synnergy genesis](#synnergy-genesis)	 - Genesis utilities
 
 
 ## synnergy geospatial
@@ -9231,6 +9258,79 @@ synnergy loanproposal votes [id] [flags]
 ### SEE ALSO
 
 * [synnergy loanproposal](#synnergy-loanproposal)	 - Work with standalone loan proposals
+
+
+## synnergy marketplace
+
+Deploy and trade smart contracts
+
+### Options
+
+```
+  -h, --help   help for marketplace
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output results in JSON
+```
+
+### SEE ALSO
+
+* [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy marketplace deploy](#synnergy-marketplace-deploy)	 - Deploy a WASM contract to the marketplace
+* [synnergy marketplace trade](#synnergy-marketplace-trade)	 - Transfer ownership of a deployed contract
+
+
+## synnergy marketplace deploy
+
+Deploy a WASM contract to the marketplace
+
+```
+synnergy marketplace deploy [wasm] [owner] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for deploy
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output results in JSON
+```
+
+### SEE ALSO
+
+* [synnergy marketplace](#synnergy-marketplace)	 - Deploy and trade smart contracts
+
+
+## synnergy marketplace trade
+
+Transfer ownership of a deployed contract
+
+```
+synnergy marketplace trade [addr] [newOwner] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for trade
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output results in JSON
+```
+
+### SEE ALSO
+
+* [synnergy marketplace](#synnergy-marketplace)	 - Deploy and trade smart contracts
 
 
 ## synnergy mining
@@ -14140,9 +14240,9 @@ synnergy syn12 init [flags]
       --discount float    discount rate
       --face uint         face value
   -h, --help              help for init
-      --issue string      issue date RFC3339 (default "2025-09-03T22:08:00Z")
+      --issue string      issue date RFC3339 (default "2025-09-03T23:11:39Z")
       --issuer string     issuer
-      --maturity string   maturity date RFC3339 (default "2025-10-03T22:08:00Z")
+      --maturity string   maturity date RFC3339 (default "2025-10-03T23:11:39Z")
       --name string       token name
       --symbol string     token symbol
 ```
@@ -14506,7 +14606,7 @@ synnergy syn1401 issue [flags]
 ```
   -h, --help             help for issue
       --id string        investment id
-      --maturity int     maturity unix time (default 1756937280)
+      --maturity int     maturity unix time (default 1756941099)
       --owner string     owner
       --principal uint   principal
       --rate float       annual rate
@@ -16116,7 +16216,7 @@ synnergy syn2600 issue [flags]
 
 ```
       --asset string    underlying asset
-      --expiry string   expiry time (default "2025-09-04T22:08:00Z")
+      --expiry string   expiry time (default "2025-09-04T23:11:39Z")
   -h, --help            help for issue
       --owner string    owner address
       --shares uint     share quantity
@@ -16423,11 +16523,11 @@ synnergy syn2800 issue [flags]
 ```
       --beneficiary string   beneficiary
       --coverage uint        coverage amount
-      --end string           end time (default "2025-09-04T22:08:00Z")
+      --end string           end time (default "2025-09-04T23:11:39Z")
   -h, --help                 help for issue
       --insured string       insured party
       --premium uint         premium amount
-      --start string         start time (default "2025-09-03T22:08:00Z")
+      --start string         start time (default "2025-09-03T23:11:39Z")
 ```
 
 ### Options inherited from parent commands
@@ -16605,13 +16705,13 @@ synnergy syn2900 issue [flags]
 ```
       --coverage string   coverage type
       --deductible uint   deductible
-      --end string        end time (default "2025-09-04T22:08:00Z")
+      --end string        end time (default "2025-09-04T23:11:39Z")
   -h, --help              help for issue
       --holder string     policy holder
       --limit uint        limit
       --payout uint       payout amount
       --premium uint      premium amount
-      --start string      start time (default "2025-09-03T22:08:00Z")
+      --start string      start time (default "2025-09-03T23:11:39Z")
 ```
 
 ### Options inherited from parent commands
@@ -16968,7 +17068,7 @@ synnergy syn3200 create [flags]
 
 ```
       --amount uint     amount
-      --due string      due time (default "2025-09-04T22:08:00Z")
+      --due string      due time (default "2025-09-04T23:11:39Z")
   -h, --help            help for create
       --id string       bill id
       --issuer string   issuer
@@ -17381,7 +17481,7 @@ synnergy syn3600 create [flags]
 ### Options
 
 ```
-      --expiration string   expiration time (default "2025-09-04T22:08:00Z")
+      --expiration string   expiration time (default "2025-09-04T23:11:39Z")
   -h, --help                help for create
       --price uint          price per unit
       --qty uint            quantity
@@ -20144,8 +20244,7 @@ Wallet operations
 
 ## synnergy wallet new
 
-Generate a new wallet. The command can optionally write an encrypted key file
-for use in graphical clients.
+Generate a new wallet
 
 ```
 synnergy wallet new [flags]
@@ -20154,9 +20253,9 @@ synnergy wallet new [flags]
 ### Options
 
 ```
-      --out string       write encrypted wallet to file
-      --password string  encryption password for wallet file
-  -h, --help             help for new
+  -h, --help              help for new
+      --out string        write encrypted wallet to file
+      --password string   encryption password for wallet file
 ```
 
 ### Options inherited from parent commands

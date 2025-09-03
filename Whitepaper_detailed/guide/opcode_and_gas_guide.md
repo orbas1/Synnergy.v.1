@@ -2888,3 +2888,12 @@ Operations related to warfare / military nodes.
 | `Warfare_SecureCommand` | `300` |
 | `Warfare_TrackLogistics` | `300` |
 | `Warfare_ShareTactical` | `200` |
+
+### Smart-Contract Marketplace
+
+Operations exposed by the Stage 34 marketplace GUI.
+
+| Opcode | Gas Cost |
+|---|---|
+| `DeploySmartContract` | `5000` |
+| `TradeContract` | `100` |

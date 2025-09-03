@@ -17,6 +17,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Biometric security backed by ECDSA signatures for sensitive node operations.
 - YAML based configuration for development, test and production environments.
 - Web interfaces for wallets, explorers and marketplaces under `GUI/`.
+- Smart‑contract marketplace GUI demonstrating contract deployment and trading through the CLI.
 - JSON emitting CLI commands for authority and institutional banking nodes to ease integration with web dashboards.
 - Built-in ledger synchronization and snapshot compression utilities with
   central bank and charity pool modules enforcing capped supply and donation

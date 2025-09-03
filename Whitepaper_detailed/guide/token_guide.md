@@ -15,6 +15,9 @@ integrate staking flows directly.
 Stage 31 introduces a GUI wallet that consumes these JSON interfaces and
 invokes token operations through the CLI, providing an accessible reference
 implementation for external applications.
+Stage 34 extends the ecosystem with a smart‑contract marketplace GUI allowing
+tokenised contracts to be deployed and traded through the same CLI surface,
+demonstrating how assets can change ownership without leaving the network.
 Stage 11 ensures token operations execute inside managed VM sandboxes with explicit cleanup semantics and idle sandboxes are automatically purged once their TTL expires.
 Stage 13 links token flows with regulatory nodes, allowing non-compliant transfers to be flagged in real time for audit trails.
 Stage 16 makes the base token and registry concurrency‑safe and includes micro‑benchmarks to monitor transfer throughput.

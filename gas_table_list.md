@@ -99,6 +99,8 @@
 | `DeployNFTMintingTemplate` | `5000` |
 | `DeployStorageMarketTemplate` | `5000` |
 | `DeployTokenFaucetTemplate` | `5000` |
+| `DeploySmartContract` | `5000` |
+| `TradeContract` | `100` |
 | `ContractInfo` | `100` |
 | `InitContracts` | `1500` |
 | `PauseContract` | `300` |

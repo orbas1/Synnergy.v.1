@@ -67,6 +67,9 @@ func main() {
 	synn.RegisterGasCost("DeployDAOGovernanceTemplate", synn.GasCost("DeployDAOGovernanceTemplate"))
 	synn.RegisterGasCost("DeployNFTMintingTemplate", synn.GasCost("DeployNFTMintingTemplate"))
 	synn.RegisterGasCost("DeployAIModelMarketTemplate", synn.GasCost("DeployAIModelMarketTemplate"))
+	// Stage 34 smart-contract marketplace operations
+	synn.RegisterGasCost("DeploySmartContract", synn.GasCost("DeploySmartContract"))
+	synn.RegisterGasCost("TradeContract", synn.GasCost("TradeContract"))
 	// Wallet operations used by GUI clients
 	synn.RegisterGasCost("NewWallet", synn.GasCost("NewWallet"))
 	synn.RegisterGasCost("Sign", synn.GasCost("Sign"))
