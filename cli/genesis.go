@@ -13,7 +13,7 @@ var genesisWallets = core.DefaultGenesisWallets()
 func init() {
 	genesisCmd := &cobra.Command{
 		Use:   "genesis",
-		Short: "Genesis wallet utilities",
+		Short: "Genesis utilities",
 	}
 
 	showCmd := &cobra.Command{
@@ -50,6 +50,19 @@ func init() {
 		},
 	}
 
-	genesisCmd.AddCommand(showCmd, allocateCmd)
+	initCmd := &cobra.Command{
+		Use:   "init",
+		Short: "Initialise the genesis block",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			stats, _, err := currentNode.InitGenesis(genesisWallets)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "genesis block %s height %d\n", stats.Hash, stats.Height)
+			return nil
+		},
+	}
+
+	genesisCmd.AddCommand(showCmd, allocateCmd, initCmd)
 	rootCmd.AddCommand(genesisCmd)
 }
