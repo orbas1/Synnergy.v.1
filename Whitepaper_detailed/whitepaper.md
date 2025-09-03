@@ -213,6 +213,7 @@ front‑ends.
 Stage 32 adds a CLI-backed Explorer GUI for inspecting chain height and blocks without requiring direct node access.
 Stage 33 introduces an AI Marketplace GUI that deploys AI-enhanced contracts through the CLI, illustrating how complex workflows can be packaged for users.
 Stage 34 debuts a Smart-Contract Marketplace GUI enabling contract deployment and ownership transfers via the CLI.
+Stage 35 launches a Storage Marketplace GUI allowing decentralized storage listings and deals to be managed through the CLI.
 
 Scripts such as `devnet_start.sh` and `testnet_start.sh` help launch local or
 multi‑node networks, while a `Dockerfile` builds a containerised node for rapid

@@ -713,3 +713,20 @@
 | `BurnRelease` | `1` |
 | `PlasmaPause` | `1` |
 | `PlasmaResume` | `1` |
+<!-- Stage 35 storage marketplace operations -->
+| `NewStorage` | `1200` |
+| `Storage_Pin` | `200` |
+| `Storage_Retrieve` | `400` |
+| `CreateListing` | `800` |
+| `Exists` | `40` |
+| `OpenDeal` | `500` |
+| `Storage_Create` | `800` |
+| `CloseDeal` | `500` |
+| `Release` | `200` |
+| `GetListing` | `100` |
+| `ListListings` | `100` |
+| `GetDeal` | `100` |
+| `ListDeals` | `100` |
+| `IPFS_Add` | `1000` |
+| `IPFS_Get` | `400` |
+| `IPFS_Unpin` | `200` |

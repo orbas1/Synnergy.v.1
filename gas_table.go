@@ -20,7 +20,7 @@ import (
 // Stage 24 extends coverage to cross-chain bridges, protocol registration and
 // Plasma management so inter-network workflows remain predictable. Stage 25
 // adds node management operations (full, light, mining, staking, watchtower and
-// warfare nodes) so dashboards can price infrastructure actions. Stage 29 introduces pricing for deployable smart contract templates including token faucets, storage markets, DAO governance, NFT minting and AI model exchanges.
+// warfare nodes) so dashboards can price infrastructure actions. Stage 29 introduces pricing for deployable smart contract templates including token faucets, storage markets, DAO governance, NFT minting and AI model exchanges. Stage 35 records storage marketplace operations so listing and deal workflows are gas priced.
 type GasTable map[string]uint64
 
 // DefaultGasCost is used when an opcode is missing from the guide.

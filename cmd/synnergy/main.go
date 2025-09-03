@@ -70,6 +70,19 @@ func main() {
 	// Stage 34 smart-contract marketplace operations
 	synn.RegisterGasCost("DeploySmartContract", synn.GasCost("DeploySmartContract"))
 	synn.RegisterGasCost("TradeContract", synn.GasCost("TradeContract"))
+	// Stage 35 storage marketplace operations
+	synn.RegisterGasCost("CreateListing", synn.GasCost("CreateListing"))
+	synn.RegisterGasCost("ListListings", synn.GasCost("ListListings"))
+	synn.RegisterGasCost("GetListing", synn.GasCost("GetListing"))
+	synn.RegisterGasCost("OpenDeal", synn.GasCost("OpenDeal"))
+	synn.RegisterGasCost("CloseDeal", synn.GasCost("CloseDeal"))
+	synn.RegisterGasCost("ListDeals", synn.GasCost("ListDeals"))
+	synn.RegisterGasCost("GetDeal", synn.GasCost("GetDeal"))
+	synn.RegisterGasCost("Storage_Pin", synn.GasCost("Storage_Pin"))
+	synn.RegisterGasCost("Storage_Retrieve", synn.GasCost("Storage_Retrieve"))
+	synn.RegisterGasCost("IPFS_Add", synn.GasCost("IPFS_Add"))
+	synn.RegisterGasCost("IPFS_Get", synn.GasCost("IPFS_Get"))
+	synn.RegisterGasCost("IPFS_Unpin", synn.GasCost("IPFS_Unpin"))
 	// Wallet operations used by GUI clients
 	synn.RegisterGasCost("NewWallet", synn.GasCost("NewWallet"))
 	synn.RegisterGasCost("Sign", synn.GasCost("Sign"))

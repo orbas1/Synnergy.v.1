@@ -62,6 +62,8 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 31 debuts a TypeScript GUI wallet that interacts with the CLI. Wallets are generated locally, encrypted with scrypt-derived AES-GCM keys and can query ledger balances through JSON emitting commands.
 - Stage 32 adds a CLI-backed Explorer GUI that displays chain height and block data.
 - Stage 33 introduces an AI Marketplace GUI that deploys AI-enhanced contracts through the CLI.
+- Stage 34 introduces a Smart-Contract Marketplace GUI enabling contract deployment and trading via the CLI.
+- Stage 35 adds a Storage Marketplace GUI where users can list and lease storage through the CLI.
 - The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
 
 ## Repository layout
