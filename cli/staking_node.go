@@ -20,14 +20,14 @@ func init() {
 		Use:   "stake <addr> <amount>",
 		Args:  cobra.ExactArgs(2),
 		Short: "Stake tokens",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
-				return
+				return fmt.Errorf("invalid amount")
 			}
 			stakingNode.Stake(args[0], amt)
-			fmt.Println("staked")
+			printOutput(map[string]any{"status": "staked", "address": args[0], "amount": amt})
+			return nil
 		},
 	}
 
@@ -35,14 +35,14 @@ func init() {
 		Use:   "unstake <addr> <amount>",
 		Args:  cobra.ExactArgs(2),
 		Short: "Unstake tokens",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
-				return
+				return fmt.Errorf("invalid amount")
 			}
 			stakingNode.Unstake(args[0], amt)
-			fmt.Println("unstaked")
+			printOutput(map[string]any{"status": "unstaked", "address": args[0], "amount": amt})
+			return nil
 		},
 	}
 
@@ -50,16 +50,18 @@ func init() {
 		Use:   "balance <addr>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show staked balance",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(stakingNode.Balance(args[0]))
+		RunE: func(cmd *cobra.Command, args []string) error {
+			printOutput(stakingNode.Balance(args[0]))
+			return nil
 		},
 	}
 
 	totalCmd := &cobra.Command{
 		Use:   "total",
 		Short: "Show total staked tokens",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(stakingNode.TotalStaked())
+		RunE: func(cmd *cobra.Command, args []string) error {
+			printOutput(stakingNode.TotalStaked())
+			return nil
 		},
 	}
 

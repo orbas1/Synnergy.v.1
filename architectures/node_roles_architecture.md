@@ -34,4 +34,4 @@ Various modules define specialized node behaviors and responsibilities across th
 - cli/centralbank.go
 - cli/warfare_node.go
 
-Together they orchestrate different node types to handle governance, institutional banking, mining, regulation, monitoring, and geographic services. JSON output flags on the CLI facilitate integration with web interfaces and automation.
+Together they orchestrate different node types to handle governance, institutional banking, mining, regulation, monitoring, and geographic services. Stage 25 upgrades these CLI modules with a unified `--json` flag and explicit gas costs so web interfaces can automate node operations safely.

@@ -19,17 +19,21 @@ func init() {
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a full node",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			id, _ := cmd.Flags().GetString("id")
 			modeStr, _ := cmd.Flags().GetString("mode")
 			var mode core.FullNodeMode
-			if modeStr == "archive" {
+			switch modeStr {
+			case "archive":
 				mode = core.FullNodeModeArchive
-			} else {
+			case "pruned":
 				mode = core.FullNodeModePruned
+			default:
+				return fmt.Errorf("unknown mode %s", modeStr)
 			}
 			fullNode = core.NewFullNode(nodes.Address(id), mode)
-			fmt.Println("full node created")
+			printOutput(map[string]any{"status": "created", "mode": modeStr})
+			return nil
 		},
 	}
 	createCmd.Flags().String("id", "", "node id")
@@ -39,12 +43,12 @@ func init() {
 	modeCmd := &cobra.Command{
 		Use:   "mode",
 		Short: "Show current node mode",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if fullNode == nil {
-				fmt.Println("node not initialised")
-				return
+				return fmt.Errorf("node not initialised")
 			}
-			fmt.Println(fullNode.CurrentMode())
+			printOutput(fullNode.CurrentMode())
+			return nil
 		},
 	}
 	cmd.AddCommand(modeCmd)
@@ -53,17 +57,20 @@ func init() {
 		Use:   "set-mode <mode>",
 		Short: "Update node mode",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if fullNode == nil {
-				fmt.Println("node not initialised")
-				return
+				return fmt.Errorf("node not initialised")
 			}
-			if args[0] == "archive" {
+			switch args[0] {
+			case "archive":
 				fullNode.SetMode(core.FullNodeModeArchive)
-			} else {
+			case "pruned":
 				fullNode.SetMode(core.FullNodeModePruned)
+			default:
+				return fmt.Errorf("unknown mode %s", args[0])
 			}
-			fmt.Println("mode updated")
+			printOutput(map[string]string{"status": "mode updated", "mode": args[0]})
+			return nil
 		},
 	}
 	cmd.AddCommand(setCmd)

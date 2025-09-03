@@ -1,3 +1,4 @@
+<!-- Stage 25 adds node operation pricing such as SetMode, Stake and ReportFork -->
 | Function | Gas Cost |
 |---|---|
 | `Accrue` | `1` |

@@ -1,3 +1,4 @@
+<!-- Stage 25 ensures full node, light node, mining, staking, watchtower and warfare opcodes are documented for UI integration -->
 | Function | Opcode |
 |---|---|
 | `Accrue` | `0x100001` |

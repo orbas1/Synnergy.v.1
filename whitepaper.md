@@ -41,6 +41,10 @@ Stage 23 further enhances the toolchain by exposing gas costs for consensus and
 governance actions through the CLI, enabling operators to model fees before
 committing transactions.
 Stage 24 introduces enterprise-grade cross-chain tooling. Bridge registration, connection management and Plasma operations now expose deterministic gas fees and optional JSON output so external systems can safely automate transfers.
+Stage 25 focuses on operational tooling. Node management commands for full,
+light, mining, mobile, optimisation, staking, watchtower and warfare roles now
+emit structured JSON and have explicit gas pricing so that enterprise dashboards
+can monitor and orchestrate infrastructure reliably.
 
 ### Wallets and Network Monitoring
 Stage 12 introduces a hardened wallet with hex-encoded addressing and ECDSA signatures for transaction authorization.  Alongside the wallet, new warfare and watchtower node roles extend the network with logistics tracking and real-time fork detection.  These modules expose CLI endpoints and feed telemetry back into the consensus layer for improved operational awareness.

@@ -21,37 +21,37 @@ func init() {
 		Use:   "add-header [hash] [height] [parent]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Add a block header",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			h, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid height:", err)
-				return
+				return fmt.Errorf("invalid height: %w", err)
 			}
 			header := nodes.BlockHeader{Hash: args[0], Height: h, ParentHash: args[2]}
 			lightNode.AddHeader(header)
+			printOutput(header)
+			return nil
 		},
 	}
 
 	latestCmd := &cobra.Command{
 		Use:   "latest",
 		Short: "Show latest header",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			h, ok := lightNode.LatestHeader()
 			if !ok {
-				fmt.Println("no headers")
-				return
+				return fmt.Errorf("no headers")
 			}
-			fmt.Printf("%d %s %s\n", h.Height, h.Hash, h.ParentHash)
+			printOutput(h)
+			return nil
 		},
 	}
 
 	listCmd := &cobra.Command{
 		Use:   "headers",
 		Short: "List all headers",
-		Run: func(cmd *cobra.Command, args []string) {
-			for _, h := range lightNode.Headers() {
-				fmt.Printf("%d %s %s\n", h.Height, h.Hash, h.ParentHash)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			printOutput(lightNode.Headers())
+			return nil
 		},
 	}
 

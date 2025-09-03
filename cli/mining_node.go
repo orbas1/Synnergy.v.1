@@ -19,24 +19,29 @@ func init() {
 	startCmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start mining",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			miningNode.Start()
+			printOutput("started")
+			return nil
 		},
 	}
 
 	stopCmd := &cobra.Command{
 		Use:   "stop",
 		Short: "Stop mining",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			miningNode.Stop()
+			printOutput("stopped")
+			return nil
 		},
 	}
 
 	statusCmd := &cobra.Command{
 		Use:   "status",
 		Short: "Show mining status",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(miningNode.IsMining())
+		RunE: func(cmd *cobra.Command, args []string) error {
+			printOutput(miningNode.IsMining())
+			return nil
 		},
 	}
 
@@ -44,21 +49,22 @@ func init() {
 		Use:   "mine [data]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Perform one mining attempt",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			hash, err := miningNode.Mine([]byte(args[0]))
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println(hash)
+			printOutput(hash)
+			return nil
 		},
 	}
 
 	rateCmd := &cobra.Command{
 		Use:   "hashrate",
 		Short: "Display hash rate hint",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(miningNode.HashRateHint())
+		RunE: func(cmd *cobra.Command, args []string) error {
+			printOutput(miningNode.HashRateHint())
+			return nil
 		},
 	}
 
@@ -67,18 +73,17 @@ func init() {
 		Use:   "hex [data]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Mine pre-hex-encoded input",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			b, err := hex.DecodeString(args[0])
 			if err != nil {
-				fmt.Println("invalid hex")
-				return
+				return fmt.Errorf("invalid hex")
 			}
 			hash, err := miningNode.Mine(b)
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println(hash)
+			printOutput(hash)
+			return nil
 		},
 	}
 
