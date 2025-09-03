@@ -104,8 +104,8 @@ func (n *Network) EnqueueTransaction(tx *Transaction) {
 // Broadcast verifies biometric data, attaches it to the transaction, and enqueues
 // the transaction for network propagation. If biometric verification fails an
 // error is returned and the transaction is not broadcast.
-func (n *Network) Broadcast(tx *Transaction, userID string, biometric []byte) error {
-	if err := tx.AttachBiometric(userID, biometric, n.auth); err != nil {
+func (n *Network) Broadcast(tx *Transaction, userID string, biometric []byte, sig []byte) error {
+	if err := tx.AttachBiometric(userID, biometric, sig, n.auth); err != nil {
 		return err
 	}
 	n.EnqueueTransaction(tx)

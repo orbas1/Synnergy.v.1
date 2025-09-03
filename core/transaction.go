@@ -81,11 +81,11 @@ func (t *Transaction) Verify(pub *ecdsa.PublicKey) bool {
 // hash is attached to the transaction and the transaction ID is recalculated to
 // include the biometric. This prevents replay or tampering with biometric data
 // after signing.
-func (t *Transaction) AttachBiometric(userID string, biometric []byte, svc *BiometricService) error {
+func (t *Transaction) AttachBiometric(userID string, biometric []byte, sig []byte, svc *BiometricService) error {
 	if svc == nil {
 		return errors.New("biometric service not available")
 	}
-	if !svc.Verify(userID, biometric) {
+	if !svc.Verify(userID, biometric, sig) {
 		return errors.New("biometric verification failed")
 	}
 	h := sha256.Sum256(biometric)

@@ -21,4 +21,6 @@ Modules in this group manage user identities, authentication, and permission con
 
 These components provide secure onboarding and identity enforcement across the platform. The access controller exposes
 thread‑safe functions (`GrantRole`, `RevokeRole`, `HasRole`, `ListRoles`) used by the CLI and virtual machine to enforce
-permissions at runtime.
+permissions at runtime. Biometric modules hash templates and bind them to
+ECDSA public keys so that all enrollments and authentications are
+cryptographically signed and tamper evident.

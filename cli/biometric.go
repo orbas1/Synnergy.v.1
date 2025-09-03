@@ -18,21 +18,31 @@ func init() {
 	}
 
 	enrollCmd := &cobra.Command{
-		Use:   "enroll [userID] [data]",
-		Args:  cobra.ExactArgs(2),
+		Use:   "enroll [userID] [data] [pubKeyHex]",
+		Args:  cobra.ExactArgs(3),
 		Short: "Enroll biometric data for a user",
 		Run: func(cmd *cobra.Command, args []string) {
-			biometricSvc.Enroll(args[0], []byte(args[1]))
+			pub, err := parsePubKey(args[2])
+			if err != nil {
+				fmt.Println("invalid public key:", err)
+				return
+			}
+			biometricSvc.Enroll(args[0], []byte(args[1]), pub)
 			fmt.Println("biometric enrolled")
 		},
 	}
 
 	verifyCmd := &cobra.Command{
-		Use:   "verify [userID] [data]",
-		Args:  cobra.ExactArgs(2),
+		Use:   "verify [userID] [data] [sigHex]",
+		Args:  cobra.ExactArgs(3),
 		Short: "Verify biometric data for a user",
 		Run: func(cmd *cobra.Command, args []string) {
-			ok := biometricSvc.Verify(args[0], []byte(args[1]))
+			sig, err := decodeSig(args[2])
+			if err != nil {
+				fmt.Println("invalid signature:", err)
+				return
+			}
+			ok := biometricSvc.Verify(args[0], []byte(args[1]), sig)
 			fmt.Println(ok)
 		},
 	}

@@ -55,7 +55,9 @@ Multiple packages handle identity management and regulatory enforcement.
 while `compliance.go`, `regulatory_management.go` and related files enforce
 jurisdictional rules. A global access‑control module assigns granular roles to
 validated addresses, and optional biometric authentication modules provide
-additional verification for sensitive workflows.
+additional verification for sensitive workflows. Templates are hashed and
+bound to ECDSA public keys so that enrollment and verification require
+cryptographic signatures, preventing tampering or replay attacks.
 
 ### AI Services
 AI features are first‑class citizens. Modules such as
