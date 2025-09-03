@@ -29,16 +29,27 @@ func init() {
 		},
 	}
 
+	var jsonOut bool
 	snapCmd := &cobra.Command{
 		Use:   "snapshot",
 		Short: "Print current gas table snapshot",
 		Run: func(cmd *cobra.Command, args []string) {
+			if jsonOut {
+				data, err := core.GasTableSnapshotJSON()
+				if err != nil {
+					fmt.Println("error generating snapshot:", err)
+					return
+				}
+				fmt.Println(string(data))
+				return
+			}
 			snapshot := core.GasTableSnapshot()
 			for op, cost := range snapshot {
 				fmt.Printf("%v: %d\n", op, cost)
 			}
 		},
 	}
+	snapCmd.Flags().BoolVar(&jsonOut, "json", false, "output JSON")
 
 	gasCmd.AddCommand(setCmd)
 	gasCmd.AddCommand(snapCmd)

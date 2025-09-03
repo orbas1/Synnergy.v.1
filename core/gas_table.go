@@ -3,6 +3,8 @@ package core
 import (
 	"bufio"
 	"bytes"
+	"encoding/json"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -83,6 +85,23 @@ func GasTableSnapshot() GasTable {
 		snapshot[op] = c
 	}
 	return snapshot
+}
+
+// GasTableSnapshotJSON serialises the current gas schedule to JSON.  Opcode keys
+// are rendered in hexadecimal ("0x000000") form so external tooling does not
+// need awareness of internal catalogue names.  The function never returns an
+// error; JSON marshaling on simple map types is deterministic.
+func GasTableSnapshotJSON() ([]byte, error) {
+	snap := GasTableSnapshot()
+	out := make(map[string]uint64, len(snap))
+	for op, cost := range snap {
+		out[fmt.Sprintf("0x%06X", op)] = cost
+	}
+	b, err := json.Marshal(out)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }
 
 // GasCostByName returns the gas price for an exported function name. It
