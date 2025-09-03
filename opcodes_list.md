@@ -630,6 +630,8 @@
 | `sqrt` | `0x10025F` |
 | `votingPowerLocked` | `0x100260` |
 | `wrap` | `0x100261` |
+| `DeploySmartContract` | `0x100262` |
+| `TradeContract` | `0x100263` |
 | `RegisterBridge` | `0xF10001` |
 | `BridgeDeposit` | `0xF10002` |
 | `BridgeClaim` | `0xF10003` |
