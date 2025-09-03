@@ -1,6 +1,6 @@
 # Synnergy Network Function Web
 
-This document provides a high-level function web for the Synnergy network, outlining major modules and their core functions. Stage 8 expands cross-chain registries and bridge managers with CLI access and gas‑priced opcodes. Stage 9 adds governance primitives, custodial nodes and cross-consensus network management.
+This document provides a high-level function web for the Synnergy network, outlining major modules and their core functions. Stage 8 expands cross-chain registries and bridge managers with CLI access and gas‑priced opcodes. Stage 9 adds governance primitives, custodial nodes and cross-consensus network management. Stage 14 introduces a unified `internal/nodes` package with light, watchtower and logistics implementations.
 
 ## Diagram
 

@@ -2,6 +2,8 @@ package watchtower
 
 import (
 	"context"
+	"errors"
+	"sync"
 	"time"
 )
 
@@ -38,4 +40,65 @@ type WatchtowerNode interface {
 
 	// Metrics returns the latest snapshot of system health data.
 	Metrics() Metrics
+}
+
+// BasicWatchtower provides an in-memory implementation of the WatchtowerNode
+// interface.  It records forks and metrics for later inspection.
+type BasicWatchtower struct {
+	id      string
+	mu      sync.RWMutex
+	running bool
+	metrics Metrics
+	forks   []struct {
+		Height uint64
+		Hash   string
+	}
+}
+
+// NewBasicWatchtower creates a new watchtower with the supplied identifier.
+func NewBasicWatchtower(id string) *BasicWatchtower {
+	return &BasicWatchtower{id: id}
+}
+
+// ID returns the identifier of the watchtower node.
+func (w *BasicWatchtower) ID() string { return w.id }
+
+// Start marks the node as running and initialises the metrics timestamp.
+func (w *BasicWatchtower) Start(ctx context.Context) error {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	if w.running {
+		return errors.New("watchtower already running")
+	}
+	w.running = true
+	w.metrics.Timestamp = time.Now()
+	return nil
+}
+
+// Stop halts the node.
+func (w *BasicWatchtower) Stop() error {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	if !w.running {
+		return errors.New("watchtower not running")
+	}
+	w.running = false
+	return nil
+}
+
+// ReportFork records a fork event.
+func (w *BasicWatchtower) ReportFork(height uint64, hash string) {
+	w.mu.Lock()
+	defer w.mu.Unlock()
+	w.forks = append(w.forks, struct {
+		Height uint64
+		Hash   string
+	}{height, hash})
+}
+
+// Metrics returns a snapshot of the latest metrics.
+func (w *BasicWatchtower) Metrics() Metrics {
+	w.mu.RLock()
+	defer w.mu.RUnlock()
+	return w.metrics
 }

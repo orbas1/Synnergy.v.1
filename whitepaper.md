@@ -114,6 +114,11 @@ regulatory, indexing, watchtower and content nodes. Each type extends the core
 node interface with domain‑specific behaviour, demonstrating how the platform
 can service diverse deployment scenarios.
 
+Stage 14 consolidates these variants under an internal `nodes` package that
+exposes a common lifecycle interface and reusable reference implementations for
+lightweight, watchtower and logistics nodes. This foundation simplifies future
+specialised roles while keeping dependencies minimal.
+
 ### Central Banking and Charity Modules
 Stage 5 adds economic primitives for public sector deployments. The
 `CentralBankingNode` can mint within the limits enforced by the native coin's

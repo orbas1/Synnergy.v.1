@@ -3,6 +3,7 @@
 Various modules define specialized node behaviors and responsibilities across the network.
 
 **Key Modules**
+- internal/nodes – shared node interfaces and lightweight implementations
 - authority_nodes.go
 - authority_node_index.go
 - authority_apply.go
