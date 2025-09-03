@@ -43,6 +43,9 @@ workflows without trusting the browser with private keys.
 Stage 34 layers on a smart‑contract marketplace GUI that invokes new
 `marketplace` CLI commands to deploy WebAssembly modules and transfer contract
 ownership, expanding the function web to cover contract trading flows.
+Stage 35 introduces a storage marketplace GUI backed by `storage_marketplace`
+CLI operations and storage-specific opcodes so dashboards can list offerings
+and open deals through the same function web.
 
 ## Diagram
 

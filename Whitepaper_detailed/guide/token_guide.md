@@ -18,6 +18,8 @@ implementation for external applications.
 Stage 34 extends the ecosystem with a smart‑contract marketplace GUI allowing
 tokenised contracts to be deployed and traded through the same CLI surface,
 demonstrating how assets can change ownership without leaving the network.
+Stage 35 introduces a storage marketplace where capacity is tokenised and traded
+through CLI and GUI components, enabling decentralised data leasing.
 Stage 11 ensures token operations execute inside managed VM sandboxes with explicit cleanup semantics and idle sandboxes are automatically purged once their TTL expires.
 Stage 13 links token flows with regulatory nodes, allowing non-compliant transfers to be flagged in real time for audit trails.
 Stage 16 makes the base token and registry concurrency‑safe and includes micro‑benchmarks to monitor transfer throughput.
@@ -97,6 +99,7 @@ how specialised assets can be modelled on top of the base abstractions:
 | `syn845.go` | Debt token registry for recording loans and repayments. |
 | `syn1000.go` & `syn1000_index.go` | Thread‑safe reserve‑backed stablecoin with high‑precision accounting and an index for managing multiple instances. |
 | `syn1100.go` | Healthcare record storage with access control lists. |
+| `storage_market.rs` | Decentralised storage marketplace contract template. |
 | `syn2369.go` | Virtual item registry for metaverse assets. |
 | `syn2500_token.go` | DAO membership registry with voting power metadata. |
 | `syn2600.go` | Investor tokens that record share ownership and return distributions. |

@@ -90,6 +90,7 @@ Synnergy blockchain CLI
 * [synnergy loanpool_apply](#synnergy-loanpool-apply)	 - Manage loan applications
 * [synnergy loanproposal](#synnergy-loanproposal)	 - Work with standalone loan proposals
 * [synnergy marketplace](#synnergy-marketplace)	 - Deploy and trade smart contracts
+* [synnergy storage_marketplace](#synnergy-storage_marketplace)  - Manage decentralized storage listings
 * [synnergy mining](#synnergy-mining)	 - Control a mining node
 * [synnergy mobile_mining](#synnergy-mobile-mining)	 - Operate a mobile mining node
 * [synnergy nat](#synnergy-nat)	 - Manage NAT port mappings
@@ -20963,4 +20964,78 @@ synnergy zero-trust send [id] [msg] [flags]
 ### SEE ALSO
 
 * [synnergy zero-trust](#synnergy-zero-trust)	 - Manage zero trust data channels
+
+
+## synnergy storage_marketplace
+
+Manage decentralized storage listings.
+
+### Options
+
+```
+  -h, --help   help for storage_marketplace
+```
+
+### SEE ALSO
+
+* [synnergy](#synnergy)  - Synnergy blockchain CLI
+* [synnergy storage_marketplace list](#synnergy-storage_marketplace-list)  - Create a storage listing
+* [synnergy storage_marketplace listings](#synnergy-storage_marketplace-listings)  - List storage offers
+* [synnergy storage_marketplace deal](#synnergy-storage_marketplace-deal)  - Open a storage deal
+
+## synnergy storage_marketplace list
+
+Create a storage listing
+
+```
+synnergy storage_marketplace list [hash] [price] [owner] [flags]
+```
+
+### Options
+
+```
+      --gas uint   gas limit
+  -h, --help      help for list
+```
+
+### SEE ALSO
+
+* [synnergy storage_marketplace](#synnergy-storage_marketplace)  - Manage decentralized storage listings
+
+## synnergy storage_marketplace listings
+
+List storage offers
+
+```
+synnergy storage_marketplace listings [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for listings
+```
+
+### SEE ALSO
+
+* [synnergy storage_marketplace](#synnergy-storage_marketplace)  - Manage decentralized storage listings
+
+## synnergy storage_marketplace deal
+
+Open a storage deal
+
+```
+synnergy storage_marketplace deal [listingID] [buyer] [flags]
+```
+
+### Options
+
+```
+      --gas uint   gas limit
+  -h, --help      help for deal
+```
+
+### SEE ALSO
+
+* [synnergy storage_marketplace](#synnergy-storage_marketplace)  - Manage decentralized storage listings
 

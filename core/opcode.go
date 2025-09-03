@@ -871,6 +871,7 @@ var catalogue = []struct {
 	{"Lightning_RoutePayment", 0x17000F},
 	{"Lightning_CloseChannel", 0x170010},
 	{"Lightning_ListChannels", 0x170011},
+	// Storage marketplace operations (0x18 category)
 	{"NewStorage", 0x180001},
 	{"Storage_Pin", 0x180002},
 	{"Storage_Retrieve", 0x180003},
