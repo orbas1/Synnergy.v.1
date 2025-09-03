@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
+	"sync"
 )
 
 // GasTable maps opcode names to their base gas cost.
@@ -17,17 +18,20 @@ type GasTable map[string]uint64
 // A low value keeps experimental opcodes affordable during development.
 const DefaultGasCost uint64 = 1
 
-// LoadGasTable parses gas_table_list.md and returns a fully populated gas table.
-// Lines in the guide are expected to contain markdown tables where the first column
-// is the opcode name and the second column is the numeric gas cost. Any opcode not
-// found in the guide receives DefaultGasCost.
-func LoadGasTable() GasTable {
+var (
+	gasOnce  sync.Once
+	gasCache GasTable
+)
+
+// loadGasTable parses gas_table_list.md and caches the result.
+func loadGasTable() {
 	tbl := make(GasTable)
 	_, filename, _, _ := runtime.Caller(0)
 	path := filepath.Join(filepath.Dir(filename), "gas_table_list.md")
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return tbl
+		gasCache = tbl
+		return
 	}
 	scanner := bufio.NewScanner(bytes.NewReader(data))
 	for scanner.Scan() {
@@ -47,7 +51,13 @@ func LoadGasTable() GasTable {
 			tbl[name] = DefaultGasCost
 		}
 	}
-	return tbl
+	gasCache = tbl
+}
+
+// LoadGasTable returns the cached gas table, loading it on first use.
+func LoadGasTable() GasTable {
+	gasOnce.Do(loadGasTable)
+	return gasCache
 }
 
 // GasCost returns the gas price for a given opcode name. If the opcode is not

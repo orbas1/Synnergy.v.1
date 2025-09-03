@@ -164,10 +164,11 @@
 | `GetTransfer` | `1` |
 | `Grant` | `1` |
 | `GrantAccess` | `1` |
+| `GrantRole` | `100` |
 | `Handle` | `1` |
 | `HasDrift` | `1` |
 | `HasQuorum` | `1` |
-| `HasRole` | `1` |
+| `HasRole` | `30` |
 | `Hash` | `1` |
 | `HashRateHint` | `1` |
 | `Head` | `1` |
@@ -203,6 +204,7 @@
 | `LatestHeader` | `1` |
 | `Leave` | `1` |
 | `List` | `1` |
+| `ListRoles` | `50` |
 | `ListBridges` | `1` |
 | `ListComponents` | `1` |
 | `ListDocuments` | `1` |
@@ -483,6 +485,7 @@
 | `ReviewTransaction` | `1` |
 | `Revoke` | `1` |
 | `RevokeAccess` | `1` |
+| `RevokeRole` | `100` |
 | `RevokeDelegation` | `1` |
 | `RevokeRelayer` | `1` |
 | `RevokeSignature` | `1` |

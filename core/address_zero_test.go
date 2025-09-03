@@ -3,7 +3,7 @@ package core
 import "testing"
 
 func TestIsZeroAddress(t *testing.T) {
-	if !IsZeroAddress(AddressZero) {
+	if !IsZeroAddress(string(AddressZero)) {
 		t.Fatalf("expected zero address to match")
 	}
 	if IsZeroAddress("0xabc") {

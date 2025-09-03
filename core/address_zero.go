@@ -1,11 +1,14 @@
 package core
 
-import "strings"
-
 // AddressZero represents the zero-value address (all 20 bytes set to zero).
-const AddressZero = "0x0000000000000000000000000000000000000000"
+const AddressZero Address = "0x0000000000000000000000000000000000000000"
 
-// IsZeroAddress returns true if the provided address equals AddressZero.
+// IsZeroAddress parses the supplied string and reports whether it is the zero
+// address. Invalid strings return false.
 func IsZeroAddress(addr string) bool {
-	return strings.ToLower(addr) == AddressZero
+	a, err := StringToAddress(addr)
+	if err != nil {
+		return false
+	}
+	return a.IsZero()
 }

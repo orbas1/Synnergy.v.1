@@ -2168,7 +2168,8 @@ Operations related to wallet / key-management.
 
 ### Access Control
 
-Operations related to access control.
+Operations related to access control. Addresses are validated before roles are
+assigned or revoked.
 
 
 | Opcode | Gas Cost |

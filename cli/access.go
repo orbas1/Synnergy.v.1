@@ -7,8 +7,6 @@ import (
 	"synnergy/core"
 )
 
-var accessCtrl = core.NewAccessController()
-
 func init() {
 	accessCmd := &cobra.Command{Use: "access", Short: "Role based access control"}
 
@@ -17,7 +15,10 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Grant a role to an address",
 		Run: func(cmd *cobra.Command, args []string) {
-			accessCtrl.Grant(args[0], args[1])
+			if err := core.GrantRole(args[0], args[1]); err != nil {
+				fmt.Println("error:", err)
+				return
+			}
 			fmt.Println("granted")
 		},
 	}
@@ -27,7 +28,10 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Revoke a role from an address",
 		Run: func(cmd *cobra.Command, args []string) {
-			accessCtrl.Revoke(args[0], args[1])
+			if err := core.RevokeRole(args[0], args[1]); err != nil {
+				fmt.Println("error:", err)
+				return
+			}
 			fmt.Println("revoked")
 		},
 	}
@@ -37,7 +41,12 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Check if address has role",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(accessCtrl.HasRole(args[0], args[1]))
+			ok, err := core.HasRole(args[0], args[1])
+			if err != nil {
+				fmt.Println("error:", err)
+				return
+			}
+			fmt.Println(ok)
 		},
 	}
 
@@ -46,7 +55,11 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "List roles for an address",
 		Run: func(cmd *cobra.Command, args []string) {
-			roles := accessCtrl.List(args[0])
+			roles, err := core.ListRoles(args[0])
+			if err != nil {
+				fmt.Println("error:", err)
+				return
+			}
 			for _, r := range roles {
 				fmt.Println(r)
 			}

@@ -19,4 +19,6 @@ Modules in this group manage user identities, authentication, and permission con
 - cli/biometric_security_node.go
 - cli/biometrics_auth.go
 
-These components provide secure onboarding and identity enforcement across the platform.
+These components provide secure onboarding and identity enforcement across the platform. The access controller exposes
+thread‑safe functions (`GrantRole`, `RevokeRole`, `HasRole`, `ListRoles`) used by the CLI and virtual machine to enforce
+permissions at runtime.
