@@ -17,11 +17,16 @@ func init() {
 	}
 
 	enrollCmd := &cobra.Command{
-		Use:   "enroll [addr] [data]",
-		Args:  cobra.ExactArgs(2),
+		Use:   "enroll [addr] [data] [pubKeyHex]",
+		Args:  cobra.ExactArgs(3),
 		Short: "Enroll biometric data for an address",
 		Run: func(cmd *cobra.Command, args []string) {
-			secureNode.Enroll(args[0], []byte(args[1]))
+			pub, err := parsePubKey(args[2])
+			if err != nil {
+				fmt.Println("invalid public key:", err)
+				return
+			}
+			secureNode.Enroll(args[0], []byte(args[1]), pub)
 		},
 	}
 
@@ -35,24 +40,34 @@ func init() {
 	}
 
 	authCmd := &cobra.Command{
-		Use:   "auth [addr] [data]",
-		Args:  cobra.ExactArgs(2),
+		Use:   "auth [addr] [data] [sigHex]",
+		Args:  cobra.ExactArgs(3),
 		Short: "Authenticate biometric data",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(secureNode.Authenticate(args[0], []byte(args[1])))
+			sig, err := decodeSig(args[2])
+			if err != nil {
+				fmt.Println("invalid signature:", err)
+				return
+			}
+			fmt.Println(secureNode.Authenticate(args[0], []byte(args[1]), sig))
 		},
 	}
 
 	addTxCmd := &cobra.Command{
-		Use:   "addtx [addr] [data] [from] [to] [amount] [fee] [nonce]",
-		Args:  cobra.ExactArgs(7),
+		Use:   "addtx [addr] [data] [sigHex] [from] [to] [amount] [fee] [nonce]",
+		Args:  cobra.ExactArgs(8),
 		Short: "Securely add a transaction to the mempool",
 		Run: func(cmd *cobra.Command, args []string) {
-			amt, _ := strconv.ParseUint(args[4], 10, 64)
-			fee, _ := strconv.ParseUint(args[5], 10, 64)
-			nonce, _ := strconv.ParseUint(args[6], 10, 64)
-			tx := core.NewTransaction(args[2], args[3], amt, fee, nonce)
-			if err := secureNode.SecureAddTransaction(args[0], []byte(args[1]), tx); err != nil {
+			sig, err := decodeSig(args[2])
+			if err != nil {
+				fmt.Println("invalid signature:", err)
+				return
+			}
+			amt, _ := strconv.ParseUint(args[5], 10, 64)
+			fee, _ := strconv.ParseUint(args[6], 10, 64)
+			nonce, _ := strconv.ParseUint(args[7], 10, 64)
+			tx := core.NewTransaction(args[3], args[4], amt, fee, nonce)
+			if err := secureNode.SecureAddTransaction(args[0], []byte(args[1]), sig, tx); err != nil {
 				fmt.Println("error:", err)
 			}
 		},

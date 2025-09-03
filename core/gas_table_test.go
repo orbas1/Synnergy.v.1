@@ -116,3 +116,13 @@ func TestAccessControlGasCosts(t *testing.T) {
 		t.Fatalf("expected HasRole cost 30, got %d", GasCost(hasOp))
 	}
 }
+
+func TestGasCostByName(t *testing.T) {
+	initGasTable()
+	if c := GasCostByName("Add"); c == 0 {
+		t.Fatalf("expected non-zero cost for Add")
+	}
+	if c := GasCostByName("NotARealOp"); c != DefaultGasCost {
+		t.Fatalf("expected default cost %d for unknown, got %d", DefaultGasCost, c)
+	}
+}

@@ -62,6 +62,18 @@ func GasCost(op Opcode) uint64 {
 }
 ```
 
+`GasCostByName` lets applications fetch prices using a function's exported name
+without manually converting it to an opcode.  This is useful for CLI and GUI
+tooling that operates on high‑level function identifiers.
+
+```go
+// gas_table.go
+cost := GasCostByName("Add")
+```
+
+Biometric authentication opcodes added in Stage 4 follow the same pricing
+model and are listed in `gas_table_list.md` alongside other functions.
+
 Lowering fees is therefore a matter of choosing cheaper opcodes, batching writes and avoiding default‑priced unknown operations.
 
 ## Efficiency Patterns

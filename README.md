@@ -14,6 +14,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - AI-enhanced contract registry with on-chain audit logging.
 - Cross‑chain bridge and protocol support.
 - Role‑based access control with validated address utilities.
+- Biometric security backed by ECDSA signatures for sensitive node operations.
 - YAML based configuration for development, test and production environments.
 - Web interfaces for wallets, explorers and marketplaces under `GUI/`.
 - JSON emitting CLI commands for authority and institutional banking nodes to ease integration with web dashboards.

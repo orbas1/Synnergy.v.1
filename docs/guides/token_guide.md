@@ -14,7 +14,9 @@ Token code lives under `internal/tokens`.  Key files are:
   token standards.
 
 The command line wrappers under `cli/` expose similar functionality for interacting
-with tokens via CLI commands.
+with tokens via CLI commands. For sensitive assets these commands can be wrapped
+by the `BiometricSecurityNode`, requiring signed biometric proofs before
+transfers or mint operations are accepted.
 
 ## Base token
 

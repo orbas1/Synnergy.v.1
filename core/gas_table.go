@@ -84,3 +84,22 @@ func GasTableSnapshot() GasTable {
 	}
 	return snapshot
 }
+
+// GasCostByName returns the gas price for an exported function name. It
+// resolves the name through the opcode catalogue and falls back to
+// DefaultGasCost when the function or its gas entry is unknown.
+func GasCostByName(name string) uint64 {
+	mu.RLock()
+	op, ok := nameToOp[name]
+	mu.RUnlock()
+	if !ok {
+		return DefaultGasCost
+	}
+	gasMu.RLock()
+	cost, ok := gasTable[op]
+	gasMu.RUnlock()
+	if !ok {
+		return DefaultGasCost
+	}
+	return cost
+}

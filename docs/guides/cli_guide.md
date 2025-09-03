@@ -1424,7 +1424,7 @@ Manage biometric templates
 Enroll biometric data for an address
 
 ```
-synnergy bioauth enroll [addr] [data] [flags]
+synnergy bioauth enroll [addr] [data] [pubKeyHex] [flags]
 ```
 
 ### Options
@@ -1500,7 +1500,7 @@ synnergy bioauth remove [addr] [flags]
 Verify biometric data for an address
 
 ```
-synnergy bioauth verify [addr] [data] [flags]
+synnergy bioauth verify [addr] [data] [sigHex] [flags]
 ```
 
 ### Options
@@ -1536,7 +1536,7 @@ Biometric authentication operations
 Enroll biometric data for a user
 
 ```
-synnergy biometric enroll [userID] [data] [flags]
+synnergy biometric enroll [userID] [data] [pubKeyHex] [flags]
 ```
 
 ### Options
@@ -1555,7 +1555,7 @@ synnergy biometric enroll [userID] [data] [flags]
 Verify biometric data for a user
 
 ```
-synnergy biometric verify [userID] [data] [flags]
+synnergy biometric verify [userID] [data] [sigHex] [flags]
 ```
 
 ### Options
@@ -1688,7 +1688,7 @@ Biometric security node operations
 Securely add a transaction to the mempool
 
 ```
-synnergy bsn addtx [addr] [data] [from] [to] [amount] [fee] [nonce] [flags]
+synnergy bsn addtx [addr] [data] [sigHex] [from] [to] [amount] [fee] [nonce] [flags]
 ```
 
 ### Options
@@ -1707,7 +1707,7 @@ synnergy bsn addtx [addr] [data] [from] [to] [amount] [fee] [nonce] [flags]
 Authenticate biometric data
 
 ```
-synnergy bsn auth [addr] [data] [flags]
+synnergy bsn auth [addr] [data] [sigHex] [flags]
 ```
 
 ### Options
@@ -1726,7 +1726,7 @@ synnergy bsn auth [addr] [data] [flags]
 Enroll biometric data for an address
 
 ```
-synnergy bsn enroll [addr] [data] [flags]
+synnergy bsn enroll [addr] [data] [pubKeyHex] [flags]
 ```
 
 ### Options

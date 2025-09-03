@@ -1,6 +1,9 @@
 package synnergy
 
-import "errors"
+import (
+	"crypto/ecdsa"
+	"errors"
+)
 
 // BiometricSecurityNode couples a node identifier with biometric authentication
 // to protect privileged operations.
@@ -22,8 +25,8 @@ func NewBiometricSecurityNode(id string, auth *BiometricsAuth) *BiometricSecurit
 func (b *BiometricSecurityNode) GetID() string { return b.id }
 
 // Enroll registers biometric data for the given address.
-func (b *BiometricSecurityNode) Enroll(addr string, biometric []byte) {
-	b.Auth.Enroll(addr, biometric)
+func (b *BiometricSecurityNode) Enroll(addr string, biometric []byte, pub *ecdsa.PublicKey) {
+	b.Auth.Enroll(addr, biometric, pub)
 }
 
 // Remove deletes biometric data associated with the address.
@@ -32,13 +35,13 @@ func (b *BiometricSecurityNode) Remove(addr string) {
 }
 
 // Authenticate verifies biometric data for the address.
-func (b *BiometricSecurityNode) Authenticate(addr string, biometric []byte) bool {
-	return b.Auth.Verify(addr, biometric)
+func (b *BiometricSecurityNode) Authenticate(addr string, biometric []byte, sig []byte) bool {
+	return b.Auth.Verify(addr, biometric, sig)
 }
 
 // SecureExecute runs fn only if biometric verification succeeds for the address.
-func (b *BiometricSecurityNode) SecureExecute(addr string, biometric []byte, fn func() error) error {
-	if !b.Auth.Verify(addr, biometric) {
+func (b *BiometricSecurityNode) SecureExecute(addr string, biometric []byte, sig []byte, fn func() error) error {
+	if !b.Auth.Verify(addr, biometric, sig) {
 		return errors.New("biometric verification failed")
 	}
 	if fn != nil {
