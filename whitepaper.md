@@ -58,6 +58,11 @@ and legal document tokens. All contracts enforce input validation, support
 explicit deactivation and are accessible through dedicated CLI modules.
 
 Stage 19 introduces a reserve‑backed stablecoin (SYN1000) and an accompanying index manager. Both leverage high‑precision arithmetic and thread‑safe data structures to track asset backing and valuations across multiple instances.
+Stage 20 adds a family of token extensions including dividend distribution,
+convertible assets, governance weight ledgers, capped supply utilities,
+time‑locked vesting, loyalty points and multi‑chain balances. These primitives
+share the concurrency guarantees of the base library and expose opcodes and CLI
+wrappers for seamless integration.
 
 ### Virtual Machine and Gas Accounting
 Smart contracts execute inside a dedicated virtual machine. Every protocol
