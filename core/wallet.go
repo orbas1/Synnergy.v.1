@@ -12,7 +12,8 @@ import (
 // Wallet holds keys used to sign transactions.
 type Wallet struct {
 	PrivateKey *ecdsa.PrivateKey
-	Address    string
+	// Address is the hex encoded SHA-256 hash of the public key.
+	Address string
 }
 
 // NewWallet generates a new wallet with a random key pair.
@@ -21,11 +22,16 @@ func NewWallet() (*Wallet, error) {
 	if err != nil {
 		return nil, err
 	}
+	// Derive a deterministic address from the uncompressed public key and
+	// return it as a hex string. Only the first 20 bytes are used to keep
+	// addresses short while preserving collision resistance for this
+	// example implementation.
 	xBytes := pk.PublicKey.X.Bytes()
 	yBytes := pk.PublicKey.Y.Bytes()
 	pub := append(append([]byte{0x04}, xBytes...), yBytes...)
-	addr := sha256.Sum256(pub)
-	return &Wallet{PrivateKey: pk, Address: string(addr[:])}, nil
+	hash := sha256.Sum256(pub)
+	addr := hex.EncodeToString(hash[:20])
+	return &Wallet{PrivateKey: pk, Address: addr}, nil
 }
 
 // Sign signs the transaction hash with the wallet's private key.

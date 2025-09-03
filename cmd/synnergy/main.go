@@ -67,6 +67,14 @@ func main() {
 	_ = core.NewConsensusNetworkManager()
 	_ = core.NewCustodialNode("cli-custodian", "cli-custodian", core.NewLedger())
 
+	// Preload stage 12 modules to expose wallet, warfare and watchtower
+	// functionality via the CLI.
+	if _, err := core.NewWallet(); err != nil {
+		logrus.Debugf("wallet init error: %v", err)
+	}
+	_ = core.NewWarfareNode(core.NewNode("cli-war", "cli-war", core.NewLedger()))
+	_ = core.NewWatchtowerNode("cli-watchtower", nil)
+
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 
 	if err := cli.Execute(); err != nil {

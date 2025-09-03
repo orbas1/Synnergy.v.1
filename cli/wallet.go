@@ -20,7 +20,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("address: %x\n", w.Address)
+			fmt.Printf("address: %s\n", w.Address)
 			return nil
 		},
 	}

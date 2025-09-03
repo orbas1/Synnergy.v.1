@@ -20,6 +20,16 @@ graph TD
         WL --> WT[ShareTactical]
     end
 
+    subgraph Wallet
+        NW[NewWallet] --> WS[Sign]
+        WS --> WV[VerifySignature]
+    end
+
+    subgraph Watchtower
+        WTN[NewWatchtowerNode] --> WTS[Start]
+        WTS --> WTMetrics[Metrics]
+    end
+
     subgraph GeospatialNode
         GN[NewGeospatialNode] --> GR[Record]
         GR --> GH[History]
@@ -94,6 +104,8 @@ graph TD
 
     BiometricSecurity --> Consensus
     WarfareNode --> Consensus
+    Wallet --> Consensus
+    Watchtower --> Consensus
     GeospatialNode --> CrossChain
     CrossChain --> Consensus
     PrivateTransactions --> Consensus
@@ -111,9 +123,10 @@ graph TD
 ## Key Relationships
 
 - **BiometricSecurity** functions protect node operations and feed into the overall consensus processes.
-- **WarfareNode** and **GeospatialNode** modules provide specialized data that flows into consensus and cross-chain operations.
+- **WarfareNode**, **Watchtower**, and **GeospatialNode** modules provide specialized data and monitoring that flows into consensus and cross-chain operations.
 - **CrossChain** functions manage bridging and transaction management across ledgers.
 - **PrivateTransactions**, **Staking**, and **Regulatory** modules interact with consensus for secure and compliant network activity.
+- **Wallet** functionality signs transactions that ultimately feed into consensus.
 
 This visualization can be rendered using any Mermaid-compatible Markdown viewer.
 

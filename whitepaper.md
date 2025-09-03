@@ -37,6 +37,9 @@ community pools.
 
 Stage 7 formalises error handling and observability for these components. Validator and contract operations emit coded errors and OpenTelemetry traces, allowing operators to audit consensus behaviour across distributed deployments.
 
+### Wallets and Network Monitoring
+Stage 12 introduces a hardened wallet with hex-encoded addressing and ECDSA signatures for transaction authorization.  Alongside the wallet, new warfare and watchtower node roles extend the network with logistics tracking and real-time fork detection.  These modules expose CLI endpoints and feed telemetry back into the consensus layer for improved operational awareness.
+
 ### Governance and DAO
 Stage 9 introduces a lightweight governance layer backed by staking and quadratic
 voting. DAO modules provide proposal management, membership roles, token ledgers
