@@ -38,7 +38,19 @@ func NewInvestorRegistry() *InvestorRegistry {
 }
 
 // Issue creates a new investor token for a given asset.
-func (r *InvestorRegistry) Issue(asset, owner string, shares uint64, expiry time.Time) *InvestorTokenMeta {
+// It validates the provided metadata and returns an error if any
+// required field is missing or invalid. Expired tokens cannot be
+// created.
+func (r *InvestorRegistry) Issue(asset, owner string, shares uint64, expiry time.Time) (*InvestorTokenMeta, error) {
+	if asset == "" || owner == "" {
+		return nil, errors.New("asset and owner required")
+	}
+	if shares == 0 {
+		return nil, errors.New("shares must be > 0")
+	}
+	if time.Now().After(expiry) {
+		return nil, errors.New("expiry must be in the future")
+	}
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.counter++
@@ -53,7 +65,7 @@ func (r *InvestorRegistry) Issue(asset, owner string, shares uint64, expiry time
 		Active:   true,
 	}
 	r.tokens[id] = tok
-	return tok
+	return tok, nil
 }
 
 // Transfer moves ownership of a token to a new owner.
@@ -63,6 +75,10 @@ func (r *InvestorRegistry) Transfer(tokenID, newOwner string) error {
 	tok, ok := r.tokens[tokenID]
 	if !ok {
 		return errors.New("token not found")
+	}
+	if !tok.Active || time.Now().After(tok.Expiry) {
+		tok.Active = false
+		return errors.New("token inactive")
 	}
 	tok.Owner = newOwner
 	return nil
@@ -76,7 +92,23 @@ func (r *InvestorRegistry) RecordReturn(tokenID string, amount uint64) error {
 	if !ok {
 		return errors.New("token not found")
 	}
+	if !tok.Active || time.Now().After(tok.Expiry) {
+		tok.Active = false
+		return errors.New("token inactive")
+	}
 	tok.Returns = append(tok.Returns, ReturnRecord{Amount: amount, Time: time.Now()})
+	return nil
+}
+
+// Deactivate marks a token as inactive, preventing further operations.
+func (r *InvestorRegistry) Deactivate(tokenID string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	tok, ok := r.tokens[tokenID]
+	if !ok {
+		return errors.New("token not found")
+	}
+	tok.Active = false
 	return nil
 }
 

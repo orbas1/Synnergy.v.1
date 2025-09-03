@@ -25,7 +25,11 @@ func init() {
 			shares, _ := cmd.Flags().GetUint64("shares")
 			expStr, _ := cmd.Flags().GetString("expiry")
 			expiry, _ := time.Parse(time.RFC3339, expStr)
-			tok := investorRegistry.Issue(asset, owner, shares, expiry)
+			tok, err := investorRegistry.Issue(asset, owner, shares, expiry)
+			if err != nil {
+				fmt.Printf("error: %v\n", err)
+				return
+			}
 			fmt.Println(tok.ID)
 		},
 	}
@@ -90,6 +94,18 @@ func init() {
 		},
 	}
 	cmd.AddCommand(listCmd)
+
+	deactivateCmd := &cobra.Command{
+		Use:   "deactivate <id>",
+		Short: "Deactivate an investor token",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := investorRegistry.Deactivate(args[0]); err != nil {
+				fmt.Printf("error: %v\n", err)
+			}
+		},
+	}
+	cmd.AddCommand(deactivateCmd)
 
 	rootCmd.AddCommand(cmd)
 }

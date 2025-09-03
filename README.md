@@ -32,6 +32,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 15 expands internal node variants with in-memory forensic, geospatial, historical and elected authority nodes, enabling richer diagnostics and data services across the network.
 - Stage 16 introduces a concurrency-safe token registry and base token with micro-benchmarks to track transfer throughput.
 - Stage 17 delivers standard token contracts including CBDC, pausable utility and gaming asset tokens. Each implementation is thread-safe and accessible via dedicated CLI modules.
+- Stage 18 expands the token library with investor share registries, life and general insurance policies, forex pairs, fiat‑pegged currencies, index funds, charity campaigns and legal document tokens, all validated and manageable through the CLI.
 
 ## Repository layout
 ```

@@ -42,7 +42,17 @@ func NewLifePolicyRegistry() *LifePolicyRegistry {
 }
 
 // IssuePolicy issues a new life insurance policy.
-func (r *LifePolicyRegistry) IssuePolicy(insured, beneficiary string, coverage, premium uint64, start, end time.Time) *LifePolicy {
+// It validates required fields and ensures the policy has not already expired.
+func (r *LifePolicyRegistry) IssuePolicy(insured, beneficiary string, coverage, premium uint64, start, end time.Time) (*LifePolicy, error) {
+	if insured == "" || beneficiary == "" {
+		return nil, errors.New("insured and beneficiary required")
+	}
+	if coverage == 0 || premium == 0 {
+		return nil, errors.New("coverage and premium must be > 0")
+	}
+	if !end.After(start) || time.Now().After(end) {
+		return nil, errors.New("invalid policy period")
+	}
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.counter++
@@ -58,7 +68,7 @@ func (r *LifePolicyRegistry) IssuePolicy(insured, beneficiary string, coverage, 
 		Active:      true,
 	}
 	r.policies[id] = p
-	return p
+	return p, nil
 }
 
 // PayPremium records a premium payment against a policy.
@@ -68,6 +78,10 @@ func (r *LifePolicyRegistry) PayPremium(policyID string, amount uint64) error {
 	p, ok := r.policies[policyID]
 	if !ok {
 		return errors.New("policy not found")
+	}
+	if !p.Active || time.Now().After(p.End) {
+		p.Active = false
+		return errors.New("policy inactive")
 	}
 	p.PaidPremium += amount
 	return nil
@@ -80,6 +94,10 @@ func (r *LifePolicyRegistry) FileClaim(policyID string, amount uint64) (*Claim, 
 	p, ok := r.policies[policyID]
 	if !ok {
 		return nil, errors.New("policy not found")
+	}
+	if !p.Active || time.Now().After(p.End) {
+		p.Active = false
+		return nil, errors.New("policy inactive")
 	}
 	r.counter++
 	id := fmt.Sprintf("CL-%d", r.counter)
@@ -112,4 +130,16 @@ func (r *LifePolicyRegistry) ListPolicies() []*LifePolicy {
 		res = append(res, &cp)
 	}
 	return res
+}
+
+// Deactivate marks a policy as inactive.
+func (r *LifePolicyRegistry) Deactivate(policyID string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	p, ok := r.policies[policyID]
+	if !ok {
+		return errors.New("policy not found")
+	}
+	p.Active = false
+	return nil
 }

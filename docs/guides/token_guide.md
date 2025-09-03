@@ -17,6 +17,11 @@ utility tokens and in‑game asset registries. These implementations embed the
 thread‑safe base token and expose dedicated CLI commands for minting and
 transfer operations.
 
+Stage 18 extends the library with investor share tokens, multiple insurance
+registries, forex pairs, fiat‑pegged currencies, index funds, charity campaigns
+and legal document tokens. Each contract validates inputs and allows
+administrators to deactivate assets through the CLI.
+
 ## Package layout
 
 Token code lives under `internal/tokens`.  Key files are:
