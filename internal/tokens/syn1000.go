@@ -1,14 +1,23 @@
 package tokens
 
-// ReserveAsset tracks backing assets for a stablecoin.
+import (
+	"math/big"
+	"sync"
+)
+
+// ReserveAsset tracks backing assets for a stablecoin using high‑precision
+// rational numbers to avoid floating point rounding errors.
 type ReserveAsset struct {
-	Amount float64
-	Price  float64
+	Amount *big.Rat
+	Price  *big.Rat
 }
 
-// SYN1000Token represents a stablecoin backed by reserve assets.
+// SYN1000Token represents a stablecoin backed by reserve assets.  It embeds
+// the thread‑safe BaseToken and guards the reserve ledger with its own mutex so
+// callers can modify reserves concurrently.
 type SYN1000Token struct {
 	*BaseToken
+	mu       sync.RWMutex
 	reserves map[string]ReserveAsset
 }
 
@@ -20,25 +29,41 @@ func NewSYN1000Token(id TokenID, name, symbol string, decimals uint8) *SYN1000To
 	}
 }
 
-// AddReserve adds a backing asset to the reserve list.
-func (t *SYN1000Token) AddReserve(asset string, amount float64) {
+// AddReserve adds a backing asset to the reserve list. Amounts are expressed as
+// rational numbers allowing callers to provide arbitrary precision values.
+func (t *SYN1000Token) AddReserve(asset string, amount *big.Rat) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	r := t.reserves[asset]
-	r.Amount += amount
+	if r.Amount == nil {
+		r.Amount = new(big.Rat)
+	}
+	r.Amount.Add(r.Amount, amount)
 	t.reserves[asset] = r
 }
 
 // SetReservePrice updates the unit price of a reserve asset.
-func (t *SYN1000Token) SetReservePrice(asset string, price float64) {
+func (t *SYN1000Token) SetReservePrice(asset string, price *big.Rat) {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	r := t.reserves[asset]
-	r.Price = price
+	if r.Price == nil {
+		r.Price = new(big.Rat)
+	}
+	r.Price.Set(price)
 	t.reserves[asset] = r
 }
 
-// TotalReserveValue calculates the total market value of all reserves.
-func (t *SYN1000Token) TotalReserveValue() float64 {
-	var v float64
+// TotalReserveValue calculates the total market value of all reserves and
+// returns the result as a rational number.
+func (t *SYN1000Token) TotalReserveValue() *big.Rat {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+	total := new(big.Rat)
 	for _, r := range t.reserves {
-		v += r.Amount * r.Price
+		if r.Amount != nil && r.Price != nil {
+			total.Add(total, new(big.Rat).Mul(r.Amount, r.Price))
+		}
 	}
-	return v
+	return total
 }

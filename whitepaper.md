@@ -57,6 +57,8 @@ foreign‑exchange pairs, fiat‑pegged currencies, index funds, charity campaig
 and legal document tokens. All contracts enforce input validation, support
 explicit deactivation and are accessible through dedicated CLI modules.
 
+Stage 19 introduces a reserve‑backed stablecoin (SYN1000) and an accompanying index manager. Both leverage high‑precision arithmetic and thread‑safe data structures to track asset backing and valuations across multiple instances.
+
 ### Virtual Machine and Gas Accounting
 Smart contracts execute inside a dedicated virtual machine. Every protocol
 function is assigned a 24‑bit opcode and priced using a deterministic gas table.

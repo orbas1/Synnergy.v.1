@@ -1,9 +1,15 @@
 package tokens
 
-import "fmt"
+import (
+	"fmt"
+	"math/big"
+	"sync"
+)
 
-// SYN1000Index manages multiple SYN1000 stablecoin instances.
+// SYN1000Index manages multiple SYN1000 stablecoin instances. It protects the
+// underlying map with a mutex so concurrent CLI calls remain safe.
 type SYN1000Index struct {
+	mu     sync.RWMutex
 	tokens map[TokenID]*SYN1000Token
 	next   TokenID
 }
@@ -15,6 +21,8 @@ func NewSYN1000Index() *SYN1000Index {
 
 // Create instantiates a new SYN1000 token and returns its identifier.
 func (i *SYN1000Index) Create(name, symbol string, decimals uint8) TokenID {
+	i.mu.Lock()
+	defer i.mu.Unlock()
 	i.next++
 	id := i.next
 	i.tokens[id] = NewSYN1000Token(id, name, symbol, decimals)
@@ -23,6 +31,8 @@ func (i *SYN1000Index) Create(name, symbol string, decimals uint8) TokenID {
 
 // Token retrieves a SYN1000 token by ID.
 func (i *SYN1000Index) Token(id TokenID) (*SYN1000Token, error) {
+	i.mu.RLock()
+	defer i.mu.RUnlock()
 	t, ok := i.tokens[id]
 	if !ok {
 		return nil, fmt.Errorf("token not found")
@@ -31,7 +41,7 @@ func (i *SYN1000Index) Token(id TokenID) (*SYN1000Token, error) {
 }
 
 // AddReserve adds reserve assets to a specific token.
-func (i *SYN1000Index) AddReserve(id TokenID, asset string, amount float64) error {
+func (i *SYN1000Index) AddReserve(id TokenID, asset string, amount *big.Rat) error {
 	t, err := i.Token(id)
 	if err != nil {
 		return err
@@ -41,7 +51,7 @@ func (i *SYN1000Index) AddReserve(id TokenID, asset string, amount float64) erro
 }
 
 // SetReservePrice updates price information for an asset backing a token.
-func (i *SYN1000Index) SetReservePrice(id TokenID, asset string, price float64) error {
+func (i *SYN1000Index) SetReservePrice(id TokenID, asset string, price *big.Rat) error {
 	t, err := i.Token(id)
 	if err != nil {
 		return err
@@ -51,10 +61,10 @@ func (i *SYN1000Index) SetReservePrice(id TokenID, asset string, price float64) 
 }
 
 // TotalValue returns the current total reserve value for the token.
-func (i *SYN1000Index) TotalValue(id TokenID) (float64, error) {
+func (i *SYN1000Index) TotalValue(id TokenID) (*big.Rat, error) {
 	t, err := i.Token(id)
 	if err != nil {
-		return 0, err
+		return nil, err
 	}
 	return t.TotalReserveValue(), nil
 }

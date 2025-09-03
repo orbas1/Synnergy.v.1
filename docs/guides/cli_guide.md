@@ -10437,7 +10437,7 @@ synnergy syn10 transfer <from> <to> <amt> [flags]
 
 ## synnergy syn1000
 
-SYN1000 stablecoin operations
+SYN1000 stablecoin operations. Amounts and prices must be provided as decimal strings to preserve precision.
 
 ### Options
 
@@ -10459,7 +10459,7 @@ SYN1000 stablecoin operations
 
 ## synnergy syn1000 add-reserve
 
-Add reserve asset
+Add reserve asset (amount as decimal string)
 
 ```
 synnergy syn1000 add-reserve <asset> <amount> [flags]
@@ -10538,7 +10538,7 @@ synnergy syn1000 mint <to> <amt> [flags]
 
 ## synnergy syn1000 set-price
 
-Set reserve price
+Set reserve price (decimal string)
 
 ```
 synnergy syn1000 set-price <asset> <price> [flags]
@@ -10614,7 +10614,7 @@ Manage multiple SYN1000 tokens
 
 ## synnergy syn1000index add-reserve
 
-Add reserve asset to token
+Add reserve asset to token (amount as decimal string)
 
 ```
 synnergy syn1000index add-reserve <id> <asset> <amount> [flags]
@@ -10653,7 +10653,7 @@ synnergy syn1000index create <name> <symbol> [flags]
 
 ## synnergy syn1000index set-price
 
-Set reserve price
+Set reserve price (decimal string)
 
 ```
 synnergy syn1000index set-price <id> <asset> <price> [flags]

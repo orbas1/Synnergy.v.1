@@ -6,6 +6,7 @@ gaming items, all backed by the thread-safe base token and accessible through
 the CLI. Stage 18 adds investor share registries, insurance policies, forex
 pairs, fiat-pegged currencies, index funds, charity campaigns and legal document
 tokens with validation and CLI-driven deactivation.
+Stage 19 introduces the SYN1000 reserve-backed stablecoin and index manager with precise gas-priced opcodes and CLI integration.
 
 ## Diagram
 

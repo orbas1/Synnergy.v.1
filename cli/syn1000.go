@@ -2,6 +2,8 @@ package cli
 
 import (
 	"fmt"
+	"math/big"
+
 	"github.com/spf13/cobra"
 	"synnergy/internal/tokens"
 )
@@ -41,8 +43,11 @@ func init() {
 				fmt.Println("token not initialised")
 				return
 			}
-			var amt float64
-			fmt.Sscanf(args[1], "%f", &amt)
+			amt, ok := new(big.Rat).SetString(args[1])
+			if !ok {
+				fmt.Println("invalid amount")
+				return
+			}
 			syn1000.AddReserve(args[0], amt)
 			fmt.Println("reserve added")
 		},
@@ -58,8 +63,11 @@ func init() {
 				fmt.Println("token not initialised")
 				return
 			}
-			var price float64
-			fmt.Sscanf(args[1], "%f", &price)
+			price, ok := new(big.Rat).SetString(args[1])
+			if !ok {
+				fmt.Println("invalid price")
+				return
+			}
 			syn1000.SetReservePrice(args[0], price)
 			fmt.Println("price updated")
 		},
@@ -74,7 +82,7 @@ func init() {
 				fmt.Println("token not initialised")
 				return
 			}
-			fmt.Println(syn1000.TotalReserveValue())
+			fmt.Println(syn1000.TotalReserveValue().FloatString(2))
 		},
 	}
 	cmd.AddCommand(valueCmd)
