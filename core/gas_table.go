@@ -68,12 +68,16 @@ func parseGasGuide() map[string]uint64 {
 // SetGasCost updates the gas cost for a specific opcode at runtime. This allows
 // governance or tests to tweak opcode pricing without rebuilding the binary.
 func SetGasCost(op Opcode, cost uint64) {
+	gasMu.Lock()
 	gasTable[op] = cost
+	gasMu.Unlock()
 }
 
 // GasTableSnapshot returns a copy of the current gas table. The snapshot can be
 // used for inspection or persistence.
 func GasTableSnapshot() GasTable {
+	gasMu.RLock()
+	defer gasMu.RUnlock()
 	snapshot := make(GasTable, len(gasTable))
 	for op, c := range gasTable {
 		snapshot[op] = c

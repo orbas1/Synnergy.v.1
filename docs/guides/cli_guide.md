@@ -174,6 +174,9 @@ Synnergy blockchain CLI
 
 Role based access control
 
+All subcommands validate addresses and provide helpful error messages when input
+is malformed.
+
 ### Options
 
 ```
@@ -192,6 +195,8 @@ Role based access control
 ## synnergy access grant
 
 Grant a role to an address
+
+Returns an error if the role is empty or the address is invalid.
 
 ```
 synnergy access grant [role] [addr] [flags]
@@ -212,6 +217,8 @@ synnergy access grant [role] [addr] [flags]
 
 Check if address has role
 
+Outputs `true` or `false` after validating inputs.
+
 ```
 synnergy access has [role] [addr] [flags]
 ```
@@ -231,6 +238,8 @@ synnergy access has [role] [addr] [flags]
 
 List roles for an address
 
+Displays all roles assigned to a valid address.
+
 ```
 synnergy access list [addr] [flags]
 ```
@@ -249,6 +258,8 @@ synnergy access list [addr] [flags]
 ## synnergy access revoke
 
 Revoke a role from an address
+
+Silently succeeds if the role was not previously granted.
 
 ```
 synnergy access revoke [role] [addr] [flags]

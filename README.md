@@ -12,6 +12,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Extensive CLI built with [Cobra](https://github.com/spf13/cobra) located under `cli/`.
 - AI modules for model management, inference analysis and anomaly detection.
 - Cross‑chain bridge and protocol support.
+- Role‑based access control with validated address utilities.
 - YAML based configuration for development, test and production environments.
 - Web interfaces for wallets, explorers and marketplaces under `GUI/`.
 

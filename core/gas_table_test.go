@@ -98,3 +98,21 @@ func TestSetGasCostAndSnapshot(t *testing.T) {
 		t.Fatalf("modifying snapshot should not alter gas table")
 	}
 }
+
+func TestAccessControlGasCosts(t *testing.T) {
+	initGasTable()
+	grantOp, ok := nameToOp["GrantRole"]
+	if !ok {
+		t.Fatalf("GrantRole opcode missing")
+	}
+	if GasCost(grantOp) != 100 {
+		t.Fatalf("expected GrantRole cost 100, got %d", GasCost(grantOp))
+	}
+	hasOp, ok := nameToOp["HasRole"]
+	if !ok {
+		t.Fatalf("HasRole opcode missing")
+	}
+	if GasCost(hasOp) != 30 {
+		t.Fatalf("expected HasRole cost 30, got %d", GasCost(hasOp))
+	}
+}

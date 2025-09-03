@@ -3,17 +3,33 @@ package core
 import "testing"
 
 func TestAccessController(t *testing.T) {
-	ac := NewAccessController()
-	ac.Grant("admin", "addr1")
-	if !ac.HasRole("admin", "addr1") {
+	GlobalAccess = NewAccessController()
+	addr := "0x1111111111111111111111111111111111111111"
+	if err := GrantRole("admin", addr); err != nil {
+		t.Fatalf("grant: %v", err)
+	}
+	ok, err := HasRole("admin", addr)
+	if err != nil || !ok {
 		t.Fatalf("expected role granted")
 	}
-	roles := ac.List("addr1")
-	if len(roles) != 1 || roles[0] != "admin" {
+	roles, err := ListRoles(addr)
+	if err != nil || len(roles) != 1 || roles[0] != "admin" {
 		t.Fatalf("unexpected roles: %v", roles)
 	}
-	ac.Revoke("admin", "addr1")
-	if ac.HasRole("admin", "addr1") {
+	if err := RevokeRole("admin", addr); err != nil {
+		t.Fatalf("revoke: %v", err)
+	}
+	ok, err = HasRole("admin", addr)
+	if err != nil {
+		t.Fatalf("has role: %v", err)
+	}
+	if ok {
 		t.Fatalf("role should be revoked")
+	}
+	if _, err := HasRole("", addr); err == nil {
+		t.Fatalf("expected error for empty role")
+	}
+	if err := GrantRole("admin", "invalid"); err == nil {
+		t.Fatalf("expected invalid address error")
 	}
 }

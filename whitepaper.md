@@ -53,7 +53,8 @@ operations tooling.
 Multiple packages handle identity management and regulatory enforcement.
 `identity_verification.go` and `idwallet_registration.go` register addresses,
 while `compliance.go`, `regulatory_management.go` and related files enforce
-jurisdictional rules. Optional biometric authentication modules provide
+jurisdictional rules. A global access‑control module assigns granular roles to
+validated addresses, and optional biometric authentication modules provide
 additional verification for sensitive workflows.
 
 ### AI Services

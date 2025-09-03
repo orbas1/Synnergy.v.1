@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/subosito/gotenv"
 
+	synn "synnergy"
 	"synnergy/cli"
 	"synnergy/internal/config"
 )
@@ -30,6 +31,9 @@ func main() {
 		logrus.Fatalf("invalid log level: %v", err)
 	}
 	logrus.SetLevel(lvl)
+
+	// Warm up caches for shared resources.
+	synn.LoadGasTable()
 
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 
