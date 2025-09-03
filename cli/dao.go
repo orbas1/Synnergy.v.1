@@ -21,6 +21,10 @@ func init() {
 		Short: "Create a new DAO",
 		Run: func(cmd *cobra.Command, args []string) {
 			dao := daoMgr.Create(args[0], args[1])
+			if dao == nil {
+				fmt.Println("invalid parameters")
+				return
+			}
 			fmt.Println(dao.ID)
 		},
 	}

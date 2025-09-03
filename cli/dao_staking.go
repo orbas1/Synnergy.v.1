@@ -55,6 +55,14 @@ func init() {
 		},
 	}
 
-	stakingCmd.AddCommand(stakeCmd, unstakeCmd, balanceCmd)
+	totalCmd := &cobra.Command{
+		Use:   "total",
+		Short: "Show total staked tokens",
+		Run: func(cmd *cobra.Command, args []string) {
+			fmt.Println(daoStaking.TotalStaked())
+		},
+	}
+
+	stakingCmd.AddCommand(stakeCmd, unstakeCmd, balanceCmd, totalCmd)
 	rootCmd.AddCommand(stakingCmd)
 }

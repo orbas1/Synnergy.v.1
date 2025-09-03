@@ -26,6 +26,6 @@ type CustodialNode interface {
 	nodes.NodeInterface
 	// Custody records assets held for a specific user.
 	Custody(user string, amount uint64)
-	// Release transfers assets back to the user if sufficient and returns success.
-	Release(user string, amount uint64) bool
+	// Release transfers assets back to the user if sufficient.
+	Release(user string, amount uint64) error
 }

@@ -26,4 +26,10 @@ func TestDAOProposal(t *testing.T) {
 	if !prop.Executed {
 		t.Fatalf("proposal not marked executed")
 	}
+	if err := pm.Vote(prop.ID, "v3", 1, true); err == nil {
+		t.Fatalf("expected vote on executed proposal to fail")
+	}
+	if err := pm.Execute(prop.ID); err == nil {
+		t.Fatalf("expected second execute to fail")
+	}
 }

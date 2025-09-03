@@ -33,3 +33,8 @@ Restrict access appropriately when exposing this interface in production environ
 An example page at `/authority` demonstrates how the JSON‑emitting CLI can power
 custom dashboards. It lists authority nodes by invoking `synnergy authority list
 --json` via the existing API layer.
+
+## Stage 9 additions
+
+DAO governance, staking and custodial node commands are now available through the
+web control panel, allowing browser-based experimentation with these modules.

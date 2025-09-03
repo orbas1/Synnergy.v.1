@@ -34,6 +34,18 @@ func (m *ConsensusNetworkManager) RegisterNetwork(source, target string) int {
 	return id
 }
 
+// RemoveNetwork deletes a registered network by ID.
+// It returns an error if the network does not exist.
+func (m *ConsensusNetworkManager) RemoveNetwork(id int) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if _, ok := m.networks[id]; !ok {
+		return errors.New("network not found")
+	}
+	delete(m.networks, id)
+	return nil
+}
+
 // ListNetworks returns all registered networks.
 func (m *ConsensusNetworkManager) ListNetworks() []ConsensusNetwork {
 	m.mu.RLock()

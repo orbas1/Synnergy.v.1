@@ -71,7 +71,9 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := proposalMgr.Execute(args[0]); err != nil {
 				fmt.Println(err)
+				return
 			}
+			fmt.Println("executed")
 		},
 	}
 

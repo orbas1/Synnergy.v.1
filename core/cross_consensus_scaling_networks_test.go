@@ -14,6 +14,11 @@ func TestConsensusNetworkManager(t *testing.T) {
 	}
 	if len(m.ListNetworks()) != 1 {
 		t.Fatalf("expected one network")
-
+	}
+	if err := m.RemoveNetwork(id); err != nil {
+		t.Fatalf("remove: %v", err)
+	}
+	if _, err := m.GetNetwork(id); err == nil {
+		t.Fatalf("expected error after removal")
 	}
 }

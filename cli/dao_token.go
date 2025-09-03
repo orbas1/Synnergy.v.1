@@ -55,6 +55,22 @@ func init() {
 		},
 	}
 
-	tokenCmd.AddCommand(mintCmd, transferCmd, balanceCmd)
+	burnCmd := &cobra.Command{
+		Use:   "burn <addr> <amount>",
+		Args:  cobra.ExactArgs(2),
+		Short: "Burn tokens from an address",
+		Run: func(cmd *cobra.Command, args []string) {
+			amt, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				fmt.Println("invalid amount")
+				return
+			}
+			if err := daoTokenLedger.Burn(args[0], amt); err != nil {
+				fmt.Println(err)
+			}
+		},
+	}
+
+	tokenCmd.AddCommand(mintCmd, transferCmd, balanceCmd, burnCmd)
 	rootCmd.AddCommand(tokenCmd)
 }

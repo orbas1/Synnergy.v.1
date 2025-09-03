@@ -62,6 +62,10 @@ func loadGasTable() {
 			ilog.Error("gas_table_parse", "opcode", name)
 		}
 	}
+	if err := scanner.Err(); err != nil {
+		span.RecordError(err)
+		ilog.Error("gas_table_scan", "error", err)
+	}
 	gasCache = tbl
 }
 

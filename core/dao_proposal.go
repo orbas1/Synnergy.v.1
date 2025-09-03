@@ -55,6 +55,9 @@ func (pm *ProposalManager) Vote(id, voter string, weight uint64, support bool) e
 	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
+	if p.Executed {
+		return errors.New("proposal executed")
+	}
 	if support {
 		p.YesVotes[voter] = weight
 		delete(p.NoVotes, voter)
@@ -93,8 +96,11 @@ func (pm *ProposalManager) Execute(id string) error {
 		return errors.New("proposal not found")
 	}
 	p.mu.Lock()
+	defer p.mu.Unlock()
+	if p.Executed {
+		return errors.New("proposal executed")
+	}
 	p.Executed = true
-	p.mu.Unlock()
 	return nil
 }
 

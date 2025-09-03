@@ -42,8 +42,11 @@ func init() {
 				fmt.Println("invalid amount")
 				return
 			}
-			ok := custodialNode.Release(args[0], amt)
-			fmt.Println(ok)
+			if err := custodialNode.Release(args[0], amt); err != nil {
+				fmt.Println(err)
+				return
+			}
+			fmt.Println("released")
 		},
 	}
 
@@ -53,11 +56,11 @@ func init() {
 		Short: "Show holdings",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 1 {
-				fmt.Println(custodialNode.Holdings[args[0]])
+				fmt.Println(custodialNode.Balance(args[0]))
 				return
 			}
-			for u, amt := range custodialNode.Holdings {
-				fmt.Printf("%s: %d\n", u, amt)
+			for u := range custodialNode.Holdings {
+				fmt.Printf("%s: %d\n", u, custodialNode.Balance(u))
 			}
 		},
 	}
