@@ -79,6 +79,11 @@ graph TD
 
     subgraph Consensus
         CH[NewConsensusHopper] --> CM[Mode]
+        AM[NewAdaptiveManager] --> Adj[Adjust]
+        DM[NewDifficultyManager] --> DS[AddSample]
+        CSvc[NewConsensusService] --> CSStart[Start]
+        VMg[NewValidatorManager] --> VAdd[Add]
+        Cmg[NewContractManager] --> CTran[Transfer]
     end
 
     BiometricSecurity --> Consensus

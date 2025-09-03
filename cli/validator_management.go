@@ -1,11 +1,13 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
+	ierr "synnergy/internal/errors"
 )
 
 var validatorMgr = core.NewValidatorManager(100)
@@ -22,8 +24,12 @@ func init() {
 		Short: "Register validator with stake",
 		Run: func(cmd *cobra.Command, args []string) {
 			stake, _ := strconv.ParseUint(args[1], 10, 64)
-			if err := validatorMgr.Add(args[0], stake); err != nil {
-				fmt.Println("error:", err)
+			if err := validatorMgr.Add(context.Background(), args[0], stake); err != nil {
+				if e, ok := err.(*ierr.Error); ok {
+					fmt.Printf("error (%s): %s\n", e.Code, e.Message)
+				} else {
+					fmt.Println("error:", err)
+				}
 			}
 		},
 	}
@@ -33,7 +39,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Remove validator",
 		Run: func(cmd *cobra.Command, args []string) {
-			validatorMgr.Remove(args[0])
+			validatorMgr.Remove(context.Background(), args[0])
 		},
 	}
 
@@ -42,7 +48,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Slash validator stake",
 		Run: func(cmd *cobra.Command, args []string) {
-			validatorMgr.Slash(args[0])
+			validatorMgr.Slash(context.Background(), args[0])
 		},
 	}
 

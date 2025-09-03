@@ -1,12 +1,14 @@
 package cli
 
 import (
+	"context"
 	"encoding/hex"
 	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
+	ierr "synnergy/internal/errors"
 )
 
 var (
@@ -25,8 +27,8 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Transfer contract ownership",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := contractMgr.Transfer(args[0], args[1]); err != nil {
-				fmt.Println("error:", err)
+			if err := contractMgr.Transfer(context.Background(), args[0], args[1]); err != nil {
+				printErr(err)
 			}
 		},
 	}
@@ -36,8 +38,8 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Pause a contract",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := contractMgr.Pause(args[0]); err != nil {
-				fmt.Println("error:", err)
+			if err := contractMgr.Pause(context.Background(), args[0]); err != nil {
+				printErr(err)
 			}
 		},
 	}
@@ -47,8 +49,8 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Resume a paused contract",
 		Run: func(cmd *cobra.Command, args []string) {
-			if err := contractMgr.Resume(args[0]); err != nil {
-				fmt.Println("error:", err)
+			if err := contractMgr.Resume(context.Background(), args[0]); err != nil {
+				printErr(err)
 			}
 		},
 	}
@@ -64,8 +66,8 @@ func init() {
 				return
 			}
 			gas, _ := strconv.ParseUint(args[2], 10, 64)
-			if err := contractMgr.Upgrade(args[0], bytes, gas); err != nil {
-				fmt.Println("error:", err)
+			if err := contractMgr.Upgrade(context.Background(), args[0], bytes, gas); err != nil {
+				printErr(err)
 			}
 		},
 	}
@@ -75,9 +77,9 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show contract metadata",
 		Run: func(cmd *cobra.Command, args []string) {
-			c, err := contractMgr.Info(args[0])
+			c, err := contractMgr.Info(context.Background(), args[0])
 			if err != nil {
-				fmt.Println("error:", err)
+				printErr(err)
 				return
 			}
 			fmt.Printf("owner:%s paused:%v gas:%d\n", c.Owner, c.Paused, c.GasLimit)
@@ -86,4 +88,12 @@ func init() {
 
 	cmd.AddCommand(transferCmd, pauseCmd, resumeCmd, upgradeCmd, infoCmd)
 	rootCmd.AddCommand(cmd)
+}
+
+func printErr(err error) {
+	if e, ok := err.(*ierr.Error); ok {
+		fmt.Printf("error (%s): %s\n", e.Code, e.Message)
+	} else {
+		fmt.Println("error:", err)
+	}
 }

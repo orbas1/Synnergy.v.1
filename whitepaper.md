@@ -35,6 +35,8 @@ compression allows historic segments of the chain to be archived efficiently.
 A transaction distribution service splits fees between block producers and
 community pools.
 
+Stage 7 formalises error handling and observability for these components. Validator and contract operations emit coded errors and OpenTelemetry traces, allowing operators to audit consensus behaviour across distributed deployments.
+
 ### Virtual Machine and Gas Accounting
 Smart contracts execute inside a dedicated virtual machine. Every protocol
 function is assigned a 24‑bit opcode and priced using a deterministic gas table.

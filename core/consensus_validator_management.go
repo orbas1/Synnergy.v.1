@@ -1,8 +1,11 @@
 package core
 
 import (
-	"errors"
+	"context"
 	"sync"
+
+	ierr "synnergy/internal/errors"
+	"synnergy/internal/telemetry"
 )
 
 // ValidatorManager tracks validator stakes and slashing state.
@@ -23,11 +26,14 @@ func NewValidatorManager(minStake uint64) *ValidatorManager {
 }
 
 // Add registers a validator with a given stake.
-func (vm *ValidatorManager) Add(addr string, stake uint64) error {
+func (vm *ValidatorManager) Add(ctx context.Context, addr string, stake uint64) error {
+	ctx, span := telemetry.Tracer().Start(ctx, "ValidatorManager.Add")
+	defer span.End()
+
 	vm.mu.Lock()
 	defer vm.mu.Unlock()
 	if stake < vm.minStake {
-		return errors.New("stake below minimum")
+		return ierr.New(ierr.Invalid, "stake below minimum")
 	}
 	vm.stakes[addr] = stake
 	delete(vm.slashed, addr)
@@ -35,7 +41,10 @@ func (vm *ValidatorManager) Add(addr string, stake uint64) error {
 }
 
 // Remove deletes a validator from the set.
-func (vm *ValidatorManager) Remove(addr string) {
+func (vm *ValidatorManager) Remove(ctx context.Context, addr string) {
+	ctx, span := telemetry.Tracer().Start(ctx, "ValidatorManager.Remove")
+	defer span.End()
+
 	vm.mu.Lock()
 	defer vm.mu.Unlock()
 	delete(vm.stakes, addr)
@@ -43,7 +52,10 @@ func (vm *ValidatorManager) Remove(addr string) {
 }
 
 // Slash halves the stake of the validator and marks it as slashed.
-func (vm *ValidatorManager) Slash(addr string) {
+func (vm *ValidatorManager) Slash(ctx context.Context, addr string) {
+	ctx, span := telemetry.Tracer().Start(ctx, "ValidatorManager.Slash")
+	defer span.End()
+
 	vm.mu.Lock()
 	defer vm.mu.Unlock()
 	if stake, ok := vm.stakes[addr]; ok {

@@ -3,6 +3,7 @@ package synnergy
 import (
 	"bufio"
 	"bytes"
+	"context"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -11,6 +12,7 @@ import (
 	"sync"
 
 	ilog "synnergy/internal/log"
+	"synnergy/internal/telemetry"
 )
 
 // GasTable maps opcode names to their base gas cost.
@@ -28,11 +30,15 @@ var (
 
 // loadGasTable parses gas_table_list.md and caches the result.
 func loadGasTable() {
+	_, span := telemetry.Tracer().Start(context.Background(), "GasTable.load")
+	defer span.End()
+
 	tbl := make(GasTable)
 	_, filename, _, _ := runtime.Caller(0)
 	path := filepath.Join(filepath.Dir(filename), "gas_table_list.md")
 	data, err := os.ReadFile(path)
 	if err != nil {
+		span.RecordError(err)
 		ilog.Error("gas_table_load", "error", err)
 		gasCache = tbl
 		return

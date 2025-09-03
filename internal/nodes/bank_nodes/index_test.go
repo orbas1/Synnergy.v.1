@@ -24,6 +24,9 @@ func (a *centralBankNodeAdapter) Stop() error                       { return nil
 func (a *centralBankNodeAdapter) IsRunning() bool                   { return true }
 func (a *centralBankNodeAdapter) Peers() []nodes.Address            { return nil }
 func (a *centralBankNodeAdapter) DialSeed(addr nodes.Address) error { return nil }
+func (a *centralBankNodeAdapter) Mint(addr string, amt uint64) {
+	_ = a.CentralBankingNode.Mint(addr, amt)
+}
 
 type custodialNodeAdapter struct{ *core.CustodialNode }
 

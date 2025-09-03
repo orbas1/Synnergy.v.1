@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -22,7 +23,7 @@ func init() {
 		Short: "Start mining loop with interval milliseconds",
 		Run: func(cmd *cobra.Command, args []string) {
 			ms, _ := time.ParseDuration(args[0] + "ms")
-			consensusService.Start(ms)
+			consensusService.Start(context.Background(), ms)
 		},
 	}
 
