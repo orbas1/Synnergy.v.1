@@ -6,6 +6,11 @@ func TestSyncManagerLifecycle(t *testing.T) {
 	l := NewLedger()
 	sm := NewSyncManager(l)
 
+	// should error when not running
+	if err := sm.Once(); err == nil {
+		t.Fatalf("expected error when not running")
+	}
+
 	sm.Start()
 	running, _ := sm.Status()
 	if !running {
@@ -25,5 +30,8 @@ func TestSyncManagerLifecycle(t *testing.T) {
 	running, _ = sm.Status()
 	if running {
 		t.Fatalf("expected stopped")
+	}
+	if err := sm.Once(); err == nil {
+		t.Fatalf("expected error when stopped")
 	}
 }

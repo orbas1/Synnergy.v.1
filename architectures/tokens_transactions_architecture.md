@@ -10,6 +10,10 @@ This group governs token standards, contract execution, and transaction processi
 - private_transactions.go
 - transaction.go
 - vm_sandbox_management.go
+- coin.go
+- blockchain_compression.go
+- blockchain_synchronization.go
+- charity.go
 
 **Related CLI Files**
 - cli/contracts.go
@@ -18,5 +22,9 @@ This group governs token standards, contract execution, and transaction processi
 - cli/gas_table.go
 - cli/private_transactions.go
 - cli/transaction.go
+- cli/coin.go
+- cli/compression.go
+- cli/synchronization.go
+- cli/charity.go
 
 These modules define how smart contracts run and how tokens and transactions are validated and executed.

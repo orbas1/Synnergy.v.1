@@ -1767,6 +1767,7 @@ Central bank node operations
 
 ```
   -h, --help   help for centralbank
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -1791,6 +1792,12 @@ synnergy centralbank info [flags]
   -h, --help   help for info
 ```
 
+### Options inherited from parent commands
+
+```
+      --json   output as JSON
+```
+
 ### SEE ALSO
 
 * [synnergy centralbank](#synnergy-centralbank)	 - Central bank node operations
@@ -1810,6 +1817,12 @@ synnergy centralbank mint [to] [amount] [flags]
   -h, --help   help for mint
 ```
 
+### Options inherited from parent commands
+
+```
+      --json   output as JSON
+```
+
 ### SEE ALSO
 
 * [synnergy centralbank](#synnergy-centralbank)	 - Central bank node operations
@@ -1827,6 +1840,12 @@ synnergy centralbank policy [description] [flags]
 
 ```
   -h, --help   help for policy
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -10720,9 +10739,9 @@ synnergy syn12 init [flags]
       --discount float    discount rate
       --face uint         face value
   -h, --help              help for init
-      --issue string      issue date RFC3339 (default "2025-09-03T16:38:47Z")
+      --issue string      issue date RFC3339 (default "2025-09-03T17:00:15Z")
       --issuer string     issuer
-      --maturity string   maturity date RFC3339 (default "2025-10-03T16:38:47Z")
+      --maturity string   maturity date RFC3339 (default "2025-10-03T17:00:15Z")
       --name string       token name
       --symbol string     token symbol
 ```
@@ -11002,7 +11021,7 @@ synnergy syn1401 issue [flags]
 ```
   -h, --help             help for issue
       --id string        investment id
-      --maturity int     maturity unix time (default 1756917527)
+      --maturity int     maturity unix time (default 1756918815)
       --owner string     owner
       --principal uint   principal
       --rate float       annual rate
@@ -12220,7 +12239,7 @@ synnergy syn2600 issue [flags]
 
 ```
       --asset string    underlying asset
-      --expiry string   expiry time (default "2025-09-04T16:38:47Z")
+      --expiry string   expiry time (default "2025-09-04T17:00:15Z")
   -h, --help            help for issue
       --owner string    owner address
       --shares uint     share quantity
@@ -12435,11 +12454,11 @@ synnergy syn2800 issue [flags]
 ```
       --beneficiary string   beneficiary
       --coverage uint        coverage amount
-      --end string           end time (default "2025-09-04T16:38:47Z")
+      --end string           end time (default "2025-09-04T17:00:15Z")
   -h, --help                 help for issue
       --insured string       insured party
       --premium uint         premium amount
-      --start string         start time (default "2025-09-03T16:38:47Z")
+      --start string         start time (default "2025-09-03T17:00:15Z")
 ```
 
 ### SEE ALSO
@@ -12554,14 +12573,14 @@ synnergy syn2900 issue [flags]
 ```
       --coverage string   coverage type
       --deductible uint   deductible
-      --end string        end time (default "2025-09-04T16:38:47Z")
+      --end string        end time (default "2025-09-04T17:00:15Z")
   -h, --help              help for issue
       --holder string     policy holder
       --id string         policy id
       --limit uint        limit
       --payout uint       payout amount
       --premium uint      premium amount
-      --start string      start time (default "2025-09-03T16:38:47Z")
+      --start string      start time (default "2025-09-03T17:00:15Z")
 ```
 
 ### SEE ALSO
@@ -12815,7 +12834,7 @@ synnergy syn3200 create [flags]
 
 ```
       --amount uint     amount
-      --due string      due time (default "2025-09-04T16:38:47Z")
+      --due string      due time (default "2025-09-04T17:00:15Z")
   -h, --help            help for create
       --id string       bill id
       --issuer string   issuer
@@ -13132,7 +13151,7 @@ synnergy syn3600 create [flags]
 ### Options
 
 ```
-      --expiration string   expiration time (default "2025-09-04T16:38:47Z")
+      --expiration string   expiration time (default "2025-09-04T17:00:15Z")
   -h, --help                help for create
       --price uint          price per unit
       --qty uint            quantity
@@ -14349,6 +14368,7 @@ Blockchain synchronization
 
 ```
   -h, --help   help for synchronization
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -14374,6 +14394,12 @@ synnergy synchronization once [flags]
   -h, --help   help for once
 ```
 
+### Options inherited from parent commands
+
+```
+      --json   output as JSON
+```
+
 ### SEE ALSO
 
 * [synnergy synchronization](#synnergy-synchronization)	 - Blockchain synchronization
@@ -14391,6 +14417,12 @@ synnergy synchronization start [flags]
 
 ```
   -h, --help   help for start
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output as JSON
 ```
 
 ### SEE ALSO
@@ -14412,6 +14444,12 @@ synnergy synchronization status [flags]
   -h, --help   help for status
 ```
 
+### Options inherited from parent commands
+
+```
+      --json   output as JSON
+```
+
 ### SEE ALSO
 
 * [synnergy synchronization](#synnergy-synchronization)	 - Blockchain synchronization
@@ -14429,6 +14467,12 @@ synnergy synchronization stop [flags]
 
 ```
   -h, --help   help for stop
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output as JSON
 ```
 
 ### SEE ALSO

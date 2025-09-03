@@ -93,6 +93,13 @@ regulatory, indexing, watchtower and content nodes. Each type extends the core
 node interface with domain‑specific behaviour, demonstrating how the platform
 can service diverse deployment scenarios.
 
+### Central Banking and Charity Modules
+Stage 5 adds economic primitives for public sector deployments. The
+`CentralBankingNode` can mint within the limits enforced by the native coin's
+capped supply and expose monetary policy through the CLI. The `CharityPool`
+coordinates registrations, community voting and fund distribution with gas‑priced
+opcodes so donations and internal transfers can be audited on chain.
+
 ### Security and Operations
 Runtime security is provided by a firewall module, zero‑trust data channels and
 system health logging. High‑availability helpers coordinate swarms of nodes,

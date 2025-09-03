@@ -2,20 +2,18 @@ package core
 
 import "testing"
 
-func TestCentralBankingNode(t *testing.T) {
-	ledger := NewLedger()
-	cbn := NewCentralBankingNode("id", "addr", ledger, "initial")
-	if cbn.Node == nil || cbn.MonetaryPolicy != "initial" {
-		t.Fatalf("node not initialized correctly")
-	}
+func TestCentralBankingMint(t *testing.T) {
+	l := NewLedger()
+	cb := NewCentralBankingNode("id", "addr", l, "neutral")
 
-	cbn.UpdatePolicy("updated")
-	if cbn.MonetaryPolicy != "updated" {
-		t.Fatalf("policy not updated")
+	if err := cb.Mint("alice", 10); err != nil {
+		t.Fatalf("mint: %v", err)
 	}
-
-	cbn.Mint("treasury", 100)
-	if bal := ledger.GetBalance("treasury"); bal != 100 {
-		t.Fatalf("minting failed, balance %d", bal)
+	if bal := l.GetBalance("alice"); bal != 10 {
+		t.Fatalf("unexpected balance %d", bal)
+	}
+	// attempt to mint beyond remaining supply
+	if err := cb.Mint("alice", RemainingSupply(0)+1); err == nil {
+		t.Fatalf("expected supply error")
 	}
 }

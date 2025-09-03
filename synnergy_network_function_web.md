@@ -39,6 +39,20 @@ graph TD
         PTM --> PTL[List]
     end
 
+    subgraph CentralBank
+        CBN[NewCentralBankingNode] --> CBM[Mint]
+    end
+
+    subgraph Charity
+        CP[NewCharityPool] --> CR[Register]
+        CP --> CV[Vote]
+    end
+
+    subgraph Synchronization
+        SM[NewSyncManager] --> SOnce[Once]
+        SM --> SStart[Start]
+    end
+
     subgraph Staking
         SN[NewStakingNode] --> SS[Stake]
         SN --> SU[Unstake]
@@ -63,6 +77,9 @@ graph TD
     PrivateTransactions --> Consensus
     Staking --> Consensus
     Regulatory --> CrossChain
+    CentralBank --> Consensus
+    Charity --> Consensus
+    Synchronization --> Consensus
 ```
 
 ## Key Relationships
