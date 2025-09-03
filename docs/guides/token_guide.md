@@ -10,6 +10,7 @@ Stage 7 adds coded error handling and telemetry spans to token registry and CLI 
 Stage 8 introduces cross‑chain token bridging via the `CrossChainTxManager`, allowing assets to move between ledgers through gas‑priced CLI calls.
 Stage 9 adds a dedicated DAO token ledger with staking support and burn capabilities for governance assets.
 Stage 11 ensures token operations execute inside managed VM sandboxes with explicit cleanup semantics and idle sandboxes are automatically purged once their TTL expires.
+Stage 13 links token flows with regulatory nodes, allowing non-compliant transfers to be flagged in real time for audit trails.
 
 ## Package layout
 

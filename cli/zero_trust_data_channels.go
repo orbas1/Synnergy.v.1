@@ -3,6 +3,7 @@ package cli
 import (
 	"encoding/hex"
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
@@ -52,9 +53,28 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "List encrypted messages",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, m := range ztEngine.Messages(args[0]) {
-				fmt.Printf("%x\n", m)
+			msgs := ztEngine.Messages(args[0])
+			for i, m := range msgs {
+				fmt.Printf("%d:%x\n", i, m.Cipher)
 			}
+		},
+	}
+
+	recvCmd := &cobra.Command{
+		Use:   "receive [id] [index]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Decrypt and verify a message",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			idx, err := strconv.Atoi(args[1])
+			if err != nil {
+				return err
+			}
+			pt, err := ztEngine.Receive(args[0], idx)
+			if err != nil {
+				return err
+			}
+			fmt.Println(string(pt))
+			return nil
 		},
 	}
 
@@ -71,6 +91,6 @@ func init() {
 		},
 	}
 
-	cmd.AddCommand(openCmd, sendCmd, listCmd, closeCmd)
+	cmd.AddCommand(openCmd, sendCmd, listCmd, recvCmd, closeCmd)
 	rootCmd.AddCommand(cmd)
 }

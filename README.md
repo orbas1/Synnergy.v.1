@@ -27,6 +27,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 9 adds DAO governance, custodial nodes and cross-consensus network tooling with gas-priced opcodes and CLI support.
 - Stage 11 introduces a context-aware virtual machine and sandbox manager, enabling contract execution with timeouts and full lifecycle control through the CLI. Inactive sandboxes can be purged automatically via `synnergy sandbox purge` to reclaim resources.
 - Stage 12 adds a hex-encoded wallet implementation and specialised warfare and watchtower nodes. The CLI can generate wallets, track logistics for military assets and monitor network health through these modules.
+- Stage 13 introduces zero trust data channels with authenticated encryption and regulatory nodes that automatically flag non-compliant transactions.
 
 ## Repository layout
 ```

@@ -1,6 +1,7 @@
 package synnergy
 
 import (
+	"crypto/ed25519"
 	"errors"
 	"sync"
 )
@@ -8,8 +9,16 @@ import (
 // DataChannel represents a secure channel with an encryption key.
 type DataChannel struct {
 	Key      []byte
-	Messages [][]byte
+	PrivKey  ed25519.PrivateKey
+	PubKey   ed25519.PublicKey
+	Messages []SignedMessage
 	Open     bool
+}
+
+// SignedMessage bundles an encrypted payload with its signature.
+type SignedMessage struct {
+	Cipher    []byte
+	Signature []byte
 }
 
 // ZeroTrustEngine manages encrypted data channels backed by ledger escrows.
@@ -30,7 +39,11 @@ func (e *ZeroTrustEngine) OpenChannel(id string, key []byte) error {
 	if _, exists := e.channels[id]; exists {
 		return errors.New("channel already exists")
 	}
-	e.channels[id] = &DataChannel{Key: key, Open: true}
+	pub, priv, err := ed25519.GenerateKey(nil)
+	if err != nil {
+		return err
+	}
+	e.channels[id] = &DataChannel{Key: key, PrivKey: priv, PubKey: pub, Open: true}
 	return nil
 }
 
@@ -46,27 +59,46 @@ func (e *ZeroTrustEngine) Send(id string, payload []byte) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
+	sig := ed25519.Sign(ch.PrivKey, cipherText)
 	e.mu.Lock()
-	ch.Messages = append(ch.Messages, cipherText)
+	ch.Messages = append(ch.Messages, SignedMessage{Cipher: cipherText, Signature: sig})
 	e.mu.Unlock()
 	return cipherText, nil
 }
 
 // Messages returns encrypted messages for a channel.
-func (e *ZeroTrustEngine) Messages(id string) [][]byte {
+func (e *ZeroTrustEngine) Messages(id string) []SignedMessage {
 	e.mu.RLock()
 	defer e.mu.RUnlock()
 	ch, ok := e.channels[id]
 	if !ok {
 		return nil
 	}
-	out := make([][]byte, len(ch.Messages))
-	for i, m := range ch.Messages {
-		cp := make([]byte, len(m))
-		copy(cp, m)
-		out[i] = cp
-	}
+	out := make([]SignedMessage, len(ch.Messages))
+	copy(out, ch.Messages)
 	return out
+}
+
+// Receive verifies and decrypts a stored message by index.
+func (e *ZeroTrustEngine) Receive(id string, index int) ([]byte, error) {
+	e.mu.RLock()
+	ch, ok := e.channels[id]
+	e.mu.RUnlock()
+	if !ok {
+		return nil, errors.New("channel not found")
+	}
+	if index < 0 || index >= len(ch.Messages) {
+		return nil, errors.New("message index out of range")
+	}
+	msg := ch.Messages[index]
+	if !ed25519.Verify(ch.PubKey, msg.Cipher, msg.Signature) {
+		return nil, errors.New("signature verification failed")
+	}
+	pt, err := Decrypt(ch.Key, msg.Cipher)
+	if err != nil {
+		return nil, err
+	}
+	return pt, nil
 }
 
 // CloseChannel closes the channel and prevents further messages.

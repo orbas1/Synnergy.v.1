@@ -9,13 +9,12 @@ func TestZeroTrustEngine(t *testing.T) {
 		t.Fatalf("open: %v", err)
 	}
 	payload := []byte("secret")
-	ct, err := eng.Send("ch1", payload)
-	if err != nil {
+	if _, err := eng.Send("ch1", payload); err != nil {
 		t.Fatalf("send: %v", err)
 	}
-	pt, err := Decrypt(key, ct)
+	pt, err := eng.Receive("ch1", 0)
 	if err != nil || string(pt) != string(payload) {
-		t.Fatalf("decrypt: %v", err)
+		t.Fatalf("receive: %v", err)
 	}
 	if err := eng.CloseChannel("ch1"); err != nil {
 		t.Fatalf("close: %v", err)

@@ -1,6 +1,9 @@
 package synnergy
 
-import "sync"
+import (
+	"strings"
+	"sync"
+)
 
 // RegulatoryNode represents a regulator-operated node overseeing transactions.
 type RegulatoryNode struct {
@@ -22,7 +25,11 @@ func NewRegulatoryNode(id string, mgr *RegulatoryManager) *RegulatoryNode {
 // ApproveTransaction checks a transaction against registered regulations.
 func (n *RegulatoryNode) ApproveTransaction(tx Transaction) bool {
 	violations := n.Manager.EvaluateTransaction(tx)
-	return len(violations) == 0
+	if len(violations) > 0 {
+		n.FlagEntity(tx.From, strings.Join(violations, ", "))
+		return false
+	}
+	return true
 }
 
 // FlagEntity records a regulatory flag for an address.

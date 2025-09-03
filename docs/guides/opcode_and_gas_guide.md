@@ -84,6 +84,8 @@ and CLI can accurately meter usage.
 
 Stage 7 expands the catalogue with consensus management primitives. Validator registration, contract administration and the consensus service publish opcodes with explicit gas prices and emit OpenTelemetry traces for observability.
 
+Stage 13 introduces zero trust data channel and regulatory node opcodes. These enable authenticated encrypted messaging and automatic compliance flagging. Base gas prices for these operations are listed in `gas_table_list.md` and surfaced through the dispatcher for both CLI and VM integrations.
+
 Lowering fees is therefore a matter of choosing cheaper opcodes, batching writes and avoiding default‑priced unknown operations.
 
 ## Efficiency Patterns
