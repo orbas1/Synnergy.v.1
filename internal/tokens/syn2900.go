@@ -44,7 +44,17 @@ func NewInsuranceRegistry() *InsuranceRegistry {
 }
 
 // IssuePolicy issues a new insurance policy.
-func (r *InsuranceRegistry) IssuePolicy(holder, coverage string, premium, payout, deductible, limit uint64, start, end time.Time) *InsurancePolicy {
+// It validates provided fields and ensures the policy period is valid.
+func (r *InsuranceRegistry) IssuePolicy(holder, coverage string, premium, payout, deductible, limit uint64, start, end time.Time) (*InsurancePolicy, error) {
+	if holder == "" || coverage == "" {
+		return nil, errors.New("holder and coverage required")
+	}
+	if premium == 0 || payout == 0 {
+		return nil, errors.New("premium and payout must be > 0")
+	}
+	if !end.After(start) || time.Now().After(end) {
+		return nil, errors.New("invalid policy period")
+	}
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.counter++
@@ -62,7 +72,7 @@ func (r *InsuranceRegistry) IssuePolicy(holder, coverage string, premium, payout
 		Active:     true,
 	}
 	r.policies[id] = p
-	return p
+	return p, nil
 }
 
 // FileClaim records a claim against a policy.
@@ -72,6 +82,10 @@ func (r *InsuranceRegistry) FileClaim(policyID, desc string, amount uint64) (*Cl
 	p, ok := r.policies[policyID]
 	if !ok {
 		return nil, errors.New("policy not found")
+	}
+	if !p.Active || time.Now().After(p.End) {
+		p.Active = false
+		return nil, errors.New("policy inactive")
 	}
 	r.counter++
 	id := fmt.Sprintf("IC-%d", r.counter)
@@ -104,4 +118,16 @@ func (r *InsuranceRegistry) ListPolicies() []*InsurancePolicy {
 		res = append(res, &cp)
 	}
 	return res
+}
+
+// Deactivate marks a policy as inactive.
+func (r *InsuranceRegistry) Deactivate(policyID string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	p, ok := r.policies[policyID]
+	if !ok {
+		return errors.New("policy not found")
+	}
+	p.Active = false
+	return nil
 }

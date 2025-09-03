@@ -51,6 +51,12 @@ digital currencies, pausable utility assets and game items. Each implementation
 embeds the concurrency‑safe base token and surfaces dedicated CLI commands for
 minting, transferring and querying balances.
 
+Stage 18 builds on this foundation with advanced financial instruments. New
+registries manage investor share tokens, life and general insurance policies,
+foreign‑exchange pairs, fiat‑pegged currencies, index funds, charity campaigns
+and legal document tokens. All contracts enforce input validation, support
+explicit deactivation and are accessible through dedicated CLI modules.
+
 ### Virtual Machine and Gas Accounting
 Smart contracts execute inside a dedicated virtual machine. Every protocol
 function is assigned a 24‑bit opcode and priced using a deterministic gas table.

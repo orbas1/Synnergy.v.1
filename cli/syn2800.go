@@ -28,7 +28,11 @@ func init() {
 			endStr, _ := cmd.Flags().GetString("end")
 			start, _ := time.Parse(time.RFC3339, startStr)
 			end, _ := time.Parse(time.RFC3339, endStr)
-			p := lifeRegistry.IssuePolicy(insured, beneficiary, coverage, premium, start, end)
+			p, err := lifeRegistry.IssuePolicy(insured, beneficiary, coverage, premium, start, end)
+			if err != nil {
+				fmt.Printf("error: %v\n", err)
+				return
+			}
 			fmt.Println(p.PolicyID)
 		},
 	}
@@ -97,6 +101,18 @@ func init() {
 		},
 	}
 	cmd.AddCommand(listCmd)
+
+	deactivateCmd := &cobra.Command{
+		Use:   "deactivate <policy>",
+		Short: "Deactivate a life policy",
+		Args:  cobra.ExactArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := lifeRegistry.Deactivate(args[0]); err != nil {
+				fmt.Printf("error: %v\n", err)
+			}
+		},
+	}
+	cmd.AddCommand(deactivateCmd)
 
 	rootCmd.AddCommand(cmd)
 }

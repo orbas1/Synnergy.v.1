@@ -40,7 +40,10 @@ func TestSYN200CarbonRegistry(t *testing.T) {
 func TestSYN2600InvestorRegistry(t *testing.T) {
 	reg := NewInvestorRegistry()
 	expiry := time.Now().Add(24 * time.Hour)
-	tok := reg.Issue("AssetA", "alice", 100, expiry)
+	tok, err := reg.Issue("AssetA", "alice", 100, expiry)
+	if err != nil {
+		t.Fatalf("issue: %v", err)
+	}
 	if err := reg.Transfer(tok.ID, "bob"); err != nil {
 		t.Fatalf("transfer: %v", err)
 	}
@@ -55,13 +58,19 @@ func TestSYN2600InvestorRegistry(t *testing.T) {
 	if len(tokens) != 1 {
 		t.Fatalf("expected 1 token got %d", len(tokens))
 	}
+	if _, err := reg.Issue("", "", 0, time.Now()); err == nil {
+		t.Fatalf("expected validation error")
+	}
 }
 
 func TestSYN2800LifePolicyRegistry(t *testing.T) {
 	reg := NewLifePolicyRegistry()
 	start := time.Now()
 	end := start.Add(365 * 24 * time.Hour)
-	policy := reg.IssuePolicy("alice", "bob", 1000, 100, start, end)
+	policy, err := reg.IssuePolicy("alice", "bob", 1000, 100, start, end)
+	if err != nil {
+		t.Fatalf("issue policy: %v", err)
+	}
 	if err := reg.PayPremium(policy.PolicyID, 50); err != nil {
 		t.Fatalf("pay premium: %v", err)
 	}
@@ -76,13 +85,19 @@ func TestSYN2800LifePolicyRegistry(t *testing.T) {
 	if len(policies) != 1 {
 		t.Fatalf("expected 1 policy got %d", len(policies))
 	}
+	if _, err := reg.IssuePolicy("", "", 0, 0, end, start); err == nil {
+		t.Fatalf("expected validation error")
+	}
 }
 
 func TestSYN2900InsuranceRegistry(t *testing.T) {
 	reg := NewInsuranceRegistry()
 	start := time.Now()
 	end := start.Add(365 * 24 * time.Hour)
-	policy := reg.IssuePolicy("alice", "fire", 100, 1000, 10, 1000, start, end)
+	policy, err := reg.IssuePolicy("alice", "fire", 100, 1000, 10, 1000, start, end)
+	if err != nil {
+		t.Fatalf("issue policy: %v", err)
+	}
 	if _, err := reg.FileClaim(policy.PolicyID, "damage", 500); err != nil {
 		t.Fatalf("file claim: %v", err)
 	}
@@ -93,6 +108,9 @@ func TestSYN2900InsuranceRegistry(t *testing.T) {
 	policies := reg.ListPolicies()
 	if len(policies) != 1 {
 		t.Fatalf("expected 1 policy got %d", len(policies))
+	}
+	if _, err := reg.IssuePolicy("", "", 0, 0, 0, 0, end, start); err == nil {
+		t.Fatalf("expected validation error")
 	}
 }
 
