@@ -1265,6 +1265,11 @@ var SNVMOpcodes = []SNVMOpcode{
 	{"internal_tokens_syn5000_Transfer", 0x0004E5},
 	{"gui_smart_contract_marketplace_DeployContract", 0x0004E6},
 	{"gui_smart_contract_marketplace_TradeContract", 0x0004E7},
+	{"gui_nft_marketplace_MintNFT", 0x0004E8},
+	{"gui_nft_marketplace_BuyNFT", 0x0004E9},
+	{"core_nft_marketplace_Mint", 0x0004EA},
+	{"core_nft_marketplace_List", 0x0004EB},
+	{"core_nft_marketplace_Buy", 0x0004EC},
 }
 
 // SNVMOpcodeByName returns the opcode for a given function identifier.

@@ -730,3 +730,7 @@
 | `IPFS_Add` | `1000` |
 | `IPFS_Get` | `400` |
 | `IPFS_Unpin` | `200` |
+<!-- Stage 36 NFT marketplace operations -->
+| `MintNFT` | `1200` |
+| `ListNFT` | `100` |
+| `BuyNFT` | `200` |

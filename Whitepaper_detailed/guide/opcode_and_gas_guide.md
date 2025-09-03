@@ -47,6 +47,8 @@ Stage 29 introduces deployable smart contract templates. Each template
 (`token_faucet`, `storage_market`, `dao_governance`, `nft_minting`,
 `ai_model_market`) receives a dedicated opcode and deterministic gas price so
 operators can estimate costs before instantiation.
+Stage 36 prices NFT marketplace operations so clients can predict the fees for
+minting and trading non-fungible tokens through the CLI and GUI.
 
 The VM charges gas **before** executing an opcode.  Dynamic portions – such as per‑word memory fees or refunds for resource release – are handled by the VM's gas meter.
 

@@ -46,6 +46,8 @@ ownership, expanding the function web to cover contract trading flows.
 Stage 35 introduces a storage marketplace GUI backed by `storage_marketplace`
 CLI operations and storage-specific opcodes so dashboards can list offerings
 and open deals through the same function web.
+Stage 36 adds an NFT marketplace GUI driven by the `nft` CLI module so
+applications can mint and trade unique assets within the function web.
 
 ## Diagram
 
