@@ -1260,6 +1260,7 @@ Base token operations
 * [synnergy basetoken burn](#synnergy-basetoken-burn)	 - Burn tokens
 * [synnergy basetoken init](#synnergy-basetoken-init)	 - Initialise a base token
 * [synnergy basetoken mint](#synnergy-basetoken-mint)	 - Mint tokens
+* [synnergy basetoken supply](#synnergy-basetoken-supply)  - Show total supply
 * [synnergy basetoken transfer](#synnergy-basetoken-transfer)	 - Transfer tokens
 
 
@@ -1398,6 +1399,24 @@ synnergy basetoken transfer <from> <to> <amt> [flags]
 
 * [synnergy basetoken](#synnergy-basetoken)	 - Base token operations
 
+
+## synnergy basetoken supply
+
+Show total supply
+
+```
+synnergy basetoken supply [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for supply
+```
+
+### SEE ALSO
+
+* [synnergy basetoken](#synnergy-basetoken)      - Base token operations
 
 ## synnergy bioauth
 

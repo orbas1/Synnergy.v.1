@@ -30,6 +30,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 13 introduces zero trust data channels with authenticated encryption and regulatory nodes that automatically flag non-compliant transactions.
 - Stage 14 consolidates node lifecycle management under an internal `nodes` package with a reusable interface and reference implementations for light, watchtower and logistics nodes.
 - Stage 15 expands internal node variants with in-memory forensic, geospatial, historical and elected authority nodes, enabling richer diagnostics and data services across the network.
+- Stage 16 introduces a concurrency-safe token registry and base token with micro-benchmarks to track transfer throughput.
 
 ## Repository layout
 ```

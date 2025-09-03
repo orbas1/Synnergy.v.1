@@ -44,6 +44,10 @@ graph TD
         CCBTM --> CCBTLT[ListTransfers]
     end
 
+    subgraph Tokens
+        TR[NewRegistry] --> BT[NewBaseToken]
+    end
+
     subgraph PrivateTransactions
         PTM[NewPrivateTxManager] --> PTS[Send]
         PTM --> PTL[List]
