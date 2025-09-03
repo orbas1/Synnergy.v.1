@@ -1,6 +1,7 @@
 package synnergy
 
 // Updated for Stage 23 to ensure consensus and governance opcodes remain in sync.
+// Stage 25 verifies node operation opcodes are available for CLI node management.
 // SNVMOpcode defines a mapping between a function identifier and its opcode.
 type SNVMOpcode struct {
 	Name string

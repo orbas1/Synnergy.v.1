@@ -19,32 +19,43 @@ func init() {
 	startCmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start mobile mining",
-		Run:   func(cmd *cobra.Command, args []string) { mobileMiner.Start() },
+		RunE: func(cmd *cobra.Command, args []string) error {
+			mobileMiner.Start()
+			printOutput("started")
+			return nil
+		},
 	}
 
 	stopCmd := &cobra.Command{
 		Use:   "stop",
 		Short: "Stop mobile mining",
-		Run:   func(cmd *cobra.Command, args []string) { mobileMiner.Stop() },
+		RunE: func(cmd *cobra.Command, args []string) error {
+			mobileMiner.Stop()
+			printOutput("stopped")
+			return nil
+		},
 	}
 
 	statusCmd := &cobra.Command{
 		Use:   "status",
 		Short: "Show mining status",
-		Run:   func(cmd *cobra.Command, args []string) { fmt.Println(mobileMiner.IsMining()) },
+		RunE: func(cmd *cobra.Command, args []string) error {
+			printOutput(mobileMiner.IsMining())
+			return nil
+		},
 	}
 
 	mineCmd := &cobra.Command{
 		Use:   "mine [data]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Mine once with provided data",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			hash, err := mobileMiner.Mine([]byte(args[0]))
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println(hash)
+			printOutput(hash)
+			return nil
 		},
 	}
 
@@ -52,20 +63,24 @@ func init() {
 		Use:   "set-power [limit]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Set power limit",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			limit, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
-				fmt.Println("invalid limit")
-				return
+				return fmt.Errorf("invalid limit")
 			}
 			mobileMiner.SetPowerLimit(limit)
+			printOutput(map[string]uint64{"limit": limit})
+			return nil
 		},
 	}
 
 	powerCmd := &cobra.Command{
 		Use:   "power",
 		Short: "Show power limit",
-		Run:   func(cmd *cobra.Command, args []string) { fmt.Println(mobileMiner.PowerLimit()) },
+		RunE: func(cmd *cobra.Command, args []string) error {
+			printOutput(mobileMiner.PowerLimit())
+			return nil
+		},
 	}
 
 	mmCmd.AddCommand(startCmd, stopCmd, statusCmd, mineCmd, setPower, powerCmd)

@@ -18,7 +18,9 @@ import (
 // GasTable maps opcode names to their base gas cost. Stage 23 registers
 // consensus and governance CLI operations so their fees are visible to users.
 // Stage 24 extends coverage to cross-chain bridges, protocol registration and
-// Plasma management so inter-network workflows remain predictable.
+// Plasma management so inter-network workflows remain predictable. Stage 25
+// adds node management operations (full, light, mining, staking, watchtower and
+// warfare nodes) so dashboards can price infrastructure actions.
 type GasTable map[string]uint64
 
 // DefaultGasCost is used when an opcode is missing from the guide.

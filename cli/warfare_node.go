@@ -19,12 +19,13 @@ func init() {
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create warfare node",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			id, _ := cmd.Flags().GetString("id")
 			addr, _ := cmd.Flags().GetString("addr")
 			base := core.NewNode(id, addr, core.NewLedger())
 			warfareNode = core.NewWarfareNode(base)
-			fmt.Println("warfare node created")
+			printOutput("warfare node created")
+			return nil
 		},
 	}
 	createCmd.Flags().String("id", "", "node id")
@@ -35,16 +36,15 @@ func init() {
 		Use:   "command <cmd>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Execute secure command",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if warfareNode == nil {
-				fmt.Println("node not initialised")
-				return
+				return fmt.Errorf("node not initialised")
 			}
 			if err := warfareNode.SecureCommand(args[0]); err != nil {
-				fmt.Println("command error:", err)
-				return
+				return err
 			}
-			fmt.Println("command executed")
+			printOutput("command executed")
+			return nil
 		},
 	}
 	cmd.AddCommand(cmdCmd)
@@ -53,13 +53,13 @@ func init() {
 		Use:   "track <assetID> <location> <status>",
 		Args:  cobra.ExactArgs(3),
 		Short: "Record logistics information",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if warfareNode == nil {
-				fmt.Println("node not initialised")
-				return
+				return fmt.Errorf("node not initialised")
 			}
 			warfareNode.TrackLogistics(args[0], args[1], args[2])
-			fmt.Println("logistics recorded")
+			printOutput("logistics recorded")
+			return nil
 		},
 	}
 	cmd.AddCommand(trackCmd)
@@ -68,10 +68,9 @@ func init() {
 		Use:   "logistics [assetID]",
 		Args:  cobra.MaximumNArgs(1),
 		Short: "List logistics records",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if warfareNode == nil {
-				fmt.Println("node not initialised")
-				return
+				return fmt.Errorf("node not initialised")
 			}
 			var recs []militarynodes.LogisticsRecord
 			if len(args) == 1 {
@@ -79,9 +78,8 @@ func init() {
 			} else {
 				recs = warfareNode.Logistics()
 			}
-			for i, r := range recs {
-				fmt.Printf("%d: %+v\n", i, r)
-			}
+			printOutput(recs)
+			return nil
 		},
 	}
 	cmd.AddCommand(listCmd)
@@ -90,13 +88,13 @@ func init() {
 		Use:   "share <info>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Share tactical information",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if warfareNode == nil {
-				fmt.Println("node not initialised")
-				return
+				return fmt.Errorf("node not initialised")
 			}
 			warfareNode.ShareTactical(args[0])
-			fmt.Println("info shared")
+			printOutput("info shared")
+			return nil
 		},
 	}
 	cmd.AddCommand(shareCmd)

@@ -18,6 +18,10 @@ managing proposals directly alongside execution results.
 Stage 24 extends cross-chain and Plasma management. The CLI now exposes bridge
 registration, connection tracking and gas-priced transfer operations that UIs
 can invoke for inter-network workflows.
+Stage 25 finalises node operations. Full, light, mining, mobile, optimisation,
+staking, watchtower and warfare nodes offer JSON emitting commands allowing the
+function web and external dashboards to orchestrate infrastructure with defined
+gas costs.
 
 ## Diagram
 

@@ -48,6 +48,9 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 24 expands cross-chain bridges and Plasma management. CLI commands now
   surface gas usage for inter-chain transfers and support JSON output for web
   dashboards.
+- Stage 25 adds comprehensive node management. Full, light, mining, mobile,
+  optimisation, staking, watchtower and warfare nodes expose JSON emitting CLI
+  operations for integration with GUIs and automation.
 
 ## Repository layout
 ```

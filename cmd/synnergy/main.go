@@ -51,6 +51,16 @@ func main() {
 	synn.RegisterGasCost("CloseConnection", synn.GasCost("CloseConnection"))
 	synn.RegisterGasCost("LockMint", synn.GasCost("LockMint"))
 	synn.RegisterGasCost("BurnRelease", synn.GasCost("BurnRelease"))
+	// Stage 25 node and operations costs
+	synn.RegisterGasCost("SetMode", synn.GasCost("SetMode"))
+	synn.RegisterGasCost("Stake", synn.GasCost("Stake"))
+	synn.RegisterGasCost("Unstake", synn.GasCost("Unstake"))
+	synn.RegisterGasCost("Optimize", synn.GasCost("Optimize"))
+	synn.RegisterGasCost("SecureCommand", synn.GasCost("SecureCommand"))
+	synn.RegisterGasCost("TrackLogistics", synn.GasCost("TrackLogistics"))
+	synn.RegisterGasCost("ShareTactical", synn.GasCost("ShareTactical"))
+	synn.RegisterGasCost("ReportFork", synn.GasCost("ReportFork"))
+	synn.RegisterGasCost("Metrics", synn.GasCost("Metrics"))
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.
