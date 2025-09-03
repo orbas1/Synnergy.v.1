@@ -13,8 +13,9 @@ func init() {
 	showCmd := &cobra.Command{
 		Use:   "show",
 		Short: "Display the zero address",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(core.AddressZero)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Fprintln(cmd.OutOrStdout(), core.AddressZero)
+			return nil
 		},
 	}
 
@@ -22,8 +23,9 @@ func init() {
 		Use:   "is [addr]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Check if address is zero address",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(core.IsZeroAddress(args[0]))
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Fprintln(cmd.OutOrStdout(), core.IsZeroAddress(args[0]))
+			return nil
 		},
 	}
 

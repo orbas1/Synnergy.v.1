@@ -15,13 +15,13 @@ func init() {
 		Use:   "parse [hex]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Validate and normalise an address",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			addr, err := core.StringToAddress(args[0])
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println(addr.Hex())
+			fmt.Fprintln(cmd.OutOrStdout(), addr.Hex())
+			return nil
 		},
 	}
 
@@ -29,13 +29,13 @@ func init() {
 		Use:   "bytes [hex]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show raw bytes of an address",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			addr, err := core.StringToAddress(args[0])
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println(hex.EncodeToString(addr.Bytes()))
+			fmt.Fprintln(cmd.OutOrStdout(), hex.EncodeToString(addr.Bytes()))
+			return nil
 		},
 	}
 
@@ -43,13 +43,13 @@ func init() {
 		Use:   "short [hex]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show shortened form of an address",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			addr, err := core.StringToAddress(args[0])
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println(addr.Short())
+			fmt.Fprintln(cmd.OutOrStdout(), addr.Short())
+			return nil
 		},
 	}
 

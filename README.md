@@ -37,6 +37,9 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 20 introduces dividend, convertible, governance, capped supply, vesting,
   loyalty and multi-chain token standards with accompanying CLI and VM
   integration.
+- Stage 21 streamlines core CLI operations for network, node and access
+  management, adding structured output and error propagation for peer
+  discovery, staking and address utilities.
 
 ## Repository layout
 ```

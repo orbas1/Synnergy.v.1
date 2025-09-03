@@ -14,12 +14,12 @@ func init() {
 		Use:   "grant [role] [addr]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Grant a role to an address",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := core.GrantRole(args[0], args[1]); err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println("granted")
+			fmt.Fprintln(cmd.OutOrStdout(), "granted")
+			return nil
 		},
 	}
 
@@ -27,12 +27,12 @@ func init() {
 		Use:   "revoke [role] [addr]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Revoke a role from an address",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := core.RevokeRole(args[0], args[1]); err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println("revoked")
+			fmt.Fprintln(cmd.OutOrStdout(), "revoked")
+			return nil
 		},
 	}
 
@@ -40,13 +40,13 @@ func init() {
 		Use:   "has [role] [addr]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Check if address has role",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			ok, err := core.HasRole(args[0], args[1])
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println(ok)
+			fmt.Fprintln(cmd.OutOrStdout(), ok)
+			return nil
 		},
 	}
 
@@ -54,15 +54,15 @@ func init() {
 		Use:   "list [addr]",
 		Args:  cobra.ExactArgs(1),
 		Short: "List roles for an address",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			roles, err := core.ListRoles(args[0])
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
 			for _, r := range roles {
-				fmt.Println(r)
+				fmt.Fprintln(cmd.OutOrStdout(), r)
 			}
+			return nil
 		},
 	}
 

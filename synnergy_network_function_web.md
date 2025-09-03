@@ -15,6 +15,12 @@ available through the CLI and VM.
 
 ```mermaid
 graph TD
+    subgraph Network
+        N[NewNetwork] --> NS[Start]
+        N --> NX[Stop]
+        N --> NPub[Publish]
+        N --> NSub[Subscribe]
+    end
     subgraph BiometricSecurity
         BA[NewBiometricsAuth] --> BE[Enroll]
         BE --> BV[Verify]
@@ -141,6 +147,7 @@ graph TD
     CentralBank --> Consensus
     Charity --> Consensus
     Synchronization --> Consensus
+    Network --> Consensus
 ```
 
 ## Key Relationships
@@ -150,6 +157,8 @@ graph TD
 - **CrossChain** functions manage bridging and transaction management across ledgers.
 - **PrivateTransactions**, **Staking**, and **Regulatory** modules interact with consensus for secure and compliant network activity.
 - **Wallet** functionality signs transactions that ultimately feed into consensus.
+- **Network** services provide message propagation and peer discovery feeding
+  transactions into the consensus workflow.
 
 This visualization can be rendered using any Mermaid-compatible Markdown viewer.
 

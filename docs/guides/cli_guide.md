@@ -4,10 +4,6 @@
 
 Synnergy blockchain CLI
 
-Stage 20 adds CLI access for new token extensions including dividend, convertible
-and multi-chain assets. These commands appear under the `token` subtree and are
-available once the corresponding modules are initialised.
-
 ### Options
 
 ```
@@ -141,7 +137,7 @@ available once the corresponding modules are initialised.
 * [synnergy syn2600](#synnergy-syn2600)	 - Investor token registry
 * [synnergy syn2700](#synnergy-syn2700)	 - Vesting schedule management
 * [synnergy syn2800](#synnergy-syn2800)	 - Life insurance policies
-* [synnergy syn2900](#synnergy-syn2900)	 - Token insurance policies
+* [synnergy syn2900](#synnergy-syn2900)	 - General insurance policies
 * [synnergy syn300](#synnergy-syn300)	 - SYN300 governance token
 * [synnergy syn3200](#synnergy-syn3200)	 - Bill registry operations
 * [synnergy syn3400](#synnergy-syn3400)	 - Forex pair registry
@@ -1264,7 +1260,7 @@ Base token operations
 * [synnergy basetoken burn](#synnergy-basetoken-burn)	 - Burn tokens
 * [synnergy basetoken init](#synnergy-basetoken-init)	 - Initialise a base token
 * [synnergy basetoken mint](#synnergy-basetoken-mint)	 - Mint tokens
-* [synnergy basetoken supply](#synnergy-basetoken-supply)  - Show total supply
+* [synnergy basetoken supply](#synnergy-basetoken-supply)	 - Show total supply
 * [synnergy basetoken transfer](#synnergy-basetoken-transfer)	 - Transfer tokens
 
 
@@ -1385,6 +1381,25 @@ synnergy basetoken mint <to> <amt> [flags]
 * [synnergy basetoken](#synnergy-basetoken)	 - Base token operations
 
 
+## synnergy basetoken supply
+
+Show total supply
+
+```
+synnergy basetoken supply [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for supply
+```
+
+### SEE ALSO
+
+* [synnergy basetoken](#synnergy-basetoken)	 - Base token operations
+
+
 ## synnergy basetoken transfer
 
 Transfer tokens
@@ -1403,24 +1418,6 @@ synnergy basetoken transfer <from> <to> <amt> [flags]
 
 * [synnergy basetoken](#synnergy-basetoken)	 - Base token operations
 
-
-## synnergy basetoken supply
-
-Show total supply
-
-```
-synnergy basetoken supply [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for supply
-```
-
-### SEE ALSO
-
-* [synnergy basetoken](#synnergy-basetoken)      - Base token operations
 
 ## synnergy bioauth
 
@@ -8496,17 +8493,17 @@ Regulatory node operations
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
-* [synnergy regnode approve](#synnergy-regnode-approve)	 - Approve or reject a transaction by amount
+* [synnergy regnode approve](#synnergy-regnode-approve)	 - Approve or reject a transaction
 * [synnergy regnode flag](#synnergy-regnode-flag)	 - Flag an address for a reason
 * [synnergy regnode logs](#synnergy-regnode-logs)	 - Show logs for an address
 
 
 ## synnergy regnode approve
 
-Approve or reject a transaction by amount
+Approve or reject a transaction
 
 ```
-synnergy regnode approve [amount] [flags]
+synnergy regnode approve [from] [amount] [flags]
 ```
 
 ### Options
@@ -9128,30 +9125,12 @@ Manage VM sandboxes
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy sandbox delete](#synnergy-sandbox-delete)	 - Delete a sandbox
 * [synnergy sandbox list](#synnergy-sandbox-list)	 - List sandboxes
-* [synnergy sandbox purge](#synnergy-sandbox-purge)	 - Purge inactive sandboxes
+* [synnergy sandbox purge](#synnergy-sandbox-purge)	 - Remove stopped sandboxes past TTL
 * [synnergy sandbox reset](#synnergy-sandbox-reset)	 - Reset sandbox timer
 * [synnergy sandbox start](#synnergy-sandbox-start)	 - Start a sandbox
 * [synnergy sandbox status](#synnergy-sandbox-status)	 - Show sandbox status
 * [synnergy sandbox stop](#synnergy-sandbox-stop)	 - Stop a sandbox
 
-
-## synnergy sandbox purge
-
-Purge inactive sandboxes
-
-```
-synnergy sandbox purge [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for purge
-```
-
-### SEE ALSO
-
-* [synnergy sandbox](#synnergy-sandbox)  - Manage VM sandboxes
 
 ## synnergy sandbox delete
 
@@ -9184,6 +9163,25 @@ synnergy sandbox list [flags]
 
 ```
   -h, --help   help for list
+```
+
+### SEE ALSO
+
+* [synnergy sandbox](#synnergy-sandbox)	 - Manage VM sandboxes
+
+
+## synnergy sandbox purge
+
+Remove stopped sandboxes past TTL
+
+```
+synnergy sandbox purge [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for purge
 ```
 
 ### SEE ALSO
@@ -10441,7 +10439,7 @@ synnergy syn10 transfer <from> <to> <amt> [flags]
 
 ## synnergy syn1000
 
-SYN1000 stablecoin operations. Amounts and prices must be provided as decimal strings to preserve precision.
+SYN1000 stablecoin operations
 
 ### Options
 
@@ -10463,7 +10461,7 @@ SYN1000 stablecoin operations. Amounts and prices must be provided as decimal st
 
 ## synnergy syn1000 add-reserve
 
-Add reserve asset (amount as decimal string)
+Add reserve asset
 
 ```
 synnergy syn1000 add-reserve <asset> <amount> [flags]
@@ -10542,7 +10540,7 @@ synnergy syn1000 mint <to> <amt> [flags]
 
 ## synnergy syn1000 set-price
 
-Set reserve price (decimal string)
+Set reserve price
 
 ```
 synnergy syn1000 set-price <asset> <price> [flags]
@@ -10618,7 +10616,7 @@ Manage multiple SYN1000 tokens
 
 ## synnergy syn1000index add-reserve
 
-Add reserve asset to token (amount as decimal string)
+Add reserve asset to token
 
 ```
 synnergy syn1000index add-reserve <id> <asset> <amount> [flags]
@@ -10657,7 +10655,7 @@ synnergy syn1000index create <name> <symbol> [flags]
 
 ## synnergy syn1000index set-price
 
-Set reserve price (decimal string)
+Set reserve price
 
 ```
 synnergy syn1000index set-price <id> <asset> <price> [flags]
@@ -10862,9 +10860,9 @@ synnergy syn12 init [flags]
       --discount float    discount rate
       --face uint         face value
   -h, --help              help for init
-      --issue string      issue date RFC3339 (default "2025-09-03T18:22:55Z")
+      --issue string      issue date RFC3339 (default "2025-09-03T19:54:20Z")
       --issuer string     issuer
-      --maturity string   maturity date RFC3339 (default "2025-10-03T18:22:55Z")
+      --maturity string   maturity date RFC3339 (default "2025-10-03T19:54:20Z")
       --name string       token name
       --symbol string     token symbol
 ```
@@ -11144,7 +11142,7 @@ synnergy syn1401 issue [flags]
 ```
   -h, --help             help for issue
       --id string        investment id
-      --maturity int     maturity unix time (default 1756923775)
+      --maturity int     maturity unix time (default 1756929260)
       --owner string     owner
       --principal uint   principal
       --rate float       annual rate
@@ -12324,11 +12322,31 @@ Investor token registry
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy syn2600 deactivate](#synnergy-syn2600-deactivate)	 - Deactivate an investor token
 * [synnergy syn2600 get](#synnergy-syn2600-get)	 - Get token info
 * [synnergy syn2600 issue](#synnergy-syn2600-issue)	 - Issue a new investor token
 * [synnergy syn2600 list](#synnergy-syn2600-list)	 - List investor tokens
 * [synnergy syn2600 return](#synnergy-syn2600-return)	 - Record a return payment
 * [synnergy syn2600 transfer](#synnergy-syn2600-transfer)	 - Transfer token ownership
+
+
+## synnergy syn2600 deactivate
+
+Deactivate an investor token
+
+```
+synnergy syn2600 deactivate <id> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for deactivate
+```
+
+### SEE ALSO
+
+* [synnergy syn2600](#synnergy-syn2600)	 - Investor token registry
 
 
 ## synnergy syn2600 get
@@ -12362,7 +12380,7 @@ synnergy syn2600 issue [flags]
 
 ```
       --asset string    underlying asset
-      --expiry string   expiry time (default "2025-09-04T18:22:55Z")
+      --expiry string   expiry time (default "2025-09-04T19:54:20Z")
   -h, --help            help for issue
       --owner string    owner address
       --shares uint     share quantity
@@ -12520,6 +12538,7 @@ Life insurance policies
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy syn2800 claim](#synnergy-syn2800-claim)	 - File a claim
+* [synnergy syn2800 deactivate](#synnergy-syn2800-deactivate)	 - Deactivate a life policy
 * [synnergy syn2800 get](#synnergy-syn2800-get)	 - Get policy info
 * [synnergy syn2800 issue](#synnergy-syn2800-issue)	 - Issue a life policy
 * [synnergy syn2800 list](#synnergy-syn2800-list)	 - List policies
@@ -12538,6 +12557,25 @@ synnergy syn2800 claim <policy> <amount> [flags]
 
 ```
   -h, --help   help for claim
+```
+
+### SEE ALSO
+
+* [synnergy syn2800](#synnergy-syn2800)	 - Life insurance policies
+
+
+## synnergy syn2800 deactivate
+
+Deactivate a life policy
+
+```
+synnergy syn2800 deactivate <policy> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for deactivate
 ```
 
 ### SEE ALSO
@@ -12577,11 +12615,11 @@ synnergy syn2800 issue [flags]
 ```
       --beneficiary string   beneficiary
       --coverage uint        coverage amount
-      --end string           end time (default "2025-09-04T18:22:55Z")
+      --end string           end time (default "2025-09-04T19:54:20Z")
   -h, --help                 help for issue
       --insured string       insured party
       --premium uint         premium amount
-      --start string         start time (default "2025-09-03T18:22:55Z")
+      --start string         start time (default "2025-09-03T19:54:20Z")
 ```
 
 ### SEE ALSO
@@ -12629,7 +12667,7 @@ synnergy syn2800 pay <policy> <amount> [flags]
 
 ## synnergy syn2900
 
-Token insurance policies
+General insurance policies
 
 ### Options
 
@@ -12640,36 +12678,19 @@ Token insurance policies
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
-* [synnergy syn2900 active](#synnergy-syn2900-active)	 - Check if policy is active
-* [synnergy syn2900 claim](#synnergy-syn2900-claim)	 - Claim the policy
+* [synnergy syn2900 claim](#synnergy-syn2900-claim)	 - File a claim
+* [synnergy syn2900 deactivate](#synnergy-syn2900-deactivate)	 - Deactivate a policy
+* [synnergy syn2900 get](#synnergy-syn2900-get)	 - Get policy info
 * [synnergy syn2900 issue](#synnergy-syn2900-issue)	 - Issue a new policy
-
-
-## synnergy syn2900 active
-
-Check if policy is active
-
-```
-synnergy syn2900 active [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for active
-```
-
-### SEE ALSO
-
-* [synnergy syn2900](#synnergy-syn2900)	 - Token insurance policies
+* [synnergy syn2900 list](#synnergy-syn2900-list)	 - List policies
 
 
 ## synnergy syn2900 claim
 
-Claim the policy
+File a claim
 
 ```
-synnergy syn2900 claim [flags]
+synnergy syn2900 claim <policy> <desc> <amount> [flags]
 ```
 
 ### Options
@@ -12680,7 +12701,45 @@ synnergy syn2900 claim [flags]
 
 ### SEE ALSO
 
-* [synnergy syn2900](#synnergy-syn2900)	 - Token insurance policies
+* [synnergy syn2900](#synnergy-syn2900)	 - General insurance policies
+
+
+## synnergy syn2900 deactivate
+
+Deactivate a policy
+
+```
+synnergy syn2900 deactivate <policy> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for deactivate
+```
+
+### SEE ALSO
+
+* [synnergy syn2900](#synnergy-syn2900)	 - General insurance policies
+
+
+## synnergy syn2900 get
+
+Get policy info
+
+```
+synnergy syn2900 get <policy> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for get
+```
+
+### SEE ALSO
+
+* [synnergy syn2900](#synnergy-syn2900)	 - General insurance policies
 
 
 ## synnergy syn2900 issue
@@ -12696,19 +12755,37 @@ synnergy syn2900 issue [flags]
 ```
       --coverage string   coverage type
       --deductible uint   deductible
-      --end string        end time (default "2025-09-04T18:22:55Z")
+      --end string        end time (default "2025-09-04T19:54:20Z")
   -h, --help              help for issue
       --holder string     policy holder
-      --id string         policy id
       --limit uint        limit
       --payout uint       payout amount
       --premium uint      premium amount
-      --start string      start time (default "2025-09-03T18:22:55Z")
+      --start string      start time (default "2025-09-03T19:54:20Z")
 ```
 
 ### SEE ALSO
 
-* [synnergy syn2900](#synnergy-syn2900)	 - Token insurance policies
+* [synnergy syn2900](#synnergy-syn2900)	 - General insurance policies
+
+
+## synnergy syn2900 list
+
+List policies
+
+```
+synnergy syn2900 list [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for list
+```
+
+### SEE ALSO
+
+* [synnergy syn2900](#synnergy-syn2900)	 - General insurance policies
 
 
 ## synnergy syn300
@@ -12957,7 +13034,7 @@ synnergy syn3200 create [flags]
 
 ```
       --amount uint     amount
-      --due string      due time (default "2025-09-04T18:22:55Z")
+      --due string      due time (default "2025-09-04T19:54:20Z")
   -h, --help            help for create
       --id string       bill id
       --issuer string   issuer
@@ -13274,7 +13351,7 @@ synnergy syn3600 create [flags]
 ### Options
 
 ```
-      --expiration string   expiration time (default "2025-09-04T18:22:55Z")
+      --expiration string   expiration time (default "2025-09-04T19:54:20Z")
   -h, --help                help for create
       --price uint          price per unit
       --qty uint            quantity
@@ -15413,7 +15490,7 @@ Wallet operations
 
 ## synnergy wallet new
 
-Generate a new wallet and print its hex-encoded address
+Generate a new wallet
 
 ```
 synnergy wallet new [flags]
@@ -15869,6 +15946,7 @@ Manage zero trust data channels
 * [synnergy zero-trust close](#synnergy-zero-trust-close)	 - Close a channel
 * [synnergy zero-trust messages](#synnergy-zero-trust-messages)	 - List encrypted messages
 * [synnergy zero-trust open](#synnergy-zero-trust-open)	 - Open a secure channel
+* [synnergy zero-trust receive](#synnergy-zero-trust-receive)	 - Decrypt and verify a message
 * [synnergy zero-trust send](#synnergy-zero-trust-send)	 - Send an encrypted message
 
 
@@ -15922,6 +16000,25 @@ synnergy zero-trust open [id] [hexkey] [flags]
 
 ```
   -h, --help   help for open
+```
+
+### SEE ALSO
+
+* [synnergy zero-trust](#synnergy-zero-trust)	 - Manage zero trust data channels
+
+
+## synnergy zero-trust receive
+
+Decrypt and verify a message
+
+```
+synnergy zero-trust receive [id] [index] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for receive
 ```
 
 ### SEE ALSO
