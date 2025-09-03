@@ -1247,6 +1247,7 @@ var catalogue = []struct {
 	{"VM_SandboxReset", 0x1C0032},
 	{"VM_SandboxStatus", 0x1C0033},
 	{"VM_SandboxList", 0x1C0034},
+	{"VM_SandboxDelete", 0x1C0035},
 	{"NewRandomWallet", 0x1D0001},
 	{"WalletFromMnemonic", 0x1D0002},
 	{"NewHDWalletFromSeed", 0x1D0003},

@@ -1,6 +1,7 @@
 package synnergy
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"sync"
@@ -120,16 +121,21 @@ func (vm *SimpleVM) RegisterOpcode(code uint32, h opcodeHandler) {
 // Execute interprets the provided bytecode as a sequence of 24-bit opcodes and
 // dispatches to the registered handlers. Unknown opcodes fall back to a default
 // echo handler so that tests remain deterministic. Gas is consumed per opcode.
-func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {
+func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	if !vm.Status() {
 		return nil, 0, errors.New("vm not running")
 	}
 
 	// Bottleneck management: limit concurrent executions according to VM
-	// profile.
+	// profile. Respect context cancellation while waiting for a slot.
 	select {
 	case vm.limiter <- struct{}{}:
 		defer func() { <-vm.limiter }()
+	case <-ctx.Done():
+		return nil, 0, ctx.Err()
 	default:
 		return nil, 0, errors.New("vm busy")
 	}
@@ -149,6 +155,9 @@ func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit ui
 
 	out := args
 	for i := 0; i < len(wasm); i += 3 {
+		if err := ctx.Err(); err != nil {
+			return nil, gasUsed, err
+		}
 		b0 := wasm[i]
 		var b1, b2 byte
 		if i+1 < len(wasm) {
@@ -170,7 +179,16 @@ func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit ui
 	}
 
 	// simulate execution delay to keep behaviour deterministic
-	time.Sleep(time.Millisecond)
+	select {
+	case <-time.After(time.Millisecond):
+	case <-ctx.Done():
+		return nil, gasUsed, ctx.Err()
+	}
 
 	return out, gasUsed, nil
+}
+
+// Execute interprets the provided bytecode using a background context.
+func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {
+	return vm.ExecuteContext(context.Background(), wasm, method, args, gasLimit)
 }

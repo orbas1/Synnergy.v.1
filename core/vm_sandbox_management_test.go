@@ -20,7 +20,10 @@ func TestSandboxManager(t *testing.T) {
 	if sb, ok := m.SandboxStatus("sb1"); !ok || sb.Active {
 		t.Fatalf("status mismatch")
 	}
-	if len(m.ListSandboxes()) != 1 {
-		t.Fatalf("list mismatch")
+	if err := m.DeleteSandbox("sb1"); err != nil {
+		t.Fatalf("delete: %v", err)
+	}
+	if _, ok := m.SandboxStatus("sb1"); ok {
+		t.Fatalf("sandbox should be removed")
 	}
 }

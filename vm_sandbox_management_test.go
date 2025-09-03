@@ -20,4 +20,10 @@ func TestSandboxManager(t *testing.T) {
 	if sb.Active {
 		t.Fatalf("sandbox should be inactive")
 	}
+	if err := m.DeleteSandbox("sb1"); err != nil {
+		t.Fatalf("delete: %v", err)
+	}
+	if _, ok := m.SandboxStatus("sb1"); ok {
+		t.Fatalf("sandbox should be removed")
+	}
 }

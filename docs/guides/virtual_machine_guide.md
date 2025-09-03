@@ -5,6 +5,8 @@ Synnergy Network: Comprehensive Virtual Machine Layer
 Overview
 The Virtual Machine (VM) layer of the Synnergy Network, known as the Synnergy VM (SVM), is designed to provide a robust, secure, and efficient execution environment for smart contracts. This layer is crucial for ensuring that all smart contract executions are deterministic, secure, and optimized for performance. The SVM leverages advanced cryptographic algorithms such as Scrypt, AES, RSA, ECC, and Argon for encryption and decryption, and supports a combination of Proof of Work (PoW), Proof of History (PoH), and Proof of Stake (PoS) consensus mechanisms. This ensures that the Synnergy Network can outperform existing blockchain platforms like Bitcoin, Ethereum, and Solana in terms of speed, security, and functionality.
 
+Stage 11 introduces a context-aware execution API that allows contracts to be run with explicit deadlines and cancellation semantics. Each contract executes inside a dedicated sandbox which can now be deleted entirely once work completes, freeing all associated resources.
+
 1. Core
 1. Execution Engine
 The Execution Engine is the heart of the Synnergy VM, responsible for interpreting and executing the smart contract bytecode efficiently and securely.

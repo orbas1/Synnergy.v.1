@@ -1,9 +1,11 @@
 package cli
 
 import (
+	"context"
 	"encoding/hex"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
@@ -84,6 +86,7 @@ func init() {
 	}
 	cmd.AddCommand(statusCmd)
 
+	var timeoutMS int
 	execCmd := &cobra.Command{
 		Use:   "exec <wasmHex> [argsHex] [gas]",
 		Args:  cobra.RangeArgs(1, 3),
@@ -118,7 +121,13 @@ func init() {
 					return
 				}
 			}
-			out, used, err := simpleVM.Execute(wasm, "", in, gas)
+			ctx := context.Background()
+			if timeoutMS > 0 {
+				var cancel context.CancelFunc
+				ctx, cancel = context.WithTimeout(ctx, time.Duration(timeoutMS)*time.Millisecond)
+				defer cancel()
+			}
+			out, used, err := simpleVM.ExecuteContext(ctx, wasm, "", in, gas)
 			if err != nil {
 				fmt.Println("exec error:", err)
 				return
@@ -126,6 +135,7 @@ func init() {
 			fmt.Printf("out: %x gasUsed: %d\n", out, used)
 		},
 	}
+	execCmd.Flags().IntVar(&timeoutMS, "timeout", 0, "execution timeout in ms (0 for none)")
 	cmd.AddCommand(execCmd)
 
 	rootCmd.AddCommand(cmd)
