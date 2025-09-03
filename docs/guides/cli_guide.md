@@ -20144,7 +20144,8 @@ Wallet operations
 
 ## synnergy wallet new
 
-Generate a new wallet
+Generate a new wallet. The command can optionally write an encrypted key file
+for use in graphical clients.
 
 ```
 synnergy wallet new [flags]
@@ -20153,7 +20154,9 @@ synnergy wallet new [flags]
 ### Options
 
 ```
-  -h, --help   help for new
+      --out string       write encrypted wallet to file
+      --password string  encryption password for wallet file
+  -h, --help             help for new
 ```
 
 ### Options inherited from parent commands

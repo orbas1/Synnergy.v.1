@@ -58,6 +58,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 28 introduces release packaging, documentation generation, CI setup and ledger backup scripts for reproducible builds and disaster recovery.
 - Stage 29 adds deployable smart contract templates for token faucets, storage markets, DAO governance, NFT minting and AI model marketplaces. These templates are accessible via CLI with gas-priced opcodes.
 - Stage 30 introduces utility smart contract modules including escrow payments, cross-chain bridges, multisig wallets and regulatory compliance contracts. Each template ships precompiled as WASM and can be deployed through the CLI and VM.
+- Stage 31 debuts a TypeScript GUI wallet that interacts with the CLI. Wallets are generated locally, encrypted with scrypt-derived AES-GCM keys and can query ledger balances through JSON emitting commands.
 - The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
 
 ## Repository layout
