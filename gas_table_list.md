@@ -663,3 +663,13 @@
 | `core_regulatory_node_ApproveTransaction` | `8` |
 | `core_regulatory_node_FlagEntity` | `2` |
 | `core_regulatory_node_Logs` | `3` |
+| `internal_tokens_syn1000_NewSYN1000Token` | `5` |
+| `internal_tokens_syn1000_AddReserve` | `3` |
+| `internal_tokens_syn1000_SetReservePrice` | `3` |
+| `internal_tokens_syn1000_TotalReserveValue` | `2` |
+| `internal_tokens_syn1000_index_NewSYN1000Index` | `5` |
+| `internal_tokens_syn1000_index_Create` | `6` |
+| `internal_tokens_syn1000_index_Token` | `2` |
+| `internal_tokens_syn1000_index_AddReserve` | `3` |
+| `internal_tokens_syn1000_index_SetReservePrice` | `3` |
+| `internal_tokens_syn1000_index_TotalValue` | `2` |

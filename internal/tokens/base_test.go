@@ -3,6 +3,7 @@ package tokens
 import (
 	"encoding/hex"
 	"errors"
+	"math/big"
 	"sync"
 	"testing"
 	"time"
@@ -60,15 +61,15 @@ func TestSYN10Info(t *testing.T) {
 func TestSYN1000ReserveValue(t *testing.T) {
 	idx := NewSYN1000Index()
 	id := idx.Create("Stable", "STBL", 2)
-	if err := idx.AddReserve(id, "USD", 100); err != nil {
+	if err := idx.AddReserve(id, "USD", big.NewRat(100, 1)); err != nil {
 		t.Fatalf("add reserve: %v", err)
 	}
-	if err := idx.SetReservePrice(id, "USD", 1.0); err != nil {
+	if err := idx.SetReservePrice(id, "USD", big.NewRat(1, 1)); err != nil {
 		t.Fatalf("set price: %v", err)
 	}
 	val, err := idx.TotalValue(id)
-	if err != nil || val != 100 {
-		t.Fatalf("unexpected value %f err %v", val, err)
+	if err != nil || val.Cmp(big.NewRat(100, 1)) != 0 {
+		t.Fatalf("unexpected value %s err %v", val.String(), err)
 	}
 }
 

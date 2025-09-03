@@ -2,6 +2,8 @@ package cli
 
 import (
 	"fmt"
+	"math/big"
+
 	"github.com/spf13/cobra"
 	"synnergy/internal/tokens"
 )
@@ -33,9 +35,12 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
 			var id uint64
-			var amt float64
 			fmt.Sscanf(args[0], "%d", &id)
-			fmt.Sscanf(args[2], "%f", &amt)
+			amt, ok := new(big.Rat).SetString(args[2])
+			if !ok {
+				fmt.Println("invalid amount")
+				return
+			}
 			if err := syn1000Index.AddReserve(tokens.TokenID(id), args[1], amt); err != nil {
 				fmt.Println("error:", err)
 				return
@@ -51,9 +56,12 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
 			var id uint64
-			var price float64
 			fmt.Sscanf(args[0], "%d", &id)
-			fmt.Sscanf(args[2], "%f", &price)
+			price, ok := new(big.Rat).SetString(args[2])
+			if !ok {
+				fmt.Println("invalid price")
+				return
+			}
 			if err := syn1000Index.SetReservePrice(tokens.TokenID(id), args[1], price); err != nil {
 				fmt.Println("error:", err)
 				return
@@ -75,7 +83,7 @@ func init() {
 				fmt.Println("error:", err)
 				return
 			}
-			fmt.Println(v)
+			fmt.Println(v.FloatString(2))
 		},
 	}
 	cmd.AddCommand(valueCmd)
