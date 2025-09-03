@@ -15,5 +15,9 @@ This directory contains architecture overviews for major module groups. Each fil
 11. [Compliance and Regulatory](compliance_architecture.md)
 12. [Monitoring and Logging](monitoring_logging_architecture.md)
 13. [Specialized Features](specialized_architecture.md)
+14. GUI Modules
+   - [Wallet](wallet_architecture.md)
+   - [Explorer](explorer_architecture.md)
+   - [AI Marketplace](ai_marketplace_architecture.md)
 
-There are **13** distinct module groups.
+There are **14** distinct module groups.
