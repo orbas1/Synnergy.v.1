@@ -94,6 +94,11 @@
 | `DeleteSandbox` | `1` |
 | `Deploy` | `1` |
 | `DeployAIContract` | `5000` |
+| `DeployAIModelMarketTemplate` | `5000` |
+| `DeployDAOGovernanceTemplate` | `5000` |
+| `DeployNFTMintingTemplate` | `5000` |
+| `DeployStorageMarketTemplate` | `5000` |
+| `DeployTokenFaucetTemplate` | `5000` |
 | `ContractInfo` | `100` |
 | `InitContracts` | `1500` |
 | `PauseContract` | `300` |

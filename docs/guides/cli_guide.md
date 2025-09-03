@@ -20,3 +20,17 @@ Stakes tokens on behalf of `addr1` and outputs the new balance.
 
 All node commands follow similar patterns with structured output and validated
 arguments.
+
+### Contract templates
+Stage 29 exposes pre-built smart contract templates for rapid prototyping. List
+available templates:
+
+```
+synnergy contracts list-templates
+```
+
+Deploy a template (e.g. `token_faucet`):
+
+```
+synnergy contracts deploy-template --name token_faucet --owner addr1 --gas 500000
+```
