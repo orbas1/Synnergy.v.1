@@ -12,6 +12,10 @@ Stage 9 adds a dedicated DAO token ledger with staking support and burn capabili
 Stage 11 ensures token operations execute inside managed VM sandboxes with explicit cleanup semantics and idle sandboxes are automatically purged once their TTL expires.
 Stage 13 links token flows with regulatory nodes, allowing non-compliant transfers to be flagged in real time for audit trails.
 Stage 16 makes the base token and registry concurrency‑safe and includes micro‑benchmarks to monitor transfer throughput.
+Stage 17 introduces a suite of standard token contracts such as CBDCs, pausable
+utility tokens and in‑game asset registries. These implementations embed the
+thread‑safe base token and expose dedicated CLI commands for minting and
+transfer operations.
 
 ## Package layout
 

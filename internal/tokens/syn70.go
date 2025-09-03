@@ -1,6 +1,9 @@
 package tokens
 
-import "fmt"
+import (
+	"fmt"
+	"sync"
+)
 
 // SYN70Asset represents a single game asset tracked by the SYN70 token standard.
 type SYN70Asset struct {
@@ -15,6 +18,7 @@ type SYN70Asset struct {
 // SYN70Token manages in-game assets.
 type SYN70Token struct {
 	*BaseToken
+	mu     sync.RWMutex
 	assets map[string]*SYN70Asset
 }
 
@@ -28,6 +32,8 @@ func NewSYN70Token(id TokenID, name, symbol string, decimals uint8) *SYN70Token 
 
 // RegisterAsset creates a new asset and assigns it to the owner.
 func (t *SYN70Token) RegisterAsset(id, owner, name, game string) error {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	if _, exists := t.assets[id]; exists {
 		return fmt.Errorf("asset already exists")
 	}
@@ -37,19 +43,27 @@ func (t *SYN70Token) RegisterAsset(id, owner, name, game string) error {
 
 // TransferAsset moves an asset to a new owner.
 func (t *SYN70Token) TransferAsset(id, newOwner string) error {
+	t.mu.Lock()
 	asset, ok := t.assets[id]
 	if !ok {
+		t.mu.Unlock()
 		return fmt.Errorf("asset not found")
 	}
-	if err := t.BaseToken.Transfer(asset.Owner, newOwner, 1); err != nil {
+	owner := asset.Owner
+	t.mu.Unlock()
+	if err := t.BaseToken.Transfer(owner, newOwner, 1); err != nil {
 		return err
 	}
+	t.mu.Lock()
 	asset.Owner = newOwner
+	t.mu.Unlock()
 	return nil
 }
 
 // SetAttribute sets a custom attribute on an asset.
 func (t *SYN70Token) SetAttribute(id, key, value string) error {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	asset, ok := t.assets[id]
 	if !ok {
 		return fmt.Errorf("asset not found")
@@ -60,6 +74,8 @@ func (t *SYN70Token) SetAttribute(id, key, value string) error {
 
 // AddAchievement records an achievement for an asset.
 func (t *SYN70Token) AddAchievement(id, name string) error {
+	t.mu.Lock()
+	defer t.mu.Unlock()
 	asset, ok := t.assets[id]
 	if !ok {
 		return fmt.Errorf("asset not found")
@@ -70,18 +86,34 @@ func (t *SYN70Token) AddAchievement(id, name string) error {
 
 // AssetInfo returns asset information if present.
 func (t *SYN70Token) AssetInfo(id string) (SYN70Asset, error) {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
 	asset, ok := t.assets[id]
 	if !ok {
 		return SYN70Asset{}, fmt.Errorf("asset not found")
 	}
-	return *asset, nil
+	cp := *asset
+	cp.Attributes = make(map[string]string)
+	for k, v := range asset.Attributes {
+		cp.Attributes[k] = v
+	}
+	cp.Achievements = append([]string(nil), asset.Achievements...)
+	return cp, nil
 }
 
 // ListAssets returns all registered assets.
 func (t *SYN70Token) ListAssets() []SYN70Asset {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
 	out := make([]SYN70Asset, 0, len(t.assets))
 	for _, a := range t.assets {
-		out = append(out, *a)
+		cp := *a
+		cp.Attributes = make(map[string]string)
+		for k, v := range a.Attributes {
+			cp.Attributes[k] = v
+		}
+		cp.Achievements = append([]string(nil), a.Achievements...)
+		out = append(out, cp)
 	}
 	return out
 }
