@@ -50,6 +50,19 @@ func init() {
 		},
 	}
 
-	genesisCmd.AddCommand(showCmd, allocateCmd)
+	initBlockCmd := &cobra.Command{
+		Use:   "init-block",
+		Short: "Initialise the chain's genesis block",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			stats, _, err := currentNode.InitGenesis(genesisWallets)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "hash: %s\ncirculating: %d\nremaining: %d\n", stats.Hash, stats.Circulating, stats.Remaining)
+			return nil
+		},
+	}
+
+	genesisCmd.AddCommand(showCmd, allocateCmd, initBlockCmd)
 	rootCmd.AddCommand(genesisCmd)
 }
