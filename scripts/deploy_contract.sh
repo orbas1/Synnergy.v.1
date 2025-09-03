@@ -1,27 +1,28 @@
 #!/usr/bin/env bash
 set -euo pipefail
-IFS=$'\n\t'
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BIN="${BIN_PATH:-$SCRIPT_DIR/../cmd/synnergy}"
 
 usage() {
-  echo "Usage: $(basename "$0") [node_count]" >&2
+  echo "Usage: $(basename "$0") path/to/contract.wasm" >&2
   exit 1
 }
 
-COUNT=${1:-1}
-PORT_BASE=${PORT_BASE:-3030}
+FILE=${1:-}
+
+if [[ -z "$FILE" ]]; then
+  usage
+fi
+
+if [[ ! -f "$FILE" ]]; then
+  echo "contract file not found: $FILE" >&2
+  exit 1
+fi
 
 if ! command -v "$BIN" &>/dev/null; then
   echo "binary not found: $BIN" >&2
   exit 1
 fi
 
-for ((i=0; i<COUNT; i++)); do
-  PORT=$((PORT_BASE + i))
-  "$BIN" network start --port "$PORT" &
-done
-
-trap 'kill 0' SIGINT SIGTERM
-wait
+"$BIN" contracts deploy --wasm "$FILE"
