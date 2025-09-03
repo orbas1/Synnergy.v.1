@@ -49,6 +49,8 @@ Stage 26 extends these tools with runtime gas table management. Operators can
 adjust opcode costs without recompiling the network and export the entire
 schedule as JSON, giving auditors and governance systems direct visibility into
 fee policies.
+Stage 27 introduces automation scripts for development and testing networks, including bootstrapping utilities, contract deployment helpers and code quality gates that streamline contributor workflows.
+Stage 28 adds release engineering scripts covering packaging, documentation generation, CI setup and ledger backups, delivering reproducible and auditable deployment processes.
 
 ### Wallets and Network Monitoring
 Stage 12 introduces a hardened wallet with hex-encoded addressing and ECDSA signatures for transaction authorization.  Alongside the wallet, new warfare and watchtower node roles extend the network with logistics tracking and real-time fork detection.  These modules expose CLI endpoints and feed telemetry back into the consensus layer for improved operational awareness.
