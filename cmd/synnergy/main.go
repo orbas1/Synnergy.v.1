@@ -46,6 +46,16 @@ func main() {
 	_ = core.NewAuthorityNodeRegistry()
 	_ = core.NewBankInstitutionalNode("init", "init", core.NewLedger())
 
+	// Preload stage 8 modules to expose contract and cross-chain managers via CLI.
+	vm := core.NewSimpleVM()
+	_ = vm.Start()
+	_ = core.NewContractRegistry(vm)
+	_ = core.NewBridgeRegistry()
+	_ = core.NewBridgeTransferManager()
+	_ = core.NewChainConnectionManager()
+	_ = core.NewProtocolRegistry()
+	_ = core.NewCrossChainTxManager(core.NewLedger())
+
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 
 	if err := cli.Execute(); err != nil {

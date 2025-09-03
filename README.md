@@ -23,6 +23,7 @@ All guides and architecture decision records are located under the `docs/` direc
   tracking.
 - Structured JSON logging with pluggable backends for compliance, connection and consensus modules.
 - Stage 7 adds a unified errors package and OpenTelemetry tracing for consensus and contract management components, improving diagnostics across the CLI and services.
+- Stage 8 introduces a contract registry and cross‑chain transaction managers with full CLI access and gas‑priced opcodes for deterministic execution.
 
 ## Repository layout
 ```

@@ -92,6 +92,11 @@
 | `Delete` | `1` |
 | `Deploy` | `1` |
 | `DeployAIContract` | `5000` |
+| `ContractInfo` | `100` |
+| `InitContracts` | `1500` |
+| `PauseContract` | `300` |
+| `ResumeContract` | `300` |
+| `UpgradeContract` | `2000` |
 | `Deposit` | `1` |
 | `Deregister` | `1` |
 | `DialSeed` | `1` |
