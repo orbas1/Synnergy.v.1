@@ -20,6 +20,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Calculate quadratic weight",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("QuadraticWeight")
 			tokens, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				fmt.Println("invalid tokens")
@@ -34,6 +35,7 @@ func init() {
 		Args:  cobra.ExactArgs(4),
 		Short: "Cast a quadratic vote",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("CastQuadraticVote")
 			tokens, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				fmt.Println("invalid tokens")

@@ -246,7 +246,7 @@
 | `Meta` | `1` |
 | `Metrics` | `1` |
 | `Mine` | `1` |
-| `MineBlock` | `1` |
+| `MineBlock` | `50` |
 | `MinimumStake` | `1` |
 | `Mint` | `10` |
 | `MintAsset` | `1` |
@@ -304,7 +304,7 @@
 | `NewDAOManager` | `1` |
 | `NewDAOStaking` | `1` |
 | `NewDAOTokenLedger` | `1` |
-| `CreateDAO` | `20` |
+| `CreateDAO` | `25` |
 | `JoinDAO` | `5` |
 | `LeaveDAO` | `5` |
 | `DAOInfo` | `1` |

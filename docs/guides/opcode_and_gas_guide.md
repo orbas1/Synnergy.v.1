@@ -35,6 +35,11 @@ capped supply, vesting, loyalty and multi‑chain token primitives. Each functio
 receives a deterministic gas price so these extensions remain affordable during
 execution.
 
+Stage 23 adds dedicated pricing for consensus mining and DAO governance
+operations. CLI commands such as `consensus mine` and `dao create` now surface
+their respective costs using the values from `gas_table_list.md`, allowing
+operators to estimate fees before execution.
+
 The VM charges gas **before** executing an opcode.  Dynamic portions – such as per‑word memory fees or refunds for resource release – are handled by the VM's gas meter.
 
 ```go

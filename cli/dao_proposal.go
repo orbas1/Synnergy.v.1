@@ -22,6 +22,7 @@ func init() {
 		Args:  cobra.MinimumNArgs(3),
 		Short: "Create a proposal",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("CreateProposal")
 			dao, err := daoMgr.Info(args[0])
 			if err != nil {
 				fmt.Println(err)
@@ -38,6 +39,7 @@ func init() {
 		Args:  cobra.ExactArgs(4),
 		Short: "Cast a vote",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("Vote")
 			w, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				fmt.Println("invalid weight")
@@ -55,6 +57,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show voting results",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ProposalStatus")
 			yes, no, err := proposalMgr.Results(args[0])
 			if err != nil {
 				fmt.Println(err)
@@ -69,6 +72,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Mark proposal executed",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ExecuteProposal")
 			if err := proposalMgr.Execute(args[0]); err != nil {
 				fmt.Println(err)
 				return
@@ -82,6 +86,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Get proposal info",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("GetProposal")
 			p, err := proposalMgr.Get(args[0])
 			if err != nil {
 				fmt.Println(err)
@@ -95,6 +100,7 @@ func init() {
 		Use:   "list",
 		Short: "List proposals",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ListProposals")
 			for _, p := range proposalMgr.List() {
 				fmt.Printf("%s DAO:%s Desc:%s Executed:%v\n", p.ID, p.DAOID, p.Desc, p.Executed)
 			}

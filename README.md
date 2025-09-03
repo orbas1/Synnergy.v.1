@@ -42,6 +42,9 @@ All guides and architecture decision records are located under the `docs/` direc
   discovery, staking and address utilities.
 - Stage 22 refines AI contract and audit CLI modules, providing consistent error
   handling and JSON-formatted output for integration with external tooling.
+- Stage 23 adds gas-aware consensus and DAO governance commands. CLI operations
+  such as block mining and DAO creation now emit their expected gas cost for
+  better planning and integration with wallets and GUIs.
 
 ## Repository layout
 ```

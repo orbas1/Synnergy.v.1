@@ -21,6 +21,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Mint tokens to an address",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("Mint")
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				fmt.Println("invalid amount")
@@ -35,6 +36,7 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Transfer tokens",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("Transfer")
 			amt, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				fmt.Println("invalid amount")
@@ -51,6 +53,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Get token balance",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("Balance")
 			fmt.Println(daoTokenLedger.Balance(args[0]))
 		},
 	}
@@ -60,6 +63,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Burn tokens from an address",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("Burn")
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
 				fmt.Println("invalid amount")

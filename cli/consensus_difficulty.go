@@ -22,6 +22,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Add block time sample and show new difficulty",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("AddSample")
 			d, _ := strconv.ParseFloat(args[0], 64)
 			fmt.Println(difficultyMgr.AddSample(d))
 		},
@@ -31,6 +32,7 @@ func init() {
 		Use:   "value",
 		Short: "Show current difficulty",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("Difficulty")
 			fmt.Println(difficultyMgr.Difficulty())
 		},
 	}
