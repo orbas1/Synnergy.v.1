@@ -22,6 +22,7 @@ All guides and architecture decision records are located under the `docs/` direc
   central bank and charity pool modules enforcing capped supply and donation
   tracking.
 - Structured JSON logging with pluggable backends for compliance, connection and consensus modules.
+- Stage 7 adds a unified errors package and OpenTelemetry tracing for consensus and contract management components, improving diagnostics across the CLI and services.
 
 ## Repository layout
 ```

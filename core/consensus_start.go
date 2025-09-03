@@ -1,8 +1,11 @@
 package core
 
 import (
+	"context"
 	"sync/atomic"
 	"time"
+
+	"synnergy/internal/telemetry"
 )
 
 // ConsensusService runs the consensus engine for a node in the background.
@@ -19,11 +22,13 @@ func NewConsensusService(n *Node) *ConsensusService {
 
 // Start begins the mining loop at the specified interval. The loop stops when
 // Stop is called or the provided context is cancelled.
-func (s *ConsensusService) Start(interval time.Duration) {
+func (s *ConsensusService) Start(ctx context.Context, interval time.Duration) {
 	if !atomic.CompareAndSwapInt32(&s.running, 0, 1) {
 		return
 	}
 	go func() {
+		ctx, span := telemetry.Tracer().Start(ctx, "ConsensusService.Start")
+		defer span.End()
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()
 		for {
@@ -31,6 +36,8 @@ func (s *ConsensusService) Start(interval time.Duration) {
 			case <-ticker.C:
 				s.node.MineBlock()
 			case <-s.quit:
+				return
+			case <-ctx.Done():
 				return
 			}
 		}

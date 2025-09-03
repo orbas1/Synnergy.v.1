@@ -1,5 +1,7 @@
 package core
 
+import "context"
+
 // ValidatorNode bundles a base node with validator management and quorum tracking.
 type ValidatorNode struct {
 	*Node
@@ -20,7 +22,7 @@ func NewValidatorNode(id, addr string, ledger *Ledger, minStake uint64, quorum i
 
 // AddValidator registers a validator within the node's manager.
 func (vn *ValidatorNode) AddValidator(addr string, stake uint64) error {
-	if err := vn.Validators.Add(addr, stake); err != nil {
+	if err := vn.Validators.Add(context.Background(), addr, stake); err != nil {
 		return err
 	}
 	vn.Quorum.Join(addr)
@@ -29,13 +31,13 @@ func (vn *ValidatorNode) AddValidator(addr string, stake uint64) error {
 
 // RemoveValidator removes a validator from the set and quorum tracker.
 func (vn *ValidatorNode) RemoveValidator(addr string) {
-	vn.Validators.Remove(addr)
+	vn.Validators.Remove(context.Background(), addr)
 	vn.Quorum.Leave(addr)
 }
 
 // SlashValidator penalises a validator and removes it from quorum if needed.
 func (vn *ValidatorNode) SlashValidator(addr string) {
-	vn.Validators.Slash(addr)
+	vn.Validators.Slash(context.Background(), addr)
 	vn.Quorum.Leave(addr)
 }
 

@@ -1,20 +1,25 @@
 package main
 
 import (
-        "os"
+	"os"
 
-        "github.com/sirupsen/logrus"
-        "github.com/subosito/gotenv"
+	"github.com/sirupsen/logrus"
+	"github.com/subosito/gotenv"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 
-        synn "synnergy"
-        "synnergy/cli"
-        "synnergy/core"
-        "synnergy/internal/config"
+	synn "synnergy"
+	"synnergy/cli"
+	"synnergy/core"
+	"synnergy/internal/config"
 )
 
 func main() {
 	// Load variables from .env if present to mirror the setup guides.
 	gotenv.Load()
+
+	// Initialize a no-op tracer provider so modules can emit spans safely.
+	otel.SetTracerProvider(trace.NewNoopTracerProvider())
 
 	cfgPath := os.Getenv("SYN_CONFIG")
 	if cfgPath == "" {
@@ -33,13 +38,13 @@ func main() {
 	}
 	logrus.SetLevel(lvl)
 
-        // Warm up caches for shared resources.
-        synn.LoadGasTable()
-        logrus.Debug("gas table loaded")
+	// Warm up caches for shared resources.
+	synn.LoadGasTable()
+	logrus.Debug("gas table loaded")
 
-        // Preload stage 3 modules so CLI commands can operate without extra setup.
-        _ = core.NewAuthorityNodeRegistry()
-        _ = core.NewBankInstitutionalNode("init", "init", core.NewLedger())
+	// Preload stage 3 modules so CLI commands can operate without extra setup.
+	_ = core.NewAuthorityNodeRegistry()
+	_ = core.NewBankInstitutionalNode("init", "init", core.NewLedger())
 
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 

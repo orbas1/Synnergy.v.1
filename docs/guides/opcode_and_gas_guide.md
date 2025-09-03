@@ -82,6 +82,8 @@ modules (`Mint`, `UpdatePolicy`, `Register`, `Vote`) also receive dedicated
 codes. Their base gas costs are defined in `gas_table_list.md` ensuring the VM
 and CLI can accurately meter usage.
 
+Stage 7 expands the catalogue with consensus management primitives. Validator registration, contract administration and the consensus service publish opcodes with explicit gas prices and emit OpenTelemetry traces for observability.
+
 Lowering fees is therefore a matter of choosing cheaper opcodes, batching writes and avoiding default‑priced unknown operations.
 
 ## Efficiency Patterns

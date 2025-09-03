@@ -1,6 +1,11 @@
 package core
 
-import "errors"
+import (
+	"context"
+
+	ierr "synnergy/internal/errors"
+	"synnergy/internal/telemetry"
+)
 
 // ContractManager provides administrative operations over deployed contracts.
 type ContractManager struct {
@@ -13,10 +18,13 @@ func NewContractManager(reg *ContractRegistry) *ContractManager {
 }
 
 // Transfer changes the owner of a contract.
-func (m *ContractManager) Transfer(addr, newOwner string) error {
+func (m *ContractManager) Transfer(ctx context.Context, addr, newOwner string) error {
+	ctx, span := telemetry.Tracer().Start(ctx, "ContractManager.Transfer")
+	defer span.End()
+
 	c, ok := m.registry.Get(addr)
 	if !ok {
-		return errors.New("contract not found")
+		return ierr.New(ierr.NotFound, "contract not found")
 	}
 	m.registry.mu.Lock()
 	c.Owner = newOwner
@@ -25,10 +33,13 @@ func (m *ContractManager) Transfer(addr, newOwner string) error {
 }
 
 // Pause disables contract execution.
-func (m *ContractManager) Pause(addr string) error {
+func (m *ContractManager) Pause(ctx context.Context, addr string) error {
+	ctx, span := telemetry.Tracer().Start(ctx, "ContractManager.Pause")
+	defer span.End()
+
 	c, ok := m.registry.Get(addr)
 	if !ok {
-		return errors.New("contract not found")
+		return ierr.New(ierr.NotFound, "contract not found")
 	}
 	m.registry.mu.Lock()
 	c.Paused = true
@@ -37,10 +48,13 @@ func (m *ContractManager) Pause(addr string) error {
 }
 
 // Resume enables execution for a paused contract.
-func (m *ContractManager) Resume(addr string) error {
+func (m *ContractManager) Resume(ctx context.Context, addr string) error {
+	ctx, span := telemetry.Tracer().Start(ctx, "ContractManager.Resume")
+	defer span.End()
+
 	c, ok := m.registry.Get(addr)
 	if !ok {
-		return errors.New("contract not found")
+		return ierr.New(ierr.NotFound, "contract not found")
 	}
 	m.registry.mu.Lock()
 	c.Paused = false
@@ -49,13 +63,16 @@ func (m *ContractManager) Resume(addr string) error {
 }
 
 // Upgrade replaces contract bytecode and optional gas limit.
-func (m *ContractManager) Upgrade(addr string, wasm []byte, gasLimit uint64) error {
+func (m *ContractManager) Upgrade(ctx context.Context, addr string, wasm []byte, gasLimit uint64) error {
+	ctx, span := telemetry.Tracer().Start(ctx, "ContractManager.Upgrade")
+	defer span.End()
+
 	if len(wasm) == 0 {
-		return errors.New("wasm bytecode required")
+		return ierr.New(ierr.Invalid, "wasm bytecode required")
 	}
 	c, ok := m.registry.Get(addr)
 	if !ok {
-		return errors.New("contract not found")
+		return ierr.New(ierr.NotFound, "contract not found")
 	}
 	m.registry.mu.Lock()
 	c.WASM = wasm
@@ -67,10 +84,13 @@ func (m *ContractManager) Upgrade(addr string, wasm []byte, gasLimit uint64) err
 }
 
 // Info returns contract metadata including owner and paused status.
-func (m *ContractManager) Info(addr string) (*Contract, error) {
+func (m *ContractManager) Info(ctx context.Context, addr string) (*Contract, error) {
+	ctx, span := telemetry.Tracer().Start(ctx, "ContractManager.Info")
+	defer span.End()
+
 	c, ok := m.registry.Get(addr)
 	if !ok {
-		return nil, errors.New("contract not found")
+		return nil, ierr.New(ierr.NotFound, "contract not found")
 	}
 	return c, nil
 }

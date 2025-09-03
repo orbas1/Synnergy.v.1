@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"testing"
 	"time"
 )
@@ -18,7 +19,7 @@ func TestConsensusServiceStartStop(t *testing.T) {
 		t.Fatalf("add tx: %v", err)
 	}
 	svc := NewConsensusService(node)
-	svc.Start(10 * time.Millisecond)
+	svc.Start(context.Background(), 10*time.Millisecond)
 
 	// wait up to one second for a block to be mined
 	deadline := time.Now().Add(1 * time.Second)
