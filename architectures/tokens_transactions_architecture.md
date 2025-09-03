@@ -28,3 +28,6 @@ This group governs token standards, contract execution, and transaction processi
 - cli/charity.go
 
 These modules define how smart contracts run and how tokens and transactions are validated and executed.
+
+Stage 16 introduces a concurrency‑safe token registry and base token with
+benchmarks to measure transfer performance across the network.

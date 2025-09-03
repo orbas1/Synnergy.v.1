@@ -6,7 +6,7 @@ import (
 	"synnergy/internal/tokens"
 )
 
-var baseToken *tokens.BaseToken
+var baseToken tokens.Token
 
 func init() {
 	cmd := &cobra.Command{
@@ -139,6 +139,19 @@ func init() {
 		},
 	}
 	cmd.AddCommand(allowanceCmd)
+
+	supplyCmd := &cobra.Command{
+		Use:   "supply",
+		Short: "Show total supply",
+		Run: func(cmd *cobra.Command, args []string) {
+			if baseToken == nil {
+				fmt.Println("token not initialised")
+				return
+			}
+			fmt.Println(baseToken.TotalSupply())
+		},
+	}
+	cmd.AddCommand(supplyCmd)
 
 	rootCmd.AddCommand(cmd)
 }

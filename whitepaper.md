@@ -171,6 +171,7 @@ focus on core consensus and contract functionality. Later stages introduce GUIs,
 integration tests, containerisation, orchestration manifests and production
 automation. The roadmap extends to 100 stages covering security audits,
 fuzz testing, formal verification and governance infrastructure.
+Stage 16 adds a concurrency-safe token registry with performance benchmarks to validate token throughput under load.
 
 ## Conclusion
 Synnergy Network demonstrates how a feature‑rich blockchain can be composed from

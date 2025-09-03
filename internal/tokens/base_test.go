@@ -2,6 +2,8 @@ package tokens
 
 import (
 	"encoding/hex"
+	"errors"
+	"sync"
 	"testing"
 	"time"
 )
@@ -154,5 +156,33 @@ func TestSYN1100Access(t *testing.T) {
 	}
 	if _, err := store.GetRecord(1, "bob"); err == nil {
 		t.Fatalf("expected access denied")
+	}
+}
+
+func TestBaseTokenTransferErrors(t *testing.T) {
+	tok := NewBaseToken(1, "Err", "ERR", 0)
+	if err := tok.Transfer("alice", "bob", 1); !errors.Is(err, ErrInsufficientBalance) {
+		t.Fatalf("expected ErrInsufficientBalance got %v", err)
+	}
+	if err := tok.TransferFrom("alice", "bob", "carol", 1); !errors.Is(err, ErrAllowanceExceeded) {
+		t.Fatalf("expected ErrAllowanceExceeded got %v", err)
+	}
+}
+
+func TestBaseTokenConcurrent(t *testing.T) {
+	tok := NewBaseToken(2, "Conc", "CON", 0)
+	var wg sync.WaitGroup
+	for i := 0; i < 100; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			if err := tok.Mint("alice", 1); err != nil {
+				t.Errorf("mint: %v", err)
+			}
+		}()
+	}
+	wg.Wait()
+	if tok.BalanceOf("alice") != 100 {
+		t.Fatalf("expected balance 100 got %d", tok.BalanceOf("alice"))
 	}
 }

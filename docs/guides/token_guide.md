@@ -11,6 +11,7 @@ Stage 8 introduces cross‑chain token bridging via the `CrossChainTxManager`, a
 Stage 9 adds a dedicated DAO token ledger with staking support and burn capabilities for governance assets.
 Stage 11 ensures token operations execute inside managed VM sandboxes with explicit cleanup semantics and idle sandboxes are automatically purged once their TTL expires.
 Stage 13 links token flows with regulatory nodes, allowing non-compliant transfers to be flagged in real time for audit trails.
+Stage 16 makes the base token and registry concurrency‑safe and includes micro‑benchmarks to monitor transfer throughput.
 
 ## Package layout
 
