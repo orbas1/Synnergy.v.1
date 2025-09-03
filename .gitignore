@@ -2,3 +2,6 @@
 site/
 web/node_modules/
 web/.next/
+
+GUI/**/node_modules/
+GUI/**/package-lock.json
