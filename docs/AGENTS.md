@@ -13,6 +13,7 @@
 - Stage 8: Completed – cross-chain-bridge-monitor services and cross-chain-management configuration scaffolds added.
 - Stage 9: Completed – cross-chain-management CLI, deployment and tests strengthened.
 - Stage 10: Completed – cross-chain-management unit tests and DAO explorer tooling enhanced.
+- Stage 11: Completed – DAO explorer CLI and data distribution monitor configs established.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -225,25 +226,25 @@
  - [x] GUI/dao-explorer/k8s/deployment.yaml – resources and environment variables
 
 **Stage 11**
-- [ ] GUI/dao-explorer/package-lock.json
-- [ ] GUI/dao-explorer/package.json
-- [ ] GUI/dao-explorer/src/components/.gitkeep
-- [ ] GUI/dao-explorer/src/hooks/.gitkeep
-- [ ] GUI/dao-explorer/src/main.test.ts
-- [ ] GUI/dao-explorer/src/main.ts
-- [ ] GUI/dao-explorer/src/pages/.gitkeep
-- [ ] GUI/dao-explorer/src/services/.gitkeep
-- [ ] GUI/dao-explorer/src/state/.gitkeep
-- [ ] GUI/dao-explorer/src/styles/.gitkeep
-- [ ] GUI/dao-explorer/tests/e2e/.gitkeep
-- [ ] GUI/dao-explorer/tests/e2e/example.e2e.test.ts
-- [ ] GUI/dao-explorer/tests/unit/.gitkeep
-- [ ] GUI/dao-explorer/tests/unit/example.test.ts
-- [ ] GUI/dao-explorer/tsconfig.json
-- [ ] GUI/data-distribution-monitor/.env.example
-- [ ] GUI/data-distribution-monitor/.eslintrc.json
-- [ ] GUI/data-distribution-monitor/.gitignore
-- [ ] GUI/data-distribution-monitor/.prettierrc
+- [x] GUI/dao-explorer/package-lock.json – include CLI dependencies
+- [x] GUI/dao-explorer/package.json – add yargs and jest script
+- [x] GUI/dao-explorer/src/components/.gitkeep – track empty component dir
+- [x] GUI/dao-explorer/src/hooks/.gitkeep – track hooks scaffold
+- [x] GUI/dao-explorer/src/main.test.ts – test default and custom greeting
+- [x] GUI/dao-explorer/src/main.ts – CLI with argument parsing
+- [x] GUI/dao-explorer/src/pages/.gitkeep – placeholder for pages
+- [x] GUI/dao-explorer/src/services/.gitkeep – placeholder for services
+- [x] GUI/dao-explorer/src/state/.gitkeep – placeholder for state management
+- [x] GUI/dao-explorer/src/styles/.gitkeep – placeholder for styles
+- [x] GUI/dao-explorer/tests/e2e/.gitkeep – preserve e2e test directory
+- [x] GUI/dao-explorer/tests/e2e/example.e2e.test.ts – exercise CLI path
+- [x] GUI/dao-explorer/tests/unit/.gitkeep – preserve unit test directory
+- [x] GUI/dao-explorer/tests/unit/example.test.ts – verify default greeting
+- [x] GUI/dao-explorer/tsconfig.json – enable rootDir and node resolution
+- [x] GUI/data-distribution-monitor/.env.example – document env variables
+- [x] GUI/data-distribution-monitor/.eslintrc.json – lint with TypeScript rules
+- [x] GUI/data-distribution-monitor/.gitignore – ignore builds and secrets
+- [x] GUI/data-distribution-monitor/.prettierrc – formatting preferences
 
 **Stage 12**
 - [ ] GUI/data-distribution-monitor/Dockerfile

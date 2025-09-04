@@ -1,5 +1,11 @@
 import { main } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('dao-explorer');
+describe('main', () => {
+  it('returns default greeting', () => {
+    expect(main()).toBe('Hello from dao-explorer');
+  });
+
+  it('supports custom name', () => {
+    expect(main('tester')).toBe('Hello from tester');
+  });
 });
