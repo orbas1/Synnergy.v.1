@@ -68,6 +68,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 37 debuts a DAO Explorer GUI that manages DAO creation and membership via the CLI.
 - Stage 38 debuts a Token Creation Tool GUI that generates token contracts via the CLI.
 - Stage 39 debuts a DEX Screener GUI that surfaces liquidity pool metrics through the CLI.
+- Stage 40 adds Administrative Dashboards for authority node indexing and cross-chain management with full CLI integration.
 - The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
 
 ## Repository layout

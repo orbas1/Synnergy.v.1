@@ -17,3 +17,5 @@ Stage 36 debuts an NFT Marketplace GUI for minting and trading NFTs via CLI comm
 Stage 37 adds a DAO Explorer GUI that manages decentralised autonomous organisations by spawning the `synnergy dao` commands to create, join, leave and inspect governance groups.
 Stage 38 introduces a Token Creation Tool GUI that spawns the CLI to create new token contracts with deterministic gas costs.
 Stage 39 adds a DEX Screener GUI that queries liquidity pools through the CLI so dashboards can monitor reserves and pricing in real time.
+
+Stage 40 introduces Administrative Dashboards for authority node indexing and cross-chain management, allowing operators to supervise nodes and bridges via CLI-backed views.
