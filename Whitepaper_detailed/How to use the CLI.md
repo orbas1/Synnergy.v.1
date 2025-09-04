@@ -16,3 +16,7 @@ synnergy liquidity_views info TOKENA-TOKENB
 ```
 
 Most commands accept the `--json` flag to produce machine readable output for GUIs.
+
+For comprehensive regression coverage the Stage 46 network harness exercises
+CLI commands against live wallet services and in-memory nodes, ensuring end-to-end
+flows operate consistently across releases.
