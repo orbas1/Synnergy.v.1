@@ -18,6 +18,8 @@
 | `AddRegulation` | `0x10000F` |
 | `AddRelay` | `0x100010` |
 | `AddReserve` | `0x100011` |
+| `DataMonitorStatus` | `0x100012` |
+| `DexLiquidity` | `0x100013` |
 | `AddSample` | `0x100012` |
 | `AddToBlacklist` | `0x100013` |
 | `AddToWhitelist` | `0x100014` |

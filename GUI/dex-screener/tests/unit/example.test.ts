@@ -1,3 +1,5 @@
-test('placeholder', () => {
-  expect(true).toBe(true);
+import { renderHome } from '../../src/pages/home';
+
+test('renders home text', () => {
+  expect(renderHome()).toContain('Home');
 });

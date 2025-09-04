@@ -5,6 +5,9 @@ It summarises the core token abstractions, the registry used to manage them and 
 built-in token standards provided by the project.
 
 Stage 12 adds a data distribution monitor exposing CLI and GUI metrics for token flows across the network.
+Stage 13 expands monitoring with a DEX screener interface, allowing token
+holders to inspect liquidity pools and pricing directly through the CLI and
+web dashboards.
 
 Stage 6 integrates compliance checks into token operations via the new logging subsystem, allowing auditors to trace token transactions.
 

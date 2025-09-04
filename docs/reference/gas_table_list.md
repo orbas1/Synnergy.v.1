@@ -1,6 +1,8 @@
 <!-- Stage 25 adds node operation pricing such as SetMode, Stake and ReportFork -->
 | Function | Gas Cost |
 |---|---|
+| `DataMonitorStatus` | `5` |
+| `DexLiquidity` | `10` |
 | `Accrue` | `1` |
 | `Acquire` | `1` |
 | `Active` | `1` |
