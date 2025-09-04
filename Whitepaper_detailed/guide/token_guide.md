@@ -154,6 +154,8 @@ rights alongside registered financial institutions.
 3. Register the token so that it can be retrieved by ID or symbol.
 4. Extend with any domain‑specific methods or data structures.
 
+Stage 44 introduces contract-level tests for the token faucet template deployed via the CLI and VM, providing a blueprint for verifying future token modules.
+
 ## Testing
 
 Unit tests for the token package can be executed with:

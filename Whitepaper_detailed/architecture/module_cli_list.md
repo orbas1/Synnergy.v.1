@@ -435,3 +435,8 @@ Stage 39 introduces liquidity pool modules and accompanying CLI commands used by
    158	cli/watchtower.go
    159	cli/watchtower_node.go
    160	cli/zero_trust_data_channels.go
+
+## Test Files
+    1  tests/cli_integration_test.go
+    2  tests/gui_wallet_test.go
+    3  tests/contracts/faucet_test.go
