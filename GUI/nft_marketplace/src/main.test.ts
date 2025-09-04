@@ -1,5 +1,6 @@
 import { main } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('nft_marketplace');
+it('outputs a rendered NFT list', async () => {
+  const output = await main();
+  expect(output).toContain('Genesis Token');
 });

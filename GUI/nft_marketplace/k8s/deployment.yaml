@@ -1,19 +1,38 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nft_marketplace
+  name: nft-marketplace
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
-      app: nft_marketplace
+      app: nft-marketplace
   template:
     metadata:
       labels:
-        app: nft_marketplace
+        app: nft-marketplace
     spec:
       containers:
-        - name: nft_marketplace
-          image: nft_marketplace:latest
+        - name: nft-marketplace
+          image: nft_marketplace:1.1.0
           ports:
             - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10

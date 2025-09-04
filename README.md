@@ -38,6 +38,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Permissioned privacy** – fine‑grained access controls enable private channels and selective data disclosure.
 - **Customisable governance** – token‑weighted voting and DAO modules allow on‑chain policy definition.
 - **Horizontal scalability** – sharding-ready architecture and multi‑node orchestration for high throughput networks.
+- **Modular web interfaces** – NFT marketplace and node operations dashboard shipped with tested TypeScript frontends.
 - **Regulatory compliance hooks** – KYC/AML modules and audit logging for standards alignment.
 
 ## Architecture & Code Map
