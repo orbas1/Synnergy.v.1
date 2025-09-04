@@ -4,3 +4,9 @@ services:
     build: .
     ports:
       - "3000:3000"
+    environment:
+      - API_URL=${API_URL:-http://localhost:3000}
+      - PORT=${PORT:-3000}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+    volumes:
+      - .:/app

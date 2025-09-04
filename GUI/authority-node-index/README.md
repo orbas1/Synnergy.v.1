@@ -1,7 +1,21 @@
 # Authority Node Index
 
-Enterprise-grade GUI for Authority Node Index. This scaffold includes TypeScript, linting, formatting, and testing configuration.
+Enterprise-grade GUI for Authority Node Index. Provides TypeScript setup with linting, formatting, tests and Docker deployment.
 
-## Scripts
-- `npm run build` - compile TypeScript
-- `npm test` - run tests (placeholder)
+## Setup
+
+```bash
+make install
+```
+
+## Development
+
+- `make build` - compile TypeScript
+- `make test` - run Jest tests
+- `make lint` - run ESLint
+- `make format` - format with Prettier
+- `make start` - start the built app
+
+## Configuration
+
+Environment variables are defined in `.env.example`.
