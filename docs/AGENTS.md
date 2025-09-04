@@ -657,25 +657,25 @@
 - [x] GUI/token-creation-tool/docs/README.md
 
 **Stage 31**
-- [ ] GUI/token-creation-tool/jest.config.js
-- [ ] GUI/token-creation-tool/k8s/.gitkeep
-- [ ] GUI/token-creation-tool/k8s/deployment.yaml
-- [ ] GUI/token-creation-tool/package-lock.json
-- [ ] GUI/token-creation-tool/package.json
-- [ ] GUI/token-creation-tool/src/components/.gitkeep
-- [ ] GUI/token-creation-tool/src/hooks/.gitkeep
-- [ ] GUI/token-creation-tool/src/main.test.ts
-- [ ] GUI/token-creation-tool/src/main.ts
-- [ ] GUI/token-creation-tool/src/pages/.gitkeep
-- [ ] GUI/token-creation-tool/src/services/.gitkeep
-- [ ] GUI/token-creation-tool/src/state/.gitkeep
-- [ ] GUI/token-creation-tool/src/styles/.gitkeep
-- [ ] GUI/token-creation-tool/tests/e2e/.gitkeep
-- [ ] GUI/token-creation-tool/tests/e2e/example.e2e.test.ts
-- [ ] GUI/token-creation-tool/tests/unit/.gitkeep
-- [ ] GUI/token-creation-tool/tests/unit/example.test.ts
-- [ ] GUI/token-creation-tool/tsconfig.json
-- [ ] GUI/validator-governance-portal/.env.example
+- [x] GUI/token-creation-tool/jest.config.js – enabled TypeScript coverage reporting
+- [x] GUI/token-creation-tool/k8s/.gitkeep – tracked k8s directory
+- [x] GUI/token-creation-tool/k8s/deployment.yaml – baseline deployment scaffold
+- [x] GUI/token-creation-tool/package-lock.json – dependencies locked
+- [x] GUI/token-creation-tool/package.json – test script runs Jest with coverage
+- [x] GUI/token-creation-tool/src/components/.gitkeep – placeholder for component source
+- [x] GUI/token-creation-tool/src/hooks/.gitkeep – placeholder for hook implementations
+- [x] GUI/token-creation-tool/src/main.test.ts – sample unit test ensures entry point works
+- [x] GUI/token-creation-tool/src/main.ts – TypeScript entry point returning greeting
+- [x] GUI/token-creation-tool/src/pages/.gitkeep – placeholder for routed pages
+- [x] GUI/token-creation-tool/src/services/.gitkeep – placeholder for service layer
+- [x] GUI/token-creation-tool/src/state/.gitkeep – placeholder for state management
+- [x] GUI/token-creation-tool/src/styles/.gitkeep – placeholder for styling
+- [x] GUI/token-creation-tool/tests/e2e/.gitkeep – e2e test folder tracked
+- [x] GUI/token-creation-tool/tests/e2e/example.e2e.test.ts – basic e2e test scaffold
+- [x] GUI/token-creation-tool/tests/unit/.gitkeep – unit test folder tracked
+- [x] GUI/token-creation-tool/tests/unit/example.test.ts – basic unit test scaffold
+- [x] GUI/token-creation-tool/tsconfig.json – TypeScript config defines build settings
+- [x] GUI/validator-governance-portal/.env.example – environment template added
 
 **Stage 32**
 - [ ] GUI/validator-governance-portal/.eslintrc.json
