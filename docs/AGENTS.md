@@ -16,6 +16,7 @@
 - Stage 11: Completed – DAO explorer CLI and data distribution monitor configs established.
 - Stage 12: Completed – data-distribution-monitor module hardened with CLI, configs, tests, and CI.
 - Stage 13: Completed – data-distribution-monitor pages/services/state and dex-screener configs, CI and tests implemented.
+- Stage 14: Completed – dex-screener module scaffold finalized with docs, config, tests and deployment scripts.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -288,25 +289,25 @@
 - [x] GUI/dex-screener/config/production.ts
 
 **Stage 14**
-- [ ] GUI/dex-screener/docker-compose.yml
-- [ ] GUI/dex-screener/docs/.gitkeep
-- [ ] GUI/dex-screener/docs/README.md
-- [ ] GUI/dex-screener/jest.config.js
-- [ ] GUI/dex-screener/k8s/.gitkeep
-- [ ] GUI/dex-screener/k8s/deployment.yaml
-- [ ] GUI/dex-screener/package-lock.json
-- [ ] GUI/dex-screener/package.json
-- [ ] GUI/dex-screener/src/components/.gitkeep
-- [ ] GUI/dex-screener/src/hooks/.gitkeep
-- [ ] GUI/dex-screener/src/main.test.ts
-- [ ] GUI/dex-screener/src/main.ts
-- [ ] GUI/dex-screener/src/pages/.gitkeep
-- [ ] GUI/dex-screener/src/services/.gitkeep
-- [ ] GUI/dex-screener/src/state/.gitkeep
-- [ ] GUI/dex-screener/src/styles/.gitkeep
-- [ ] GUI/dex-screener/tests/e2e/.gitkeep
-- [ ] GUI/dex-screener/tests/e2e/example.e2e.test.ts
-- [ ] GUI/dex-screener/tests/unit/.gitkeep
+- [x] GUI/dex-screener/docker-compose.yml – service and UI container defined
+- [x] GUI/dex-screener/docs/.gitkeep – track documentation directory
+- [x] GUI/dex-screener/docs/README.md – module documentation
+- [x] GUI/dex-screener/jest.config.js – TypeScript jest setup
+- [x] GUI/dex-screener/k8s/.gitkeep – track Kubernetes config
+- [x] GUI/dex-screener/k8s/deployment.yaml – deployment spec
+- [x] GUI/dex-screener/package-lock.json – locked dependencies
+- [x] GUI/dex-screener/package.json – npm scripts and deps
+- [x] GUI/dex-screener/src/components/.gitkeep – scaffold components
+- [x] GUI/dex-screener/src/hooks/.gitkeep – scaffold hooks
+- [x] GUI/dex-screener/src/main.test.ts – entrypoint tests
+- [x] GUI/dex-screener/src/main.ts – CLI entrypoint
+- [x] GUI/dex-screener/src/pages/.gitkeep – scaffold pages
+- [x] GUI/dex-screener/src/services/.gitkeep – scaffold services
+- [x] GUI/dex-screener/src/state/.gitkeep – scaffold state
+- [x] GUI/dex-screener/src/styles/.gitkeep – base styles
+- [x] GUI/dex-screener/tests/e2e/.gitkeep – track e2e tests
+- [x] GUI/dex-screener/tests/e2e/example.e2e.test.ts – example e2e test
+- [x] GUI/dex-screener/tests/unit/.gitkeep – track unit tests
 
 **Stage 15**
 - [ ] GUI/dex-screener/tests/unit/example.test.ts
