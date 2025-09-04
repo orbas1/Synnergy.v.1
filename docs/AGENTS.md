@@ -8,6 +8,7 @@
 - Stage 3: Completed – GUI state management, styles, tests, and authority-node-index tooling upgraded.
 - Stage 4: Completed – authority-node-index docs, configuration, tests and Kubernetes deployment enhanced.
 - Stage 5: Completed – authority-node-index tsconfig and compliance-dashboard configuration hardened.
+- Stage 6: Completed – compliance-dashboard backend and bridge-monitor configs upgraded.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -115,25 +116,25 @@
 - [x] GUI/compliance-dashboard/package-lock.json
 
 **Stage 6**
-- [ ] GUI/compliance-dashboard/package.json
-- [ ] GUI/compliance-dashboard/src/components/.gitkeep
-- [ ] GUI/compliance-dashboard/src/hooks/.gitkeep
-- [ ] GUI/compliance-dashboard/src/main.test.ts
-- [ ] GUI/compliance-dashboard/src/main.ts
-- [ ] GUI/compliance-dashboard/src/pages/.gitkeep
-- [ ] GUI/compliance-dashboard/src/services/.gitkeep
-- [ ] GUI/compliance-dashboard/src/state/.gitkeep
-- [ ] GUI/compliance-dashboard/src/styles/.gitkeep
-- [ ] GUI/compliance-dashboard/tests/e2e/.gitkeep
-- [ ] GUI/compliance-dashboard/tests/e2e/example.e2e.test.ts
-- [ ] GUI/compliance-dashboard/tests/unit/.gitkeep
-- [ ] GUI/compliance-dashboard/tests/unit/example.test.ts
-- [ ] GUI/compliance-dashboard/tsconfig.json
-- [ ] GUI/cross-chain-bridge-monitor/.env.example
-- [ ] GUI/cross-chain-bridge-monitor/.eslintrc.json
-- [ ] GUI/cross-chain-bridge-monitor/.gitignore
-- [ ] GUI/cross-chain-bridge-monitor/.prettierrc
-- [ ] GUI/cross-chain-bridge-monitor/Dockerfile
+- [x] GUI/compliance-dashboard/package.json
+- [x] GUI/compliance-dashboard/src/components/.gitkeep
+- [x] GUI/compliance-dashboard/src/hooks/.gitkeep
+- [x] GUI/compliance-dashboard/src/main.test.ts
+- [x] GUI/compliance-dashboard/src/main.ts
+- [x] GUI/compliance-dashboard/src/pages/.gitkeep
+- [x] GUI/compliance-dashboard/src/services/.gitkeep
+- [x] GUI/compliance-dashboard/src/state/.gitkeep
+- [x] GUI/compliance-dashboard/src/styles/.gitkeep
+- [x] GUI/compliance-dashboard/tests/e2e/.gitkeep
+- [x] GUI/compliance-dashboard/tests/e2e/example.e2e.test.ts
+- [x] GUI/compliance-dashboard/tests/unit/.gitkeep
+- [x] GUI/compliance-dashboard/tests/unit/example.test.ts
+- [x] GUI/compliance-dashboard/tsconfig.json
+- [x] GUI/cross-chain-bridge-monitor/.env.example
+- [x] GUI/cross-chain-bridge-monitor/.eslintrc.json
+- [x] GUI/cross-chain-bridge-monitor/.gitignore
+- [x] GUI/cross-chain-bridge-monitor/.prettierrc
+- [x] GUI/cross-chain-bridge-monitor/Dockerfile
 
 **Stage 7**
 - [ ] GUI/cross-chain-bridge-monitor/Makefile
