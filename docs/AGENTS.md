@@ -23,7 +23,7 @@
 - Stage 18: In Progress – identity-management-console CLI gains user registration with tests; mining-staking-manager pending.
 
 - Stage 19: Completed – mining-staking-manager scaffold enhanced with config, services, tests and deployment.
-- Stage 20: In Progress – mining-staking-manager unit tests refined; NFT marketplace scaffolding pending.
+- Stage 20: Completed – mining-staking-manager TS config finalized; NFT marketplace configs added.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -419,23 +419,23 @@
 **Stage 20**
 - [x] GUI/mining-staking-manager/tests/unit/.gitkeep – ensure test directory tracked
 - [x] GUI/mining-staking-manager/tests/unit/example.test.ts – verify dashboard stake aggregation
-- [ ] GUI/mining-staking-manager/tsconfig.json
-- [ ] GUI/nft_marketplace/.env.example
-- [ ] GUI/nft_marketplace/.eslintrc.json
-- [ ] GUI/nft_marketplace/.gitignore
-- [ ] GUI/nft_marketplace/.prettierrc
-- [ ] GUI/nft_marketplace/Dockerfile
-- [ ] GUI/nft_marketplace/Makefile
-- [ ] GUI/nft_marketplace/README.md
-- [ ] GUI/nft_marketplace/ci/.gitkeep
-- [ ] GUI/nft_marketplace/ci/pipeline.yml
-- [ ] GUI/nft_marketplace/config/.gitkeep
-- [ ] GUI/nft_marketplace/config/production.ts
-- [ ] GUI/nft_marketplace/docker-compose.yml
-- [ ] GUI/nft_marketplace/docs/.gitkeep
-- [ ] GUI/nft_marketplace/docs/README.md
-- [ ] GUI/nft_marketplace/jest.config.js
-- [ ] GUI/nft_marketplace/k8s/.gitkeep
+- [x] GUI/mining-staking-manager/tsconfig.json – strict TypeScript build config
+- [x] GUI/nft_marketplace/.env.example – sample API and port variables
+- [x] GUI/nft_marketplace/.eslintrc.json – TypeScript ESLint + Prettier
+- [x] GUI/nft_marketplace/.gitignore – ignore logs, envs and build output
+- [x] GUI/nft_marketplace/.prettierrc – formatting conventions
+- [x] GUI/nft_marketplace/Dockerfile – multi-stage production image
+- [x] GUI/nft_marketplace/Makefile – install, build, lint, test targets
+- [x] GUI/nft_marketplace/README.md – development and Docker usage docs
+- [x] GUI/nft_marketplace/ci/.gitkeep – directory tracked
+- [x] GUI/nft_marketplace/ci/pipeline.yml – GitHub Actions pipeline
+- [x] GUI/nft_marketplace/config/.gitkeep – directory tracked
+- [x] GUI/nft_marketplace/config/production.ts – environment-based config
+- [x] GUI/nft_marketplace/docker-compose.yml – local service definition
+- [x] GUI/nft_marketplace/docs/.gitkeep – directory tracked
+- [x] GUI/nft_marketplace/docs/README.md – architecture notes
+- [x] GUI/nft_marketplace/jest.config.js – coverage-enabled Jest setup
+- [x] GUI/nft_marketplace/k8s/.gitkeep – directory tracked
 
 **Stage 21**
 - [ ] GUI/nft_marketplace/k8s/deployment.yaml
