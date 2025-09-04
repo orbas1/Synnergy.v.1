@@ -17,6 +17,7 @@
 - Stage 12: Completed – data-distribution-monitor module hardened with CLI, configs, tests, and CI.
 - Stage 13: Completed – data-distribution-monitor pages/services/state and dex-screener configs, CI and tests implemented.
 - Stage 14: Completed – dex-screener module scaffold finalized with docs, config, tests and deployment scripts.
+- Stage 15: Completed – explorer configuration, CI pipeline and deployment manifests hardened.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -310,25 +311,25 @@
 - [x] GUI/dex-screener/tests/unit/.gitkeep – track unit tests
 
 **Stage 15**
-- [ ] GUI/dex-screener/tests/unit/example.test.ts
-- [ ] GUI/dex-screener/tsconfig.json
-- [ ] GUI/explorer/.env.example
-- [ ] GUI/explorer/.eslintrc.json
-- [ ] GUI/explorer/.gitignore
-- [ ] GUI/explorer/.prettierrc
-- [ ] GUI/explorer/Dockerfile
-- [ ] GUI/explorer/Makefile
-- [ ] GUI/explorer/README.md
-- [ ] GUI/explorer/ci/.gitkeep
-- [ ] GUI/explorer/ci/pipeline.yml
-- [ ] GUI/explorer/config/.gitkeep
-- [ ] GUI/explorer/config/production.ts
-- [ ] GUI/explorer/docker-compose.yml
-- [ ] GUI/explorer/docs/.gitkeep
-- [ ] GUI/explorer/docs/README.md
-- [ ] GUI/explorer/jest.config.js
-- [ ] GUI/explorer/k8s/.gitkeep
-- [ ] GUI/explorer/k8s/deployment.yaml
+- [x] GUI/dex-screener/tests/unit/example.test.ts
+- [x] GUI/dex-screener/tsconfig.json
+- [x] GUI/explorer/.env.example
+- [x] GUI/explorer/.eslintrc.json
+- [x] GUI/explorer/.gitignore
+- [x] GUI/explorer/.prettierrc
+- [x] GUI/explorer/Dockerfile
+- [x] GUI/explorer/Makefile
+- [x] GUI/explorer/README.md
+- [x] GUI/explorer/ci/.gitkeep
+- [x] GUI/explorer/ci/pipeline.yml
+- [x] GUI/explorer/config/.gitkeep
+- [x] GUI/explorer/config/production.ts
+- [x] GUI/explorer/docker-compose.yml
+- [x] GUI/explorer/docs/.gitkeep
+- [x] GUI/explorer/docs/README.md
+- [x] GUI/explorer/jest.config.js
+- [x] GUI/explorer/k8s/.gitkeep
+- [x] GUI/explorer/k8s/deployment.yaml
 
 **Stage 16**
 - [ ] GUI/explorer/package-lock.json
@@ -2923,8 +2924,8 @@
 - [ ] GUI/dex-screener/tests/e2e/.gitkeep
 - [ ] GUI/dex-screener/tests/e2e/example.e2e.test.ts
 - [ ] GUI/dex-screener/tests/unit/.gitkeep
-- [ ] GUI/dex-screener/tests/unit/example.test.ts
-- [ ] GUI/dex-screener/tsconfig.json
+- [x] GUI/dex-screener/tests/unit/example.test.ts
+- [x] GUI/dex-screener/tsconfig.json
 - [ ] GUI/explorer/.env.example
 - [ ] GUI/explorer/.eslintrc.json
 - [ ] GUI/explorer/.gitignore
