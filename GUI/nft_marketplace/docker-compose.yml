@@ -1,6 +1,12 @@
-version: '3'
+version: '3.8'
 services:
   app:
     build: .
+    environment:
+      - API_URL=${API_URL:-http://localhost:3000}
+      - PORT=3000
+    volumes:
+      - .:/app
+      - /app/node_modules
     ports:
       - "3000:3000"
