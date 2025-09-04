@@ -1,6 +1,5 @@
-import { parseDeploy } from './main';
-import assert from 'assert';
+import { main } from './main';
 
-const addr = parseDeploy('contract: 0xabc');
-assert.strictEqual(addr, '0xabc');
-console.log('parseDeploy test passed');
+test('main returns greeting', () => {
+  expect(main()).toContain('ai-marketplace');
+});

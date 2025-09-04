@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ai-marketplace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ai-marketplace
+  template:
+    metadata:
+      labels:
+        app: ai-marketplace
+    spec:
+      containers:
+        - name: ai-marketplace
+          image: ai-marketplace:latest
+          ports:
+            - containerPort: 80

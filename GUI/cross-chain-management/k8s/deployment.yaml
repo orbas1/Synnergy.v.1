@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cross-chain-management
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cross-chain-management
+  template:
+    metadata:
+      labels:
+        app: cross-chain-management
+    spec:
+      containers:
+        - name: cross-chain-management
+          image: cross-chain-management:latest
+          ports:
+            - containerPort: 80

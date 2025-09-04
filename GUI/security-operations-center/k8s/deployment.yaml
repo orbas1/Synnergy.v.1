@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: security-operations-center
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: security-operations-center
+  template:
+    metadata:
+      labels:
+        app: security-operations-center
+    spec:
+      containers:
+        - name: security-operations-center
+          image: security-operations-center:latest
+          ports:
+            - containerPort: 80

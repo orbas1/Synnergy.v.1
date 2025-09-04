@@ -1,21 +1,7 @@
-# Synnergy GUI Wallet
+# Wallet
 
-Stage 31 introduces a lightweight TypeScript wallet that interacts with the
-Synnergy CLI. It demonstrates how graphical interfaces can drive on-chain
-operations without embedding private keys in the browser.
+Enterprise-grade GUI for Wallet. This scaffold includes TypeScript, linting, formatting, and testing configuration.
 
-## Usage
-
-```bash
-npm install
-npm start
-```
-
-The script will invoke the `synnergy` CLI to create a new encrypted wallet,
-store it in `wallet.json`, and display its current balance.
-
-## Integration
-
-Future stages connect this UI to the `walletserver` backend for remote key
-management. Commands are executed through the CLI, which exposes JSON output for
-front-end consumption.
+## Scripts
+- `npm run build` - compile TypeScript
+- `npm test` - run tests (placeholder)

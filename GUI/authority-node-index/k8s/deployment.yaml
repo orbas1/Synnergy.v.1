@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authority-node-index
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authority-node-index
+  template:
+    metadata:
+      labels:
+        app: authority-node-index
+    spec:
+      containers:
+        - name: authority-node-index
+          image: authority-node-index:latest
+          ports:
+            - containerPort: 80

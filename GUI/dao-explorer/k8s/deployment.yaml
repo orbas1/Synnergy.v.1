@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dao-explorer
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dao-explorer
+  template:
+    metadata:
+      labels:
+        app: dao-explorer
+    spec:
+      containers:
+        - name: dao-explorer
+          image: dao-explorer:latest
+          ports:
+            - containerPort: 80

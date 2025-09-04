@@ -1,17 +1,7 @@
-# Smart-Contract Marketplace GUI
+# Smart Contract Marketplace
 
-This reference interface demonstrates how generic WebAssembly contracts can be
-deployed and traded through the Synnergy CLI.
+Enterprise-grade GUI for Smart Contract Marketplace. This scaffold includes TypeScript, linting, formatting, and testing configuration.
 
-## Usage
-
-```bash
-# Deploy a contract
-node src/main.ts deploy.wasm alice
-
-# Trade ownership
-node src/main.ts trade <address> bob
-```
-
-The implementation spawns the local `synnergy` binary and therefore inherits all
-CLI configuration such as network endpoints and gas table settings.
+## Scripts
+- `npm run build` - compile TypeScript
+- `npm test` - run tests (placeholder)

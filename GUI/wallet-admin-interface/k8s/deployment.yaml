@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wallet-admin-interface
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wallet-admin-interface
+  template:
+    metadata:
+      labels:
+        app: wallet-admin-interface
+    spec:
+      containers:
+        - name: wallet-admin-interface
+          image: wallet-admin-interface:latest
+          ports:
+            - containerPort: 80

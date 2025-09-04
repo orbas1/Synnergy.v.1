@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-contract-marketplace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smart-contract-marketplace
+  template:
+    metadata:
+      labels:
+        app: smart-contract-marketplace
+    spec:
+      containers:
+        - name: smart-contract-marketplace
+          image: smart-contract-marketplace:latest
+          ports:
+            - containerPort: 80

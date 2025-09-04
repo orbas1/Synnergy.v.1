@@ -1,18 +1,7 @@
-# Cross-Chain Management GUI
+# Cross Chain Management
 
-This dashboard drives the `cross-chain-management` CLI module to list
-and establish cross-chain bridges. It executes the `synnergy` binary and
-presents the returned JSON data.
+Enterprise-grade GUI for Cross Chain Management. This scaffold includes TypeScript, linting, formatting, and testing configuration.
 
-## Usage
-
-```bash
-# Show registered bridges
-node src/main.ts bridges
-
-# Connect to a new chain
-node src/main.ts connect chainA https://endpoint
-```
-
-Ensure the `synnergy` CLI is configured with credentials and gas policy
-suitable for cross-chain operations.
+## Scripts
+- `npm run build` - compile TypeScript
+- `npm test` - run tests (placeholder)

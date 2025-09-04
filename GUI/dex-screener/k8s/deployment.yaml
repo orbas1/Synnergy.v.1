@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dex-screener
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dex-screener
+  template:
+    metadata:
+      labels:
+        app: dex-screener
+    spec:
+      containers:
+        - name: dex-screener
+          image: dex-screener:latest
+          ports:
+            - containerPort: 80

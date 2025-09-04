@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nft_marketplace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nft_marketplace
+  template:
+    metadata:
+      labels:
+        app: nft_marketplace
+    spec:
+      containers:
+        - name: nft_marketplace
+          image: nft_marketplace:latest
+          ports:
+            - containerPort: 80
