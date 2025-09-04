@@ -17,8 +17,8 @@ type CentralBankingNode interface {
 	nodes.NodeInterface
 	// UpdatePolicy updates the node's monetary policy guidance.
 	UpdatePolicy(policy string)
-	// Mint credits the given amount to the target account within the ledger.
-	Mint(to string, amount uint64)
+	// MintCBDC creates new CBDC tokens for the target account.
+	MintCBDC(to string, amount uint64) error
 }
 
 // CustodialNode models a node that holds assets on behalf of users.

@@ -1,6 +1,10 @@
 package core
 
-import "testing"
+import (
+	"testing"
+
+	"synnergy/internal/tokens"
+)
 
 func TestBankNodes(t *testing.T) {
 	ledger := NewLedger()
@@ -8,7 +12,8 @@ func TestBankNodes(t *testing.T) {
 	if b == nil || b.Node == nil {
 		t.Fatal("bank institutional node not created")
 	}
-	c := NewCentralBankingNode("id2", "addr2", ledger, "policy")
+	tok := tokens.NewSYN10Token(1, "CBDC", "cSYN", "central", 1, 2)
+	c := NewCentralBankingNode("id2", "addr2", ledger, "policy", tok)
 	if c.MonetaryPolicy != "policy" {
 		t.Fatal("policy not set")
 	}
