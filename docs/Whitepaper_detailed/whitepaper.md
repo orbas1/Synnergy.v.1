@@ -79,10 +79,10 @@ time‑locked vesting, loyalty points and multi‑chain balances. These primitiv
 share the concurrency guarantees of the base library and expose opcodes and CLI
 wrappers for seamless integration.
 
-Stage 21 streamlines the core command‑line interface, providing standardized
-network lifecycle management, peer discovery and address utilities. Commands now
-propagate errors to calling environments and emit structured output, aligning CLI
-operations with the gas‑priced virtual machine and consensus layers.
+Stage 21 introduces a TypeScript-based NFT marketplace and node operations dashboard.
+These web modules expose the same command primitives as the core CLI, delivering
+structured output and hardened error handling while remaining aligned with the
+gas-priced virtual machine and consensus layers.
 
 Stage 22 extends these improvements to AI contract and audit tooling. The
 associated CLI modules expose JSON output and consistent error handling so that

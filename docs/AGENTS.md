@@ -24,6 +24,7 @@
 
 - Stage 19: Completed – mining-staking-manager scaffold enhanced with config, services, tests and deployment.
 - Stage 20: Completed – mining-staking-manager TS config finalized; NFT marketplace configs added.
+- Stage 21: Completed – NFT marketplace frontend scaffold expanded with sample components, services, tests and hardened dashboard configuration.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -438,25 +439,23 @@
 - [x] GUI/nft_marketplace/k8s/.gitkeep – directory tracked
 
 **Stage 21**
-- [ ] GUI/nft_marketplace/k8s/deployment.yaml
-- [ ] GUI/nft_marketplace/package-lock.json
-- [ ] GUI/nft_marketplace/package.json
-- [ ] GUI/nft_marketplace/src/components/.gitkeep
-- [ ] GUI/nft_marketplace/src/hooks/.gitkeep
-- [ ] GUI/nft_marketplace/src/main.test.ts
-- [ ] GUI/nft_marketplace/src/main.ts
-- [ ] GUI/nft_marketplace/src/pages/.gitkeep
-- [ ] GUI/nft_marketplace/src/services/.gitkeep
-- [ ] GUI/nft_marketplace/src/state/.gitkeep
-- [ ] GUI/nft_marketplace/src/styles/.gitkeep
-- [ ] GUI/nft_marketplace/tests/e2e/.gitkeep
-- [ ] GUI/nft_marketplace/tests/e2e/example.e2e.test.ts
-- [ ] GUI/nft_marketplace/tests/unit/.gitkeep
-- [ ] GUI/nft_marketplace/tests/unit/example.test.ts
-- [ ] GUI/nft_marketplace/tsconfig.json
-- [ ] GUI/node-operations-dashboard/.env.example
-- [ ] GUI/node-operations-dashboard/.eslintrc.json
-- [ ] GUI/node-operations-dashboard/.gitignore
+- [x] GUI/nft_marketplace/k8s/deployment.yaml – resource limits and probes added
+- [x] GUI/nft_marketplace/package-lock.json – version aligned with package manifest
+- [x] GUI/nft_marketplace/package.json – test script enabled
+- [x] GUI/nft_marketplace/src/components/NFTList.ts
+- [x] GUI/nft_marketplace/src/hooks/useNFTs.ts
+- [x] GUI/nft_marketplace/src/main.test.ts
+- [x] GUI/nft_marketplace/src/main.ts
+- [x] GUI/nft_marketplace/src/pages/Home.ts
+- [x] GUI/nft_marketplace/src/services/nftService.ts
+- [x] GUI/nft_marketplace/src/state/store.ts
+- [x] GUI/nft_marketplace/src/styles/main.css
+- [x] GUI/nft_marketplace/tests/e2e/example.e2e.test.ts
+- [x] GUI/nft_marketplace/tests/unit/example.test.ts
+- [x] GUI/nft_marketplace/tsconfig.json
+- [x] GUI/node-operations-dashboard/.env.example – defaults expanded
+- [x] GUI/node-operations-dashboard/.eslintrc.json – TypeScript rules added
+- [x] GUI/node-operations-dashboard/.gitignore – temp and log files ignored
 
 **Stage 22**
 - [ ] GUI/node-operations-dashboard/.prettierrc
