@@ -2,3 +2,4 @@ node_modules
 dist
 coverage
 .env
+npm-debug.log*

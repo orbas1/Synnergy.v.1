@@ -734,6 +734,9 @@
 | `IPFS_Add` | `1000` |
 | `IPFS_Get` | `400` |
 | `IPFS_Unpin` | `200` |
+<!-- Stage 25 security operations and marketplace -->
+| `Security_RaiseAlert` | `150` |
+| `Marketplace_ListContract` | `80` |
 <!-- Stage 36 NFT marketplace operations -->
 | `MintNFT` | `1200` |
 | `ListNFT` | `100` |

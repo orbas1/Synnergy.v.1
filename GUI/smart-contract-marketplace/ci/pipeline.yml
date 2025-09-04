@@ -1,1 +1,9 @@
-# Placeholder CI pipeline for smart-contract-marketplace
+stages:
+  - test
+
+test-job:
+  stage: test
+  script:
+    - npm ci
+    - npm test
+    - npm run build

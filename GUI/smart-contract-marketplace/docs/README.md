@@ -1,3 +1,4 @@
 # Smart Contract Marketplace Documentation
 
-Additional documentation for Smart Contract Marketplace.
+This section details architecture and usage for the Smart Contract Marketplace
+module. It covers configuration, deployment and integration steps.
