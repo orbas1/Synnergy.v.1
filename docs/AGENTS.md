@@ -2,16 +2,19 @@
 
 ## Stages 1-135 – File Upgrade Checklist
 
+### Progress
+- Stage 1: In Progress – issue templates, PR template, README and root `.gitignore` upgraded; remaining files pending.
+
 **Stage 1**
-- [ ] .github/ISSUE_TEMPLATE/bug_report.md
+- [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
 - [ ] .github/ISSUE_TEMPLATE/config.yml
-- [ ] .github/ISSUE_TEMPLATE/feature_request.md
-- [ ] .github/PULL_REQUEST_TEMPLATE.md
+- [x] .github/ISSUE_TEMPLATE/feature_request.md – user stories and acceptance criteria
+- [x] .github/PULL_REQUEST_TEMPLATE.md – testing and security checklist added
 - [ ] .github/dependabot.yml
 - [ ] .github/workflows/ci.yml
 - [ ] .github/workflows/release.yml
 - [ ] .github/workflows/security.yml
-- [ ] .gitignore
+- [x] .gitignore – broadened to ignore builds, logs and secrets
 - [ ] .goreleaser.yml
 - [ ] CHANGELOG.md
 - [ ] CODE_OF_CONDUCT.md

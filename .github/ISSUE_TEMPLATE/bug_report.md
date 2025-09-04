@@ -4,24 +4,32 @@ about: Create a report to help us improve
 labels: bug
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**Description**
+Provide a clear and concise description of the issue. Include any error messages that were returned.
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Run '...'
-3. See error
+**Steps to Reproduce**
+1. 
+2. 
+3. 
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+**Expected vs. Actual**
+- **Expected:**
+- **Actual:**
 
-**Screenshots or Logs**
-If applicable, add screenshots or logs to help explain your problem.
-
-**Environment:**
-- OS: [e.g. Ubuntu 22.04]
+**Environment**
+- OS:
+- Architecture:
 - Commit/Version:
+- CLI command (if applicable):
 
-**Additional context**
-Add any other context about the problem here.
+**Severity**
+- [ ] Critical – security vulnerability or network outage
+- [ ] High – loss of functionality with no workaround
+- [ ] Medium – functional but degraded
+- [ ] Low – cosmetic or documentation issue
+
+**Logs / Screenshots**
+Attach relevant logs, stack traces or screenshots.
+
+**Additional Context**
+Add any other context about the problem such as configuration files or related issues.
