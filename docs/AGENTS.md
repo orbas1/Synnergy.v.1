@@ -23,6 +23,7 @@
 - Stage 18: In Progress – identity-management-console CLI gains user registration with tests; mining-staking-manager pending.
 
 - Stage 19: Completed – mining-staking-manager scaffold enhanced with config, services, tests and deployment.
+- Stage 20: In Progress – mining-staking-manager unit tests refined; NFT marketplace scaffolding pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -416,8 +417,8 @@
 - [x] GUI/mining-staking-manager/tests/e2e/example.e2e.test.ts – CLI e2e test
 
 **Stage 20**
-- [ ] GUI/mining-staking-manager/tests/unit/.gitkeep
-- [ ] GUI/mining-staking-manager/tests/unit/example.test.ts
+- [x] GUI/mining-staking-manager/tests/unit/.gitkeep – ensure test directory tracked
+- [x] GUI/mining-staking-manager/tests/unit/example.test.ts – verify dashboard stake aggregation
 - [ ] GUI/mining-staking-manager/tsconfig.json
 - [ ] GUI/nft_marketplace/.env.example
 - [ ] GUI/nft_marketplace/.eslintrc.json
