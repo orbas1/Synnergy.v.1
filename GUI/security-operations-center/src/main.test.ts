@@ -1,5 +1,8 @@
 import { main } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('security-operations-center');
+describe('main', () => {
+  it('includes configured API url', () => {
+    process.env.API_URL = 'http://example';
+    expect(main()).toContain('http://example');
+  });
 });
