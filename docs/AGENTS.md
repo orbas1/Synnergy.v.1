@@ -12,6 +12,7 @@
 - Stage 7: Completed – cross-chain-bridge-monitor docs, config, and CI pipeline solidified.
 - Stage 8: Completed – cross-chain-bridge-monitor services and cross-chain-management configuration scaffolds added.
 - Stage 9: Completed – cross-chain-management CLI, deployment and tests strengthened.
+- Stage 10: Completed – cross-chain-management unit tests and DAO explorer tooling enhanced.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -203,25 +204,25 @@
 - [x] GUI/cross-chain-management/tests/unit/.gitkeep
 
 **Stage 10**
-- [ ] GUI/cross-chain-management/tests/unit/example.test.ts
-- [ ] GUI/cross-chain-management/tsconfig.json
-- [ ] GUI/dao-explorer/.env.example
-- [ ] GUI/dao-explorer/.eslintrc.json
-- [ ] GUI/dao-explorer/.gitignore
-- [ ] GUI/dao-explorer/.prettierrc
-- [ ] GUI/dao-explorer/Dockerfile
-- [ ] GUI/dao-explorer/Makefile
-- [ ] GUI/dao-explorer/README.md
-- [ ] GUI/dao-explorer/ci/.gitkeep
-- [ ] GUI/dao-explorer/ci/pipeline.yml
-- [ ] GUI/dao-explorer/config/.gitkeep
-- [ ] GUI/dao-explorer/config/production.ts
-- [ ] GUI/dao-explorer/docker-compose.yml
-- [ ] GUI/dao-explorer/docs/.gitkeep
-- [ ] GUI/dao-explorer/docs/README.md
-- [ ] GUI/dao-explorer/jest.config.js
-- [ ] GUI/dao-explorer/k8s/.gitkeep
-- [ ] GUI/dao-explorer/k8s/deployment.yaml
+ - [x] GUI/cross-chain-management/tests/unit/example.test.ts – verifies bridge status output
+ - [x] GUI/cross-chain-management/tsconfig.json – stricter TypeScript compiler settings
+ - [x] GUI/dao-explorer/.env.example – added log level and database configuration
+ - [x] GUI/dao-explorer/.eslintrc.json – enabled TypeScript linting with prettier integration
+ - [x] GUI/dao-explorer/.gitignore – expanded ignores for local env and OS files
+ - [x] GUI/dao-explorer/.prettierrc – enforced consistent formatting standards
+ - [x] GUI/dao-explorer/Dockerfile – multi-stage production build
+ - [x] GUI/dao-explorer/Makefile – lint, format, build and test targets
+ - [x] GUI/dao-explorer/README.md – expanded setup and Docker instructions
+ - [x] GUI/dao-explorer/ci/.gitkeep
+ - [x] GUI/dao-explorer/ci/pipeline.yml – GitHub Actions workflow for lint, test and build
+ - [x] GUI/dao-explorer/config/.gitkeep
+ - [x] GUI/dao-explorer/config/production.ts – typed production config with defaults
+ - [x] GUI/dao-explorer/docker-compose.yml – added environment and development conveniences
+ - [x] GUI/dao-explorer/docs/.gitkeep
+ - [x] GUI/dao-explorer/docs/README.md – described documentation scope
+ - [x] GUI/dao-explorer/jest.config.js – coverage reporting enabled
+ - [x] GUI/dao-explorer/k8s/.gitkeep
+ - [x] GUI/dao-explorer/k8s/deployment.yaml – resources and environment variables
 
 **Stage 11**
 - [ ] GUI/dao-explorer/package-lock.json
