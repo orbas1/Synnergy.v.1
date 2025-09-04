@@ -216,8 +216,9 @@ Stage 34 debuts a Smart-Contract Marketplace GUI enabling contract deployment an
 Stage 35 launches a Storage Marketplace GUI allowing decentralized storage listings and deals to be managed through the CLI.
 
 Scripts such as `devnet_start.sh` and `testnet_start.sh` help launch local or
-multi‑node networks, while a `Dockerfile` builds a containerised node for rapid
-deployment.
+multi‑node networks, while the `docker/` directory provides multi-stage
+Dockerfiles and a compose setup for running the node and wallet server
+in isolated containers for rapid deployment.
 
 ## Roadmap
 Development is guided by a staged plan documented in `AGENTS.md`. Early stages

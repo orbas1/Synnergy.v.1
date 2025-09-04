@@ -1,0 +1,22 @@
+version: '3.9'
+services:
+  synnergy:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: synnergy
+    ports:
+      - "8080:8080"
+    environment:
+      - SYN_CONFIG=/configs/dev.yaml
+    volumes:
+      - ../configs:/configs:ro
+  walletserver:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: walletserver
+    ports:
+      - "8090:8090"
+    depends_on:
+      - synnergy
