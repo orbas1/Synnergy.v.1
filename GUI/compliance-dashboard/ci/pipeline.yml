@@ -1,1 +1,21 @@
-# Placeholder CI pipeline for compliance-dashboard
+stages:
+  - install
+  - lint
+  - test
+  - build
+
+install:
+  stage: install
+  script: npm ci
+
+lint:
+  stage: lint
+  script: npx eslint . --ext .ts
+
+test:
+  stage: test
+  script: npm test
+
+build:
+  stage: build
+  script: npm run build
