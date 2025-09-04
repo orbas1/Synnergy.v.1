@@ -22,6 +22,8 @@
 
 - Stage 18: In Progress – identity-management-console CLI gains user registration with tests; mining-staking-manager pending.
 
+- Stage 19: Completed – mining-staking-manager scaffold enhanced with config, services, tests and deployment.
+
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
 - [ ] .github/ISSUE_TEMPLATE/config.yml
@@ -393,28 +395,25 @@
 - [ ] GUI/mining-staking-manager/README.md
 - [ ] GUI/mining-staking-manager/ci/.gitkeep
 - [ ] GUI/mining-staking-manager/ci/pipeline.yml
-- [ ] GUI/mining-staking-manager/config/.gitkeep
+- [x] GUI/mining-staking-manager/config/.gitkeep – replaced by production config
 
 **Stage 19**
-- [ ] GUI/mining-staking-manager/config/production.ts
-- [ ] GUI/mining-staking-manager/docker-compose.yml
-- [ ] GUI/mining-staking-manager/docs/.gitkeep
-- [ ] GUI/mining-staking-manager/docs/README.md
-- [ ] GUI/mining-staking-manager/jest.config.js
-- [ ] GUI/mining-staking-manager/k8s/.gitkeep
-- [ ] GUI/mining-staking-manager/k8s/deployment.yaml
-- [ ] GUI/mining-staking-manager/package-lock.json
-- [ ] GUI/mining-staking-manager/package.json
-- [ ] GUI/mining-staking-manager/src/components/.gitkeep
-- [ ] GUI/mining-staking-manager/src/hooks/.gitkeep
-- [ ] GUI/mining-staking-manager/src/main.test.ts
-- [ ] GUI/mining-staking-manager/src/main.ts
-- [ ] GUI/mining-staking-manager/src/pages/.gitkeep
-- [ ] GUI/mining-staking-manager/src/services/.gitkeep
-- [ ] GUI/mining-staking-manager/src/state/.gitkeep
-- [ ] GUI/mining-staking-manager/src/styles/.gitkeep
-- [ ] GUI/mining-staking-manager/tests/e2e/.gitkeep
-- [ ] GUI/mining-staking-manager/tests/e2e/example.e2e.test.ts
+- [x] GUI/mining-staking-manager/config/production.ts – typed config with default API URL
+- [x] GUI/mining-staking-manager/docker-compose.yml – command, environment and restart policy
+- [x] GUI/mining-staking-manager/docs/README.md – usage, testing and deployment docs
+- [x] GUI/mining-staking-manager/jest.config.js – coverage collection and tests root
+- [x] GUI/mining-staking-manager/k8s/deployment.yaml – env vars and health probes
+- [x] GUI/mining-staking-manager/package-lock.json – verified
+- [x] GUI/mining-staking-manager/package.json – jest test script added
+- [x] GUI/mining-staking-manager/src/components/MiningDashboard.ts – basic dashboard implementation
+- [x] GUI/mining-staking-manager/src/hooks/useStaking.ts – staking total helper
+- [x] GUI/mining-staking-manager/src/main.test.ts – updated for async main
+- [x] GUI/mining-staking-manager/src/main.ts – async CLI entrypoint
+- [x] GUI/mining-staking-manager/src/pages/index.ts – placeholder page
+- [x] GUI/mining-staking-manager/src/services/stakingService.ts – mock stake service
+- [x] GUI/mining-staking-manager/src/state/store.ts – in-memory staking store
+- [x] GUI/mining-staking-manager/src/styles/.gitkeep – placeholder retained
+- [x] GUI/mining-staking-manager/tests/e2e/example.e2e.test.ts – CLI e2e test
 
 **Stage 20**
 - [ ] GUI/mining-staking-manager/tests/unit/.gitkeep
