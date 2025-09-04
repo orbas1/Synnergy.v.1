@@ -1,3 +1,7 @@
 # System Analytics Dashboard Documentation
 
-Additional documentation for System Analytics Dashboard.
+This directory contains design and operational notes for the System Analytics Dashboard.
+
+## Overview
+
+The dashboard visualizes real-time network metrics and exposes a simple CLI entry point for automation.

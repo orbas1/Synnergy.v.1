@@ -2,5 +2,8 @@ version: '3'
 services:
   app:
     build: .
+    environment:
+      - API_URL=${API_URL:-https://api.synnergy.local}
     ports:
       - "3000:3000"
+    restart: unless-stopped

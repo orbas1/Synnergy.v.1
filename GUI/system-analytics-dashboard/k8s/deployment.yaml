@@ -16,4 +16,7 @@ spec:
         - name: system-analytics-dashboard
           image: system-analytics-dashboard:latest
           ports:
-            - containerPort: 80
+            - containerPort: 3000
+          env:
+            - name: API_URL
+              value: https://api.synnergy.local
