@@ -4,6 +4,8 @@ This guide explains how tokens are organised and implemented in the Synnergy Net
 It summarises the core token abstractions, the registry used to manage them and the
 built-in token standards provided by the project.
 
+Stage 28 introduces release packaging and documentation tooling for token modules so audited contracts can be published and consumed by dashboards through the CLI.
+
 Stage 12 adds a data distribution monitor exposing CLI and GUI metrics for token flows across the network.
 Stage 13 expands monitoring with a DEX screener interface, allowing token
 holders to inspect liquidity pools and pricing directly through the CLI and

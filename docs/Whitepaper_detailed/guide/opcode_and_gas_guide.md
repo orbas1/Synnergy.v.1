@@ -6,6 +6,8 @@ Stage 13 extends the catalogue with opcodes for data distribution monitoring and
 DEX liquidity queries so operational dashboards can estimate fees prior to
 invocation.
 
+Stage 28 validates that storage marketplace and analytics dashboard operations leverage this canonical gas schedule, ensuring user interfaces surface accurate fee estimates when invoking CLI commands.
+
 ## Opcode Structure
 
 Every exported function in the core packages is mapped to a unique 24‑bit opcode.  The format `0xCCNNNN` splits the value into a one‑byte **category** `CC` and a two‑byte **index** `NNNN`.  Categories correspond to major modules such as the ledger, AMM, state channels or the virtual machine.  The catalogue is generated automatically; the dispatcher resolves the opcode at runtime and invokes the appropriate handler.
