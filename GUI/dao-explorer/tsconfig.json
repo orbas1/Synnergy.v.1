@@ -2,7 +2,9 @@
   "compilerOptions": {
     "target": "ES2017",
     "module": "commonjs",
+    "rootDir": "src",
     "outDir": "dist",
+    "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true
