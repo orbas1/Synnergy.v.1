@@ -1,0 +1,16 @@
+apiVersion: v2
+name: synnergy
+description: Helm chart for deploying Synnergy blockchain nodes and wallet server.
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - blockchain
+  - synnergy
+  - helm
+home: https://example.com/synnergy
+sources:
+  - https://github.com/synnergy-network/Synnergy.v.1
+maintainers:
+  - name: Synnergy Dev Team
+    email: dev@example.com
