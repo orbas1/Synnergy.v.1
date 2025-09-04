@@ -15,5 +15,6 @@ spec:
       containers:
         - name: cross-chain-management
           image: cross-chain-management:latest
+          command: ["node", "dist/main.js"]
           ports:
-            - containerPort: 80
+            - containerPort: 3000

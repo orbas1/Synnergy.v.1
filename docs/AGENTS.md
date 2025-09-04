@@ -11,6 +11,7 @@
 - Stage 6: Completed – compliance-dashboard backend and bridge-monitor configs upgraded.
 - Stage 7: Completed – cross-chain-bridge-monitor docs, config, and CI pipeline solidified.
 - Stage 8: Completed – cross-chain-bridge-monitor services and cross-chain-management configuration scaffolds added.
+- Stage 9: Completed – cross-chain-management CLI, deployment and tests strengthened.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -181,25 +182,25 @@
 - [x] GUI/cross-chain-management/config/production.ts
 
 **Stage 9**
-- [ ] GUI/cross-chain-management/docker-compose.yml
-- [ ] GUI/cross-chain-management/docs/.gitkeep
-- [ ] GUI/cross-chain-management/docs/README.md
-- [ ] GUI/cross-chain-management/jest.config.js
-- [ ] GUI/cross-chain-management/k8s/.gitkeep
-- [ ] GUI/cross-chain-management/k8s/deployment.yaml
-- [ ] GUI/cross-chain-management/package-lock.json
-- [ ] GUI/cross-chain-management/package.json
-- [ ] GUI/cross-chain-management/src/components/.gitkeep
-- [ ] GUI/cross-chain-management/src/hooks/.gitkeep
-- [ ] GUI/cross-chain-management/src/main.test.ts
-- [ ] GUI/cross-chain-management/src/main.ts
-- [ ] GUI/cross-chain-management/src/pages/.gitkeep
-- [ ] GUI/cross-chain-management/src/services/.gitkeep
-- [ ] GUI/cross-chain-management/src/state/.gitkeep
-- [ ] GUI/cross-chain-management/src/styles/.gitkeep
-- [ ] GUI/cross-chain-management/tests/e2e/.gitkeep
-- [ ] GUI/cross-chain-management/tests/e2e/example.e2e.test.ts
-- [ ] GUI/cross-chain-management/tests/unit/.gitkeep
+- [x] GUI/cross-chain-management/docker-compose.yml
+- [x] GUI/cross-chain-management/docs/.gitkeep
+- [x] GUI/cross-chain-management/docs/README.md
+- [x] GUI/cross-chain-management/jest.config.js
+- [x] GUI/cross-chain-management/k8s/.gitkeep
+- [x] GUI/cross-chain-management/k8s/deployment.yaml
+- [x] GUI/cross-chain-management/package-lock.json
+- [x] GUI/cross-chain-management/package.json
+- [x] GUI/cross-chain-management/src/components/.gitkeep
+- [x] GUI/cross-chain-management/src/hooks/.gitkeep
+- [x] GUI/cross-chain-management/src/main.test.ts
+- [x] GUI/cross-chain-management/src/main.ts
+- [x] GUI/cross-chain-management/src/pages/.gitkeep
+- [x] GUI/cross-chain-management/src/services/.gitkeep
+- [x] GUI/cross-chain-management/src/state/.gitkeep
+- [x] GUI/cross-chain-management/src/styles/.gitkeep
+- [x] GUI/cross-chain-management/tests/e2e/.gitkeep
+- [x] GUI/cross-chain-management/tests/e2e/example.e2e.test.ts
+- [x] GUI/cross-chain-management/tests/unit/.gitkeep
 
 **Stage 10**
 - [ ] GUI/cross-chain-management/tests/unit/example.test.ts
