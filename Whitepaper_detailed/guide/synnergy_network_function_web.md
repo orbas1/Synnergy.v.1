@@ -50,6 +50,7 @@ Stage 36 adds an NFT marketplace GUI driven by the `nft` CLI module so
 applications can mint and trade unique assets within the function web.
 Stage 38 introduces a token creation tool GUI that generates token contracts through the CLI, enabling dashboards to craft new assets within the function web.
 Stage 39 adds a DEX Screener GUI that leverages `liquidity_views` commands so interfaces can stream pool reserves and fees.
+Stage 40 introduces administrative dashboards for authority node indexing and cross-chain management, exposing node and bridge status through CLI-driven views.
 
 ## Diagram
 
