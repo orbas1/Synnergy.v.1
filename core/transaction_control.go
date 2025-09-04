@@ -49,6 +49,70 @@ func ReverseTransaction(l *Ledger, tx *Transaction) error {
 	return nil
 }
 
+// ReversalRequest tracks an authority-mediated transaction reversal.
+type ReversalRequest struct {
+	Tx          *Transaction
+	RequestedAt time.Time
+	Fee         uint64
+	votes       map[string]bool
+}
+
+// RequestReversal freezes the recipient's funds and records a reversal request.
+// The recipient must cover the amount plus return gas fee.
+func RequestReversal(l *Ledger, tx *Transaction, fee uint64) (*ReversalRequest, error) {
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	total := tx.Amount + fee
+	if l.balances[tx.To] < total {
+		return nil, errors.New("insufficient funds to freeze for reversal")
+	}
+	l.balances[tx.To] -= total
+	l.frozen[tx.To] += total
+	return &ReversalRequest{Tx: tx, RequestedAt: time.Now(), Fee: fee, votes: make(map[string]bool)}, nil
+}
+
+// Vote records an authority node's decision on the reversal request.
+func (r *ReversalRequest) Vote(authorityID string, approve bool) {
+	r.votes[authorityID] = approve
+}
+
+const reversalWindow = 30 * 24 * time.Hour
+
+// FinalizeReversal executes the compensating transaction if enough authority
+// nodes approve within the time window. Frozen funds are used to pay the
+// reversal and associated fee.
+func FinalizeReversal(l *Ledger, r *ReversalRequest, required int) error {
+	approvals := 0
+	for _, v := range r.votes {
+		if v {
+			approvals++
+		}
+	}
+	if approvals < required {
+		return errors.New("insufficient authority approvals")
+	}
+	if time.Since(r.RequestedAt) > reversalWindow {
+		RejectReversal(l, r)
+		return errors.New("reversal request expired")
+	}
+	total := r.Tx.Amount + r.Fee
+	l.mu.Lock()
+	l.balances[r.Tx.To] += total
+	l.frozen[r.Tx.To] -= total
+	l.mu.Unlock()
+	revTx := NewTransaction(r.Tx.To, r.Tx.From, r.Tx.Amount, r.Fee, 0)
+	return l.ApplyTransaction(revTx)
+}
+
+// RejectReversal releases frozen funds when a reversal request fails.
+func RejectReversal(l *Ledger, r *ReversalRequest) {
+	total := r.Tx.Amount + r.Fee
+	l.mu.Lock()
+	l.balances[r.Tx.To] += total
+	l.frozen[r.Tx.To] -= total
+	l.mu.Unlock()
+}
+
 // ConvertToPrivate encrypts the transaction using AES-GCM with the provided key.
 func ConvertToPrivate(tx *Transaction, key []byte) (*PrivateTransaction, error) {
 	block, err := aes.NewCipher(key)
