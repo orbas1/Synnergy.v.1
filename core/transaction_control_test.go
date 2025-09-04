@@ -32,6 +32,50 @@ func TestReverseTransaction(t *testing.T) {
 	}
 }
 
+func TestAuthorityMediatedReversal(t *testing.T) {
+	l := NewLedger()
+	l.Credit("a", 20)
+	tx := NewTransaction("a", "b", 10, 1, 0)
+	if err := l.ApplyTransaction(tx); err != nil {
+		t.Fatalf("apply: %v", err)
+	}
+	l.Credit("b", 2)
+	req, err := RequestReversal(l, tx, 2)
+	if err != nil {
+		t.Fatalf("request: %v", err)
+	}
+	req.Vote("auth1", true)
+	req.Vote("auth2", true)
+	if err := FinalizeReversal(l, req, 2); err != nil {
+		t.Fatalf("finalize: %v", err)
+	}
+	if l.GetBalance("a") != 19 || l.GetBalance("b") != 0 {
+		t.Fatalf("unexpected balances: a=%d b=%d", l.GetBalance("a"), l.GetBalance("b"))
+	}
+}
+
+func TestReversalRejection(t *testing.T) {
+	l := NewLedger()
+	l.Credit("a", 20)
+	tx := NewTransaction("a", "b", 10, 1, 0)
+	if err := l.ApplyTransaction(tx); err != nil {
+		t.Fatalf("apply: %v", err)
+	}
+	l.Credit("b", 2)
+	req, err := RequestReversal(l, tx, 2)
+	if err != nil {
+		t.Fatalf("request: %v", err)
+	}
+	req.Vote("auth1", true)
+	if err := FinalizeReversal(l, req, 2); err == nil {
+		t.Fatalf("expected error due to insufficient approvals")
+	}
+	RejectReversal(l, req)
+	if l.GetBalance("b") != 12 {
+		t.Fatalf("expected funds returned, got %d", l.GetBalance("b"))
+	}
+}
+
 func TestConvertToPrivate(t *testing.T) {
 	key := []byte("example key 1234")
 	tx := NewTransaction("a", "b", 5, 1, 0)
