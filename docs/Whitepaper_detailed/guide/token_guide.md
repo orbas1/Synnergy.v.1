@@ -4,6 +4,8 @@ This guide explains how tokens are organised and implemented in the Synnergy Net
 It summarises the core token abstractions, the registry used to manage them and the
 built-in token standards provided by the project.
 
+Stage 12 adds a data distribution monitor exposing CLI and GUI metrics for token flows across the network.
+
 Stage 6 integrates compliance checks into token operations via the new logging subsystem, allowing auditors to trace token transactions.
 
 Stage 7 adds coded error handling and telemetry spans to token registry and CLI interactions, enabling operators to correlate failures across services.

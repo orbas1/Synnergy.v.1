@@ -12,8 +12,25 @@ spec:
       labels:
         app: data-distribution-monitor
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
       containers:
         - name: data-distribution-monitor
           image: data-distribution-monitor:latest
           ports:
-            - containerPort: 80
+            - containerPort: 3000
+          env:
+            - name: API_URL
+              value: "https://api.synnergy.local"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+            requests:
+              memory: "64Mi"
+              cpu: "100m"

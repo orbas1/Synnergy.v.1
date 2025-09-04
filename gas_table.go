@@ -15,7 +15,7 @@ import (
 	"synnergy/internal/telemetry"
 )
 
-// GasTable maps opcode names to their base gas cost. Stage 23 registers
+// GasTable maps opcode names to their base gas cost. Stage 12 introduces pricing for data distribution monitor queries. Stage 23 registers
 // consensus and governance CLI operations so their fees are visible to users.
 // Stage 24 extends coverage to cross-chain bridges, protocol registration and
 // Plasma management so inter-network workflows remain predictable. Stage 25
