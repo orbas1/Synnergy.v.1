@@ -1,5 +1,17 @@
+import http from 'http';
+import { AddressInfo } from 'net';
 import { main } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('validator-governance-portal');
+test('server responds with alive message', async () => {
+  const server = main(0); // use ephemeral port
+  const { port } = server.address() as AddressInfo;
+  const data = await new Promise<string>((resolve) => {
+    http.get(`http://127.0.0.1:${port}`, (res) => {
+      let buf = '';
+      res.on('data', (chunk) => (buf += chunk));
+      res.on('end', () => resolve(buf));
+    });
+  });
+  expect(data).toBe('validator-governance-portal alive');
+  server.close();
 });
