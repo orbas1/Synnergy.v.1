@@ -333,6 +333,7 @@
 | `BurnDAOToken` | `3` |
 | `RemoveConsensusNetwork` | `8` |
 | `NewDataDistribution` | `1` |
+| `DataDistributionMonitor_Status` | `1` |
 | `NewDataFeed` | `1` |
 | `NewDataResourceManager` | `1` |
 | `NewDebtRegistry` | `1` |

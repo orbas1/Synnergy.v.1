@@ -121,7 +121,7 @@ func main() {
 	_ = core.NewConsensusNetworkManager()
 	_ = core.NewCustodialNode("cli-custodian", "cli-custodian", core.NewLedger())
 
-	// Preload stage 12 modules to expose wallet, warfare and watchtower
+	// Preload stage 12 modules to expose wallet, warfare, watchtower and data distribution monitoring
 	// functionality via the CLI.
 	if _, err := core.NewWallet(); err != nil {
 		logrus.Debugf("wallet init error: %v", err)

@@ -1,1 +1,17 @@
-# Placeholder CI pipeline for data-distribution-monitor
+name: data-distribution-monitor-ci
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: GUI/data-distribution-monitor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

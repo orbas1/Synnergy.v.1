@@ -32,6 +32,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()` and registered with `synnergy.RegisterGasCost()`.
 - **Role-based security** – biometric authentication (`core.NewBiometricService`), zero‑trust data channels and PKI tooling.
 - **Extensible CLI** – built with [Cobra](https://github.com/spf13/cobra) and backed by `cli.Execute()`.
+- **Data distribution monitor** – CLI and GUI for network telemetry.
 - **Infrastructure-as-code** – Dockerfiles, Helm charts, Terraform and Ansible playbooks for reproducible environments.
 - **Strong encryption and signatures** – all transactions and messages are secured using well‑vetted cryptography with digital signatures.
 - **Permissioned privacy** – fine‑grained access controls enable private channels and selective data disclosure.

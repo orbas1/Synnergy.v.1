@@ -1,5 +1,9 @@
 import { main } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('data-distribution-monitor');
+test('status command returns operational message', () => {
+  expect(main(['status'])).toContain('operational');
+});
+
+test('unknown command throws error', () => {
+  expect(() => main(['bad'])).toThrow('Unknown command');
 });
