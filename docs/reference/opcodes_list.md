@@ -12,6 +12,7 @@
 | `AddListing` | `0x100009` |
 | `AddMember` | `0x10000A` |
 | `AddNode` | `0x10000B` |
+| `NodeStatus` | `0x500001` |
 | `AddOffset` | `0x10000C` |
 | `AddPeer` | `0x10000D` |
 | `AddRecord` | `0x10000E` |

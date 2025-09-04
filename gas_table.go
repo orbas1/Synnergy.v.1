@@ -22,7 +22,7 @@ import (
 // extends coverage to cross-chain bridges, protocol registration and Plasma
 // management so inter-network workflows remain predictable. Stage 25 adds node
 // management operations (full, light, mining, staking, watchtower and warfare
-// nodes) so dashboards can price infrastructure actions. Stage 29 introduces
+// nodes) so dashboards can price infrastructure actions. Stage 22 prices node status queries for the node operations dashboard. Stage 29 introduces
 // pricing for deployable smart contract templates including token faucets,
 // storage markets, DAO governance, NFT minting and AI model exchanges. Stage 35
 // records storage marketplace operations so listing and deal workflows are gas

@@ -2915,3 +2915,5 @@ Stage 48 introduces Kubernetes manifests for running nodes and the wallet
 server. The orchestration layer does not alter opcode semantics or gas
 pricing but ensures resources are isolated so gas accounting remains
 predictable across replicas.
+
+Stage 22 registers opcodes for querying node health so the Node Operations Dashboard can estimate gas costs before execution.

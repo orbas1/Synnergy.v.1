@@ -1,1 +1,21 @@
-# Placeholder CI pipeline for node-operations-dashboard
+name: node-operations-dashboard CI
+
+on:
+  push:
+    paths:
+      - 'GUI/node-operations-dashboard/**'
+  pull_request:
+    paths:
+      - 'GUI/node-operations-dashboard/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

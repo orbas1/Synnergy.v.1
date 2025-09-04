@@ -3,6 +3,7 @@
 |---|---|
 | `DataMonitorStatus` | `5` |
 | `DexLiquidity` | `10` |
+| `NodeStatus` | `5` |
 | `Accrue` | `1` |
 | `Acquire` | `1` |
 | `Active` | `1` |

@@ -241,3 +241,6 @@ welcome as the project advances toward a production‑grade platform.
 
 
 Stage 39 debuts a DEX Screener GUI that reads liquidity pool metrics via CLI commands, enabling real-time market monitoring.
+
+### Node Operations Dashboard
+A dedicated dashboard module now provides operators with a TypeScript-based CLI and web interface for monitoring node health and status across the network. It consumes opcode and gas metrics exposed by the core system.
