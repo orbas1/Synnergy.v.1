@@ -7,7 +7,13 @@ Enterprise-grade GUI for Identity Management Console. This scaffold includes Typ
 ```bash
 npm ci
 npm run build
-npm start
+npm start -- --name yourname
+```
+
+Register a user:
+
+```bash
+npm start -- --register alice --key pubkey
 ```
 
 ## Development

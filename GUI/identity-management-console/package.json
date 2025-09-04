@@ -10,9 +10,7 @@
     "lint": "eslint .",
     "format": "prettier --write ."
   },
-  "dependencies": {
-    "commander": "^11.1.0"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@types/jest": "^29.5.3",
     "eslint": "^8.56.0",
