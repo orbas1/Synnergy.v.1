@@ -76,6 +76,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 45 adds script tests validating automated contract deployment workflows.
 - Stage 46 introduces an end-to-end network harness to exercise node, wallet and CLI interoperability.
 - Stage 47 provides Dockerfiles and a compose configuration for containerised nodes and the wallet server, enabling reproducible deployments.
+- Stage 48 adds Kubernetes manifests for the node and wallet server, allowing fault-tolerant cluster deployments via `kubectl`.
 - The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
 
 ## Repository layout

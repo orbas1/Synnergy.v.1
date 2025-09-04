@@ -21102,3 +21102,15 @@ go test ./tests/contracts
 ```
 
 to validate the token faucet template and future contract modules.
+
+## Kubernetes deployment
+Stage 48 adds manifests under `deploy/k8s/` for running the node and wallet
+server inside a Kubernetes cluster. Apply them with `kubectl`:
+
+```bash
+kubectl apply -f deploy/k8s/node.yaml
+kubectl apply -f deploy/k8s/wallet.yaml
+```
+
+These manifests include health probes and resource limits so clusters can
+maintain availability automatically.

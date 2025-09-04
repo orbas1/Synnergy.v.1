@@ -156,6 +156,12 @@ rights alongside registered financial institutions.
 
 Stage 44 introduces contract-level tests for the token faucet template deployed via the CLI and VM, providing a blueprint for verifying future token modules.
 
+## Kubernetes deployment
+Tokens interact with network services regardless of the execution
+environment. When running nodes on Kubernetes using the manifests in
+`deploy/k8s/`, token transactions and registry operations are available
+through the wallet server and CLI just as in bare‑metal setups.
+
 ## Testing
 
 Unit tests for the token package can be executed with:

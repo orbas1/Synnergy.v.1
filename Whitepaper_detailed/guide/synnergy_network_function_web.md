@@ -205,5 +205,11 @@ graph TD
 - **Network** services provide message propagation and peer discovery feeding
   transactions into the consensus workflow.
 
+## Kubernetes deployment
+Stage 48 introduces manifests for orchestrating the node and wallet server on
+Kubernetes. Deploying these components with `kubectl` preserves all module
+relationships illustrated above while adding automated restarts and
+scalability for the web-facing services.
+
 This visualization can be rendered using any Mermaid-compatible Markdown viewer.
 

@@ -219,6 +219,9 @@ Scripts such as `devnet_start.sh` and `testnet_start.sh` help launch local or
 multi‑node networks, while the `docker/` directory provides multi-stage
 Dockerfiles and a compose setup for running the node and wallet server
 in isolated containers for rapid deployment.
+Stage 48 supplies Kubernetes manifests in `deploy/k8s/` so clusters can
+orchestrate replicated nodes and the wallet server with health probes and
+resource quotas for enterprise deployments.
 
 ## Roadmap
 Development is guided by a staged plan documented in `AGENTS.md`. Early stages
