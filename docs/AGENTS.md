@@ -34,6 +34,7 @@
 - Stage 27: Completed – storage-marketplace GUI scaffold with configs, Docker and CI.
 - Stage 28: Completed – storage marketplace module finalized and system analytics dashboard scaffold created.
 - Stage 29: Completed – system analytics dashboard CI pipeline, configuration and tests established.
+- Stage 30: Completed – system analytics dashboard tests and token creation tool configs hardened.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -635,25 +636,25 @@
 - [ ] GUI/system-analytics-dashboard/src/styles/.gitkeep
 
 **Stage 30**
-- [ ] GUI/system-analytics-dashboard/tests/e2e/.gitkeep
-- [ ] GUI/system-analytics-dashboard/tests/e2e/example.e2e.test.ts
-- [ ] GUI/system-analytics-dashboard/tests/unit/.gitkeep
-- [ ] GUI/system-analytics-dashboard/tests/unit/example.test.ts
-- [ ] GUI/system-analytics-dashboard/tsconfig.json
-- [ ] GUI/token-creation-tool/.env.example
-- [ ] GUI/token-creation-tool/.eslintrc.json
-- [ ] GUI/token-creation-tool/.gitignore
-- [ ] GUI/token-creation-tool/.prettierrc
-- [ ] GUI/token-creation-tool/Dockerfile
-- [ ] GUI/token-creation-tool/Makefile
-- [ ] GUI/token-creation-tool/README.md
-- [ ] GUI/token-creation-tool/ci/.gitkeep
-- [ ] GUI/token-creation-tool/ci/pipeline.yml
-- [ ] GUI/token-creation-tool/config/.gitkeep
-- [ ] GUI/token-creation-tool/config/production.ts
-- [ ] GUI/token-creation-tool/docker-compose.yml
-- [ ] GUI/token-creation-tool/docs/.gitkeep
-- [ ] GUI/token-creation-tool/docs/README.md
+- [x] GUI/system-analytics-dashboard/tests/e2e/.gitkeep
+- [x] GUI/system-analytics-dashboard/tests/e2e/example.e2e.test.ts
+- [x] GUI/system-analytics-dashboard/tests/unit/.gitkeep
+- [x] GUI/system-analytics-dashboard/tests/unit/example.test.ts
+- [x] GUI/system-analytics-dashboard/tsconfig.json
+- [x] GUI/token-creation-tool/.env.example
+- [x] GUI/token-creation-tool/.eslintrc.json
+- [x] GUI/token-creation-tool/.gitignore
+- [x] GUI/token-creation-tool/.prettierrc
+- [x] GUI/token-creation-tool/Dockerfile
+- [x] GUI/token-creation-tool/Makefile
+- [x] GUI/token-creation-tool/README.md
+- [x] GUI/token-creation-tool/ci/.gitkeep
+- [x] GUI/token-creation-tool/ci/pipeline.yml
+- [x] GUI/token-creation-tool/config/.gitkeep
+- [x] GUI/token-creation-tool/config/production.ts
+- [x] GUI/token-creation-tool/docker-compose.yml
+- [x] GUI/token-creation-tool/docs/.gitkeep
+- [x] GUI/token-creation-tool/docs/README.md
 
 **Stage 31**
 - [ ] GUI/token-creation-tool/jest.config.js
