@@ -1,5 +1,6 @@
 import { main } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('identity-management-console');
+test('main greets provided name', () => {
+  const result = main(['node', 'test', '--name', 'user']);
+  expect(result).toBe('Hello from user');
 });
