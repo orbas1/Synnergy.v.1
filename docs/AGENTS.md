@@ -1,6 +1,6 @@
 # Development Stages and File Index
 
-## Stages 1-125 – File Upgrade Checklist
+## Stages 1-135 – File Upgrade Checklist
 
 **Stage 1**
 - [ ] .github/ISSUE_TEMPLATE/bug_report.md
@@ -7499,3 +7499,13 @@
 | 125 | web/pages/index.js | [ ] |
 | 125 | zero_trust_data_channels.go | [ ] |
 | 125 | zero_trust_data_channels_test.go | [ ] |
+| 126 | docs/ux/mobile_responsiveness.md | [ ] |
+| 127 | docs/ux/accessibility_aids.md | [ ] |
+| 128 | docs/ux/error_handling_validation.md | [ ] |
+| 129 | docs/ux/loading_feedback.md | [ ] |
+| 130 | docs/ux/theming_options.md | [ ] |
+| 131 | docs/ux/onboarding_help.md | [ ] |
+| 132 | docs/ux/localization_support.md | [ ] |
+| 133 | docs/ux/command_history.md | [ ] |
+| 134 | docs/ux/authentication_roles.md | [ ] |
+| 135 | docs/ux/status_indicators.md | [ ] |
