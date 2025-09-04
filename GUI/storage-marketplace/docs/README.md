@@ -1,3 +1,3 @@
 # Storage Marketplace Documentation
 
-Additional documentation for Storage Marketplace.
+This directory will contain user and developer documentation for the storage marketplace interface.

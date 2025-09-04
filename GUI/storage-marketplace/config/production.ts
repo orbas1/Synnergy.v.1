@@ -1,3 +1,4 @@
 export default {
-  apiUrl: process.env.API_URL || ''
+  port: Number(process.env.PORT) || 3000,
+  apiEndpoint: process.env.API_ENDPOINT || 'https://api.synnergy.local'
 };

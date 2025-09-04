@@ -16,4 +16,4 @@ spec:
         - name: storage-marketplace
           image: storage-marketplace:latest
           ports:
-            - containerPort: 80
+            - containerPort: 3000
