@@ -6,6 +6,7 @@
 - Stage 1: In Progress – issue templates, PR template, README and root `.gitignore` upgraded; remaining files pending.
 - Stage 2: Completed – ai-marketplace scaffold enhanced with CI, config and tests.
 - Stage 3: Completed – GUI state management, styles, tests, and authority-node-index tooling upgraded.
+- Stage 4: Completed – authority-node-index docs, configuration, tests and Kubernetes deployment enhanced.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -71,25 +72,25 @@
 - [x] GUI/authority-node-index/docker-compose.yml
 
 **Stage 4**
-- [ ] GUI/authority-node-index/docs/.gitkeep
-- [ ] GUI/authority-node-index/docs/README.md
-- [ ] GUI/authority-node-index/jest.config.js
-- [ ] GUI/authority-node-index/k8s/.gitkeep
-- [ ] GUI/authority-node-index/k8s/deployment.yaml
-- [ ] GUI/authority-node-index/package-lock.json
-- [ ] GUI/authority-node-index/package.json
-- [ ] GUI/authority-node-index/src/components/.gitkeep
-- [ ] GUI/authority-node-index/src/hooks/.gitkeep
-- [ ] GUI/authority-node-index/src/main.test.ts
-- [ ] GUI/authority-node-index/src/main.ts
-- [ ] GUI/authority-node-index/src/pages/.gitkeep
-- [ ] GUI/authority-node-index/src/services/.gitkeep
-- [ ] GUI/authority-node-index/src/state/.gitkeep
-- [ ] GUI/authority-node-index/src/styles/.gitkeep
-- [ ] GUI/authority-node-index/tests/e2e/.gitkeep
-- [ ] GUI/authority-node-index/tests/e2e/example.e2e.test.ts
-- [ ] GUI/authority-node-index/tests/unit/.gitkeep
-- [ ] GUI/authority-node-index/tests/unit/example.test.ts
+- [x] GUI/authority-node-index/docs/.gitkeep
+- [x] GUI/authority-node-index/docs/README.md
+- [x] GUI/authority-node-index/jest.config.js
+- [x] GUI/authority-node-index/k8s/.gitkeep
+- [x] GUI/authority-node-index/k8s/deployment.yaml
+- [x] GUI/authority-node-index/package-lock.json
+- [x] GUI/authority-node-index/package.json
+- [x] GUI/authority-node-index/src/components/.gitkeep
+- [x] GUI/authority-node-index/src/hooks/.gitkeep
+- [x] GUI/authority-node-index/src/main.test.ts
+- [x] GUI/authority-node-index/src/main.ts
+- [x] GUI/authority-node-index/src/pages/.gitkeep
+- [x] GUI/authority-node-index/src/services/.gitkeep
+- [x] GUI/authority-node-index/src/state/.gitkeep
+- [x] GUI/authority-node-index/src/styles/.gitkeep
+- [x] GUI/authority-node-index/tests/e2e/.gitkeep
+- [x] GUI/authority-node-index/tests/e2e/example.e2e.test.ts
+- [x] GUI/authority-node-index/tests/unit/.gitkeep
+- [x] GUI/authority-node-index/tests/unit/example.test.ts
 
 **Stage 5**
 - [ ] GUI/authority-node-index/tsconfig.json

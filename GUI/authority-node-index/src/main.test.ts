@@ -1,5 +1,6 @@
-import { main } from './main';
+import { start } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('authority-node-index');
+test('start reports configured port', () => {
+  const message = start();
+  expect(message).toContain('port 3000');
 });
