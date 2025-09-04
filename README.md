@@ -78,6 +78,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 47 provides Dockerfiles and a compose configuration for containerised nodes and the wallet server, enabling reproducible deployments.
 - Stage 48 adds Kubernetes manifests for the node and wallet server, allowing fault-tolerant cluster deployments via `kubectl`.
 - Stage 49 introduces a Helm chart for deploying Synnergy components with opinionated defaults, enabling reproducible cluster deployments via `helm install`.
+- Stage 50 introduces Terraform and Ansible automation for provisioning infrastructure and configuring nodes with fault-tolerant defaults.
 - The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
 
 ## Repository layout
@@ -125,6 +126,15 @@ docker compose -f docker/docker-compose.yml up --build
 To deploy Synnergy components with Helm, use the provided chart:
 ```
 helm install synnergy deploy/helm/synnergy
+```
+
+To provision infrastructure with Terraform and configure nodes with Ansible:
+```
+cd deploy/terraform
+terraform init
+terraform apply -var 'ami_id=ami-123456'
+
+ansible-playbook -i <inventory> ../ansible/playbook.yml
 ```
 
 ## Testing and security checks

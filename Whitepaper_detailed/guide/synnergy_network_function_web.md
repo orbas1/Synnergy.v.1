@@ -210,6 +210,7 @@ Stage 48 introduces manifests for orchestrating the node and wallet server on
 Kubernetes. Deploying these components with `kubectl` preserves all module
 relationships illustrated above while adding automated restarts and
 scalability for the web-facing services.
+Stage 50 adds Terraform and Ansible automation for provisioning infrastructure and applying configuration, allowing dashboards and the CLI to launch fault-tolerant networks through the function web.
 
 This visualization can be rendered using any Mermaid-compatible Markdown viewer.
 
