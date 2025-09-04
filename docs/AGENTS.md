@@ -5,6 +5,7 @@
 ### Progress
 - Stage 1: In Progress – issue templates, PR template, README and root `.gitignore` upgraded; remaining files pending.
 - Stage 2: Completed – ai-marketplace scaffold enhanced with CI, config and tests.
+- Stage 3: Completed – GUI state management, styles, tests, and authority-node-index tooling upgraded.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -49,25 +50,25 @@
 - [x] GUI/ai-marketplace/src/services/.gitkeep
 
 **Stage 3**
-- [ ] GUI/ai-marketplace/src/state/.gitkeep
-- [ ] GUI/ai-marketplace/src/styles/.gitkeep
-- [ ] GUI/ai-marketplace/tests/e2e/.gitkeep
-- [ ] GUI/ai-marketplace/tests/e2e/example.e2e.test.ts
-- [ ] GUI/ai-marketplace/tests/unit/.gitkeep
-- [ ] GUI/ai-marketplace/tests/unit/example.test.ts
-- [ ] GUI/ai-marketplace/tsconfig.json
-- [ ] GUI/authority-node-index/.env.example
-- [ ] GUI/authority-node-index/.eslintrc.json
-- [ ] GUI/authority-node-index/.gitignore
-- [ ] GUI/authority-node-index/.prettierrc
-- [ ] GUI/authority-node-index/Dockerfile
-- [ ] GUI/authority-node-index/Makefile
-- [ ] GUI/authority-node-index/README.md
-- [ ] GUI/authority-node-index/ci/.gitkeep
-- [ ] GUI/authority-node-index/ci/pipeline.yml
-- [ ] GUI/authority-node-index/config/.gitkeep
-- [ ] GUI/authority-node-index/config/production.ts
-- [ ] GUI/authority-node-index/docker-compose.yml
+- [x] GUI/ai-marketplace/src/state/.gitkeep
+- [x] GUI/ai-marketplace/src/styles/.gitkeep
+- [x] GUI/ai-marketplace/tests/e2e/.gitkeep
+- [x] GUI/ai-marketplace/tests/e2e/example.e2e.test.ts
+- [x] GUI/ai-marketplace/tests/unit/.gitkeep
+- [x] GUI/ai-marketplace/tests/unit/example.test.ts
+- [x] GUI/ai-marketplace/tsconfig.json
+- [x] GUI/authority-node-index/.env.example
+- [x] GUI/authority-node-index/.eslintrc.json
+- [x] GUI/authority-node-index/.gitignore
+- [x] GUI/authority-node-index/.prettierrc
+- [x] GUI/authority-node-index/Dockerfile
+- [x] GUI/authority-node-index/Makefile
+- [x] GUI/authority-node-index/README.md
+- [x] GUI/authority-node-index/ci/.gitkeep
+- [x] GUI/authority-node-index/ci/pipeline.yml
+- [x] GUI/authority-node-index/config/.gitkeep
+- [x] GUI/authority-node-index/config/production.ts
+- [x] GUI/authority-node-index/docker-compose.yml
 
 **Stage 4**
 - [ ] GUI/authority-node-index/docs/.gitkeep
