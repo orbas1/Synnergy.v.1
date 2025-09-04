@@ -16,7 +16,7 @@ func gasListPath(t *testing.T) string {
 	}
 	coreDir := filepath.Dir(filename)
 	rootDir := filepath.Dir(coreDir)
-	return filepath.Join(rootDir, "gas_table_list.md")
+	return filepath.Join(rootDir, "docs", "reference", "gas_table_list.md")
 }
 
 func TestParseGasGuide(t *testing.T) {
