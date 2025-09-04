@@ -1,8 +1,13 @@
 import { fetchNodeStatus } from './services/status';
 
 export async function main(): Promise<string> {
-  const status = await fetchNodeStatus();
-  return `Node status: ${status}`;
+  try {
+    const status = await fetchNodeStatus();
+    return `Node status: ${status}`;
+  } catch {
+    // Ensure callers always receive a string even on unexpected errors
+    return 'Node status: ERROR';
+  }
 }
 
 if (require.main === module) {

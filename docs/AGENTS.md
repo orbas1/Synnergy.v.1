@@ -27,6 +27,8 @@
 - Stage 21: Completed – NFT marketplace frontend scaffold expanded with sample components, services, tests and hardened dashboard configuration.
 - Stage 22: Completed – node-operations-dashboard scaffold established with CI, docs and tests.
 
+- Stage 23: Completed – node-operations-dashboard status service and security-operations-center configuration hardened.
+
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
 - [ ] .github/ISSUE_TEMPLATE/config.yml
@@ -480,25 +482,25 @@
 - [x] GUI/node-operations-dashboard/src/main.test.ts
 
 **Stage 23**
-- [ ] GUI/node-operations-dashboard/src/main.ts
-- [ ] GUI/node-operations-dashboard/src/pages/.gitkeep
-- [ ] GUI/node-operations-dashboard/src/services/.gitkeep
-- [ ] GUI/node-operations-dashboard/src/state/.gitkeep
-- [ ] GUI/node-operations-dashboard/src/styles/.gitkeep
-- [ ] GUI/node-operations-dashboard/tests/e2e/.gitkeep
-- [ ] GUI/node-operations-dashboard/tests/e2e/example.e2e.test.ts
-- [ ] GUI/node-operations-dashboard/tests/unit/.gitkeep
-- [ ] GUI/node-operations-dashboard/tests/unit/example.test.ts
-- [ ] GUI/node-operations-dashboard/tsconfig.json
-- [ ] GUI/security-operations-center/.env.example
-- [ ] GUI/security-operations-center/.eslintrc.json
-- [ ] GUI/security-operations-center/.gitignore
-- [ ] GUI/security-operations-center/.prettierrc
-- [ ] GUI/security-operations-center/Dockerfile
-- [ ] GUI/security-operations-center/Makefile
-- [ ] GUI/security-operations-center/README.md
-- [ ] GUI/security-operations-center/ci/.gitkeep
-- [ ] GUI/security-operations-center/ci/pipeline.yml
+- [x] GUI/node-operations-dashboard/src/main.ts – env-driven status fetch with error handling
+- [x] GUI/node-operations-dashboard/src/pages/.gitkeep – placeholder for future pages
+- [x] GUI/node-operations-dashboard/src/services/.gitkeep – directory preserved alongside status service
+- [x] GUI/node-operations-dashboard/src/state/.gitkeep – state management scaffold
+- [x] GUI/node-operations-dashboard/src/styles/.gitkeep – style folder retained
+- [x] GUI/node-operations-dashboard/tests/e2e/.gitkeep – e2e test folder established
+- [x] GUI/node-operations-dashboard/tests/e2e/example.e2e.test.ts – fetch mocked end-to-end test
+- [x] GUI/node-operations-dashboard/tests/unit/.gitkeep – unit test folder established
+- [x] GUI/node-operations-dashboard/tests/unit/example.test.ts – fetch mocked unit test
+- [x] GUI/node-operations-dashboard/tsconfig.json – compiler options hardened
+- [x] GUI/security-operations-center/.env.example – sample environment variables added
+- [x] GUI/security-operations-center/.eslintrc.json – TypeScript and Prettier rules
+- [x] GUI/security-operations-center/.gitignore – broadened ignore patterns
+- [x] GUI/security-operations-center/.prettierrc – formatting rules
+- [x] GUI/security-operations-center/Dockerfile – multi-stage image and non-root user
+- [x] GUI/security-operations-center/Makefile – standard build targets
+- [x] GUI/security-operations-center/README.md – usage and Docker instructions
+- [x] GUI/security-operations-center/ci/.gitkeep – CI folder established
+- [x] GUI/security-operations-center/ci/pipeline.yml – GitHub Actions pipeline
 
 **Stage 24**
 - [ ] GUI/security-operations-center/config/.gitkeep
