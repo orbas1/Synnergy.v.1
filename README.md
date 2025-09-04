@@ -69,6 +69,10 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 38 debuts a Token Creation Tool GUI that generates token contracts via the CLI.
 - Stage 39 debuts a DEX Screener GUI that surfaces liquidity pool metrics through the CLI.
 - Stage 40 adds Administrative Dashboards for authority node indexing and cross-chain management with full CLI integration.
+- Stage 41 introduces a wallet server backend enabling GUI interactions.
+- Stage 42 adds CLI integration tests validating command wiring.
+- Stage 43 provides GUI wallet integration tests ensuring end-to-end flows.
+- Stage 44 ships smart contract tests for the token faucet template via the CLI and VM.
 - The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
 
 ## Repository layout

@@ -21092,3 +21092,13 @@ synnergy liquidity_views list
 # Inspect a specific pool
 synnergy liquidity_views info <id>
 ```
+
+## Smart contract tests
+
+Stage 44 introduces a contract test harness ensuring templates deploy correctly through the CLI and virtual machine. Run:
+
+```bash
+go test ./tests/contracts
+```
+
+to validate the token faucet template and future contract modules.

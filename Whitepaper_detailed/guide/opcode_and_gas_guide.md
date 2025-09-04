@@ -2901,3 +2901,7 @@ Operations exposed by the Stage 34 marketplace GUI.
 |---|---|
 | `DeploySmartContract` | `5000` |
 | `TradeContract` | `100` |
+
+### Contract Test Harness
+
+Stage 44 adds regression tests that deploy the `token_faucet` template via the CLI and VM. These tests confirm opcode resolution and gas prices for contract templates remain stable over time.
