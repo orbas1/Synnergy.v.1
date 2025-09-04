@@ -87,6 +87,9 @@ func main() {
 	synn.RegisterGasCost("MintNFT", synn.GasCost("MintNFT"))
 	synn.RegisterGasCost("ListNFT", synn.GasCost("ListNFT"))
 	synn.RegisterGasCost("BuyNFT", synn.GasCost("BuyNFT"))
+	// Stage 39 liquidity view operations for DEX screener
+	synn.RegisterGasCost("Liquidity_Pool", synn.GasCost("Liquidity_Pool"))
+	synn.RegisterGasCost("Liquidity_Pools", synn.GasCost("Liquidity_Pools"))
 	// Wallet operations used by GUI clients
 	synn.RegisterGasCost("NewWallet", synn.GasCost("NewWallet"))
 	synn.RegisterGasCost("Sign", synn.GasCost("Sign"))

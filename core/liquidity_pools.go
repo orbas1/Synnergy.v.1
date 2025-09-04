@@ -3,10 +3,12 @@ package core
 import (
 	"errors"
 	"fmt"
+	"sync"
 )
 
 // LiquidityPool represents a constant-product AMM pool.
 type LiquidityPool struct {
+	mu         sync.Mutex
 	ID         string
 	TokenA     string
 	TokenB     string
@@ -30,6 +32,8 @@ func NewLiquidityPool(id, tokenA, tokenB string, feeBps uint16) *LiquidityPool {
 
 // AddLiquidity adds tokens to the pool and mints LP tokens.
 func (p *LiquidityPool) AddLiquidity(provider string, amtA, amtB uint64) (uint64, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	if p.totalLP == 0 {
 		p.ReserveA += amtA
 		p.ReserveB += amtB
@@ -55,6 +59,8 @@ func (p *LiquidityPool) AddLiquidity(provider string, amtA, amtB uint64) (uint64
 
 // RemoveLiquidity burns LP tokens and returns underlying assets.
 func (p *LiquidityPool) RemoveLiquidity(provider string, lpTokens uint64) (uint64, uint64, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	bal := p.LPBalances[provider]
 	if bal < lpTokens || p.totalLP == 0 {
 		return 0, 0, errors.New("insufficient LP balance")
@@ -70,6 +76,8 @@ func (p *LiquidityPool) RemoveLiquidity(provider string, lpTokens uint64) (uint6
 
 // Swap executes a token swap within the pool.
 func (p *LiquidityPool) Swap(tokenIn string, amtIn, minOut uint64) (uint64, error) {
+	p.mu.Lock()
+	defer p.mu.Unlock()
 	if amtIn == 0 {
 		return 0, errors.New("amount must be > 0")
 	}
@@ -110,6 +118,7 @@ func sqrt(n uint64) uint64 {
 
 // LiquidityPoolRegistry tracks all pools.
 type LiquidityPoolRegistry struct {
+	mu    sync.RWMutex
 	pools map[string]*LiquidityPool
 }
 
@@ -120,6 +129,8 @@ func NewLiquidityPoolRegistry() *LiquidityPoolRegistry {
 
 // Create registers a new liquidity pool.
 func (r *LiquidityPoolRegistry) Create(id, tokenA, tokenB string, feeBps uint16) (*LiquidityPool, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	if _, exists := r.pools[id]; exists {
 		return nil, fmt.Errorf("pool %s exists", id)
 	}
@@ -130,12 +141,16 @@ func (r *LiquidityPoolRegistry) Create(id, tokenA, tokenB string, feeBps uint16)
 
 // Get returns a pool by ID.
 func (r *LiquidityPoolRegistry) Get(id string) (*LiquidityPool, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	p, ok := r.pools[id]
 	return p, ok
 }
 
 // List returns all pools.
 func (r *LiquidityPoolRegistry) List() []*LiquidityPool {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	res := make([]*LiquidityPool, 0, len(r.pools))
 	for _, p := range r.pools {
 		res = append(res, p)

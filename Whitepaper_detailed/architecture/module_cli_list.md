@@ -1,6 +1,7 @@
 # Module and CLI Files
 
 Stage 23 updates consensus and governance CLI modules to emit gas information for enterprise planning.
+Stage 39 introduces liquidity pool modules and accompanying CLI commands used by the DEX Screener.
 
 ## Module Files
      1	access_control.go

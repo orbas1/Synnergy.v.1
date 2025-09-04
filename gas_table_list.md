@@ -734,3 +734,5 @@
 | `MintNFT` | `1200` |
 | `ListNFT` | `100` |
 | `BuyNFT` | `200` |
+| `Liquidity_Pool` | `1` |
+| `Liquidity_Pools` | `1` |

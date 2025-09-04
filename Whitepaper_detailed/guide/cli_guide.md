@@ -21081,3 +21081,14 @@ Transfer ownership of an NFT
 ```
 synnergy nft buy [id] [newOwner]
 ```
+
+## DEX Screener
+The Stage 39 DEX Screener GUI relies on the following commands:
+
+```bash
+# List all pools with reserves
+synnergy liquidity_views list
+
+# Inspect a specific pool
+synnergy liquidity_views info <id>
+```
