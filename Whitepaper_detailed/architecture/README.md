@@ -20,4 +20,6 @@ This directory contains architecture overviews for major module groups. Each fil
    - [Explorer](explorer_architecture.md)
    - [AI Marketplace](ai_marketplace_architecture.md)
 
-There are **14** distinct module groups.
+15. [Deployment and Containerization](docker_architecture.md)
+
+There are **15** distinct module groups.

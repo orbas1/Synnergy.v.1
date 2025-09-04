@@ -75,6 +75,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 44 ships smart contract tests for the token faucet template via the CLI and VM.
 - Stage 45 adds script tests validating automated contract deployment workflows.
 - Stage 46 introduces an end-to-end network harness to exercise node, wallet and CLI interoperability.
+- Stage 47 provides Dockerfiles and a compose configuration for containerised nodes and the wallet server, enabling reproducible deployments.
 - The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
 
 ## Repository layout
@@ -113,6 +114,11 @@ export SYN_CONFIG=configs/dev.yaml
 ./synnergy network start
 ```
 Helper scripts in `scripts/` can launch multi‑node devnets or testnets for experimentation.
+
+To run the node and wallet server via Docker containers, refer to [docker/README.md](docker/README.md):
+```
+docker compose -f docker/docker-compose.yml up --build
+```
 
 ## Testing and security checks
 Run the unit tests and static analysis tools before submitting changes:
