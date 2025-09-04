@@ -1,5 +1,9 @@
-import { main } from '../../src/main';
+import request from 'supertest';
+import { createServer } from '../../src/main';
 
-test('main returns greeting', () => {
-  expect(main()).toBe('Hello from smart-contract-marketplace');
+test('server provides contracts endpoint', async () => {
+  const app = createServer();
+  const res = await request(app).get('/contracts');
+  expect(res.status).toBe(200);
+  expect(res.body.contracts).toHaveLength(1);
 });

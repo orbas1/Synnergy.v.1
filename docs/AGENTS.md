@@ -30,6 +30,7 @@
 - Stage 23: Completed – node-operations-dashboard status service and security-operations-center configuration hardened.
 - Stage 24: Completed – security-operations-center runtime, documentation and deployment scaffolds finalised.
 - Stage 25: Completed – security tests and smart-contract-marketplace config hardened.
+- Stage 26: Completed – smart-contract-marketplace API server, docs and tests added.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -547,25 +548,25 @@
 - [x] GUI/smart-contract-marketplace/jest.config.js – tests include src and tests dirs
 
 **Stage 26**
-- [ ] GUI/smart-contract-marketplace/k8s/.gitkeep
-- [ ] GUI/smart-contract-marketplace/k8s/deployment.yaml
-- [ ] GUI/smart-contract-marketplace/package-lock.json
-- [ ] GUI/smart-contract-marketplace/package.json
-- [ ] GUI/smart-contract-marketplace/src/components/.gitkeep
-- [ ] GUI/smart-contract-marketplace/src/hooks/.gitkeep
-- [ ] GUI/smart-contract-marketplace/src/main.test.ts
-- [ ] GUI/smart-contract-marketplace/src/main.ts
-- [ ] GUI/smart-contract-marketplace/src/pages/.gitkeep
-- [ ] GUI/smart-contract-marketplace/src/services/.gitkeep
-- [ ] GUI/smart-contract-marketplace/src/state/.gitkeep
-- [ ] GUI/smart-contract-marketplace/src/styles/.gitkeep
-- [ ] GUI/smart-contract-marketplace/tests/e2e/.gitkeep
-- [ ] GUI/smart-contract-marketplace/tests/e2e/example.e2e.test.ts
-- [ ] GUI/smart-contract-marketplace/tests/unit/.gitkeep
-- [ ] GUI/smart-contract-marketplace/tests/unit/example.test.ts
-- [ ] GUI/smart-contract-marketplace/tsconfig.json
-- [ ] GUI/storage-marketplace/.env.example
-- [ ] GUI/storage-marketplace/.eslintrc.json
+- [x] GUI/smart-contract-marketplace/k8s/.gitkeep
+- [x] GUI/smart-contract-marketplace/k8s/deployment.yaml
+- [x] GUI/smart-contract-marketplace/package-lock.json
+- [x] GUI/smart-contract-marketplace/package.json
+- [x] GUI/smart-contract-marketplace/src/components/.gitkeep
+- [x] GUI/smart-contract-marketplace/src/hooks/.gitkeep
+- [x] GUI/smart-contract-marketplace/src/main.test.ts
+- [x] GUI/smart-contract-marketplace/src/main.ts
+- [x] GUI/smart-contract-marketplace/src/pages/.gitkeep
+- [x] GUI/smart-contract-marketplace/src/services/.gitkeep
+- [x] GUI/smart-contract-marketplace/src/state/.gitkeep
+- [x] GUI/smart-contract-marketplace/src/styles/.gitkeep
+- [x] GUI/smart-contract-marketplace/tests/e2e/.gitkeep
+- [x] GUI/smart-contract-marketplace/tests/e2e/example.e2e.test.ts
+- [x] GUI/smart-contract-marketplace/tests/unit/.gitkeep
+- [x] GUI/smart-contract-marketplace/tests/unit/example.test.ts
+- [x] GUI/smart-contract-marketplace/tsconfig.json
+- [x] GUI/storage-marketplace/.env.example
+- [x] GUI/storage-marketplace/.eslintrc.json
 
 **Stage 27**
 - [ ] GUI/storage-marketplace/.gitignore
