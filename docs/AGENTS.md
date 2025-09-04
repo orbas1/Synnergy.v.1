@@ -4,6 +4,7 @@
 
 ### Progress
 - Stage 1: In Progress – issue templates, PR template, README and root `.gitignore` upgraded; remaining files pending.
+- Stage 2: Completed – ai-marketplace scaffold enhanced with CI, config and tests.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -27,25 +28,25 @@
 - [ ] GUI/ai-marketplace/Makefile
 
 **Stage 2**
-- [ ] GUI/ai-marketplace/README.md
-- [ ] GUI/ai-marketplace/ci/.gitkeep
-- [ ] GUI/ai-marketplace/ci/pipeline.yml
-- [ ] GUI/ai-marketplace/config/.gitkeep
-- [ ] GUI/ai-marketplace/config/production.ts
-- [ ] GUI/ai-marketplace/docker-compose.yml
-- [ ] GUI/ai-marketplace/docs/.gitkeep
-- [ ] GUI/ai-marketplace/docs/README.md
-- [ ] GUI/ai-marketplace/jest.config.js
-- [ ] GUI/ai-marketplace/k8s/.gitkeep
-- [ ] GUI/ai-marketplace/k8s/deployment.yaml
-- [ ] GUI/ai-marketplace/package-lock.json
-- [ ] GUI/ai-marketplace/package.json
-- [ ] GUI/ai-marketplace/src/components/.gitkeep
-- [ ] GUI/ai-marketplace/src/hooks/.gitkeep
-- [ ] GUI/ai-marketplace/src/main.test.ts
-- [ ] GUI/ai-marketplace/src/main.ts
-- [ ] GUI/ai-marketplace/src/pages/.gitkeep
-- [ ] GUI/ai-marketplace/src/services/.gitkeep
+- [x] GUI/ai-marketplace/README.md
+- [x] GUI/ai-marketplace/ci/.gitkeep
+- [x] GUI/ai-marketplace/ci/pipeline.yml
+- [x] GUI/ai-marketplace/config/.gitkeep
+- [x] GUI/ai-marketplace/config/production.ts
+- [x] GUI/ai-marketplace/docker-compose.yml
+- [x] GUI/ai-marketplace/docs/.gitkeep
+- [x] GUI/ai-marketplace/docs/README.md
+- [x] GUI/ai-marketplace/jest.config.js
+- [x] GUI/ai-marketplace/k8s/.gitkeep
+- [x] GUI/ai-marketplace/k8s/deployment.yaml
+- [x] GUI/ai-marketplace/package-lock.json
+- [x] GUI/ai-marketplace/package.json
+- [x] GUI/ai-marketplace/src/components/.gitkeep
+- [x] GUI/ai-marketplace/src/hooks/.gitkeep
+- [x] GUI/ai-marketplace/src/main.test.ts
+- [x] GUI/ai-marketplace/src/main.ts
+- [x] GUI/ai-marketplace/src/pages/.gitkeep
+- [x] GUI/ai-marketplace/src/services/.gitkeep
 
 **Stage 3**
 - [ ] GUI/ai-marketplace/src/state/.gitkeep

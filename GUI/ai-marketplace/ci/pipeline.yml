@@ -1,1 +1,22 @@
-# Placeholder CI pipeline for ai-marketplace
+name: ai-marketplace CI
+
+on:
+  push:
+    paths:
+      - 'GUI/ai-marketplace/**'
+  pull_request:
+    paths:
+      - 'GUI/ai-marketplace/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - run: npm ci
+      - run: npm test
+      - run: npm run build

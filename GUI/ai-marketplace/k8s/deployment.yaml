@@ -15,5 +15,8 @@ spec:
       containers:
         - name: ai-marketplace
           image: ai-marketplace:latest
+          env:
+            - name: PORT
+              value: "3000"
           ports:
-            - containerPort: 80
+            - containerPort: 3000

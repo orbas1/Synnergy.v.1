@@ -2,5 +2,9 @@ version: '3'
 services:
   app:
     build: .
+    command: npm start
+    environment:
+      - PORT=3000
+      - API_URL=http://localhost:3000
     ports:
       - "3000:3000"
