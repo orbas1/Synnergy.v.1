@@ -1,5 +1,6 @@
 import { main } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('mining-staking-manager');
+test('main renders dashboard with total stake', async () => {
+  const output = await main();
+  expect(output).toContain('Total Stake');
 });
