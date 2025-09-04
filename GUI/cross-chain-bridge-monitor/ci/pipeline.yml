@@ -1,1 +1,19 @@
-# Placeholder CI pipeline for cross-chain-bridge-monitor
+stages:
+  - install
+  - test
+  - build
+
+install:
+  stage: install
+  script:
+    - npm ci
+
+test:
+  stage: test
+  script:
+    - npm test
+
+build:
+  stage: build
+  script:
+    - npm run build
