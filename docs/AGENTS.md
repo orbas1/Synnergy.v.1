@@ -9,7 +9,8 @@
 - Stage 4: Completed – authority-node-index docs, configuration, tests and Kubernetes deployment enhanced.
 - Stage 5: Completed – authority-node-index tsconfig and compliance-dashboard configuration hardened.
 - Stage 6: Completed – compliance-dashboard backend and bridge-monitor configs upgraded.
-- Stage 7: In Progress – cross-chain-bridge-monitor docs, config, and CI pipeline enhanced; GUI components remain placeholders.
+- Stage 7: Completed – cross-chain-bridge-monitor docs, config, and CI pipeline solidified.
+- Stage 8: Completed – cross-chain-bridge-monitor services and cross-chain-management configuration scaffolds added.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -159,25 +160,25 @@
 - [ ] GUI/cross-chain-bridge-monitor/src/pages/.gitkeep
 
 **Stage 8**
-- [ ] GUI/cross-chain-bridge-monitor/src/services/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/src/state/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/src/styles/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/tests/e2e/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/tests/e2e/example.e2e.test.ts
-- [ ] GUI/cross-chain-bridge-monitor/tests/unit/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/tests/unit/example.test.ts
-- [ ] GUI/cross-chain-bridge-monitor/tsconfig.json
-- [ ] GUI/cross-chain-management/.env.example
-- [ ] GUI/cross-chain-management/.eslintrc.json
-- [ ] GUI/cross-chain-management/.gitignore
-- [ ] GUI/cross-chain-management/.prettierrc
-- [ ] GUI/cross-chain-management/Dockerfile
-- [ ] GUI/cross-chain-management/Makefile
-- [ ] GUI/cross-chain-management/README.md
-- [ ] GUI/cross-chain-management/ci/.gitkeep
-- [ ] GUI/cross-chain-management/ci/pipeline.yml
-- [ ] GUI/cross-chain-management/config/.gitkeep
-- [ ] GUI/cross-chain-management/config/production.ts
+- [x] GUI/cross-chain-bridge-monitor/src/services/.gitkeep
+- [x] GUI/cross-chain-bridge-monitor/src/state/.gitkeep
+- [x] GUI/cross-chain-bridge-monitor/src/styles/.gitkeep
+- [x] GUI/cross-chain-bridge-monitor/tests/e2e/.gitkeep
+- [x] GUI/cross-chain-bridge-monitor/tests/e2e/example.e2e.test.ts
+- [x] GUI/cross-chain-bridge-monitor/tests/unit/.gitkeep
+- [x] GUI/cross-chain-bridge-monitor/tests/unit/example.test.ts
+- [x] GUI/cross-chain-bridge-monitor/tsconfig.json
+- [x] GUI/cross-chain-management/.env.example
+- [x] GUI/cross-chain-management/.eslintrc.json
+- [x] GUI/cross-chain-management/.gitignore
+- [x] GUI/cross-chain-management/.prettierrc
+- [x] GUI/cross-chain-management/Dockerfile
+- [x] GUI/cross-chain-management/Makefile
+- [x] GUI/cross-chain-management/README.md
+- [x] GUI/cross-chain-management/ci/.gitkeep
+- [x] GUI/cross-chain-management/ci/pipeline.yml
+- [x] GUI/cross-chain-management/config/.gitkeep
+- [x] GUI/cross-chain-management/config/production.ts
 
 **Stage 9**
 - [ ] GUI/cross-chain-management/docker-compose.yml

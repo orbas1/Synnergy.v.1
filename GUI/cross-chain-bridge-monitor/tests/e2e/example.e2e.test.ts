@@ -1,3 +1,5 @@
-test('e2e placeholder', () => {
-  expect(true).toBe(true);
+import { getBridgeStatus } from '../../src/services/bridgeService';
+
+test('basic bridge workflow returns ok status', () => {
+  expect(getBridgeStatus()).toBe('ok');
 });
