@@ -11,7 +11,8 @@ The documentation is split into three main sections:
 
 | Path | Description |
 |------|-------------|
-| [`guides/`](guides/) | How‑to articles and conceptual overviews for every major module. Guides are written for developers, node operators and CLI users. |
+| [`guides/`](guides/) | Quickstart and how‑to articles for developers, node operators, and GUI users. |
+| [`api/`](api/) | Package‑level references and instructions for generating API documentation. |
 | [`adr/`](adr/) | Architecture Decision Records describing significant technical choices made during development. |
 | [`performance_benchmarks.md`](performance_benchmarks.md) | Baseline performance figures and instructions for running benchmarks. |
 
