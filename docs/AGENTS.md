@@ -32,6 +32,8 @@
 - Stage 25: Completed – security tests and smart-contract-marketplace config hardened.
 - Stage 26: Completed – smart-contract-marketplace API server, docs and tests added.
 - Stage 27: Completed – storage-marketplace GUI scaffold with configs, Docker and CI.
+- Stage 28: Completed – storage marketplace module finalized and system analytics dashboard scaffold created.
+- Stage 29: Completed – system analytics dashboard CI pipeline, configuration and tests established.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -611,7 +613,7 @@
 - [x] GUI/system-analytics-dashboard/README.md
 - [x] GUI/system-analytics-dashboard/ci/.gitkeep
 
-**Stage 29**
+**Stage 29** ✅ Completed – system analytics dashboard CI, config and tests established
 - [ ] GUI/system-analytics-dashboard/ci/pipeline.yml
 - [ ] GUI/system-analytics-dashboard/config/.gitkeep
 - [ ] GUI/system-analytics-dashboard/config/production.ts
@@ -5666,27 +5668,27 @@
 | 28 | GUI/system-analytics-dashboard/.prettierrc | [ ] |
 | 28 | GUI/system-analytics-dashboard/Dockerfile | [ ] |
 | 28 | GUI/system-analytics-dashboard/Makefile | [ ] |
-| 28 | GUI/system-analytics-dashboard/README.md | [ ] |
-| 28 | GUI/system-analytics-dashboard/ci/.gitkeep | [ ] |
-| 29 | GUI/system-analytics-dashboard/ci/pipeline.yml | [ ] |
-| 29 | GUI/system-analytics-dashboard/config/.gitkeep | [ ] |
-| 29 | GUI/system-analytics-dashboard/config/production.ts | [ ] |
-| 29 | GUI/system-analytics-dashboard/docker-compose.yml | [ ] |
-| 29 | GUI/system-analytics-dashboard/docs/.gitkeep | [ ] |
-| 29 | GUI/system-analytics-dashboard/docs/README.md | [ ] |
-| 29 | GUI/system-analytics-dashboard/jest.config.js | [ ] |
-| 29 | GUI/system-analytics-dashboard/k8s/.gitkeep | [ ] |
-| 29 | GUI/system-analytics-dashboard/k8s/deployment.yaml | [ ] |
-| 29 | GUI/system-analytics-dashboard/package-lock.json | [ ] |
-| 29 | GUI/system-analytics-dashboard/package.json | [ ] |
-| 29 | GUI/system-analytics-dashboard/src/components/.gitkeep | [ ] |
-| 29 | GUI/system-analytics-dashboard/src/hooks/.gitkeep | [ ] |
-| 29 | GUI/system-analytics-dashboard/src/main.test.ts | [ ] |
-| 29 | GUI/system-analytics-dashboard/src/main.ts | [ ] |
-| 29 | GUI/system-analytics-dashboard/src/pages/.gitkeep | [ ] |
-| 29 | GUI/system-analytics-dashboard/src/services/.gitkeep | [ ] |
-| 29 | GUI/system-analytics-dashboard/src/state/.gitkeep | [ ] |
-| 29 | GUI/system-analytics-dashboard/src/styles/.gitkeep | [ ] |
+| 28 | GUI/system-analytics-dashboard/README.md | [x] |
+| 28 | GUI/system-analytics-dashboard/ci/.gitkeep | [x] |
+| 29 | GUI/system-analytics-dashboard/ci/pipeline.yml | [x] |
+| 29 | GUI/system-analytics-dashboard/config/.gitkeep | [x] |
+| 29 | GUI/system-analytics-dashboard/config/production.ts | [x] |
+| 29 | GUI/system-analytics-dashboard/docker-compose.yml | [x] |
+| 29 | GUI/system-analytics-dashboard/docs/.gitkeep | [x] |
+| 29 | GUI/system-analytics-dashboard/docs/README.md | [x] |
+| 29 | GUI/system-analytics-dashboard/jest.config.js | [x] |
+| 29 | GUI/system-analytics-dashboard/k8s/.gitkeep | [x] |
+| 29 | GUI/system-analytics-dashboard/k8s/deployment.yaml | [x] |
+| 29 | GUI/system-analytics-dashboard/package-lock.json | [x] |
+| 29 | GUI/system-analytics-dashboard/package.json | [x] |
+| 29 | GUI/system-analytics-dashboard/src/components/.gitkeep | [x] |
+| 29 | GUI/system-analytics-dashboard/src/hooks/.gitkeep | [x] |
+| 29 | GUI/system-analytics-dashboard/src/main.test.ts | [x] |
+| 29 | GUI/system-analytics-dashboard/src/main.ts | [x] |
+| 29 | GUI/system-analytics-dashboard/src/pages/.gitkeep | [x] |
+| 29 | GUI/system-analytics-dashboard/src/services/.gitkeep | [x] |
+| 29 | GUI/system-analytics-dashboard/src/state/.gitkeep | [x] |
+| 29 | GUI/system-analytics-dashboard/src/styles/.gitkeep | [x] |
 | 30 | GUI/system-analytics-dashboard/tests/e2e/.gitkeep | [ ] |
 | 30 | GUI/system-analytics-dashboard/tests/e2e/example.e2e.test.ts | [ ] |
 | 30 | GUI/system-analytics-dashboard/tests/unit/.gitkeep | [ ] |
