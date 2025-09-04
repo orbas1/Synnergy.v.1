@@ -29,6 +29,7 @@
 
 - Stage 23: Completed – node-operations-dashboard status service and security-operations-center configuration hardened.
 - Stage 24: Completed – security-operations-center runtime, documentation and deployment scaffolds finalised.
+- Stage 25: Completed – security tests and smart-contract-marketplace config hardened.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -525,25 +526,25 @@
 - [x] GUI/security-operations-center/tests/e2e/.gitkeep – e2e folder tracked
 
 **Stage 25**
-- [ ] GUI/security-operations-center/tests/e2e/example.e2e.test.ts
-- [ ] GUI/security-operations-center/tests/unit/.gitkeep
-- [ ] GUI/security-operations-center/tests/unit/example.test.ts
-- [ ] GUI/security-operations-center/tsconfig.json
-- [ ] GUI/smart-contract-marketplace/.env.example
-- [ ] GUI/smart-contract-marketplace/.eslintrc.json
-- [ ] GUI/smart-contract-marketplace/.gitignore
-- [ ] GUI/smart-contract-marketplace/.prettierrc
-- [ ] GUI/smart-contract-marketplace/Dockerfile
-- [ ] GUI/smart-contract-marketplace/Makefile
-- [ ] GUI/smart-contract-marketplace/README.md
-- [ ] GUI/smart-contract-marketplace/ci/.gitkeep
-- [ ] GUI/smart-contract-marketplace/ci/pipeline.yml
-- [ ] GUI/smart-contract-marketplace/config/.gitkeep
-- [ ] GUI/smart-contract-marketplace/config/production.ts
-- [ ] GUI/smart-contract-marketplace/docker-compose.yml
-- [ ] GUI/smart-contract-marketplace/docs/.gitkeep
-- [ ] GUI/smart-contract-marketplace/docs/README.md
-- [ ] GUI/smart-contract-marketplace/jest.config.js
+- [x] GUI/security-operations-center/tests/e2e/example.e2e.test.ts – e2e boots with API URL
+- [x] GUI/security-operations-center/tests/unit/.gitkeep – unit folder tracked
+- [x] GUI/security-operations-center/tests/unit/example.test.ts – verifies default API
+- [x] GUI/security-operations-center/tsconfig.json – unused checks enabled
+- [x] GUI/smart-contract-marketplace/.env.example – API and port placeholders
+- [x] GUI/smart-contract-marketplace/.eslintrc.json – lint for unused vars
+- [x] GUI/smart-contract-marketplace/.gitignore – ignore npm debug logs
+- [x] GUI/smart-contract-marketplace/.prettierrc – trailing comma option
+- [x] GUI/smart-contract-marketplace/Dockerfile – reproducible installs
+- [x] GUI/smart-contract-marketplace/Makefile – lint and format targets
+- [x] GUI/smart-contract-marketplace/README.md – document scripts and env
+- [x] GUI/smart-contract-marketplace/ci/.gitkeep – CI folder tracked
+- [x] GUI/smart-contract-marketplace/ci/pipeline.yml – npm ci, test, build
+- [x] GUI/smart-contract-marketplace/config/.gitkeep – config folder tracked
+- [x] GUI/smart-contract-marketplace/config/production.ts – default API URL
+- [x] GUI/smart-contract-marketplace/docker-compose.yml – API env wired
+- [x] GUI/smart-contract-marketplace/docs/.gitkeep – docs folder tracked
+- [x] GUI/smart-contract-marketplace/docs/README.md – expanded documentation
+- [x] GUI/smart-contract-marketplace/jest.config.js – tests include src and tests dirs
 
 **Stage 26**
 - [ ] GUI/smart-contract-marketplace/k8s/.gitkeep

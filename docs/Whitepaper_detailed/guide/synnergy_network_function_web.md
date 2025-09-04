@@ -21,7 +21,8 @@ can invoke for inter-network workflows.
 Stage 25 finalises node operations. Full, light, mining, mobile, optimisation,
 staking, watchtower and warfare nodes offer JSON emitting commands allowing the
 function web and external dashboards to orchestrate infrastructure with defined
-gas costs.
+gas costs. A security operations center and smart contract marketplace expose
+these capabilities through hardened GUIs backed by CLI hooks.
 Stage 26 extends operational visibility with gas table controls. Operators can
 adjust opcode pricing on the fly and export the entire schedule as JSON,
 enabling governance portals and monitoring systems to consume pricing data

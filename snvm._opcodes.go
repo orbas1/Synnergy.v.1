@@ -1272,6 +1272,8 @@ var SNVMOpcodes = []SNVMOpcode{
 	{"core_nft_marketplace_Buy", 0x0004EC},
 	{"gui_data_distribution_monitor_Status", 0x0004ED},
 	{"gui_dex_screener_Liquidity", 0x0004EE},
+	{"gui_security_operations_RaiseAlert", 0x0004EF},
+	{"gui_smart_contract_marketplace_ListContract", 0x0004F0},
 }
 
 // SNVMOpcodeByName returns the opcode for a given function identifier.

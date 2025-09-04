@@ -35,6 +35,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Data distribution monitor** – CLI and GUI for network telemetry.
 - **Node operations dashboard** – TypeScript CLI and GUI for real-time node health monitoring.
 - **Security operations center** – monitors and aggregates security events with a CLI-accessible GUI.
+- **Smart contract marketplace** – publish and trade vetted contracts through CLI or GUI with deterministic gas costs.
 - **Infrastructure-as-code** – Dockerfiles, Helm charts, Terraform and Ansible playbooks for reproducible environments.
 - **Strong encryption and signatures** – all transactions and messages are secured using well‑vetted cryptography with digital signatures.
 - **Permissioned privacy** – fine‑grained access controls enable private channels and selective data disclosure.
