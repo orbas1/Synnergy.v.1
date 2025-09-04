@@ -21118,3 +21118,15 @@ maintain availability automatically.
 ### Node Operations Dashboard CLI
 
 The `node-operations-dashboard` module provides a lightweight CLI accessed with `npm start` to view node health status.
+
+### System Analytics Dashboard CLI
+
+The `system-analytics-dashboard` module supplies TypeScript utilities for collecting and serving metrics.
+
+```bash
+cd GUI/system-analytics-dashboard
+npm install
+npm start
+```
+
+Tests and lint checks can be run with `npm test` and `npm run lint` respectively.

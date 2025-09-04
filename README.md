@@ -36,6 +36,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Node operations dashboard** – TypeScript CLI and GUI for real-time node health monitoring.
 - **Security operations center** – monitors and aggregates security events with a CLI-accessible GUI.
 - **Smart contract marketplace** – publish and trade vetted contracts through CLI or GUI with deterministic gas costs.
+- **Storage marketplace & analytics dashboards** – TypeScript modules exposing CLI and GUI entrypoints for decentralised storage and system metrics.
 - **Infrastructure-as-code** – Dockerfiles, Helm charts, Terraform and Ansible playbooks for reproducible environments.
 - **Strong encryption and signatures** – all transactions and messages are secured using well‑vetted cryptography with digital signatures.
 - **Permissioned privacy** – fine‑grained access controls enable private channels and selective data disclosure.
@@ -185,6 +186,8 @@ See [SECURITY.md](SECURITY.md) for policies, and use `scripts/aml_kyc_process.sh
 ```bash
 go test ./...
 scripts/run_tests.sh          # execute full suite including integration tests
+npm test --prefix GUI/storage-marketplace            # run storage marketplace tests
+npm test --prefix GUI/system-analytics-dashboard     # run dashboard tests
 ```
 
 ## Documentation
