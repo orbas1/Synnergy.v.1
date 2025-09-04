@@ -5,7 +5,12 @@
     "outDir": "dist",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "noEmitOnError": true,
+    "types": ["node", "jest"]
   },
   "include": ["src/**/*"]
 }

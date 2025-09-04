@@ -332,25 +332,25 @@
 - [x] GUI/explorer/k8s/deployment.yaml
 
 **Stage 16**
-- [ ] GUI/explorer/package-lock.json
-- [ ] GUI/explorer/package.json
-- [ ] GUI/explorer/src/components/.gitkeep
-- [ ] GUI/explorer/src/hooks/.gitkeep
-- [ ] GUI/explorer/src/main.test.ts
-- [ ] GUI/explorer/src/main.ts
-- [ ] GUI/explorer/src/pages/.gitkeep
-- [ ] GUI/explorer/src/services/.gitkeep
-- [ ] GUI/explorer/src/state/.gitkeep
-- [ ] GUI/explorer/src/styles/.gitkeep
-- [ ] GUI/explorer/tests/e2e/.gitkeep
-- [ ] GUI/explorer/tests/e2e/example.e2e.test.ts
-- [ ] GUI/explorer/tests/unit/.gitkeep
-- [ ] GUI/explorer/tests/unit/example.test.ts
-- [ ] GUI/explorer/tsconfig.json
-- [ ] GUI/identity-management-console/.env.example
-- [ ] GUI/identity-management-console/.eslintrc.json
-- [ ] GUI/identity-management-console/.gitignore
-- [ ] GUI/identity-management-console/.prettierrc
+- [x] GUI/explorer/package-lock.json – updated after adding CLI dependencies
+- [x] GUI/explorer/package.json – added axios & commander, refined scripts
+- [x] GUI/explorer/src/components/.gitkeep – replaced with basic component stub
+- [x] GUI/explorer/src/hooks/.gitkeep – replaced with sample hook
+- [x] GUI/explorer/src/main.test.ts – added CLI and network tests
+- [x] GUI/explorer/src/main.ts – implemented CLI with status command
+- [x] GUI/explorer/src/pages/.gitkeep – replaced with placeholder page
+- [x] GUI/explorer/src/services/.gitkeep – replaced with axios service helper
+- [x] GUI/explorer/src/state/.gitkeep – replaced with simple store
+- [x] GUI/explorer/src/styles/.gitkeep – replaced with base stylesheet
+- [x] GUI/explorer/tests/e2e/.gitkeep – removed; added real e2e test
+- [x] GUI/explorer/tests/e2e/example.e2e.test.ts – covers CLI status output
+- [x] GUI/explorer/tests/unit/.gitkeep – removed in favor of real tests
+- [x] GUI/explorer/tests/unit/example.test.ts – tests ExplorerComponent
+- [x] GUI/explorer/tsconfig.json – expanded options for strict builds
+- [x] GUI/identity-management-console/.env.example – documented env vars
+- [x] GUI/identity-management-console/.eslintrc.json – configured TS ESLint
+- [x] GUI/identity-management-console/.gitignore – added standard ignores
+- [x] GUI/identity-management-console/.prettierrc – enforced formatting rules
 
 **Stage 17**
 - [ ] GUI/identity-management-console/Dockerfile

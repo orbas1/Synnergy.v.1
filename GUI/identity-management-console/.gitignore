@@ -1,4 +1,8 @@
 node_modules
+Dist
 dist
 coverage
 .env
+*.log
+npm-debug.log*
+.DS_Store
