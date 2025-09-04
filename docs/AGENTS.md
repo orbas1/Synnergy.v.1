@@ -20,6 +20,8 @@
 - Stage 16: Completed – explorer CLI and identity-management-console configs established.
 - Stage 17: Completed – identity-management-console pipeline, docs, and deployment scaffolds added.
 
+- Stage 18: In Progress – identity-management-console CLI gains user registration with tests; mining-staking-manager pending.
+
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
 - [ ] .github/ISSUE_TEMPLATE/config.yml
@@ -375,15 +377,13 @@
 - [x] GUI/identity-management-console/src/main.ts – CLI using commander with name flag
 
 **Stage 18**
-- [ ] GUI/identity-management-console/src/pages/.gitkeep
-- [ ] GUI/identity-management-console/src/services/.gitkeep
-- [ ] GUI/identity-management-console/src/state/.gitkeep
-- [ ] GUI/identity-management-console/src/styles/.gitkeep
-- [ ] GUI/identity-management-console/tests/e2e/.gitkeep
-- [ ] GUI/identity-management-console/tests/e2e/example.e2e.test.ts
-- [ ] GUI/identity-management-console/tests/unit/.gitkeep
-- [ ] GUI/identity-management-console/tests/unit/example.test.ts
-- [ ] GUI/identity-management-console/tsconfig.json
+- [x] GUI/identity-management-console/src/pages/login.ts
+- [x] GUI/identity-management-console/src/services/identityService.ts
+- [x] GUI/identity-management-console/src/state/store.ts
+- [x] GUI/identity-management-console/src/styles/main.css
+- [x] GUI/identity-management-console/tests/e2e/cli.e2e.test.ts
+- [x] GUI/identity-management-console/tests/unit/identityService.test.ts
+- [x] GUI/identity-management-console/tsconfig.json
 - [ ] GUI/mining-staking-manager/.env.example
 - [ ] GUI/mining-staking-manager/.eslintrc.json
 - [ ] GUI/mining-staking-manager/.gitignore
