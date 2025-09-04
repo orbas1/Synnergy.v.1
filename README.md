@@ -1,158 +1,190 @@
-# Synnergy
+# Synnergy: Enterprise Blockchain Framework
 
+Synnergy is a modular, high-performance blockchain written in Go and built for enterprise production use.  It exposes pluggable node roles, cross-chain interoperability and AI-assisted contract tooling so organisations can prototype, pilot and run distributed networks with the same codebase.
 
-Synnergy is an enterprise production blockchain written in Go. This repository contains the command line applications, core packages, GUI front‑ends and example smart contracts used to simulate a full network. The code is primarily intended for research and learning. For the vision and background see [`synnergy-network/WHITEPAPER.md`](synnergy-network/WHITEPAPER.md).
-## Documentation
+## Table of Contents
+- [Key Features](#key-features)
+- [Architecture & Code Map](#architecture--code-map)
+- [Bootstrap Sequence](#bootstrap-sequence)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Build from Source](#build-from-source)
+  - [Configuration](#configuration)
+  - [Run a Local Node](#run-a-local-node)
+  - [Multi-node Devnet](#multi-node-devnet)
+- [CLI Modules](#cli-modules)
+- [Production Deployment](#production-deployment)
+  - [Docker Compose](#docker-compose)
+  - [Kubernetes (Helm)](#kubernetes-helm)
+  - [Terraform & Ansible](#terraform--ansible)
+- [High Availability & Scaling](#high-availability--scaling)
+- [Monitoring & Observability](#monitoring--observability)
+- [Security & Compliance](#security--compliance)
+- [Testing](#testing)
+- [Documentation](#documentation)
+- [Contributing](#contributing)
+- [License](#license)
 
-All guides and architecture decision records are located under the `docs/` directory and are built with MkDocs. Run `mkdocs serve` for a live server or `mkdocs build` to generate the static site. For deploying and exercising the full test suite on a server, see [`docs/guides/server_setup_guide.md`](docs/guides/server_setup_guide.md).
+## Key Features
+- **Pluggable node roles** – mining, staking, authority, regulatory, watchtower, warfare and more via constructors such as `core.NewMiningNode` and `core.NewRegulatoryNode`.
+- **Cross-chain interoperability** – bridges, connection managers and transaction relays (`core.NewBridgeRegistry`, `core.NewChainConnectionManager`, `core.NewCrossChainTxManager`).
+- **AI modules** – contract management, inference analysis, anomaly detection and secure storage (`core.NewAIEnhancedContract`, `core.NewAIDriftMonitor`).
+- **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()` and registered with `synnergy.RegisterGasCost()`.
+- **Role-based security** – biometric authentication (`core.NewBiometricService`), zero‑trust data channels and PKI tooling.
+- **Extensible CLI** – built with [Cobra](https://github.com/spf13/cobra) and backed by `cli.Execute()`.
+- **Infrastructure-as-code** – Dockerfiles, Helm charts, Terraform and Ansible playbooks for reproducible environments.
 
-
-## Features
-- Pluggable node types for mining, staking, authority, regulatory, watchtower and other roles.
-- Extensive CLI built with [Cobra](https://github.com/spf13/cobra) located under `cli/`.
-- AI modules for model management, inference analysis and anomaly detection.
-- AI-enhanced contract registry with on-chain audit logging.
-- Cross‑chain bridge and protocol support.
-- Role‑based access control with validated address utilities.
-- Biometric security backed by ECDSA signatures for sensitive node operations.
-- YAML based configuration for development, test and production environments.
-- Web interfaces for wallets, explorers and marketplaces under `GUI/`.
-- Smart‑contract marketplace GUI demonstrating contract deployment and trading through the CLI.
-- JSON emitting CLI commands for authority and institutional banking nodes to ease integration with web dashboards.
-- Built-in ledger synchronization and snapshot compression utilities with
-  central bank and charity pool modules enforcing capped supply and donation
-  tracking.
-- Structured JSON logging with pluggable backends for compliance, connection and consensus modules.
-- Stage 7 adds a unified errors package and OpenTelemetry tracing for consensus and contract management components, improving diagnostics across the CLI and services.
-- Stage 8 introduces a contract registry and cross‑chain transaction managers with full CLI access and gas‑priced opcodes for deterministic execution.
-- Stage 9 adds DAO governance, custodial nodes and cross-consensus network tooling with gas-priced opcodes and CLI support.
-- Stage 11 introduces a context-aware virtual machine and sandbox manager, enabling contract execution with timeouts and full lifecycle control through the CLI. Inactive sandboxes can be purged automatically via `synnergy sandbox purge` to reclaim resources.
-- Stage 12 adds a hex-encoded wallet implementation and specialised warfare and watchtower nodes. The CLI can generate wallets, track logistics for military assets and monitor network health through these modules.
-- Stage 13 introduces zero trust data channels with authenticated encryption and regulatory nodes that automatically flag non-compliant transactions.
-- Stage 14 consolidates node lifecycle management under an internal `nodes` package with a reusable interface and reference implementations for light, watchtower and logistics nodes.
-- Stage 15 expands internal node variants with in-memory forensic, geospatial, historical and elected authority nodes, enabling richer diagnostics and data services across the network.
-- Stage 16 introduces a concurrency-safe token registry and base token with micro-benchmarks to track transfer throughput.
-- Stage 17 delivers standard token contracts including CBDC, pausable utility and gaming asset tokens. Each implementation is thread-safe and accessible via dedicated CLI modules.
-- Stage 18 expands the token library with investor share registries, life and general insurance policies, forex pairs, fiat‑pegged currencies, index funds, charity campaigns and legal document tokens, all validated and manageable through the CLI.
-- Stage 19 adds a reserve-backed stablecoin (`SYN1000`) with an index manager and high-precision, thread-safe reserve accounting accessible through dedicated CLI commands.
-- Stage 20 introduces dividend, convertible, governance, capped supply, vesting,
-  loyalty and multi-chain token standards with accompanying CLI and VM
-  integration.
-- Stage 21 streamlines core CLI operations for network, node and access
-  management, adding structured output and error propagation for peer
-  discovery, staking and address utilities.
-- Stage 22 refines AI contract and audit CLI modules, providing consistent error
-  handling and JSON-formatted output for integration with external tooling.
-- Stage 23 adds gas-aware consensus and DAO governance commands. CLI operations
-  such as block mining and DAO creation now emit their expected gas cost for
-  better planning and integration with wallets and GUIs.
-- Stage 24 expands cross-chain bridges and Plasma management. CLI commands now
-  surface gas usage for inter-chain transfers and support JSON output for web
-  dashboards.
-- Stage 25 adds comprehensive node management. Full, light, mining, mobile,
-  optimisation, staking, watchtower and warfare nodes expose JSON emitting CLI
-  operations for integration with GUIs and automation.
-- Stage 26 enhances operational utilities. Gas table management now allows
-  runtime opcode price adjustments and JSON snapshots so dashboards and
-  governance tools can consume pricing data directly from the CLI.
-- Stage 27 adds developer and testnet automation scripts, covering network bootstrapping, contract deployment, linting and test execution for streamlined workflows.
-- Stage 28 introduces release packaging, documentation generation, CI setup and ledger backup scripts for reproducible builds and disaster recovery.
-- Stage 29 adds deployable smart contract templates for token faucets, storage markets, DAO governance, NFT minting and AI model marketplaces. These templates are accessible via CLI with gas-priced opcodes.
-- Stage 30 introduces utility smart contract modules including escrow payments, cross-chain bridges, multisig wallets and regulatory compliance contracts. Each template ships precompiled as WASM and can be deployed through the CLI and VM.
-- Stage 31 debuts a TypeScript GUI wallet that interacts with the CLI. Wallets are generated locally, encrypted with scrypt-derived AES-GCM keys and can query ledger balances through JSON emitting commands.
-- Stage 32 adds a CLI-backed Explorer GUI that displays chain height and block data.
-- Stage 33 introduces an AI Marketplace GUI that deploys AI-enhanced contracts through the CLI.
-- Stage 34 introduces a Smart-Contract Marketplace GUI enabling contract deployment and trading via the CLI.
-- Stage 35 adds a Storage Marketplace GUI where users can list and lease storage through the CLI.
-- Stage 36 debuts an NFT Marketplace GUI for minting and trading NFTs via the CLI with gas-priced opcodes.
-- Stage 37 debuts a DAO Explorer GUI that manages DAO creation and membership via the CLI.
-- Stage 38 debuts a Token Creation Tool GUI that generates token contracts via the CLI.
-- Stage 39 debuts a DEX Screener GUI that surfaces liquidity pool metrics through the CLI.
-- Stage 40 adds Administrative Dashboards for authority node indexing and cross-chain management with full CLI integration.
-- Stage 41 introduces a wallet server backend enabling GUI interactions.
-- Stage 42 adds CLI integration tests validating command wiring.
-- Stage 43 provides GUI wallet integration tests ensuring end-to-end flows.
-- Stage 44 ships smart contract tests for the token faucet template via the CLI and VM.
-- Stage 45 adds script tests validating automated contract deployment workflows.
-- Stage 46 introduces an end-to-end network harness to exercise node, wallet and CLI interoperability.
-- Stage 47 provides Dockerfiles and a compose configuration for containerised nodes and the wallet server, enabling reproducible deployments.
-- Stage 48 adds Kubernetes manifests for the node and wallet server, allowing fault-tolerant cluster deployments via `kubectl`.
-- Stage 49 introduces a Helm chart for deploying Synnergy components with opinionated defaults, enabling reproducible cluster deployments via `helm install`.
-- Stage 50 introduces Terraform and Ansible automation for provisioning infrastructure and configuring nodes with fault-tolerant defaults.
-- The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
-
-## Repository layout
+## Architecture & Code Map
 ```
-cmd/          Command line entry points (e.g. `cmd/synnergy`)
-cli/          CLI command implementations
-core/         Blockchain runtime modules (consensus, networking, VM, …)
-configs/      Default configuration files (`dev.yaml`, `test.yaml`, `prod.yaml`)
-internal/     Shared utilities and configuration loading
-GUI/          Web front‑end projects
-docs/         Guides and MkDocs documentation sources
-scripts/      Helper scripts and automation
-pkg/          Reusable packages and libraries
+cmd/          Command-line entry points (`cmd/synnergy`, `cmd/watchtower`, …)
+cli/          Modular CLI commands (network, wallet, contracts, mining, …)
+core/         Blockchain runtime (consensus, networking, VM, node roles)
+configs/      YAML configuration templates
+internal/     Shared utilities such as `config.Load` and token helpers
+GUI/          Web and desktop front-ends
+deploy/       Docker, Helm, Terraform and Ansible manifests
+scripts/      Operational scripts for setup, testing and automation
+docs/         MkDocs sources and reference guides
+pkg/          Reusable libraries and experimental modules
 ```
-Additional extensions live under `node_ext/` and `internal/`.
 
-## Getting started
+## Bootstrap Sequence
+`cmd/synnergy/main.go` orchestrates start-up:
+1. Load environment variables with `gotenv.Load()`.
+2. Resolve configuration path from `SYN_CONFIG` or `config.DefaultConfigPath`.
+3. Parse YAML via `config.Load` and configure logging.
+4. Initialise tracer provider (`otel.SetTracerProvider`).
+5. Warm caches by calling `synnergy.LoadGasTable()` and `synnergy.RegisterGasCost()` for core operations like `MineBlock`, `OpenConnection` and `MintNFT`.
+6. Pre-load modules used by the CLI:
+   - `core.NewNetwork` for pub‑sub networking
+   - `core.NewContractRegistry` backed by `core.NewSimpleVM`
+   - DAO managers (`core.NewDAOManager`, `core.NewProposalManager`, …)
+   - Wallet, watchtower and warfare nodes (`core.NewWallet`, `core.NewWatchtowerNode`, `core.NewWarfareNode`)
+   - Token constructors in `internal/tokens` (`tokens.NewSYN223Token`, etc.)
+7. Finally, invoke `cli.Execute()` to dispatch Cobra commands.
+
+## Getting Started
+
 ### Prerequisites
-- Go 1.24 or newer
-- (optional) Docker for containerised builds
-- (optional) Node.js for GUI projects
+- Go **1.24+**
+- Make (optional but recommended)
+- Docker & Node.js for container builds and GUI projects
 
-### Build the CLI
+### Build from Source
+```bash
+go build ./cmd/synnergy    # or: make build
 ```
-go build ./cmd/synnergy
-# or
-make build
-```
-The resulting binary named `synnergy` is written to the repository root.
+The `synnergy` binary is written to the repository root.
 
-### Run
-Select a configuration file from `configs/` or provide your own via the `SYN_CONFIG` environment variable.
+### Configuration
+Synnergy loads a YAML configuration file using `config.Load`. The path is resolved from the `SYN_CONFIG` environment variable and defaults to `configs/dev.yaml`. Example:
+```yaml
+environment: development
+log_level: debug
+server:
+  host: "127.0.0.1"
+  port: 8080
+database:
+  url: "https://dev-db.example.com"
 ```
+For production builds, compile with `go build -tags prod ./cmd/synnergy` so `config.DefaultConfigPath` points to `configs/prod.yaml`.
+
+### Run a Local Node
+```bash
 export SYN_CONFIG=configs/dev.yaml
-./synnergy --help
-./synnergy network start
+./synnergy network start           # start networking stack
+./synnergy network peers           # list peers
+./synnergy network stop            # stop services
+./synnergy wallet new --out wallet.json --password pass
+./synnergy system_health snapshot  # inspect runtime metrics
 ```
-Helper scripts in `scripts/` can launch multi‑node devnets or testnets for experimentation.
 
-To run the node and wallet server via Docker containers, refer to [docker/README.md](docker/README.md):
+### Multi-node Devnet
+Launch a disposable development network with multiple nodes:
+```bash
+scripts/devnet_start.sh 3   # spawns 3 nodes
 ```
+
+## CLI Modules
+Run `./synnergy --help` for the full command tree. Common modules include:
+
+| Command | Description |
+| ------- | ----------- |
+| `network start|stop|peers|broadcast|subscribe` | Manage the P2P layer backed by `core.NewNetwork` |
+| `wallet new` | Generate encrypted wallets via `core.NewWallet` |
+| `mining start|status|stop|attempt` | Operate a mining node (`core.NewMiningNode`) |
+| `staking_node start|status|stop` | Control the staking service |
+| `contracts compile|deploy|invoke|list|info` | WASM smart contract lifecycle through `core.NewContractRegistry` |
+| `system_health snapshot|log` | Emit metrics and structured logs |
+
+Additional modules cover DAO governance, cross-chain bridges, regulatory nodes, watchtowers and more.
+
+## Production Deployment
+
+### Docker Compose
+```bash
 docker compose -f docker/docker-compose.yml up --build
 ```
+The compose file builds the `cmd/synnergy` Docker image and launches an example node.
 
-To deploy Synnergy components with Helm, use the provided chart:
-```
+### Kubernetes (Helm)
+```bash
 helm install synnergy deploy/helm/synnergy
 ```
+Override settings with `--set` or by editing `deploy/helm/synnergy/values.yaml` to specify image tags, replicas and resource limits.
 
-To provision infrastructure with Terraform and configure nodes with Ansible:
-```
+### Terraform & Ansible
+```bash
 cd deploy/terraform
 terraform init
 terraform apply -var 'ami_id=ami-123456'
 
-ansible-playbook -i <inventory> ../ansible/playbook.yml
+ansible-playbook -i <inventory> deploy/ansible/playbook.yml
 ```
+These templates provision cloud infrastructure and configure nodes with hardened defaults.
 
-## Testing and security checks
-Run the unit tests and static analysis tools before submitting changes:
+## High Availability & Scaling
+Scripts under `scripts/` provide building blocks for resilient clusters:
+```bash
+scripts/high_availability_setup.sh    # configure active-active replicas
+scripts/ha_failover_test.sh           # simulate node failure
+scripts/active_active_sync.sh         # cross-region state sync
 ```
+For geo-distributed deployments use Kubernetes with multiple replicas and load balancers to achieve automated failover.
+
+## Monitoring & Observability
+Synnergy emits structured logs via Logrus and initializes an OpenTelemetry tracer. Metrics can be exported or inspected directly:
+```bash
+./synnergy system_health snapshot
+scripts/metrics_export.sh     # stream metrics to Prometheus
+scripts/metrics_alert_dispatch.sh  # send alert to webhook
+```
+Integrate results with Prometheus, Grafana or the ELK stack.
+
+## Security & Compliance
+```bash
+make security                 # run staticcheck, gosec and govulncheck
+scripts/pki_setup.sh          # generate certificate authority and node certs
+scripts/wallet_hardware_integration.sh  # configure hardware wallets
+```
+See [SECURITY.md](SECURITY.md) for policies, and use `scripts/aml_kyc_process.sh` or `scripts/compliance_audit.sh` for regulatory workflows.
+
+## Testing
+```bash
 go test ./...
-make security   # runs staticcheck, gosec and govulncheck
+scripts/run_tests.sh          # execute full suite including integration tests
 ```
 
 ## Documentation
-Project guides and architecture notes live under `docs/` and are built with [MkDocs](https://www.mkdocs.org/):
+```bash
+make docs        # build static site into site/
+make docs-serve  # serve documentation locally
 ```
-make docs        # build the static site into site/
-make docs-serve  # serve the documentation locally
-```
+Reference documentation is generated from the `docs/` directory using MkDocs.
 
 ## Contributing
-Development follows the staged workflow described in [AGENTS.md](AGENTS.md).  Keep pull requests focused, format code with `go fmt`, verify with `go vet`, and run `go build` and `go test` on the packages you touch.
+Development follows the staged workflow outlined in [AGENTS.md](AGENTS.md). Format code with `go fmt`, run `go vet`, `go build` and `go test` on touched packages before opening a pull request. Review [CHANGELOG.md](CHANGELOG.md) and [PRODUCTION_STAGES.md](PRODUCTION_STAGES.md) for roadmap and release process.
 
 ## License
-Synnergy is provided for research and educational purposes.  Third‑party dependencies retain their original licenses.
+Synnergy is provided for research and educational purposes. Third-party dependencies retain their original licenses.
+
