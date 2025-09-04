@@ -15,5 +15,8 @@ spec:
       containers:
         - name: cross-chain-bridge-monitor
           image: cross-chain-bridge-monitor:latest
+          env:
+            - name: API_URL
+              value: "http://bridge-api:8080"
           ports:
             - containerPort: 80

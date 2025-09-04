@@ -9,6 +9,7 @@
 - Stage 4: Completed – authority-node-index docs, configuration, tests and Kubernetes deployment enhanced.
 - Stage 5: Completed – authority-node-index tsconfig and compliance-dashboard configuration hardened.
 - Stage 6: Completed – compliance-dashboard backend and bridge-monitor configs upgraded.
+- Stage 7: In Progress – cross-chain-bridge-monitor docs, config, and CI pipeline enhanced; GUI components remain placeholders.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -137,24 +138,24 @@
 - [x] GUI/cross-chain-bridge-monitor/Dockerfile
 
 **Stage 7**
-- [ ] GUI/cross-chain-bridge-monitor/Makefile
-- [ ] GUI/cross-chain-bridge-monitor/README.md
+- [x] GUI/cross-chain-bridge-monitor/Makefile
+- [x] GUI/cross-chain-bridge-monitor/README.md
 - [ ] GUI/cross-chain-bridge-monitor/ci/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/ci/pipeline.yml
+- [x] GUI/cross-chain-bridge-monitor/ci/pipeline.yml
 - [ ] GUI/cross-chain-bridge-monitor/config/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/config/production.ts
-- [ ] GUI/cross-chain-bridge-monitor/docker-compose.yml
+- [x] GUI/cross-chain-bridge-monitor/config/production.ts
+- [x] GUI/cross-chain-bridge-monitor/docker-compose.yml
 - [ ] GUI/cross-chain-bridge-monitor/docs/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/docs/README.md
-- [ ] GUI/cross-chain-bridge-monitor/jest.config.js
+- [x] GUI/cross-chain-bridge-monitor/docs/README.md
+- [x] GUI/cross-chain-bridge-monitor/jest.config.js
 - [ ] GUI/cross-chain-bridge-monitor/k8s/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/k8s/deployment.yaml
+- [x] GUI/cross-chain-bridge-monitor/k8s/deployment.yaml
 - [ ] GUI/cross-chain-bridge-monitor/package-lock.json
-- [ ] GUI/cross-chain-bridge-monitor/package.json
+- [x] GUI/cross-chain-bridge-monitor/package.json
 - [ ] GUI/cross-chain-bridge-monitor/src/components/.gitkeep
 - [ ] GUI/cross-chain-bridge-monitor/src/hooks/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/src/main.test.ts
-- [ ] GUI/cross-chain-bridge-monitor/src/main.ts
+- [x] GUI/cross-chain-bridge-monitor/src/main.test.ts
+- [x] GUI/cross-chain-bridge-monitor/src/main.ts
 - [ ] GUI/cross-chain-bridge-monitor/src/pages/.gitkeep
 
 **Stage 8**
@@ -1728,7 +1729,7 @@
 - [ ] docs/Whitepaper_detailed/guide/script_guide.md
 - [ ] docs/Whitepaper_detailed/guide/server_setup_guide.md
 - [ ] docs/Whitepaper_detailed/guide/smart_contract_guide.md
-- [ ] docs/Whitepaper_detailed/guide/synnergy_network_function_web.md
+- [x] docs/Whitepaper_detailed/guide/synnergy_network_function_web.md
 - [ ] docs/Whitepaper_detailed/guide/synnergy_set_up.md
 - [ ] docs/Whitepaper_detailed/guide/token_guide.md
 - [ ] docs/Whitepaper_detailed/guide/transaction_guide.md
@@ -2760,24 +2761,24 @@
 - [ ] GUI/cross-chain-bridge-monitor/.gitignore
 - [ ] GUI/cross-chain-bridge-monitor/.prettierrc
 - [ ] GUI/cross-chain-bridge-monitor/Dockerfile
-- [ ] GUI/cross-chain-bridge-monitor/Makefile
-- [ ] GUI/cross-chain-bridge-monitor/README.md
+- [x] GUI/cross-chain-bridge-monitor/Makefile
+- [x] GUI/cross-chain-bridge-monitor/README.md
 - [ ] GUI/cross-chain-bridge-monitor/ci/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/ci/pipeline.yml
+- [x] GUI/cross-chain-bridge-monitor/ci/pipeline.yml
 - [ ] GUI/cross-chain-bridge-monitor/config/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/config/production.ts
-- [ ] GUI/cross-chain-bridge-monitor/docker-compose.yml
+- [x] GUI/cross-chain-bridge-monitor/config/production.ts
+- [x] GUI/cross-chain-bridge-monitor/docker-compose.yml
 - [ ] GUI/cross-chain-bridge-monitor/docs/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/docs/README.md
-- [ ] GUI/cross-chain-bridge-monitor/jest.config.js
+- [x] GUI/cross-chain-bridge-monitor/docs/README.md
+- [x] GUI/cross-chain-bridge-monitor/jest.config.js
 - [ ] GUI/cross-chain-bridge-monitor/k8s/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/k8s/deployment.yaml
+- [x] GUI/cross-chain-bridge-monitor/k8s/deployment.yaml
 - [ ] GUI/cross-chain-bridge-monitor/package-lock.json
-- [ ] GUI/cross-chain-bridge-monitor/package.json
+- [x] GUI/cross-chain-bridge-monitor/package.json
 - [ ] GUI/cross-chain-bridge-monitor/src/components/.gitkeep
 - [ ] GUI/cross-chain-bridge-monitor/src/hooks/.gitkeep
-- [ ] GUI/cross-chain-bridge-monitor/src/main.test.ts
-- [ ] GUI/cross-chain-bridge-monitor/src/main.ts
+- [x] GUI/cross-chain-bridge-monitor/src/main.test.ts
+- [x] GUI/cross-chain-bridge-monitor/src/main.ts
 - [ ] GUI/cross-chain-bridge-monitor/src/pages/.gitkeep
 - [ ] GUI/cross-chain-bridge-monitor/src/services/.gitkeep
 - [ ] GUI/cross-chain-bridge-monitor/src/state/.gitkeep
@@ -4261,7 +4262,7 @@
 - [ ] docs/Whitepaper_detailed/guide/script_guide.md
 - [ ] docs/Whitepaper_detailed/guide/server_setup_guide.md
 - [ ] docs/Whitepaper_detailed/guide/smart_contract_guide.md
-- [ ] docs/Whitepaper_detailed/guide/synnergy_network_function_web.md
+- [x] docs/Whitepaper_detailed/guide/synnergy_network_function_web.md
 - [ ] docs/Whitepaper_detailed/guide/synnergy_set_up.md
 - [ ] docs/Whitepaper_detailed/guide/token_guide.md
 - [ ] docs/Whitepaper_detailed/guide/transaction_guide.md
@@ -6682,7 +6683,7 @@
 | 82 | docs/Whitepaper_detailed/guide/script_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/server_setup_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/smart_contract_guide.md | [ ] |
-| 82 | docs/Whitepaper_detailed/guide/synnergy_network_function_web.md | [ ] |
+| 82 | docs/Whitepaper_detailed/guide/synnergy_network_function_web.md | [x] |
 | 82 | docs/Whitepaper_detailed/guide/synnergy_set_up.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/token_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/transaction_guide.md | [ ] |

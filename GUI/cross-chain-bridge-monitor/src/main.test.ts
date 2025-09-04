@@ -1,5 +1,8 @@
 import { main } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('cross-chain-bridge-monitor');
+describe('main', () => {
+  test('reflects API_URL environment variable', () => {
+    process.env.API_URL = 'http://example.com';
+    expect(main()).toContain('http://example.com');
+  });
 });
