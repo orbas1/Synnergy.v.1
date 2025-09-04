@@ -31,6 +31,7 @@
 - Stage 24: Completed – security-operations-center runtime, documentation and deployment scaffolds finalised.
 - Stage 25: Completed – security tests and smart-contract-marketplace config hardened.
 - Stage 26: Completed – smart-contract-marketplace API server, docs and tests added.
+- Stage 27: Completed – storage-marketplace GUI scaffold with configs, Docker and CI.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -569,25 +570,25 @@
 - [x] GUI/storage-marketplace/.eslintrc.json
 
 **Stage 27**
-- [ ] GUI/storage-marketplace/.gitignore
-- [ ] GUI/storage-marketplace/.prettierrc
-- [ ] GUI/storage-marketplace/Dockerfile
-- [ ] GUI/storage-marketplace/Makefile
-- [ ] GUI/storage-marketplace/README.md
-- [ ] GUI/storage-marketplace/ci/.gitkeep
-- [ ] GUI/storage-marketplace/ci/pipeline.yml
-- [ ] GUI/storage-marketplace/config/.gitkeep
-- [ ] GUI/storage-marketplace/config/production.ts
-- [ ] GUI/storage-marketplace/docker-compose.yml
-- [ ] GUI/storage-marketplace/docs/.gitkeep
-- [ ] GUI/storage-marketplace/docs/README.md
-- [ ] GUI/storage-marketplace/jest.config.js
-- [ ] GUI/storage-marketplace/k8s/.gitkeep
-- [ ] GUI/storage-marketplace/k8s/deployment.yaml
-- [ ] GUI/storage-marketplace/package-lock.json
-- [ ] GUI/storage-marketplace/package.json
-- [ ] GUI/storage-marketplace/src/components/.gitkeep
-- [ ] GUI/storage-marketplace/src/hooks/.gitkeep
+- [x] GUI/storage-marketplace/.gitignore
+- [x] GUI/storage-marketplace/.prettierrc
+- [x] GUI/storage-marketplace/Dockerfile
+- [x] GUI/storage-marketplace/Makefile
+- [x] GUI/storage-marketplace/README.md
+- [x] GUI/storage-marketplace/ci/.gitkeep
+- [x] GUI/storage-marketplace/ci/pipeline.yml
+- [x] GUI/storage-marketplace/config/.gitkeep
+- [x] GUI/storage-marketplace/config/production.ts
+- [x] GUI/storage-marketplace/docker-compose.yml
+- [x] GUI/storage-marketplace/docs/.gitkeep
+- [x] GUI/storage-marketplace/docs/README.md
+- [x] GUI/storage-marketplace/jest.config.js
+- [x] GUI/storage-marketplace/k8s/.gitkeep
+- [x] GUI/storage-marketplace/k8s/deployment.yaml
+- [x] GUI/storage-marketplace/package-lock.json
+- [x] GUI/storage-marketplace/package.json
+- [x] GUI/storage-marketplace/src/components/.gitkeep
+- [x] GUI/storage-marketplace/src/hooks/.gitkeep
 
 **Stage 28**
 - [ ] GUI/storage-marketplace/src/main.test.ts

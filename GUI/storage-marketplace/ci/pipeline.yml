@@ -1,1 +1,9 @@
-# Placeholder CI pipeline for storage-marketplace
+stages:
+  - test
+
+test:
+  stage: test
+  image: node:18-alpine
+  script:
+    - npm ci
+    - npm test
