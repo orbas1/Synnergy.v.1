@@ -1,0 +1,45 @@
+---
+- name: Configure Synnergy nodes
+  hosts: nodes
+  become: true
+  vars:
+    synnergy_bin: /usr/local/bin/synnergy
+    network_config: /etc/synnergy/config.yml
+  tasks:
+    - name: Install required packages
+      apt:
+        name:
+          - git
+          - golang
+        update_cache: yes
+
+    - name: Create synnergy user
+      user:
+        name: synnergy
+        system: yes
+        create_home: no
+
+    - name: Upload binary
+      copy:
+        src: "{{ synnergy_bin }}"
+        dest: "/usr/local/bin/synnergy"
+        mode: '0755'
+
+    - name: Deploy configuration
+      template:
+        src: templates/config.yml.j2
+        dest: "{{ network_config }}"
+        mode: '0644'
+      notify: restart synnergy
+
+    - name: Enable and start service
+      systemd:
+        name: synnergy
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: restart synnergy
+      systemd:
+        name: synnergy
+        state: restarted

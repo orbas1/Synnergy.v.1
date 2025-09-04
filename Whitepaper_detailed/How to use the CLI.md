@@ -20,3 +20,12 @@ Most commands accept the `--json` flag to produce machine readable output for GU
 For comprehensive regression coverage the Stage 46 network harness exercises
 CLI commands against live wallet services and in-memory nodes, ensuring end-to-end
 flows operate consistently across releases.
+## Infrastructure Automation
+Stage 50 introduces Terraform and Ansible support for deploying nodes:
+```bash
+cd deploy/terraform
+terraform init
+terraform apply -var 'ami_id=ami-123456'
+
+ansible-playbook -i inventory ../ansible/playbook.yml
+```

@@ -222,6 +222,7 @@ in isolated containers for rapid deployment.
 Stage 48 supplies Kubernetes manifests in `deploy/k8s/` so clusters can
 orchestrate replicated nodes and the wallet server with health probes and
 resource quotas for enterprise deployments.
+Stage 50 adds Terraform and Ansible automation under `deploy/` to provision cloud infrastructure and configure nodes with Infrastructure as Code, enabling repeatable fault-tolerant deployments.
 
 ## Roadmap
 Development is guided by a staged plan documented in `AGENTS.md`. Early stages
