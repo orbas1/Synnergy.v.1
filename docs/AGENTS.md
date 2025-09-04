@@ -17,7 +17,8 @@
 - Stage 12: Completed – data-distribution-monitor module hardened with CLI, configs, tests, and CI.
 - Stage 13: Completed – data-distribution-monitor pages/services/state and dex-screener configs, CI and tests implemented.
 - Stage 14: Completed – dex-screener module scaffold finalized with docs, config, tests and deployment scripts.
-- Stage 15: Completed – explorer configuration, CI pipeline and deployment manifests hardened.
+- Stage 16: Completed – explorer CLI and identity-management-console configs established.
+- Stage 17: Completed – identity-management-console pipeline, docs, and deployment scaffolds added.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -353,25 +354,25 @@
 - [x] GUI/identity-management-console/.prettierrc – enforced formatting rules
 
 **Stage 17**
-- [ ] GUI/identity-management-console/Dockerfile
-- [ ] GUI/identity-management-console/Makefile
-- [ ] GUI/identity-management-console/README.md
-- [ ] GUI/identity-management-console/ci/.gitkeep
-- [ ] GUI/identity-management-console/ci/pipeline.yml
-- [ ] GUI/identity-management-console/config/.gitkeep
-- [ ] GUI/identity-management-console/config/production.ts
-- [ ] GUI/identity-management-console/docker-compose.yml
-- [ ] GUI/identity-management-console/docs/.gitkeep
-- [ ] GUI/identity-management-console/docs/README.md
-- [ ] GUI/identity-management-console/jest.config.js
-- [ ] GUI/identity-management-console/k8s/.gitkeep
-- [ ] GUI/identity-management-console/k8s/deployment.yaml
-- [ ] GUI/identity-management-console/package-lock.json
-- [ ] GUI/identity-management-console/package.json
-- [ ] GUI/identity-management-console/src/components/.gitkeep
-- [ ] GUI/identity-management-console/src/hooks/.gitkeep
-- [ ] GUI/identity-management-console/src/main.test.ts
-- [ ] GUI/identity-management-console/src/main.ts
+- [x] GUI/identity-management-console/Dockerfile – multi-stage build with non-root user
+- [x] GUI/identity-management-console/Makefile – added install, lint, and format targets
+- [x] GUI/identity-management-console/README.md – expanded setup and development docs
+- [x] GUI/identity-management-console/ci/.gitkeep – removed; pipeline now defines test and build stages
+- [x] GUI/identity-management-console/ci/pipeline.yml – added test and build jobs
+- [x] GUI/identity-management-console/config/.gitkeep – removed; production config provided
+- [x] GUI/identity-management-console/config/production.ts – typed config with default API URL
+- [x] GUI/identity-management-console/docker-compose.yml – development container with API_URL env var
+- [x] GUI/identity-management-console/docs/.gitkeep – removed; doc README added
+- [x] GUI/identity-management-console/docs/README.md – documented layout and deployment notes
+- [x] GUI/identity-management-console/jest.config.js – enabled coverage reporting
+- [x] GUI/identity-management-console/k8s/.gitkeep – removed; deployment manifest added
+- [x] GUI/identity-management-console/k8s/deployment.yaml – added env vars, resources, and non-root policy
+- [x] GUI/identity-management-console/package-lock.json – updated with commander dependency
+- [x] GUI/identity-management-console/package.json – added commander and jest test script
+- [x] GUI/identity-management-console/src/components/.gitkeep – replaced with IdentityComponent stub
+- [x] GUI/identity-management-console/src/hooks/.gitkeep – replaced with useIdentity hook
+- [x] GUI/identity-management-console/src/main.test.ts – tests CLI greeting option
+- [x] GUI/identity-management-console/src/main.ts – CLI using commander with name flag
 
 **Stage 18**
 - [ ] GUI/identity-management-console/src/pages/.gitkeep

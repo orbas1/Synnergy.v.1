@@ -1,6 +1,9 @@
-version: '3'
+version: '3.9'
 services:
   app:
     build: .
+    image: synnergy/identity-management-console:dev
     ports:
       - "3000:3000"
+    environment:
+      - API_URL=http://localhost:4000
