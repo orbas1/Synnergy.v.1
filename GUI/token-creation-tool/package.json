@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/main.js",
-    "test": "echo \"No tests yet\"",
+    "test": "jest --coverage --runInBand",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
