@@ -52,6 +52,9 @@ Stage 38 introduces a token creation tool GUI that generates token contracts thr
 Stage 39 adds a DEX Screener GUI that leverages `liquidity_views` commands so interfaces can stream pool reserves and fees.
 Stage 40 introduces administrative dashboards for authority node indexing and cross-chain management, exposing node and bridge status through CLI-driven views.
 Stage 44 adds a smart contract test harness exercising the token faucet template through the CLI, ensuring contract modules function reliably across the function web.
+Stage 46 introduces an automated network harness that assembles wallet services
+and in-memory nodes to verify end-to-end transaction propagation and gas
+accounting from the CLI through the consensus layer.
 
 ## Diagram
 
