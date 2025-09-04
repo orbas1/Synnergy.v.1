@@ -40,7 +40,7 @@ func loadGasTable() {
 
 	tbl := make(GasTable)
 	_, filename, _, _ := runtime.Caller(0)
-	path := filepath.Join(filepath.Dir(filename), "gas_table_list.md")
+	path := filepath.Join(filepath.Dir(filename), "docs", "reference", "gas_table_list.md")
 	data, err := os.ReadFile(path)
 	if err != nil {
 		span.RecordError(err)

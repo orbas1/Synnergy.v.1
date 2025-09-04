@@ -39,7 +39,7 @@ func parseGasGuide() map[string]uint64 {
 	_, filename, _, _ := runtime.Caller(0)
 	coreDir := filepath.Dir(filename)
 	rootDir := filepath.Dir(coreDir)
-	path := filepath.Clean(filepath.Join(rootDir, "gas_table_list.md"))
+	path := filepath.Clean(filepath.Join(rootDir, "docs", "reference", "gas_table_list.md"))
 	if !strings.HasPrefix(path, rootDir) {
 		return nil
 	}
