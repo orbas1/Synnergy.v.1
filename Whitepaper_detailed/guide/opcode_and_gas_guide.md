@@ -2905,3 +2905,9 @@ Operations exposed by the Stage 34 marketplace GUI.
 ### Contract Test Harness
 
 Stage 44 adds regression tests that deploy the `token_faucet` template via the CLI and VM. These tests confirm opcode resolution and gas prices for contract templates remain stable over time.
+
+### Kubernetes deployment
+Stage 48 introduces Kubernetes manifests for running nodes and the wallet
+server. The orchestration layer does not alter opcode semantics or gas
+pricing but ensures resources are isolated so gas accounting remains
+predictable across replicas.

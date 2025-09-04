@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synnergy-node
+  labels:
+    app: synnergy-node
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: synnergy-node
+  template:
+    metadata:
+      labels:
+        app: synnergy-node
+    spec:
+      containers:
+      - name: node
+        image: synnergy/node:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 30303
+          name: p2p
+        - containerPort: 8080
+          name: rpc
+        env:
+        - name: SYN_CONFIG
+          value: /etc/synnergy/config.yaml
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1"
+            memory: "1Gi"
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        livenessProbe:
+          httpGet:
+            path: /livez
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        volumeMounts:
+        - name: config
+          mountPath: /etc/synnergy
+      volumes:
+      - name: config
+        configMap:
+          name: syn-node-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: synnergy-node
+  labels:
+    app: synnergy-node
+spec:
+  selector:
+    app: synnergy-node
+  ports:
+  - name: p2p
+    port: 30303
+    targetPort: 30303
+  - name: rpc
+    port: 8080
+    targetPort: 8080
