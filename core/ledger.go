@@ -29,6 +29,7 @@ type Ledger struct {
 	utxos    map[string][]*UTXO
 	mempool  []*Transaction
 	nextUTXO uint64
+	frozen   map[string]uint64
 }
 
 // NewLedger creates a new ledger. If a path is supplied it will replay any
@@ -39,6 +40,7 @@ func NewLedger(path ...string) *Ledger {
 		blocks:   []*Block{},
 		utxos:    make(map[string][]*UTXO),
 		mempool:  []*Transaction{},
+		frozen:   make(map[string]uint64),
 	}
 	if len(path) > 0 {
 		l.walPath = path[0]
