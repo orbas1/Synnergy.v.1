@@ -1,1 +1,22 @@
-# Placeholder CI pipeline for explorer
+name: Explorer CI
+on:
+  push:
+    paths:
+      - 'GUI/explorer/**'
+  pull_request:
+    paths:
+      - 'GUI/explorer/**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm ci
+        working-directory: GUI/explorer
+      - run: npm test
+        working-directory: GUI/explorer
+      - run: npm run build
+        working-directory: GUI/explorer

@@ -1,5 +1,7 @@
 import { renderHome } from '../../src/pages/home';
 
-test('renders home text', () => {
-  expect(renderHome()).toContain('Home');
+describe('home page', () => {
+  it('returns the exact home page title', () => {
+    expect(renderHome()).toBe('Dex Screener Home');
+  });
 });
