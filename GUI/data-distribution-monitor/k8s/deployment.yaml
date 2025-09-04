@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: data-distribution-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: data-distribution-monitor
+  template:
+    metadata:
+      labels:
+        app: data-distribution-monitor
+    spec:
+      containers:
+        - name: data-distribution-monitor
+          image: data-distribution-monitor:latest
+          ports:
+            - containerPort: 80

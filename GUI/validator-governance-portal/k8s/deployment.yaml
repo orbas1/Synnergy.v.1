@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: validator-governance-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: validator-governance-portal
+  template:
+    metadata:
+      labels:
+        app: validator-governance-portal
+    spec:
+      containers:
+        - name: validator-governance-portal
+          image: validator-governance-portal:latest
+          ports:
+            - containerPort: 80

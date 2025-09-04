@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: token-creation-tool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: token-creation-tool
+  template:
+    metadata:
+      labels:
+        app: token-creation-tool
+    spec:
+      containers:
+        - name: token-creation-tool
+          image: token-creation-tool:latest
+          ports:
+            - containerPort: 80

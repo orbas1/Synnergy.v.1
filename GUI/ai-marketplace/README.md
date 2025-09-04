@@ -1,18 +1,7 @@
-# Synnergy AI Marketplace
+# Ai Marketplace
 
-A minimal TypeScript interface for deploying AI-enhanced contracts through the Synnergy CLI.
+Enterprise-grade GUI for Ai Marketplace. This scaffold includes TypeScript, linting, formatting, and testing configuration.
 
-## Usage
-
-```
-npm install
-npm start <wasm_file> <model_hash> <manifest> <gas_limit> <owner>
-```
-
-The marketplace shells out to `synnergy ai_contract deploy` and prints the resulting contract address. Ensure the `synnergy` binary is on your `PATH` and a node is running.
-
-## Testing
-
-```
-npm test
-```
+## Scripts
+- `npm run build` - compile TypeScript
+- `npm test` - run tests (placeholder)

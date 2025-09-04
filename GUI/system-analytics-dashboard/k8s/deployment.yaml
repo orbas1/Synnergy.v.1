@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: system-analytics-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: system-analytics-dashboard
+  template:
+    metadata:
+      labels:
+        app: system-analytics-dashboard
+    spec:
+      containers:
+        - name: system-analytics-dashboard
+          image: system-analytics-dashboard:latest
+          ports:
+            - containerPort: 80

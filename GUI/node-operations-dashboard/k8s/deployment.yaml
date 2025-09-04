@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: node-operations-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: node-operations-dashboard
+  template:
+    metadata:
+      labels:
+        app: node-operations-dashboard
+    spec:
+      containers:
+        - name: node-operations-dashboard
+          image: node-operations-dashboard:latest
+          ports:
+            - containerPort: 80

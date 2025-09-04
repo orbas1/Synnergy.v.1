@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cross-chain-bridge-monitor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cross-chain-bridge-monitor
+  template:
+    metadata:
+      labels:
+        app: cross-chain-bridge-monitor
+    spec:
+      containers:
+        - name: cross-chain-bridge-monitor
+          image: cross-chain-bridge-monitor:latest
+          ports:
+            - containerPort: 80

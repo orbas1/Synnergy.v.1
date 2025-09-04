@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mining-staking-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mining-staking-manager
+  template:
+    metadata:
+      labels:
+        app: mining-staking-manager
+    spec:
+      containers:
+        - name: mining-staking-manager
+          image: mining-staking-manager:latest
+          ports:
+            - containerPort: 80

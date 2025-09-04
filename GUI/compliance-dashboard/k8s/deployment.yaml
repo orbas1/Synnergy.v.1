@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: compliance-dashboard
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: compliance-dashboard
+  template:
+    metadata:
+      labels:
+        app: compliance-dashboard
+    spec:
+      containers:
+        - name: compliance-dashboard
+          image: compliance-dashboard:latest
+          ports:
+            - containerPort: 80

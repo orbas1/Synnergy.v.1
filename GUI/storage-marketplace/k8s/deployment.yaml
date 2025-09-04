@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage-marketplace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: storage-marketplace
+  template:
+    metadata:
+      labels:
+        app: storage-marketplace
+    spec:
+      containers:
+        - name: storage-marketplace
+          image: storage-marketplace:latest
+          ports:
+            - containerPort: 80
