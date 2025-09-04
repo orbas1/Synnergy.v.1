@@ -7,6 +7,7 @@
 - Stage 2: Completed – ai-marketplace scaffold enhanced with CI, config and tests.
 - Stage 3: Completed – GUI state management, styles, tests, and authority-node-index tooling upgraded.
 - Stage 4: Completed – authority-node-index docs, configuration, tests and Kubernetes deployment enhanced.
+- Stage 5: Completed – authority-node-index tsconfig and compliance-dashboard configuration hardened.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -93,25 +94,25 @@
 - [x] GUI/authority-node-index/tests/unit/example.test.ts
 
 **Stage 5**
-- [ ] GUI/authority-node-index/tsconfig.json
-- [ ] GUI/compliance-dashboard/.env.example
-- [ ] GUI/compliance-dashboard/.eslintrc.json
-- [ ] GUI/compliance-dashboard/.gitignore
-- [ ] GUI/compliance-dashboard/.prettierrc
-- [ ] GUI/compliance-dashboard/Dockerfile
-- [ ] GUI/compliance-dashboard/Makefile
-- [ ] GUI/compliance-dashboard/README.md
-- [ ] GUI/compliance-dashboard/ci/.gitkeep
-- [ ] GUI/compliance-dashboard/ci/pipeline.yml
-- [ ] GUI/compliance-dashboard/config/.gitkeep
-- [ ] GUI/compliance-dashboard/config/production.ts
-- [ ] GUI/compliance-dashboard/docker-compose.yml
-- [ ] GUI/compliance-dashboard/docs/.gitkeep
-- [ ] GUI/compliance-dashboard/docs/README.md
-- [ ] GUI/compliance-dashboard/jest.config.js
-- [ ] GUI/compliance-dashboard/k8s/.gitkeep
-- [ ] GUI/compliance-dashboard/k8s/deployment.yaml
-- [ ] GUI/compliance-dashboard/package-lock.json
+- [x] GUI/authority-node-index/tsconfig.json
+- [x] GUI/compliance-dashboard/.env.example
+- [x] GUI/compliance-dashboard/.eslintrc.json
+- [x] GUI/compliance-dashboard/.gitignore
+- [x] GUI/compliance-dashboard/.prettierrc
+- [x] GUI/compliance-dashboard/Dockerfile
+- [x] GUI/compliance-dashboard/Makefile
+- [x] GUI/compliance-dashboard/README.md
+- [x] GUI/compliance-dashboard/ci/.gitkeep
+- [x] GUI/compliance-dashboard/ci/pipeline.yml
+- [x] GUI/compliance-dashboard/config/.gitkeep
+- [x] GUI/compliance-dashboard/config/production.ts
+- [x] GUI/compliance-dashboard/docker-compose.yml
+- [x] GUI/compliance-dashboard/docs/.gitkeep
+- [x] GUI/compliance-dashboard/docs/README.md
+- [x] GUI/compliance-dashboard/jest.config.js
+- [x] GUI/compliance-dashboard/k8s/.gitkeep
+- [x] GUI/compliance-dashboard/k8s/deployment.yaml
+- [x] GUI/compliance-dashboard/package-lock.json
 
 **Stage 6**
 - [ ] GUI/compliance-dashboard/package.json
