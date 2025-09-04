@@ -5,6 +5,7 @@ import (
 
 	"synnergy/core"
 	"synnergy/internal/nodes"
+	"synnergy/internal/tokens"
 )
 
 type bankNodeAdapter struct{ *core.BankInstitutionalNode }
@@ -24,8 +25,8 @@ func (a *centralBankNodeAdapter) Stop() error                       { return nil
 func (a *centralBankNodeAdapter) IsRunning() bool                   { return true }
 func (a *centralBankNodeAdapter) Peers() []nodes.Address            { return nil }
 func (a *centralBankNodeAdapter) DialSeed(addr nodes.Address) error { return nil }
-func (a *centralBankNodeAdapter) Mint(addr string, amt uint64) {
-	_ = a.CentralBankingNode.Mint(addr, amt)
+func (a *centralBankNodeAdapter) MintCBDC(addr string, amt uint64) error {
+	return a.CentralBankingNode.MintCBDC(addr, amt)
 }
 
 type custodialNodeAdapter struct{ *core.CustodialNode }
@@ -40,8 +41,9 @@ func (a *custodialNodeAdapter) DialSeed(addr nodes.Address) error { return nil }
 // TestInterfaceCompliance ensures core implementations satisfy the banking node interfaces via adapters.
 func TestInterfaceCompliance(t *testing.T) {
 	ledger := core.NewLedger()
+	tok := tokens.NewSYN10Token(1, "CBDC", "cSYN", "central", 1, 2)
 
 	var _ BankInstitutionalNode = &bankNodeAdapter{core.NewBankInstitutionalNode("id1", "addr1", ledger)}
-	var _ CentralBankingNode = &centralBankNodeAdapter{core.NewCentralBankingNode("id2", "addr2", ledger, "policy")}
+	var _ CentralBankingNode = &centralBankNodeAdapter{core.NewCentralBankingNode("id2", "addr2", ledger, "policy", tok)}
 	var _ CustodialNode = &custodialNodeAdapter{core.NewCustodialNode("id3", "addr3", ledger)}
 }

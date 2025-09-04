@@ -117,7 +117,7 @@ graph TD
     end
 
     subgraph CentralBank
-        CBN[NewCentralBankingNode] --> CBM[Mint]
+        CBN[NewCentralBankingNode] --> CBM[MintCBDC]
     end
 
     subgraph Charity

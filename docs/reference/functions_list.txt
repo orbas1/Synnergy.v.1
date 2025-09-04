@@ -531,9 +531,10 @@ core/kademlia.go:18:func NewKademlia() *Kademlia {
 core/kademlia.go:23:func (k *Kademlia) Store(key string, value []byte) {
 core/kademlia.go:30:func (k *Kademlia) FindValue(key string) ([]byte, bool) {
 core/kademlia.go:41:func Distance(a, b string) *big.Int {
-core/central_banking_node.go:10:func NewCentralBankingNode(id, addr string, ledger *Ledger, policy string) *CentralBankingNode {
-core/central_banking_node.go:18:func (n *CentralBankingNode) UpdatePolicy(policy string) {
-core/central_banking_node.go:23:func (n *CentralBankingNode) Mint(to string, amount uint64) {
+core/central_banking_node.go:17:func NewCentralBankingNode(id, addr string, ledger *Ledger, policy string, token *tokens.SYN10Token) *CentralBankingNode {
+core/central_banking_node.go:27:func (n *CentralBankingNode) UpdatePolicy(policy string) {
+core/central_banking_node.go:30:func (n *CentralBankingNode) MintCBDC(to string, amount uint64) error {
+core/central_banking_node.go:39:func (n *CentralBankingNode) Mint(to string, amount uint64) error {
 core/ai_enhanced_contract.go:19:func NewAIContractRegistry(base *ContractRegistry) *AIContractRegistry {
 core/ai_enhanced_contract.go:28:func (r *AIContractRegistry) DeployAIContract(wasm []byte, modelHash, manifest string, gasLimit uint64, owner string) (string, error) {
 core/ai_enhanced_contract.go:41:func (r *AIContractRegistry) InvokeAIContract(addr string, input []byte, gasLimit uint64) ([]byte, uint64, error) {

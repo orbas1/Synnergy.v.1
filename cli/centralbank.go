@@ -8,9 +8,11 @@ import (
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
+	"synnergy/internal/tokens"
 )
 
-var centralBank = core.NewCentralBankingNode("central", "cbnode", ledger, "neutral")
+var centralBankToken = tokens.NewSYN10Token(1, "CBDC", "cSYN", "central", 1, 2)
+var centralBank = core.NewCentralBankingNode("central", "cbnode", ledger, "neutral", centralBankToken)
 var centralBankJSON bool
 
 func init() {
@@ -29,9 +31,9 @@ func init() {
 		centralBank.UpdatePolicy(args[0])
 	}}
 
-	mintCmd := &cobra.Command{Use: "mint [to] [amount]", Args: cobra.ExactArgs(2), Short: "Mint currency tokens", RunE: func(cmd *cobra.Command, args []string) error {
+	mintCmd := &cobra.Command{Use: "mint [to] [amount]", Args: cobra.ExactArgs(2), Short: "Mint CBDC tokens", RunE: func(cmd *cobra.Command, args []string) error {
 		amt, _ := strconv.ParseUint(args[1], 10, 64)
-		return centralBank.Mint(args[0], amt)
+		return centralBank.MintCBDC(args[0], amt)
 	}}
 
 	cbCmd.AddCommand(infoCmd, policyCmd, mintCmd)
