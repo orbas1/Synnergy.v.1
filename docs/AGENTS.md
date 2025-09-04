@@ -28,6 +28,7 @@
 - Stage 22: Completed – node-operations-dashboard scaffold established with CI, docs and tests.
 
 - Stage 23: Completed – node-operations-dashboard status service and security-operations-center configuration hardened.
+- Stage 24: Completed – security-operations-center runtime, documentation and deployment scaffolds finalised.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -503,25 +504,25 @@
 - [x] GUI/security-operations-center/ci/pipeline.yml – GitHub Actions pipeline
 
 **Stage 24**
-- [ ] GUI/security-operations-center/config/.gitkeep
-- [ ] GUI/security-operations-center/config/production.ts
-- [ ] GUI/security-operations-center/docker-compose.yml
-- [ ] GUI/security-operations-center/docs/.gitkeep
-- [ ] GUI/security-operations-center/docs/README.md
-- [ ] GUI/security-operations-center/jest.config.js
-- [ ] GUI/security-operations-center/k8s/.gitkeep
-- [ ] GUI/security-operations-center/k8s/deployment.yaml
-- [ ] GUI/security-operations-center/package-lock.json
-- [ ] GUI/security-operations-center/package.json
-- [ ] GUI/security-operations-center/src/components/.gitkeep
-- [ ] GUI/security-operations-center/src/hooks/.gitkeep
-- [ ] GUI/security-operations-center/src/main.test.ts
-- [ ] GUI/security-operations-center/src/main.ts
-- [ ] GUI/security-operations-center/src/pages/.gitkeep
-- [ ] GUI/security-operations-center/src/services/.gitkeep
-- [ ] GUI/security-operations-center/src/state/.gitkeep
-- [ ] GUI/security-operations-center/src/styles/.gitkeep
-- [ ] GUI/security-operations-center/tests/e2e/.gitkeep
+- [x] GUI/security-operations-center/config/.gitkeep – config directory placeholder
+- [x] GUI/security-operations-center/config/production.ts – env-driven API and log level
+- [x] GUI/security-operations-center/docker-compose.yml – production compose with restart policy
+- [x] GUI/security-operations-center/docs/.gitkeep – docs directory tracked
+- [x] GUI/security-operations-center/docs/README.md – usage, Docker and test instructions
+- [x] GUI/security-operations-center/jest.config.js – coverage enabled Jest setup
+- [x] GUI/security-operations-center/k8s/.gitkeep – k8s manifest folder preserved
+- [x] GUI/security-operations-center/k8s/deployment.yaml – replica and API_URL configuration
+- [x] GUI/security-operations-center/package-lock.json – lockfile retained for reproducible installs
+- [x] GUI/security-operations-center/package.json – Jest test script added
+- [x] GUI/security-operations-center/src/components/.gitkeep – component scaffold
+- [x] GUI/security-operations-center/src/hooks/.gitkeep – hook scaffold
+- [x] GUI/security-operations-center/src/main.test.ts – verifies env-driven startup message
+- [x] GUI/security-operations-center/src/main.ts – fault-tolerant entry point
+- [x] GUI/security-operations-center/src/pages/.gitkeep – pages scaffold
+- [x] GUI/security-operations-center/src/services/.gitkeep – service scaffold
+- [x] GUI/security-operations-center/src/state/.gitkeep – state scaffold
+- [x] GUI/security-operations-center/src/styles/.gitkeep – style scaffold
+- [x] GUI/security-operations-center/tests/e2e/.gitkeep – e2e folder tracked
 
 **Stage 25**
 - [ ] GUI/security-operations-center/tests/e2e/example.e2e.test.ts
