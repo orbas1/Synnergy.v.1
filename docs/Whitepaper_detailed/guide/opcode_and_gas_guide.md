@@ -2,6 +2,10 @@
 
 This guide describes how Synnergy assigns opcodes, prices execution and enforces gas usage.  It is derived from the canonical tables in `gas_table.go` and the dispatcher in `opcode_dispatcher.go`.
 
+Stage 13 extends the catalogue with opcodes for data distribution monitoring and
+DEX liquidity queries so operational dashboards can estimate fees prior to
+invocation.
+
 ## Opcode Structure
 
 Every exported function in the core packages is mapped to a unique 24‑bit opcode.  The format `0xCCNNNN` splits the value into a one‑byte **category** `CC` and a two‑byte **index** `NNNN`.  Categories correspond to major modules such as the ledger, AMM, state channels or the virtual machine.  The catalogue is generated automatically; the dispatcher resolves the opcode at runtime and invokes the appropriate handler.

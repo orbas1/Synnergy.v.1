@@ -7,6 +7,11 @@ blockchain state such as chain height and block details.  These tools provide a
 foundation for richer dashboards and can be extended to visualise transactions,
 addresses and node health.
 
+Stage 13 lays the groundwork for operational dashboards by scaffolding a data
+distribution monitor and DEX screener. These GUIs consume the CLI to surface
+network flow metrics and liquidity information, enabling operators to evaluate
+throughput and market depth in real time.
+
 Stage 33 adds an AI Marketplace GUI that deploys AI-enhanced contracts through the CLI. Users supply a WebAssembly module, model hash, manifest and gas limit, and the interface returns the on-chain contract address. This marketplace demonstrates how advanced contract workflows can be wrapped in thin, CLI-driven front ends.
 Stage 34 introduces a Smart-Contract Marketplace GUI that leverages the new
 `marketplace` CLI commands to deploy generic WebAssembly contracts and trade
