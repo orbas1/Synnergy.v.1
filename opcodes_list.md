@@ -647,3 +647,5 @@
 | `BurnRelease` | `0xF1000A` |
 | `PlasmaPause` | `0xF1000B` |
 | `PlasmaResume` | `0xF1000C` |
+| `Liquidity_Pool` | `0x0F0007` |
+| `Liquidity_Pools` | `0x0F0008` |

@@ -234,3 +234,5 @@ a modular VM, cross‑chain bridges, AI services and numerous specialised nodes
 while providing extensive tooling for developers. Community contributions are
 welcome as the project advances toward a production‑grade platform.
 
+
+Stage 39 debuts a DEX Screener GUI that reads liquidity pool metrics via CLI commands, enabling real-time market monitoring.

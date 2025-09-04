@@ -25,6 +25,7 @@
 //     <FunctionName>  =  <24-bit-binary>  =  <HexOpcode>
 //
 //     NB: Tabs are significant – tools rely on them when parsing for audits.
+//     Stage 39 adds liquidity pool view opcodes for the DEX screener.
 package core
 
 import (

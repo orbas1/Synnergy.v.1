@@ -40,3 +40,13 @@ func (r *LiquidityPoolRegistry) PoolViews() []LiquidityPoolView {
 	}
 	return views
 }
+
+// Liquidity_Pool exposes PoolInfo for opcode integration and external callers.
+func Liquidity_Pool(r *LiquidityPoolRegistry, id string) (LiquidityPoolView, bool) {
+	return r.PoolInfo(id)
+}
+
+// Liquidity_Pools exposes PoolViews for opcode integration and external callers.
+func Liquidity_Pools(r *LiquidityPoolRegistry) []LiquidityPoolView {
+	return r.PoolViews()
+}

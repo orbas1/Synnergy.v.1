@@ -67,6 +67,7 @@ All guides and architecture decision records are located under the `docs/` direc
 - Stage 36 debuts an NFT Marketplace GUI for minting and trading NFTs via the CLI with gas-priced opcodes.
 - Stage 37 debuts a DAO Explorer GUI that manages DAO creation and membership via the CLI.
 - Stage 38 debuts a Token Creation Tool GUI that generates token contracts via the CLI.
+- Stage 39 debuts a DEX Screener GUI that surfaces liquidity pool metrics through the CLI.
 - The virtual machine supports smart contracts compiled from WebAssembly, Go, JavaScript, Solidity, Rust, Python and Yul, ensuring opcode compatibility across ecosystems.
 
 ## Repository layout
