@@ -21114,3 +21114,7 @@ kubectl apply -f deploy/k8s/wallet.yaml
 
 These manifests include health probes and resource limits so clusters can
 maintain availability automatically.
+
+### Node Operations Dashboard CLI
+
+The `node-operations-dashboard` module provides a lightweight CLI accessed with `npm start` to view node health status.

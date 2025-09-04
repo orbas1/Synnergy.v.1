@@ -25,6 +25,7 @@
 - Stage 19: Completed – mining-staking-manager scaffold enhanced with config, services, tests and deployment.
 - Stage 20: Completed – mining-staking-manager TS config finalized; NFT marketplace configs added.
 - Stage 21: Completed – NFT marketplace frontend scaffold expanded with sample components, services, tests and hardened dashboard configuration.
+- Stage 22: Completed – node-operations-dashboard scaffold established with CI, docs and tests.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -458,25 +459,25 @@
 - [x] GUI/node-operations-dashboard/.gitignore – temp and log files ignored
 
 **Stage 22**
-- [ ] GUI/node-operations-dashboard/.prettierrc
-- [ ] GUI/node-operations-dashboard/Dockerfile
-- [ ] GUI/node-operations-dashboard/Makefile
-- [ ] GUI/node-operations-dashboard/README.md
-- [ ] GUI/node-operations-dashboard/ci/.gitkeep
-- [ ] GUI/node-operations-dashboard/ci/pipeline.yml
-- [ ] GUI/node-operations-dashboard/config/.gitkeep
-- [ ] GUI/node-operations-dashboard/config/production.ts
-- [ ] GUI/node-operations-dashboard/docker-compose.yml
-- [ ] GUI/node-operations-dashboard/docs/.gitkeep
-- [ ] GUI/node-operations-dashboard/docs/README.md
-- [ ] GUI/node-operations-dashboard/jest.config.js
-- [ ] GUI/node-operations-dashboard/k8s/.gitkeep
-- [ ] GUI/node-operations-dashboard/k8s/deployment.yaml
-- [ ] GUI/node-operations-dashboard/package-lock.json
-- [ ] GUI/node-operations-dashboard/package.json
-- [ ] GUI/node-operations-dashboard/src/components/.gitkeep
-- [ ] GUI/node-operations-dashboard/src/hooks/.gitkeep
-- [ ] GUI/node-operations-dashboard/src/main.test.ts
+- [x] GUI/node-operations-dashboard/.prettierrc – formatting rules established
+- [x] GUI/node-operations-dashboard/Dockerfile
+- [x] GUI/node-operations-dashboard/Makefile
+- [x] GUI/node-operations-dashboard/README.md
+- [x] GUI/node-operations-dashboard/ci/.gitkeep
+- [x] GUI/node-operations-dashboard/ci/pipeline.yml
+- [x] GUI/node-operations-dashboard/config/.gitkeep
+- [x] GUI/node-operations-dashboard/config/production.ts
+- [x] GUI/node-operations-dashboard/docker-compose.yml
+- [x] GUI/node-operations-dashboard/docs/.gitkeep
+- [x] GUI/node-operations-dashboard/docs/README.md
+- [x] GUI/node-operations-dashboard/jest.config.js
+- [x] GUI/node-operations-dashboard/k8s/.gitkeep
+- [x] GUI/node-operations-dashboard/k8s/deployment.yaml
+- [x] GUI/node-operations-dashboard/package-lock.json
+- [x] GUI/node-operations-dashboard/package.json
+- [x] GUI/node-operations-dashboard/src/components/.gitkeep
+- [x] GUI/node-operations-dashboard/src/hooks/.gitkeep
+- [x] GUI/node-operations-dashboard/src/main.test.ts
 
 **Stage 23**
 - [ ] GUI/node-operations-dashboard/src/main.ts
@@ -3060,38 +3061,38 @@
 - [ ] GUI/nft_marketplace/tests/unit/.gitkeep
 - [ ] GUI/nft_marketplace/tests/unit/example.test.ts
 - [ ] GUI/nft_marketplace/tsconfig.json
-- [ ] GUI/node-operations-dashboard/.env.example
-- [ ] GUI/node-operations-dashboard/.eslintrc.json
-- [ ] GUI/node-operations-dashboard/.gitignore
-- [ ] GUI/node-operations-dashboard/.prettierrc
-- [ ] GUI/node-operations-dashboard/Dockerfile
-- [ ] GUI/node-operations-dashboard/Makefile
-- [ ] GUI/node-operations-dashboard/README.md
-- [ ] GUI/node-operations-dashboard/ci/.gitkeep
-- [ ] GUI/node-operations-dashboard/ci/pipeline.yml
-- [ ] GUI/node-operations-dashboard/config/.gitkeep
-- [ ] GUI/node-operations-dashboard/config/production.ts
-- [ ] GUI/node-operations-dashboard/docker-compose.yml
-- [ ] GUI/node-operations-dashboard/docs/.gitkeep
-- [ ] GUI/node-operations-dashboard/docs/README.md
-- [ ] GUI/node-operations-dashboard/jest.config.js
-- [ ] GUI/node-operations-dashboard/k8s/.gitkeep
-- [ ] GUI/node-operations-dashboard/k8s/deployment.yaml
-- [ ] GUI/node-operations-dashboard/package-lock.json
-- [ ] GUI/node-operations-dashboard/package.json
-- [ ] GUI/node-operations-dashboard/src/components/.gitkeep
-- [ ] GUI/node-operations-dashboard/src/hooks/.gitkeep
-- [ ] GUI/node-operations-dashboard/src/main.test.ts
-- [ ] GUI/node-operations-dashboard/src/main.ts
-- [ ] GUI/node-operations-dashboard/src/pages/.gitkeep
-- [ ] GUI/node-operations-dashboard/src/services/.gitkeep
-- [ ] GUI/node-operations-dashboard/src/state/.gitkeep
-- [ ] GUI/node-operations-dashboard/src/styles/.gitkeep
-- [ ] GUI/node-operations-dashboard/tests/e2e/.gitkeep
-- [ ] GUI/node-operations-dashboard/tests/e2e/example.e2e.test.ts
-- [ ] GUI/node-operations-dashboard/tests/unit/.gitkeep
-- [ ] GUI/node-operations-dashboard/tests/unit/example.test.ts
-- [ ] GUI/node-operations-dashboard/tsconfig.json
+- [x] GUI/node-operations-dashboard/.env.example
+- [x] GUI/node-operations-dashboard/.eslintrc.json
+- [x] GUI/node-operations-dashboard/.gitignore
+- [x] GUI/node-operations-dashboard/.prettierrc
+- [x] GUI/node-operations-dashboard/Dockerfile
+- [x] GUI/node-operations-dashboard/Makefile
+- [x] GUI/node-operations-dashboard/README.md
+- [x] GUI/node-operations-dashboard/ci/.gitkeep
+- [x] GUI/node-operations-dashboard/ci/pipeline.yml
+- [x] GUI/node-operations-dashboard/config/.gitkeep
+- [x] GUI/node-operations-dashboard/config/production.ts
+- [x] GUI/node-operations-dashboard/docker-compose.yml
+- [x] GUI/node-operations-dashboard/docs/.gitkeep
+- [x] GUI/node-operations-dashboard/docs/README.md
+- [x] GUI/node-operations-dashboard/jest.config.js
+- [x] GUI/node-operations-dashboard/k8s/.gitkeep
+- [x] GUI/node-operations-dashboard/k8s/deployment.yaml
+- [x] GUI/node-operations-dashboard/package-lock.json
+- [x] GUI/node-operations-dashboard/package.json
+- [x] GUI/node-operations-dashboard/src/components/.gitkeep
+- [x] GUI/node-operations-dashboard/src/hooks/.gitkeep
+- [x] GUI/node-operations-dashboard/src/main.test.ts
+- [x] GUI/node-operations-dashboard/src/main.ts
+- [x] GUI/node-operations-dashboard/src/pages/.gitkeep
+- [x] GUI/node-operations-dashboard/src/services/.gitkeep
+- [x] GUI/node-operations-dashboard/src/state/.gitkeep
+- [x] GUI/node-operations-dashboard/src/styles/.gitkeep
+- [x] GUI/node-operations-dashboard/tests/e2e/.gitkeep
+- [x] GUI/node-operations-dashboard/tests/e2e/example.e2e.test.ts
+- [x] GUI/node-operations-dashboard/tests/unit/.gitkeep
+- [x] GUI/node-operations-dashboard/tests/unit/example.test.ts
+- [x] GUI/node-operations-dashboard/tsconfig.json
 - [ ] GUI/security-operations-center/.env.example
 - [ ] GUI/security-operations-center/.eslintrc.json
 - [ ] GUI/security-operations-center/.gitignore

@@ -214,3 +214,5 @@ Stage 50 adds Terraform and Ansible automation for provisioning infrastructure a
 
 This visualization can be rendered using any Mermaid-compatible Markdown viewer.
 
+
+Stage 22 adds the Node Operations Dashboard, giving operators a dedicated CLI and web interface for real-time node monitoring.

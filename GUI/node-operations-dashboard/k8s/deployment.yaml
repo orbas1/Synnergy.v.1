@@ -16,4 +16,7 @@ spec:
         - name: node-operations-dashboard
           image: node-operations-dashboard:latest
           ports:
-            - containerPort: 80
+            - containerPort: 3000
+          env:
+            - name: API_URL
+              value: https://api.synnergy.local

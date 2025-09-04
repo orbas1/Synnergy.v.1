@@ -177,3 +177,5 @@ go test ./internal/tokens
 
 Running the full repository test suite will also exercise all token
 implementations.
+
+Stage 22 introduces node-operations tokens that power the Node Operations Dashboard and enable operators to stake and monitor infrastructure activity.

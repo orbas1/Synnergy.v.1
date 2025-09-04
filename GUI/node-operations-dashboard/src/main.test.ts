@@ -1,5 +1,5 @@
 import { main } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('node-operations-dashboard');
+it('returns node status', async () => {
+  await expect(main()).resolves.toContain('Node status: OK');
 });
