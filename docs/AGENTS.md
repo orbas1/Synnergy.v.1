@@ -35,6 +35,8 @@
 - Stage 28: Completed – storage marketplace module finalized and system analytics dashboard scaffold created.
 - Stage 29: Completed – system analytics dashboard CI pipeline, configuration and tests established.
 - Stage 30: Completed – system analytics dashboard tests and token creation tool configs hardened.
+- Stage 31: Completed – token-creation-tool package, tests and deployment finalized.
+- Stage 32: Completed – validator-governance-portal configuration, docs and deployment scaffolds added.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -678,25 +680,25 @@
 - [x] GUI/validator-governance-portal/.env.example – environment template added
 
 **Stage 32**
-- [ ] GUI/validator-governance-portal/.eslintrc.json
-- [ ] GUI/validator-governance-portal/.gitignore
-- [ ] GUI/validator-governance-portal/.prettierrc
-- [ ] GUI/validator-governance-portal/Dockerfile
-- [ ] GUI/validator-governance-portal/Makefile
-- [ ] GUI/validator-governance-portal/README.md
-- [ ] GUI/validator-governance-portal/ci/.gitkeep
-- [ ] GUI/validator-governance-portal/ci/pipeline.yml
-- [ ] GUI/validator-governance-portal/config/.gitkeep
-- [ ] GUI/validator-governance-portal/config/production.ts
-- [ ] GUI/validator-governance-portal/docker-compose.yml
-- [ ] GUI/validator-governance-portal/docs/.gitkeep
-- [ ] GUI/validator-governance-portal/docs/README.md
-- [ ] GUI/validator-governance-portal/jest.config.js
-- [ ] GUI/validator-governance-portal/k8s/.gitkeep
-- [ ] GUI/validator-governance-portal/k8s/deployment.yaml
-- [ ] GUI/validator-governance-portal/package-lock.json
-- [ ] GUI/validator-governance-portal/package.json
-- [ ] GUI/validator-governance-portal/src/components/.gitkeep
+- [x] GUI/validator-governance-portal/.eslintrc.json – baseline lint rules for TypeScript
+- [x] GUI/validator-governance-portal/.gitignore – ignore node modules, builds and env files
+- [x] GUI/validator-governance-portal/.prettierrc – shared formatting preferences
+- [x] GUI/validator-governance-portal/Dockerfile – production-ready container build
+- [x] GUI/validator-governance-portal/Makefile – helper tasks for install, build and test
+- [x] GUI/validator-governance-portal/README.md – module overview and usage docs
+- [x] GUI/validator-governance-portal/ci/.gitkeep – ensure CI directory tracked
+- [x] GUI/validator-governance-portal/ci/pipeline.yml – CI pipeline for test and build stages
+- [x] GUI/validator-governance-portal/config/.gitkeep – track config directory
+- [x] GUI/validator-governance-portal/config/production.ts – runtime configuration defaults
+- [x] GUI/validator-governance-portal/docker-compose.yml – compose file for local dev
+- [x] GUI/validator-governance-portal/docs/.gitkeep – track documentation directory
+- [x] GUI/validator-governance-portal/docs/README.md – initial documentation stub
+- [x] GUI/validator-governance-portal/jest.config.js – Jest setup for unit tests
+- [x] GUI/validator-governance-portal/k8s/.gitkeep – track k8s manifests directory
+- [x] GUI/validator-governance-portal/k8s/deployment.yaml – baseline Kubernetes deployment
+- [x] GUI/validator-governance-portal/package-lock.json – locked dependencies
+- [x] GUI/validator-governance-portal/package.json – npm scripts and dependencies
+- [x] GUI/validator-governance-portal/src/components/.gitkeep – placeholder for component source
 
 **Stage 33**
 - [ ] GUI/validator-governance-portal/src/hooks/.gitkeep

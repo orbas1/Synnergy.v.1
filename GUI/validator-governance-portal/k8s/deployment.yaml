@@ -1,3 +1,4 @@
+# Kubernetes deployment for Validator Governance Portal
 apiVersion: apps/v1
 kind: Deployment
 metadata:

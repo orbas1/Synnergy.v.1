@@ -1,1 +1,18 @@
-# Placeholder CI pipeline for validator-governance-portal
+stages:
+  - test
+  - build
+
+test:
+  stage: test
+  script:
+    - npm ci
+    - npm test
+
+build:
+  stage: build
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - dist/
