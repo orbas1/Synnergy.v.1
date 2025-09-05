@@ -10,11 +10,11 @@ func TestFeeForTransfer(t *testing.T) {
 }
 
 func TestDistributeFees(t *testing.T) {
-	dist := DistributeFees(100)
-	if dist.InternalDevelopment != 5 || dist.InternalCharity != 5 || dist.ExternalCharity != 5 || dist.LoanPool != 5 || dist.PassiveIncome != 5 || dist.ValidatorsMiners != 64 || dist.AuthorityNodes != 5 || dist.NodeHosts != 5 || dist.CreatorWallet != 1 {
-		t.Fatalf("unexpected distribution: %+v", dist)
-	}
-	total := dist.InternalDevelopment + dist.InternalCharity + dist.ExternalCharity + dist.LoanPool + dist.PassiveIncome + dist.ValidatorsMiners + dist.AuthorityNodes + dist.NodeHosts + dist.CreatorWallet
+       dist := DistributeFees(100)
+       if dist.InternalDevelopment != 5 || dist.InternalCharity != 5 || dist.ExternalCharity != 5 || dist.LoanPool != 10 || dist.PassiveIncome != 5 || dist.ValidatorsMiners != 59 || dist.AuthorityNodes != 5 || dist.NodeHosts != 5 || dist.CreatorWallet != 1 {
+               t.Fatalf("unexpected distribution: %+v", dist)
+       }
+       total := dist.InternalDevelopment + dist.InternalCharity + dist.ExternalCharity + dist.LoanPool + dist.PassiveIncome + dist.ValidatorsMiners + dist.AuthorityNodes + dist.NodeHosts + dist.CreatorWallet
 	if total != 100 {
 		t.Fatalf("distribution does not sum to total, got %d", total)
 	}
