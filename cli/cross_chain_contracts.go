@@ -19,16 +19,26 @@ func init() {
 
 	var listJSON bool
 	var getJSON bool
+	var registerJSON bool
+	var removeJSON bool
 
 	registerCmd := &cobra.Command{
 		Use:   "register <local_addr> <remote_chain> <remote_addr>",
 		Args:  cobra.ExactArgs(3),
 		Short: "Register a contract mapping",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			crossContractRegistry.RegisterMapping(args[0], args[1], args[2])
-			fmt.Printf("gas:%d\n", synnergy.GasCost("RegisterXContract"))
+			gas := synnergy.GasCost("RegisterXContract")
+			if registerJSON {
+				enc, _ := json.Marshal(map[string]interface{}{"gas": gas})
+				fmt.Println(string(enc))
+				return nil
+			}
+			fmt.Printf("gas:%d\n", gas)
+			return nil
 		},
 	}
+	registerCmd.Flags().BoolVar(&registerJSON, "json", false, "output as JSON")
 
 	listCmd := &cobra.Command{
 		Use:   "list",
@@ -75,10 +85,17 @@ func init() {
 			if err := crossContractRegistry.RemoveMapping(args[0]); err != nil {
 				return err
 			}
-			fmt.Printf("gas:%d\n", synnergy.GasCost("RemoveXContract"))
+			gas := synnergy.GasCost("RemoveXContract")
+			if removeJSON {
+				enc, _ := json.Marshal(map[string]interface{}{"gas": gas})
+				fmt.Println(string(enc))
+				return nil
+			}
+			fmt.Printf("gas:%d\n", gas)
 			return nil
 		},
 	}
+	removeCmd.Flags().BoolVar(&removeJSON, "json", false, "output as JSON")
 
 	cmd.AddCommand(registerCmd, listCmd, getCmd, removeCmd)
 	rootCmd.AddCommand(cmd)

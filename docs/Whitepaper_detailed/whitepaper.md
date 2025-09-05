@@ -41,6 +41,7 @@ Stage 23 further enhances the toolchain by exposing gas costs for consensus and
 governance actions through the CLI, enabling operators to model fees before
 committing transactions.
 Stage 24 introduces enterprise-grade cross-chain tooling. Bridge registration, connection management and Plasma operations now expose deterministic gas fees and optional JSON output so external systems can safely automate transfers.
+Stage 42 finalises this layer: protocol registries, contract mappings and custodial nodes all emit structured JSON through their CLIs, enabling fault-tolerant automation across disparate networks.
 Stage 25 focuses on operational tooling. Node management commands for full,
 light, mining, mobile, optimisation, staking, watchtower and warfare roles now
 emit structured JSON and have explicit gas pricing so that enterprise dashboards

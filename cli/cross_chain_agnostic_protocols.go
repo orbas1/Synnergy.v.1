@@ -20,16 +20,28 @@ func init() {
 
 	var listJSON bool
 	var getJSON bool
+	var registerJSON bool
 
 	registerCmd := &cobra.Command{
 		Use:   "register <name>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Register a new protocol definition",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if args[0] == "" {
+				return fmt.Errorf("name required")
+			}
 			id := protocolRegistry.Register(args[0])
-			fmt.Printf("%d gas:%d\n", id, synnergy.GasCost("RegisterProtocol"))
+			gas := synnergy.GasCost("RegisterProtocol")
+			if registerJSON {
+				enc, _ := json.Marshal(map[string]interface{}{"id": id, "gas": gas})
+				fmt.Println(string(enc))
+				return nil
+			}
+			fmt.Printf("%d gas:%d\n", id, gas)
+			return nil
 		},
 	}
+	registerCmd.Flags().BoolVar(&registerJSON, "json", false, "output as JSON")
 
 	listCmd := &cobra.Command{
 		Use:   "list",

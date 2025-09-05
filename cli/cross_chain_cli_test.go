@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"strings"
 	"testing"
 )
@@ -39,11 +40,18 @@ func TestPlasmaMgmtCLI(t *testing.T) {
 }
 
 func TestBridgeDepositCLI(t *testing.T) {
-	out, err := execCommand("cross_chain_bridge", "deposit", "bridge1", "alice", "bob", "5")
+	out, err := execCommand("cross_chain_bridge", "deposit", "bridge1", "alice", "bob", "5", "--json")
 	if err != nil {
 		t.Fatalf("deposit failed: %v", err)
 	}
-	if !strings.Contains(out, "gas:") {
-		t.Fatalf("expected gas output, got %s", out)
+	var resp map[string]interface{}
+	if err := json.Unmarshal([]byte(out), &resp); err != nil {
+		t.Fatalf("invalid json: %v", err)
+	}
+	if resp["id"] == "" {
+		t.Fatalf("expected id in response: %v", resp)
+	}
+	if _, ok := resp["gas"]; !ok {
+		t.Fatalf("expected gas field: %v", resp)
 	}
 }

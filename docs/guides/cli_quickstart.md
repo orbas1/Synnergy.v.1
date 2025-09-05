@@ -15,6 +15,7 @@ make build
 - `synnergy charity_pool --json registration <addr>` – view charity registration info as JSON
 - `synnergy charity_mgmt donate <from> <amount>` – donate tokens to the charity pool
 - `synnergy coin --json info` – inspect monetary parameters
+- `synnergy cross_chain_bridge deposit <bridge> <from> <to> <amount> --json` – lock assets for bridging with structured output
 
 ## Help
 Run `synnergy --help` or `synnergy <command> --help` for more details.

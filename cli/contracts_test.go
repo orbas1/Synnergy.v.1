@@ -2,6 +2,12 @@ package cli
 
 import "testing"
 
-func TestContractsPlaceholder(t *testing.T) {
-	t.Skip("TODO: implement test")
+func TestContractsList(t *testing.T) {
+	out, err := execCommand("contracts", "list")
+	if err != nil {
+		t.Fatalf("list failed: %v", err)
+	}
+	if out != "" {
+		t.Fatalf("expected empty list, got %s", out)
+	}
 }
