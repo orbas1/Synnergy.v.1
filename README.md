@@ -130,6 +130,12 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `data monitor status` | Report network data distribution metrics |
 | `audit log|list` | Record and query audit events via `core.NewAuditManager` |
 | `audit_node start|log|list` | Operate a bootstrap audit node for network-wide logs |
+| `authority register|vote|list` | Manage the authority node registry (`core.NewAuthorityNodeRegistry`) |
+| `authority_apply submit|vote|finalize|list` | Handle authority node applications (`core.NewAuthorityApplicationManager`) |
+| `bankinst register|list|is` | Manage institutional bank participants (`core.NewBankInstitutionalNode`) |
+| `banknodes types` | Display supported bank node categories |
+| `basenode start|stop|running|peers|dial` | Control a base network node (`core.NewBaseNode`) |
+| `basetoken init|mint|balance` | Interact with a basic token (`tokens.NewBaseToken`) |
 | `dex liquidity <pair>` | Query on-chain liquidity pool reserves |
 
 Additional modules cover DAO governance, cross-chain bridges, regulatory nodes, watchtowers and more.
