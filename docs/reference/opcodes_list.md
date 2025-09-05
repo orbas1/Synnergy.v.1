@@ -1,4 +1,11 @@
 <!-- Stage 25 ensures full node, light node, mining, staking, watchtower and warfare opcodes are documented for UI integration -->
+
+# Opcode Reference
+
+This document lists Synnergy's opcode assignments. Each function maps to a
+unique hexadecimal value used across full, light, mining, staking, watchtower
+and warfare nodes as well as UI integrations.
+
 | Function | Opcode |
 |---|---|
 | `Accrue` | `0x100001` |
