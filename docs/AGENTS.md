@@ -45,7 +45,7 @@
 - Stage 39: Completed – authority and bank CLI modules validated with unit tests.
 - Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
 - Stage 41: Completed – consensus and contract management CLIs now validate inputs with accompanying tests.
-- Stage 42: In Progress – cross-chain bridge CLI upgraded with structured output and integration tests; remaining cross-chain files pending.
+- Stage 42: In Progress – cross-chain bridge and transaction CLIs upgraded with structured output and integration tests; remaining cross-chain files pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -914,7 +914,8 @@
 - [ ] cli/cross_chain_contracts_test.go
 - [x] cli/cross_chain_test.go – end-to-end tests for register/list/get/authorize/revoke
 - [ ] cli/cross_chain_transactions.go
-- [ ] cli/cross_chain_transactions_test.go
+- [x] cli/cross_chain_transactions.go – root json flag and structured outputs for lock‑mint/burn‑release
+- [x] cli/cross_chain_transactions_test.go – CLI coverage for lock‑mint, burn‑release, list and get
 - [ ] cli/cross_consensus_scaling_networks.go
 - [ ] cli/cross_consensus_scaling_networks_test.go
 - [ ] cli/custodial_node.go
@@ -1664,7 +1665,7 @@
 - [ ] docs/Whitepaper_detailed/Consensus.md
 - [ ] docs/Whitepaper_detailed/Contracts.md
 - [ ] docs/Whitepaper_detailed/Creditors.md
-- [ ] docs/Whitepaper_detailed/Cross chain.md
+- [x] docs/Whitepaper_detailed/Cross chain.md – cross_tx module and lock-mint/burn-release flows documented
 - [ ] docs/Whitepaper_detailed/Exchanges.md
 - [ ] docs/Whitepaper_detailed/Executive Summary.md
 - [ ] docs/Whitepaper_detailed/Faucet.md
@@ -1721,7 +1722,7 @@
 
 **Stage 81**
 - [ ] docs/Whitepaper_detailed/architecture/consensus_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/cross_chain_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/cross_chain_architecture.md – cross_tx CLI integration described
 - [ ] docs/Whitepaper_detailed/architecture/dao_explorer_architecture.md
 - [ ] docs/Whitepaper_detailed/architecture/docker_architecture.md
 - [ ] docs/Whitepaper_detailed/architecture/explorer_architecture.md
@@ -1750,13 +1751,13 @@
 - [ ] docs/Whitepaper_detailed/guide/loanpool_guide.md
 - [ ] docs/Whitepaper_detailed/guide/module_guide.md
 - [ ] docs/Whitepaper_detailed/guide/node_guide.md
-- [ ] docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md
+- [x] docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md – cross_tx operations noted
 - [ ] docs/Whitepaper_detailed/guide/script_guide.md
 - [ ] docs/Whitepaper_detailed/guide/server_setup_guide.md
 - [ ] docs/Whitepaper_detailed/guide/smart_contract_guide.md
 - [x] docs/Whitepaper_detailed/guide/synnergy_network_function_web.md
 - [ ] docs/Whitepaper_detailed/guide/synnergy_set_up.md
-- [ ] docs/Whitepaper_detailed/guide/token_guide.md
+- [x] docs/Whitepaper_detailed/guide/token_guide.md – cross_tx CLI noted
 - [ ] docs/Whitepaper_detailed/guide/transaction_guide.md
 - [ ] docs/Whitepaper_detailed/guide/virtual_machine_guide.md
 - [ ] docs/Whitepaper_detailed/whitepaper.md
@@ -1794,6 +1795,7 @@
 - [ ] firewall.go
 - [ ] firewall_test.go
 - [ ] gas_table.go
+- [x] gas_table.go – noted Stage 42 cross-chain transfer costs
 - [ ] gas_table_test.go
 - [ ] geospatial_node.go
 - [ ] geospatial_node_test.go
@@ -2621,6 +2623,7 @@
 - [ ] smart-contracts/weather_oracle.wasm
 - [ ] smart-contracts/zk_transaction.wasm
 - [ ] snvm._opcodes.go
+- [x] snvm._opcodes.go – cross-chain transfer opcodes annotated for Stage 42
 - [ ] snvm._opcodes_test.go
 - [ ] stage12_content_data_test.go
 
@@ -3383,7 +3386,7 @@
 - [ ] GUI/wallet/tsconfig.json
 - [ ] LICENSE
 - [ ] Makefile
-- [ ] README.md
+- [x] README.md – cross_tx CLI noted
 - [ ] SECURITY.md
 - [ ] access_control.go
 - [ ] access_control_test.go
@@ -3495,7 +3498,8 @@
 - [ ] cli/cross_chain_contracts_test.go
 - [ ] cli/cross_chain_test.go
 - [ ] cli/cross_chain_transactions.go
-- [ ] cli/cross_chain_transactions_test.go
+- [x] cli/cross_chain_transactions.go
+- [x] cli/cross_chain_transactions_test.go
 - [ ] cli/cross_consensus_scaling_networks.go
 - [ ] cli/cross_consensus_scaling_networks_test.go
 - [ ] cli/custodial_node.go
@@ -4201,7 +4205,7 @@
 - [ ] docs/Whitepaper_detailed/Consensus.md
 - [ ] docs/Whitepaper_detailed/Contracts.md
 - [ ] docs/Whitepaper_detailed/Creditors.md
-- [ ] docs/Whitepaper_detailed/Cross chain.md
+- [x] docs/Whitepaper_detailed/Cross chain.md – cross_tx module and lock-mint/burn-release flows documented
 - [ ] docs/Whitepaper_detailed/Exchanges.md
 - [ ] docs/Whitepaper_detailed/Executive Summary.md
 - [ ] docs/Whitepaper_detailed/Faucet.md
@@ -4254,7 +4258,7 @@
 - [ ] docs/Whitepaper_detailed/architecture/ai_marketplace_architecture.md
 - [ ] docs/Whitepaper_detailed/architecture/compliance_architecture.md
 - [ ] docs/Whitepaper_detailed/architecture/consensus_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/cross_chain_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/cross_chain_architecture.md – cross_tx CLI integration described
 - [ ] docs/Whitepaper_detailed/architecture/dao_explorer_architecture.md
 - [ ] docs/Whitepaper_detailed/architecture/docker_architecture.md
 - [ ] docs/Whitepaper_detailed/architecture/explorer_architecture.md
@@ -4283,13 +4287,13 @@
 - [ ] docs/Whitepaper_detailed/guide/loanpool_guide.md
 - [ ] docs/Whitepaper_detailed/guide/module_guide.md
 - [ ] docs/Whitepaper_detailed/guide/node_guide.md
-- [ ] docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md
+- [x] docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md – cross_tx operations noted
 - [ ] docs/Whitepaper_detailed/guide/script_guide.md
 - [ ] docs/Whitepaper_detailed/guide/server_setup_guide.md
 - [ ] docs/Whitepaper_detailed/guide/smart_contract_guide.md
 - [x] docs/Whitepaper_detailed/guide/synnergy_network_function_web.md
 - [ ] docs/Whitepaper_detailed/guide/synnergy_set_up.md
-- [ ] docs/Whitepaper_detailed/guide/token_guide.md
+- [x] docs/Whitepaper_detailed/guide/token_guide.md – cross_tx CLI noted
 - [ ] docs/Whitepaper_detailed/guide/transaction_guide.md
 - [ ] docs/Whitepaper_detailed/guide/virtual_machine_guide.md
 - [ ] docs/Whitepaper_detailed/whitepaper.md
@@ -4325,6 +4329,7 @@
 - [ ] firewall.go
 - [ ] firewall_test.go
 - [ ] gas_table.go
+- [x] gas_table.go – Stage 42 cross-chain transfer costs documented
 - [ ] gas_table_test.go
 - [ ] geospatial_node.go
 - [ ] geospatial_node_test.go
@@ -5104,6 +5109,7 @@
 - [ ] smart-contracts/weather_oracle.wasm
 - [ ] smart-contracts/zk_transaction.wasm
 - [ ] snvm._opcodes.go
+- [x] snvm._opcodes.go – Stage 42 cross-chain opcodes documented
 - [ ] snvm._opcodes_test.go
 - [ ] stage12_content_data_test.go
 - [ ] stake_penalty.go
@@ -5836,7 +5842,7 @@
 | 36 | GUI/wallet/tsconfig.json | [ ] |
 | 37 | LICENSE | [ ] |
 | 37 | Makefile | [ ] |
-| 37 | README.md | [ ] |
+| 37 | README.md | [x] |
 | 37 | SECURITY.md | [ ] |
 | 37 | access_control.go | [ ] |
 | 37 | access_control_test.go | [ ] |
@@ -5943,8 +5949,8 @@
 | 42 | cli/cross_chain_contracts.go | [ ] |
 | 42 | cli/cross_chain_contracts_test.go | [ ] |
 | 42 | cli/cross_chain_test.go | [ ] |
-| 42 | cli/cross_chain_transactions.go | [ ] |
-| 42 | cli/cross_chain_transactions_test.go | [ ] |
+| 42 | cli/cross_chain_transactions.go | [x] |
+| 42 | cli/cross_chain_transactions_test.go | [x] |
 | 42 | cli/cross_consensus_scaling_networks.go | [ ] |
 | 42 | cli/cross_consensus_scaling_networks_test.go | [ ] |
 | 42 | cli/custodial_node.go | [ ] |
@@ -6622,7 +6628,7 @@
 | 78 | docs/Whitepaper_detailed/Consensus.md | [ ] |
 | 78 | docs/Whitepaper_detailed/Contracts.md | [ ] |
 | 78 | docs/Whitepaper_detailed/Creditors.md | [ ] |
-| 78 | docs/Whitepaper_detailed/Cross chain.md | [ ] |
+| 78 | docs/Whitepaper_detailed/Cross chain.md | [x] |
 | 78 | docs/Whitepaper_detailed/Exchanges.md | [ ] |
 | 78 | docs/Whitepaper_detailed/Executive Summary.md | [ ] |
 | 78 | docs/Whitepaper_detailed/Faucet.md | [ ] |
@@ -6673,7 +6679,7 @@
 | 80 | docs/Whitepaper_detailed/architecture/ai_marketplace_architecture.md | [ ] |
 | 80 | docs/Whitepaper_detailed/architecture/compliance_architecture.md | [ ] |
 | 81 | docs/Whitepaper_detailed/architecture/consensus_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/cross_chain_architecture.md | [ ] |
+| 81 | docs/Whitepaper_detailed/architecture/cross_chain_architecture.md | [x] |
 | 81 | docs/Whitepaper_detailed/architecture/dao_explorer_architecture.md | [ ] |
 | 81 | docs/Whitepaper_detailed/architecture/docker_architecture.md | [ ] |
 | 81 | docs/Whitepaper_detailed/architecture/explorer_architecture.md | [ ] |
@@ -6700,13 +6706,13 @@
 | 82 | docs/Whitepaper_detailed/guide/loanpool_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/module_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/node_guide.md | [ ] |
-| 82 | docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md | [ ] |
+| 82 | docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md | [x] |
 | 82 | docs/Whitepaper_detailed/guide/script_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/server_setup_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/smart_contract_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/synnergy_network_function_web.md | [x] |
 | 82 | docs/Whitepaper_detailed/guide/synnergy_set_up.md | [ ] |
-| 82 | docs/Whitepaper_detailed/guide/token_guide.md | [ ] |
+| 82 | docs/Whitepaper_detailed/guide/token_guide.md | [x] |
 | 82 | docs/Whitepaper_detailed/guide/transaction_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/virtual_machine_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/whitepaper.md | [ ] |
@@ -6739,7 +6745,7 @@
 | 84 | financial_prediction_test.go | [ ] |
 | 84 | firewall.go | [ ] |
 | 84 | firewall_test.go | [ ] |
-| 84 | gas_table.go | [ ] |
+| 84 | gas_table.go | [x] |
 | 84 | gas_table_test.go | [ ] |
 | 84 | geospatial_node.go | [ ] |
 | 84 | geospatial_node_test.go | [ ] |
@@ -7488,7 +7494,7 @@
 | 123 | smart-contracts/veto_council.wasm | [ ] |
 | 123 | smart-contracts/weather_oracle.wasm | [ ] |
 | 123 | smart-contracts/zk_transaction.wasm | [ ] |
-| 123 | snvm._opcodes.go | [ ] |
+| 123 | snvm._opcodes.go | [x] |
 | 123 | snvm._opcodes_test.go | [ ] |
 | 123 | stage12_content_data_test.go | [ ] |
 | 124 | stake_penalty.go | [ ] |

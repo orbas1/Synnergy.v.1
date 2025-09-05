@@ -3,6 +3,8 @@ package synnergy
 // Updated for Stage 23 to ensure consensus and governance opcodes remain in sync.
 // Stage 25 verifies node operation opcodes are available for CLI node management.
 // Stage 38 covers biometric security node opcodes for CLI exposure.
+// Stage 42 records lock-mint and burn-release opcodes used by cross-chain
+// transaction flows.
 // SNVMOpcode defines a mapping between a function identifier and its opcode.
 type SNVMOpcode struct {
 	Name string

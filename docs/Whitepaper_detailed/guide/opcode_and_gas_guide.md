@@ -370,6 +370,10 @@ Operations related to contracts (wasm / evm‐compat).
 
 Operations related to cross-chain.
 
+Stage 42 introduces the `cross_tx` CLI which utilises these opcodes to execute
+lock‑mint and burn‑release transfers.  Each operation publishes its gas cost so
+scripts and user interfaces can price cross-network moves deterministically.
+
 
 | Opcode | Gas Cost |
 |---|---|

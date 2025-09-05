@@ -18,6 +18,9 @@ managing proposals directly alongside execution results.
 Stage 24 extends cross-chain and Plasma management. The CLI now exposes bridge
 registration, connection tracking and gas-priced transfer operations that UIs
 can invoke for inter-network workflows.
+Stage 42 builds on this by adding the `cross_tx` module so the function web can
+initiate lock‑mint and burn‑release flows with JSON responses and audited gas
+charges.
 Stage 35 delivers a production-ready wallet interface with rigorous testing and
 CI integration, allowing web dashboards to securely sign and submit
 transactions through the same function web.
