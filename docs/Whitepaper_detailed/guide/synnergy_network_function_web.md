@@ -57,6 +57,7 @@ applications can mint and trade unique assets within the function web.
 Stage 38 introduces a token creation tool GUI that generates token contracts through the CLI and finalises biometric security node commands, enabling dashboards to craft new assets and enforce biometric verification within the function web.
 Stage 39 adds a DEX Screener GUI that leverages `liquidity_views` commands so interfaces can stream pool reserves and fees.
 Stage 40 introduces administrative dashboards for authority node indexing and cross-chain management, exposing node and bridge status through CLI-driven views. The central bank module joins the function web at this stage, allowing monetary policy updates and CBDC issuance to be orchestrated alongside other network services via `synnergy centralbank`.
+Coin supply metrics are also exposed through `synnergy coin`, which validates inputs and emits JSON so wallets and dashboards can retrieve rewards and circulating supply.
 Stage 44 adds a smart contract test harness exercising the token faucet template through the CLI, ensuring contract modules function reliably across the function web.
 Stage 46 introduces an automated network harness that assembles wallet services
 and in-memory nodes to verify end-to-end transaction propagation and gas

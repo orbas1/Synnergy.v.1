@@ -14,6 +14,7 @@ make build
 - `synnergy node status` – display node synchronization status
 - `synnergy charity_pool --json registration <addr>` – view charity registration info as JSON
 - `synnergy charity_mgmt donate <from> <amount>` – donate tokens to the charity pool
+- `synnergy coin --json info` – inspect monetary parameters
 
 ## Help
 Run `synnergy --help` or `synnergy <command> --help` for more details.

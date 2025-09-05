@@ -43,7 +43,7 @@
 - Stage 37: Completed – core security and AI modules upgraded with tests and encryption.
 - Stage 38: Completed – biometric security node and CLI components finalised with tests.
 - Stage 39: Completed – authority and bank CLI modules validated with unit tests.
-- Stage 40: In Progress – block and central bank CLIs upgraded with validation and JSON; charity pool commands now support JSON output and tests; remaining modules pending.
+- Stage 40: In Progress – block and central bank CLIs upgraded with validation and JSON; charity pool commands now support JSON output and tests; coin utilities now emit validated JSON responses; remaining modules pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -868,8 +868,8 @@
  - [x] cli/charity.go – JSON output and robust validation added
  - [x] cli/charity_test.go – covers registration and balances flows
  - [x] cli/cli_core_test.go – root help coverage added
-- [ ] cli/coin.go
-- [ ] cli/coin_test.go
+ - [x] cli/coin.go – JSON output and argument validation
+ - [x] cli/coin_test.go – verifies JSON info and height validation
 - [ ] cli/compliance.go
 - [ ] cli/compliance_mgmt.go
 - [ ] cli/compliance_mgmt_test.go
