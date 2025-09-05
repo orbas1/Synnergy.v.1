@@ -15,7 +15,12 @@ type AnomalyDetector struct {
 }
 
 // NewAnomalyDetector constructs a detector with a z-score threshold.
+// If a non-positive threshold is supplied, a default of 3 is used to avoid
+// disabling anomaly detection inadvertently.
 func NewAnomalyDetector(threshold float64) *AnomalyDetector {
+	if threshold <= 0 {
+		threshold = 3
+	}
 	return &AnomalyDetector{threshold: threshold}
 }
 

@@ -30,8 +30,13 @@ func NewTrainingManager() *TrainingManager {
 }
 
 // Start begins a new training job and returns its ID.
-func (m *TrainingManager) Start(datasetCID, modelCID string) string {
+// Both datasetCID and modelCID must be provided or an error is returned.
+func (m *TrainingManager) Start(datasetCID, modelCID string) (string, error) {
+	if datasetCID == "" || modelCID == "" {
+		return "", errors.New("datasetCID and modelCID required")
+	}
 	m.mu.Lock()
+	defer m.mu.Unlock()
 	m.nextID++
 	id := fmt.Sprintf("job-%d", m.nextID)
 	m.jobs[id] = TrainingJob{
@@ -41,15 +46,14 @@ func (m *TrainingManager) Start(datasetCID, modelCID string) string {
 		Status:     "running",
 		StartedAt:  time.Now().UTC(),
 	}
-	m.mu.Unlock()
-	return id
+	return id, nil
 }
 
 // Status returns a training job by ID.
 func (m *TrainingManager) Status(id string) (TrainingJob, bool) {
 	m.mu.RLock()
+	defer m.mu.RUnlock()
 	job, ok := m.jobs[id]
-	m.mu.RUnlock()
 	return job, ok
 }
 
@@ -67,18 +71,33 @@ func (m *TrainingManager) List() []TrainingJob {
 // Cancel marks a running job as cancelled.
 func (m *TrainingManager) Cancel(id string) error {
 	m.mu.Lock()
+	defer m.mu.Unlock()
 	job, ok := m.jobs[id]
 	if !ok {
-		m.mu.Unlock()
 		return errors.New("job not found")
 	}
 	if job.Status != "running" {
-		m.mu.Unlock()
 		return errors.New("job not running")
 	}
 	job.Status = "cancelled"
 	job.CompletedAt = time.Now().UTC()
 	m.jobs[id] = job
-	m.mu.Unlock()
+	return nil
+}
+
+// Complete marks a running job as finished successfully.
+func (m *TrainingManager) Complete(id string) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	job, ok := m.jobs[id]
+	if !ok {
+		return errors.New("job not found")
+	}
+	if job.Status != "running" {
+		return errors.New("job not running")
+	}
+	job.Status = "completed"
+	job.CompletedAt = time.Now().UTC()
+	m.jobs[id] = job
 	return nil
 }
