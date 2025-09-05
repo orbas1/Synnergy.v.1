@@ -45,6 +45,7 @@
 - Stage 39: Completed – authority and bank CLI modules validated with unit tests.
 - Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
 - Stage 41: Completed – consensus and contract management CLIs now validate inputs with accompanying tests.
+- Stage 42: In Progress – cross-chain bridge CLI and protocol registry commands upgraded with structured output and integration tests; remaining cross-chain files pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -901,9 +902,9 @@
 **Stage 42**
 - [ ] cli/contracts_opcodes_test.go
 - [ ] cli/contracts_test.go
-- [ ] cli/cross_chain.go
-- [ ] cli/cross_chain_agnostic_protocols.go
-- [ ] cli/cross_chain_agnostic_protocols_test.go
+- [x] cli/cross_chain.go – structured outputs and error handling for bridge commands
+- [x] cli/cross_chain_agnostic_protocols.go – structured outputs and JSON flag handling
+- [x] cli/cross_chain_agnostic_protocols_test.go – register/list/get integration tests
 - [ ] cli/cross_chain_bridge.go
 - [ ] cli/cross_chain_bridge_test.go
 - [ ] cli/cross_chain_cli_test.go
@@ -911,7 +912,7 @@
 - [ ] cli/cross_chain_connection_test.go
 - [ ] cli/cross_chain_contracts.go
 - [ ] cli/cross_chain_contracts_test.go
-- [ ] cli/cross_chain_test.go
+- [x] cli/cross_chain_test.go – end-to-end tests for register/list/get/authorize/revoke
 - [ ] cli/cross_chain_transactions.go
 - [ ] cli/cross_chain_transactions_test.go
 - [ ] cli/cross_consensus_scaling_networks.go
@@ -5931,9 +5932,9 @@
 | 41 | cli/contracts_opcodes.go | [x] | gas cost listing |
 | 42 | cli/contracts_opcodes_test.go | [ ] |
 | 42 | cli/contracts_test.go | [ ] |
-| 42 | cli/cross_chain.go | [ ] |
-| 42 | cli/cross_chain_agnostic_protocols.go | [ ] |
-| 42 | cli/cross_chain_agnostic_protocols_test.go | [ ] |
+| 42 | cli/cross_chain.go | [x] |
+| 42 | cli/cross_chain_agnostic_protocols.go | [x] |
+| 42 | cli/cross_chain_agnostic_protocols_test.go | [x] |
 | 42 | cli/cross_chain_bridge.go | [ ] |
 | 42 | cli/cross_chain_bridge_test.go | [ ] |
 | 42 | cli/cross_chain_cli_test.go | [ ] |
@@ -5941,7 +5942,7 @@
 | 42 | cli/cross_chain_connection_test.go | [ ] |
 | 42 | cli/cross_chain_contracts.go | [ ] |
 | 42 | cli/cross_chain_contracts_test.go | [ ] |
-| 42 | cli/cross_chain_test.go | [ ] |
+| 42 | cli/cross_chain_test.go | [x] |
 | 42 | cli/cross_chain_transactions.go | [ ] |
 | 42 | cli/cross_chain_transactions_test.go | [ ] |
 | 42 | cli/cross_consensus_scaling_networks.go | [ ] |
