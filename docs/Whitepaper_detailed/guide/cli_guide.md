@@ -6,7 +6,9 @@ Synnergy blockchain CLI
 
 Stage 38 finalises biometric security and associated CLI modules. Wallet and
 biometric commands are now fully tested and hardened, enabling secure
-configuration and automation in production environments.
+configuration and automation in production environments. Stage 40 adds
+robust block management with strict argument validation and accompanying test
+coverage.
 
 ### Options
 
