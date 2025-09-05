@@ -1759,7 +1759,7 @@
 - [x] docs/Whitepaper_detailed/guide/token_guide.md – cross_tx CLI noted
 - [ ] docs/Whitepaper_detailed/guide/transaction_guide.md
 - [ ] docs/Whitepaper_detailed/guide/virtual_machine_guide.md
-- [ ] docs/Whitepaper_detailed/whitepaper.md
+- [x] docs/Whitepaper_detailed/whitepaper.md
 
 **Stage 83**
 - [ ] docs/adr/0001-adopt-mkdocs.md
@@ -4295,7 +4295,7 @@
 - [x] docs/Whitepaper_detailed/guide/token_guide.md – cross_tx CLI noted
 - [ ] docs/Whitepaper_detailed/guide/transaction_guide.md
 - [ ] docs/Whitepaper_detailed/guide/virtual_machine_guide.md
-- [ ] docs/Whitepaper_detailed/whitepaper.md
+- [x] docs/Whitepaper_detailed/whitepaper.md
 - [ ] docs/adr/0001-adopt-mkdocs.md
 - [ ] docs/api/README.md
 - [ ] docs/api/core.md
@@ -6714,7 +6714,7 @@
 | 82 | docs/Whitepaper_detailed/guide/token_guide.md | [x] |
 | 82 | docs/Whitepaper_detailed/guide/transaction_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/virtual_machine_guide.md | [ ] |
-| 82 | docs/Whitepaper_detailed/whitepaper.md | [ ] |
+| 82 | docs/Whitepaper_detailed/whitepaper.md | [x] |
 | 83 | docs/adr/0001-adopt-mkdocs.md | [ ] |
 | 83 | docs/api/README.md | [ ] |
 | 83 | docs/api/core.md | [ ] |
