@@ -1,6 +1,10 @@
-version: '3'
+version: '3.8'
 services:
-  app:
+  wallet:
     build: .
+    environment:
+      - API_URL=${API_URL:-http://localhost:3000}
+      - PORT=${PORT:-3000}
+      - LOG_LEVEL=${LOG_LEVEL:-info}
     ports:
       - "3000:3000"

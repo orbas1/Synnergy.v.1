@@ -22,6 +22,9 @@ integrate staking flows directly.
 Stage 31 introduces a GUI wallet that consumes these JSON interfaces and
 invokes token operations through the CLI, providing an accessible reference
 implementation for external applications.
+Stage 35 adds production-ready wallet tooling with CI, configuration and
+automated tests so token workflows remain secure across both CLI and GUI
+interfaces.
 Stage 34 extends the ecosystem with a smart‑contract marketplace GUI allowing
 tokenised contracts to be deployed and traded through the same CLI surface,
 demonstrating how assets can change ownership without leaving the network.

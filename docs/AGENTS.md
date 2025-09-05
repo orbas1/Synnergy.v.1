@@ -38,6 +38,7 @@
 - Stage 31: Completed – token-creation-tool package, tests and deployment finalized.
 - Stage 32: Completed – validator-governance-portal configuration, docs and deployment scaffolds added.
 - Stage 33: Completed – validator-governance-portal source/tests and wallet-admin-interface base configs established.
+- Stage 35: Completed – wallet admin interface tests and wallet module production scaffolds hardened.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -743,26 +744,26 @@
 - [x] GUI/wallet-admin-interface/src/services/.gitkeep
 - [x] GUI/wallet-admin-interface/src/state/.gitkeep
 
-**Stage 35**
-- [ ] GUI/wallet-admin-interface/src/styles/.gitkeep
-- [ ] GUI/wallet-admin-interface/tests/e2e/.gitkeep
-- [ ] GUI/wallet-admin-interface/tests/e2e/example.e2e.test.ts
-- [ ] GUI/wallet-admin-interface/tests/unit/.gitkeep
-- [ ] GUI/wallet-admin-interface/tests/unit/example.test.ts
-- [ ] GUI/wallet-admin-interface/tsconfig.json
-- [ ] GUI/wallet/.env.example
-- [ ] GUI/wallet/.eslintrc.json
-- [ ] GUI/wallet/.gitignore
-- [ ] GUI/wallet/.prettierrc
-- [ ] GUI/wallet/Dockerfile
-- [ ] GUI/wallet/Makefile
-- [ ] GUI/wallet/README.md
-- [ ] GUI/wallet/ci/.gitkeep
-- [ ] GUI/wallet/ci/pipeline.yml
-- [ ] GUI/wallet/config/.gitkeep
-- [ ] GUI/wallet/config/production.ts
-- [ ] GUI/wallet/docker-compose.yml
-- [ ] GUI/wallet/docs/.gitkeep
+**Stage 35 – Completed**
+- [x] GUI/wallet-admin-interface/src/styles/.gitkeep
+- [x] GUI/wallet-admin-interface/tests/e2e/.gitkeep
+- [x] GUI/wallet-admin-interface/tests/e2e/example.e2e.test.ts
+- [x] GUI/wallet-admin-interface/tests/unit/.gitkeep
+- [x] GUI/wallet-admin-interface/tests/unit/example.test.ts
+- [x] GUI/wallet-admin-interface/tsconfig.json
+- [x] GUI/wallet/.env.example
+- [x] GUI/wallet/.eslintrc.json
+- [x] GUI/wallet/.gitignore
+- [x] GUI/wallet/.prettierrc
+- [x] GUI/wallet/Dockerfile
+- [x] GUI/wallet/Makefile
+- [x] GUI/wallet/README.md
+- [x] GUI/wallet/ci/.gitkeep
+- [x] GUI/wallet/ci/pipeline.yml
+- [x] GUI/wallet/config/.gitkeep
+- [x] GUI/wallet/config/production.ts
+- [x] GUI/wallet/docker-compose.yml
+- [x] GUI/wallet/docs/.gitkeep
 
 **Stage 36**
 - [ ] GUI/wallet/docs/README.md

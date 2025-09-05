@@ -2,6 +2,10 @@
 
 This guide describes how Synnergy assigns opcodes, prices execution and enforces gas usage.  It is derived from the canonical tables in `gas_table.go` and the dispatcher in `opcode_dispatcher.go`.
 
+Stage 35 adds a wallet interface layer; while it introduces no new opcodes, the
+CI and testing harness ensure existing gas costs remain stable when wallet
+operations invoke the virtual machine.
+
 Stage 13 extends the catalogue with opcodes for data distribution monitoring and
 DEX liquidity queries so operational dashboards can estimate fees prior to
 invocation.
