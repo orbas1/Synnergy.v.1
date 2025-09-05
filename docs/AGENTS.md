@@ -42,7 +42,7 @@
 - Stage 36: Completed – wallet GUI configuration, documentation and tests enhanced.
 - Stage 37: Completed – core security and AI modules upgraded with tests and encryption.
 - Stage 38: Completed – biometric security node and CLI components finalised with tests.
-- Stage 39: In Progress – audit CLI and audit node validated with address checks and tests; authority and bank CLI modules pending.
+- Stage 39: Completed – authority and bank CLI modules validated with unit tests.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -838,21 +838,21 @@
 - [x] cli/audit_node.go
 - [x] cli/audit_node_test.go
 - [x] cli/audit_test.go
-- [ ] cli/authority_apply.go
-- [ ] cli/authority_apply_test.go
-- [ ] cli/authority_node_index.go
-- [ ] cli/authority_node_index_test.go
-- [ ] cli/authority_nodes.go
-- [ ] cli/authority_nodes_test.go
-- [ ] cli/bank_institutional_node.go
-- [ ] cli/bank_institutional_node_test.go
-- [ ] cli/bank_nodes_index.go
-- [ ] cli/bank_nodes_index_test.go
-- [ ] cli/base_node.go
-- [ ] cli/base_node_test.go
-- [ ] cli/base_token.go
-- [ ] cli/base_token_test.go
-- [ ] cli/biometric.go
+- [x] cli/authority_apply.go
+- [x] cli/authority_apply_test.go
+- [x] cli/authority_node_index.go
+- [x] cli/authority_node_index_test.go
+- [x] cli/authority_nodes.go
+- [x] cli/authority_nodes_test.go
+- [x] cli/bank_institutional_node.go
+- [x] cli/bank_institutional_node_test.go
+- [x] cli/bank_nodes_index.go
+- [x] cli/bank_nodes_index_test.go
+- [x] cli/base_node.go
+- [x] cli/base_node_test.go
+- [x] cli/base_token.go
+- [x] cli/base_token_test.go
+- [x] cli/biometric.go
 
 **Stage 40**
 - [ ] cli/biometric_security_node.go

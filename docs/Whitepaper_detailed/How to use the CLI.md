@@ -1,9 +1,20 @@
 # How to use the CLI
 
 The `synnergy` binary exposes network and contract functionality.
-Stage 39 extends the toolset with liquidity pool commands used by the DEX screener.
+Stage 39 extends the toolset with authority governance and banking commands alongside liquidity pool utilities used by the DEX screener.
 
 ```bash
+# Manage authority applications and node membership
+synnergy authority_apply submit node1 validator "candidate node"
+synnergy authority_apply list --json
+synnergy authority register node1 validator
+synnergy authority is node1
+
+# Register participating institutions and inspect supported node types
+synnergy bankinst register MyBank
+synnergy bankinst list
+synnergy banknodes types
+
 # Create a new liquidity pool with default fee
 synnergy liquidity_pools create TOKENA TOKENB
 
