@@ -46,6 +46,7 @@
 - Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
 - Stage 41: Completed – consensus and contract management CLIs now validate inputs with accompanying tests.
 - Stage 42: Completed – cross-chain bridge, protocol, connection, contract and custodial CLIs now emit structured JSON with accompanying tests.
+- Stage 43: In Progress – DAO CLI gains JSON output and signature verification with initial tests; advanced governance commands pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -921,7 +922,7 @@
 - [x] cli/custodial_node_test.go – custodial operations verified
 
 **Stage 43**
-- [ ] cli/dao.go
+- [x] cli/dao.go
 - [ ] cli/dao_access_control.go
 - [ ] cli/dao_access_control_test.go
 - [ ] cli/dao_proposal.go
@@ -930,11 +931,11 @@
 - [ ] cli/dao_quadratic_voting_test.go
 - [ ] cli/dao_staking.go
 - [ ] cli/dao_staking_test.go
-- [ ] cli/dao_test.go
+- [x] cli/dao_test.go
 - [ ] cli/dao_token.go
 - [ ] cli/dao_token_test.go
-- [ ] cli/ecdsa_util.go
-- [ ] cli/ecdsa_util_test.go
+- [x] cli/ecdsa_util.go
+- [x] cli/ecdsa_util_test.go
 - [ ] cli/elected_authority_node.go
 - [ ] cli/elected_authority_node_test.go
 - [ ] cli/experimental_node.go
@@ -2667,6 +2668,7 @@
 - [ ] web/pages/api/run.js
 - [ ] web/pages/authority.js
 - [ ] web/pages/index.js
+ - [x] web/pages/dao.js
 - [ ] zero_trust_data_channels.go
 - [ ] zero_trust_data_channels_test.go
 
@@ -5151,6 +5153,7 @@
 - [ ] web/pages/api/run.js
 - [ ] web/pages/authority.js
 - [ ] web/pages/index.js
+- [x] web/pages/dao.js
 - [ ] zero_trust_data_channels.go
 - [ ] zero_trust_data_channels_test.go
 
@@ -7536,6 +7539,7 @@
 | 125 | web/pages/api/run.js | [ ] |
 | 125 | web/pages/authority.js | [ ] |
 | 125 | web/pages/index.js | [ ] |
+| 125 | web/pages/dao.js | [x] |
 | 125 | zero_trust_data_channels.go | [ ] |
 | 125 | zero_trust_data_channels_test.go | [ ] |
 | 126 | docs/ux/mobile_responsiveness.md | [ ] |
