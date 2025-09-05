@@ -21,9 +21,13 @@ func init() {
 		Use:   "start [ms]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Start mining loop with interval milliseconds",
-		Run: func(cmd *cobra.Command, args []string) {
-			ms, _ := time.ParseDuration(args[0] + "ms")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ms, err := time.ParseDuration(args[0] + "ms")
+			if err != nil {
+				return err
+			}
 			consensusService.Start(context.Background(), ms)
+			return nil
 		},
 	}
 

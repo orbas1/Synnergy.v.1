@@ -10,14 +10,16 @@ import (
 
 var switcher = core.NewConsensusSwitcher(core.ModePoW)
 
-func parseMode(m string) core.ConsensusMode {
+func parseMode(m string) (core.ConsensusMode, error) {
 	switch strings.ToLower(m) {
+	case "pow":
+		return core.ModePoW, nil
 	case "pos":
-		return core.ModePoS
+		return core.ModePoS, nil
 	case "poh":
-		return core.ModePoH
+		return core.ModePoH, nil
 	default:
-		return core.ModePoW
+		return core.ModePoW, fmt.Errorf("unknown mode %s", m)
 	}
 }
 
@@ -48,8 +50,13 @@ func init() {
 		Use:   "set [mode]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Set initial mode (pow|pos|poh)",
-		Run: func(cmd *cobra.Command, args []string) {
-			switcher = core.NewConsensusSwitcher(parseMode(args[0]))
+		RunE: func(cmd *cobra.Command, args []string) error {
+			mode, err := parseMode(args[0])
+			if err != nil {
+				return err
+			}
+			switcher = core.NewConsensusSwitcher(mode)
+			return nil
 		},
 	}
 
