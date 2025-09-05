@@ -40,6 +40,7 @@
 - Stage 33: Completed – validator-governance-portal source/tests and wallet-admin-interface base configs established.
 - Stage 35: Completed – wallet admin interface tests and wallet module production scaffolds hardened.
 - Stage 36: Completed – wallet GUI configuration, documentation and tests enhanced.
+- Stage 37: Not started – core security and AI modules pending review.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -787,7 +788,7 @@
 - [ ] GUI/wallet/tests/unit/example.test.ts
 - [ ] GUI/wallet/tsconfig.json
 
-**Stage 37**
+**Stage 37** – status: pending evaluation of core security and AI modules
 - [ ] LICENSE
 - [ ] Makefile
 - [ ] README.md
