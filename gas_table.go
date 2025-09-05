@@ -29,7 +29,8 @@ import (
 // priced. Stage 36 adds NFT marketplace operations to price minting and trading
 // tokens. Stage 38 prices biometric security node enrollment and authentication
 // commands so secure transaction flows surface their costs. Stage 39 records
-// liquidity view operations for the DEX screener.
+// liquidity view operations for the DEX screener. Stage 40 adds monetary coin
+// queries so wallets can surface the cost of reward and supply lookups.
 type GasTable map[string]uint64
 
 // DefaultGasCost is used when an opcode is missing from the guide.

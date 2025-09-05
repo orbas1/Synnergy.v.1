@@ -94,6 +94,13 @@ func main() {
 	synn.RegisterGasCost("NewWallet", synn.GasCost("NewWallet"))
 	synn.RegisterGasCost("Sign", synn.GasCost("Sign"))
 	synn.RegisterGasCost("VerifySignature", synn.GasCost("VerifySignature"))
+	// Stage 40 monetary policy queries
+	synn.RegisterGasCost("BlockReward", synn.GasCost("BlockReward"))
+	synn.RegisterGasCost("CirculatingSupply", synn.GasCost("CirculatingSupply"))
+	synn.RegisterGasCost("RemainingSupply", synn.GasCost("RemainingSupply"))
+	synn.RegisterGasCost("InitialPrice", synn.GasCost("InitialPrice"))
+	synn.RegisterGasCost("AlphaFactor", synn.GasCost("AlphaFactor"))
+	synn.RegisterGasCost("MinimumStake", synn.GasCost("MinimumStake"))
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.

@@ -2,6 +2,7 @@
 
 The `synnergy` binary exposes network and contract functionality.
 Stage 39 extends the toolset with authority governance and banking commands alongside liquidity pool utilities used by the DEX screener.
+Stage 40 adds monetary policy utilities; `synnergy coin` validates inputs and can emit JSON for supply and reward queries.
 
 ```bash
 # Manage authority applications and node membership
@@ -24,6 +25,9 @@ synnergy liquidity_views list
 
 # Query a specific pool
 synnergy liquidity_views info TOKENA-TOKENB
+
+# Inspect coin parameters
+synnergy coin --json info
 ```
 
 Most commands accept the `--json` flag to produce machine readable output for GUIs.

@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -8,14 +9,22 @@ import (
 	"synnergy/core"
 )
 
+var coinJSON bool
+
 func init() {
 	coinCmd := &cobra.Command{Use: "coin", Short: "Synthron coin utilities"}
+	coinCmd.PersistentFlags().BoolVar(&coinJSON, "json", false, "output as JSON")
 
 	infoCmd := &cobra.Command{
 		Use:   "info",
 		Short: "Display coin parameters",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Printf("name: %s\nmax supply: %d\ngenesis allocation: %d\n", core.CoinName, core.MaxSupply, core.GenesisAllocation)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			resp := map[string]interface{}{
+				"name":               core.CoinName,
+				"max_supply":         core.MaxSupply,
+				"genesis_allocation": core.GenesisAllocation,
+			}
+			return coinOutput(resp, fmt.Sprintf("name: %s\nmax supply: %d\ngenesis allocation: %d", core.CoinName, core.MaxSupply, core.GenesisAllocation))
 		},
 	}
 
@@ -23,9 +32,13 @@ func init() {
 		Use:   "reward [height]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show block reward at a given height",
-		Run: func(cmd *cobra.Command, args []string) {
-			h, _ := strconv.ParseUint(args[0], 10, 64)
-			fmt.Println("reward:", core.BlockReward(h))
+		RunE: func(cmd *cobra.Command, args []string) error {
+			h, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid height: %w", err)
+			}
+			reward := core.BlockReward(h)
+			return coinOutput(map[string]uint64{"reward": reward}, fmt.Sprintf("reward: %d", reward))
 		},
 	}
 
@@ -33,11 +46,15 @@ func init() {
 		Use:   "supply [height]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show circulating and remaining supply",
-		Run: func(cmd *cobra.Command, args []string) {
-			h, _ := strconv.ParseUint(args[0], 10, 64)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			h, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid height: %w", err)
+			}
 			circ := core.CirculatingSupply(h)
 			rem := core.RemainingSupply(h)
-			fmt.Printf("circulating: %d remaining: %d\n", circ, rem)
+			resp := map[string]uint64{"circulating": circ, "remaining": rem}
+			return coinOutput(resp, fmt.Sprintf("circulating: %d remaining: %d", circ, rem))
 		},
 	}
 
@@ -45,14 +62,33 @@ func init() {
 		Use:   "price [C] [R] [M] [V] [T] [E]",
 		Args:  cobra.ExactArgs(6),
 		Short: "Calculate initial price from economic factors",
-		Run: func(cmd *cobra.Command, args []string) {
-			C, _ := strconv.ParseFloat(args[0], 64)
-			R, _ := strconv.ParseFloat(args[1], 64)
-			M, _ := strconv.ParseFloat(args[2], 64)
-			V, _ := strconv.ParseFloat(args[3], 64)
-			T, _ := strconv.ParseFloat(args[4], 64)
-			E, _ := strconv.ParseFloat(args[5], 64)
-			fmt.Println("price:", core.InitialPrice(C, R, M, V, T, E))
+		RunE: func(cmd *cobra.Command, args []string) error {
+			C, err := strconv.ParseFloat(args[0], 64)
+			if err != nil {
+				return fmt.Errorf("invalid C: %w", err)
+			}
+			R, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return fmt.Errorf("invalid R: %w", err)
+			}
+			M, err := strconv.ParseFloat(args[2], 64)
+			if err != nil {
+				return fmt.Errorf("invalid M: %w", err)
+			}
+			V, err := strconv.ParseFloat(args[3], 64)
+			if err != nil {
+				return fmt.Errorf("invalid V: %w", err)
+			}
+			T, err := strconv.ParseFloat(args[4], 64)
+			if err != nil {
+				return fmt.Errorf("invalid T: %w", err)
+			}
+			E, err := strconv.ParseFloat(args[5], 64)
+			if err != nil {
+				return fmt.Errorf("invalid E: %w", err)
+			}
+			price := core.InitialPrice(C, R, M, V, T, E)
+			return coinOutput(map[string]float64{"price": price}, fmt.Sprintf("price: %f", price))
 		},
 	}
 
@@ -60,12 +96,25 @@ func init() {
 		Use:   "alpha [volatility] [participation] [economic] [norm]",
 		Args:  cobra.ExactArgs(4),
 		Short: "Compute alpha factor",
-		Run: func(cmd *cobra.Command, args []string) {
-			V, _ := strconv.ParseFloat(args[0], 64)
-			P, _ := strconv.ParseFloat(args[1], 64)
-			E, _ := strconv.ParseFloat(args[2], 64)
-			N, _ := strconv.ParseFloat(args[3], 64)
-			fmt.Println("alpha:", core.AlphaFactor(V, P, E, N))
+		RunE: func(cmd *cobra.Command, args []string) error {
+			V, err := strconv.ParseFloat(args[0], 64)
+			if err != nil {
+				return fmt.Errorf("invalid volatility: %w", err)
+			}
+			P, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return fmt.Errorf("invalid participation: %w", err)
+			}
+			E, err := strconv.ParseFloat(args[2], 64)
+			if err != nil {
+				return fmt.Errorf("invalid economic factor: %w", err)
+			}
+			N, err := strconv.ParseFloat(args[3], 64)
+			if err != nil {
+				return fmt.Errorf("invalid norm: %w", err)
+			}
+			alpha := core.AlphaFactor(V, P, E, N)
+			return coinOutput(map[string]float64{"alpha": alpha}, fmt.Sprintf("alpha: %f", alpha))
 		},
 	}
 
@@ -73,15 +122,41 @@ func init() {
 		Use:   "minstake [totalTx] [currentReward] [circSupply] [alpha]",
 		Args:  cobra.ExactArgs(4),
 		Short: "Calculate minimum stake requirement",
-		Run: func(cmd *cobra.Command, args []string) {
-			tx, _ := strconv.ParseFloat(args[0], 64)
-			reward, _ := strconv.ParseFloat(args[1], 64)
-			supply, _ := strconv.ParseFloat(args[2], 64)
-			alpha, _ := strconv.ParseFloat(args[3], 64)
-			fmt.Println("minimum stake:", core.MinimumStake(tx, reward, supply, alpha))
+		RunE: func(cmd *cobra.Command, args []string) error {
+			tx, err := strconv.ParseFloat(args[0], 64)
+			if err != nil {
+				return fmt.Errorf("invalid totalTx: %w", err)
+			}
+			reward, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return fmt.Errorf("invalid currentReward: %w", err)
+			}
+			supply, err := strconv.ParseFloat(args[2], 64)
+			if err != nil {
+				return fmt.Errorf("invalid circSupply: %w", err)
+			}
+			alpha, err := strconv.ParseFloat(args[3], 64)
+			if err != nil {
+				return fmt.Errorf("invalid alpha: %w", err)
+			}
+			ms := core.MinimumStake(tx, reward, supply, alpha)
+			return coinOutput(map[string]float64{"minimum_stake": ms}, fmt.Sprintf("minimum stake: %f", ms))
 		},
 	}
 
 	coinCmd.AddCommand(infoCmd, rewardCmd, supplyCmd, priceCmd, alphaCmd, minstakeCmd)
 	rootCmd.AddCommand(coinCmd)
+}
+
+func coinOutput(v interface{}, plain string) error {
+	if coinJSON {
+		b, err := json.Marshal(v)
+		if err != nil {
+			return err
+		}
+		fmt.Println(string(b))
+	} else {
+		fmt.Println(plain)
+	}
+	return nil
 }
