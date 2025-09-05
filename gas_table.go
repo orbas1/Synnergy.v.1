@@ -30,7 +30,8 @@ import (
 // tokens. Stage 38 prices biometric security node enrollment and authentication
 // commands so secure transaction flows surface their costs. Stage 39 records
 // liquidity view operations for the DEX screener. Stage 40 adds monetary coin
-// queries so wallets can surface the cost of reward and supply lookups.
+// queries and compliance management costs so wallets can surface the price of
+// reward, supply and KYC operations.
 type GasTable map[string]uint64
 
 // DefaultGasCost is used when an opcode is missing from the guide.

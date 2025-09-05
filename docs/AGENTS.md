@@ -43,7 +43,7 @@
 - Stage 37: Completed – core security and AI modules upgraded with tests and encryption.
 - Stage 38: Completed – biometric security node and CLI components finalised with tests.
 - Stage 39: Completed – authority and bank CLI modules validated with unit tests.
-- Stage 40: In Progress – block and central bank CLIs upgraded with validation and JSON; charity pool commands now support JSON output and tests; coin utilities now emit validated JSON responses; remaining modules pending.
+- Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -856,11 +856,11 @@
 - [x] cli/biometric.go
 
 **Stage 40**
-- [ ] cli/biometric_security_node.go
-- [ ] cli/biometric_security_node_test.go
-- [ ] cli/biometric_test.go
-- [ ] cli/biometrics_auth.go
-- [ ] cli/biometrics_auth_test.go
+ - [x] cli/biometric_security_node.go – JSON output and argument validation
+ - [x] cli/biometric_security_node_test.go – tests JSON auth response
+ - [x] cli/biometric_test.go – verifies unenrolled biometric authentication
+ - [x] cli/biometrics_auth.go – JSON template management commands
+ - [x] cli/biometrics_auth_test.go – ensures empty list returns JSON array
 - [x] cli/block.go – added argument validation and RunE handlers
 - [x] cli/block_test.go – covered block creation and header hashing
  - [x] cli/centralbank.go – RunE handlers and JSON output support
@@ -870,11 +870,11 @@
  - [x] cli/cli_core_test.go – root help coverage added
  - [x] cli/coin.go – JSON output and argument validation
  - [x] cli/coin_test.go – verifies JSON info and height validation
-- [ ] cli/compliance.go
-- [ ] cli/compliance_mgmt.go
-- [ ] cli/compliance_mgmt_test.go
-- [ ] cli/compliance_test.go
-- [ ] cli/compression.go
+ - [x] cli/compliance.go – JSON KYC, fraud and risk queries
+ - [x] cli/compliance_mgmt.go – JSON policy controls
+ - [x] cli/compliance_mgmt_test.go – status command tests
+ - [x] cli/compliance_test.go – risk query test
+ - [x] cli/compression.go – JSON snapshot save/load
 
 **Stage 41**
 - [ ] cli/compression_test.go

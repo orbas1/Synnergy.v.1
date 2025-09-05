@@ -9,35 +9,59 @@ import (
 	ilog "synnergy/internal/log"
 )
 
-var complianceMgr = core.NewComplianceManager()
+var (
+	complianceMgr = core.NewComplianceManager()
+	cmJSON        bool
+)
+
+func cmOutput(v interface{}, plain string) {
+	if cmJSON {
+		b, err := json.Marshal(v)
+		if err == nil {
+			fmt.Println(string(b))
+		}
+	} else {
+		fmt.Println(plain)
+	}
+}
 
 func init() {
 	mgmtCmd := &cobra.Command{Use: "compliance_management", Short: "Manage address compliance"}
+	mgmtCmd.PersistentFlags().BoolVar(&cmJSON, "json", false, "output results in JSON")
 
-	suspendCmd := &cobra.Command{Use: "suspend [addr]", Args: cobra.ExactArgs(1), Short: "Suspend an address", Run: func(cmd *cobra.Command, args []string) {
+	suspendCmd := &cobra.Command{Use: "suspend [addr]", Args: cobra.ExactArgs(1), Short: "Suspend an address", RunE: func(cmd *cobra.Command, args []string) error {
 		complianceMgr.Suspend(args[0])
 		ilog.Info("cli_suspend", "address", args[0])
+		cmOutput(map[string]string{"status": "suspended"}, "suspended")
+		return nil
 	}}
 
-	resumeCmd := &cobra.Command{Use: "resume [addr]", Args: cobra.ExactArgs(1), Short: "Lift a suspension", Run: func(cmd *cobra.Command, args []string) {
+	resumeCmd := &cobra.Command{Use: "resume [addr]", Args: cobra.ExactArgs(1), Short: "Lift a suspension", RunE: func(cmd *cobra.Command, args []string) error {
 		complianceMgr.Resume(args[0])
 		ilog.Info("cli_resume", "address", args[0])
+		cmOutput(map[string]string{"status": "resumed"}, "resumed")
+		return nil
 	}}
 
-	whitelistCmd := &cobra.Command{Use: "whitelist [addr]", Args: cobra.ExactArgs(1), Short: "Add an address to the whitelist", Run: func(cmd *cobra.Command, args []string) {
+	whitelistCmd := &cobra.Command{Use: "whitelist [addr]", Args: cobra.ExactArgs(1), Short: "Add an address to the whitelist", RunE: func(cmd *cobra.Command, args []string) error {
 		complianceMgr.Whitelist(args[0])
 		ilog.Info("cli_whitelist", "address", args[0])
+		cmOutput(map[string]string{"status": "whitelisted"}, "whitelisted")
+		return nil
 	}}
 
-	unwhitelistCmd := &cobra.Command{Use: "unwhitelist [addr]", Args: cobra.ExactArgs(1), Short: "Remove an address from the whitelist", Run: func(cmd *cobra.Command, args []string) {
+	unwhitelistCmd := &cobra.Command{Use: "unwhitelist [addr]", Args: cobra.ExactArgs(1), Short: "Remove an address from the whitelist", RunE: func(cmd *cobra.Command, args []string) error {
 		complianceMgr.Unwhitelist(args[0])
 		ilog.Info("cli_unwhitelist", "address", args[0])
+		cmOutput(map[string]string{"status": "unwhitelisted"}, "unwhitelisted")
+		return nil
 	}}
 
-	statusCmd := &cobra.Command{Use: "status [addr]", Args: cobra.ExactArgs(1), Short: "Show suspension and whitelist status", Run: func(cmd *cobra.Command, args []string) {
+	statusCmd := &cobra.Command{Use: "status [addr]", Args: cobra.ExactArgs(1), Short: "Show suspension and whitelist status", RunE: func(cmd *cobra.Command, args []string) error {
 		s, w := complianceMgr.Status(args[0])
 		ilog.Info("cli_status", "address", args[0], "suspended", s, "whitelisted", w)
-		fmt.Printf("suspended: %v whitelisted: %v\n", s, w)
+		cmOutput(map[string]bool{"suspended": s, "whitelisted": w}, fmt.Sprintf("suspended: %v whitelisted: %v", s, w))
+		return nil
 	}}
 
 	reviewCmd := &cobra.Command{Use: "review [tx.json]", Args: cobra.ExactArgs(1), Short: "Check a transaction before broadcast", RunE: func(cmd *cobra.Command, args []string) error {
@@ -54,7 +78,7 @@ func init() {
 			return err
 		}
 		ilog.Info("cli_review", "from", tx.From, "to", tx.To)
-		fmt.Println("ok")
+		cmOutput(map[string]string{"status": "ok"}, "ok")
 		return nil
 	}}
 

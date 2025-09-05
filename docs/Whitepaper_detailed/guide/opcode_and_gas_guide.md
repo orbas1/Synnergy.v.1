@@ -63,7 +63,7 @@ minting and trading non-fungible tokens through the CLI and GUI.
 Stage 38 registers biometric security node enrollment and authentication
 opcodes, ensuring CLI commands report deterministic gas costs for secure
 transactions.
-Stage 40 introduces opcodes for monetary policy queries (`BlockReward`, `CirculatingSupply`, `InitialPrice`, `MinimumStake`) so wallets can surface coin economics with accurate fee estimates.
+Stage 40 introduces opcodes for monetary policy queries (`BlockReward`, `CirculatingSupply`, `InitialPrice`, `MinimumStake`) so wallets can surface coin economics with accurate fee estimates, and expands the catalogue with compliance management and ledger compression handlers so KYC checks and snapshot operations carry predictable fees.
 
 The VM charges gas **before** executing an opcode.  Dynamic portions – such as per‑word memory fees or refunds for resource release – are handled by the VM's gas meter.
 

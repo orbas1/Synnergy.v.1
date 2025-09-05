@@ -11,10 +11,25 @@ import (
 	ilog "synnergy/internal/log"
 )
 
-var compliance = core.NewComplianceService()
+var (
+	compliance = core.NewComplianceService()
+	compJSON   bool
+)
+
+func compOutput(v interface{}, plain string) {
+	if compJSON {
+		b, err := json.Marshal(v)
+		if err == nil {
+			fmt.Println(string(b))
+		}
+	} else {
+		fmt.Println(plain)
+	}
+}
 
 func init() {
 	compCmd := &cobra.Command{Use: "compliance", Short: "Compliance operations"}
+	compCmd.PersistentFlags().BoolVar(&compJSON, "json", false, "output results in JSON")
 
 	validateCmd := &cobra.Command{
 		Use:   "validate [kyc.json]",
@@ -37,7 +52,7 @@ func init() {
 				return err
 			}
 			ilog.Info("cli_validate_kyc", "address", input.Address)
-			fmt.Println("commitment:", commit)
+			compOutput(map[string]string{"commitment": commit}, fmt.Sprintf("commitment: %s", commit))
 			return nil
 		},
 	}
@@ -46,9 +61,11 @@ func init() {
 		Use:   "erase [address]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Remove a user's KYC data.",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			compliance.EraseKYC(args[0])
 			ilog.Info("cli_erase_kyc", "address", args[0])
+			compOutput(map[string]string{"status": "erased"}, "erased")
+			return nil
 		},
 	}
 
@@ -56,10 +73,15 @@ func init() {
 		Use:   "fraud [address] [severity]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Record a fraud signal.",
-		Run: func(cmd *cobra.Command, args []string) {
-			sev, _ := strconv.Atoi(args[1])
+		RunE: func(cmd *cobra.Command, args []string) error {
+			sev, err := strconv.Atoi(args[1])
+			if err != nil {
+				return fmt.Errorf("invalid severity: %w", err)
+			}
 			compliance.RecordFraud(args[0], sev)
 			ilog.Info("cli_fraud", "address", args[0], "severity", sev)
+			compOutput(map[string]string{"status": "recorded"}, "recorded")
+			return nil
 		},
 	}
 
@@ -67,10 +89,11 @@ func init() {
 		Use:   "risk [address]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Retrieve accumulated fraud risk score.",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			score := compliance.RiskScore(args[0])
 			ilog.Info("cli_risk", "address", args[0], "score", score)
-			fmt.Println(score)
+			compOutput(map[string]int{"risk": score}, fmt.Sprintf("%d", score))
+			return nil
 		},
 	}
 
@@ -78,12 +101,21 @@ func init() {
 		Use:   "audit [address]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Display the audit trail for an address.",
-		Run: func(cmd *cobra.Command, args []string) {
-			for _, e := range compliance.AuditTrail(args[0]) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			events := compliance.AuditTrail(args[0])
+			ilog.Info("cli_audit", "address", args[0])
+			if compJSON {
+				b, err := json.Marshal(events)
+				if err == nil {
+					fmt.Println(string(b))
+				}
+				return nil
+			}
+			for _, e := range events {
 				b, _ := json.Marshal(e)
 				fmt.Println(string(b))
 			}
-			ilog.Info("cli_audit", "address", args[0])
+			return nil
 		},
 	}
 
@@ -100,13 +132,16 @@ func init() {
 			if err := json.Unmarshal(b, &tx); err != nil {
 				return err
 			}
-			thr, _ := strconv.ParseFloat(args[1], 64)
-			if compliance.MonitorTransaction(tx, thr) {
-				ilog.Info("cli_monitor", "id", tx.ID, "anomaly", true)
-				fmt.Println("anomaly detected")
+			thr, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return fmt.Errorf("invalid threshold: %w", err)
+			}
+			anomaly := compliance.MonitorTransaction(tx, thr)
+			ilog.Info("cli_monitor", "id", tx.ID, "anomaly", anomaly)
+			if anomaly {
+				compOutput(map[string]string{"status": "anomaly"}, "anomaly detected")
 			} else {
-				ilog.Info("cli_monitor", "id", tx.ID, "anomaly", false)
-				fmt.Println("ok")
+				compOutput(map[string]string{"status": "ok"}, "ok")
 			}
 			return nil
 		},
@@ -123,7 +158,7 @@ func init() {
 			}
 			ok := compliance.VerifyZKP(b, args[1], args[2])
 			ilog.Info("cli_verify_zkp", "result", ok)
-			fmt.Println(ok)
+			compOutput(map[string]bool{"valid": ok}, fmt.Sprintf("%v", ok))
 			return nil
 		},
 	}
