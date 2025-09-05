@@ -23,26 +23,36 @@ func init() {
 		Use:   "sub-create [validator] [from] [to] [amount] [fee] [nonce]",
 		Args:  cobra.ExactArgs(6),
 		Short: "Create a sub-block with a single transaction",
-		Run: func(cmd *cobra.Command, args []string) {
-			amt, _ := strconv.ParseUint(args[3], 10, 64)
-			fee, _ := strconv.ParseUint(args[4], 10, 64)
-			nonce, _ := strconv.ParseUint(args[5], 10, 64)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			amt, err := strconv.ParseUint(args[3], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid amount: %w", err)
+			}
+			fee, err := strconv.ParseUint(args[4], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid fee: %w", err)
+			}
+			nonce, err := strconv.ParseUint(args[5], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid nonce: %w", err)
+			}
 			tx := core.NewTransaction(args[1], args[2], amt, fee, nonce)
 			sb := core.NewSubBlock([]*core.Transaction{tx}, args[0])
 			sbList = append(sbList, sb)
 			fmt.Println(sb.PohHash)
+			return nil
 		},
 	}
 
 	subVerifyCmd := &cobra.Command{
 		Use:   "sub-verify",
 		Short: "Verify the latest sub-block signature",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(sbList) == 0 {
-				fmt.Println("no sub-blocks")
-				return
+				return fmt.Errorf("no sub-blocks")
 			}
 			fmt.Println(sbList[len(sbList)-1].VerifySignature())
+			return nil
 		},
 	}
 
@@ -50,9 +60,13 @@ func init() {
 		Use:   "create [prevhash]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Create a block from existing sub-blocks",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(sbList) == 0 {
+				return fmt.Errorf("no sub-blocks to assemble")
+			}
 			lastBlock = core.NewBlock(sbList, args[0])
 			fmt.Printf("block with %d sub-blocks created\n", len(sbList))
+			return nil
 		},
 	}
 
@@ -60,13 +74,16 @@ func init() {
 		Use:   "header [nonce]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Compute header hash for the latest block",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if lastBlock == nil {
-				fmt.Println("no block")
-				return
+				return fmt.Errorf("no block")
 			}
-			nonce, _ := strconv.ParseUint(args[0], 10, 64)
+			nonce, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid nonce: %w", err)
+			}
 			fmt.Println(lastBlock.HeaderHash(nonce))
+			return nil
 		},
 	}
 

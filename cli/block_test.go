@@ -1,7 +1,32 @@
 package cli
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
-func TestBlockPlaceholder(t *testing.T) {
-	t.Skip("TODO: implement test")
+// TestBlockCreateAndHeader ensures block creation and header hashing work via CLI.
+func TestBlockCreateAndHeader(t *testing.T) {
+	sbList = nil
+	lastBlock = nil
+
+	if _, err := execCommand("block", "sub-create", "val", "from", "to", "10", "1", "0"); err != nil {
+		t.Fatalf("sub-create failed: %v", err)
+	}
+
+	out, err := execCommand("block", "create", "prevhash")
+	if err != nil {
+		t.Fatalf("create failed: %v", err)
+	}
+	if !strings.Contains(out, "block with 1 sub-blocks") {
+		t.Fatalf("unexpected create output: %s", out)
+	}
+
+	out, err = execCommand("block", "header", "1")
+	if err != nil {
+		t.Fatalf("header failed: %v", err)
+	}
+	if out == "" {
+		t.Fatalf("expected header hash")
+	}
 }

@@ -43,6 +43,7 @@
 - Stage 37: Completed – core security and AI modules upgraded with tests and encryption.
 - Stage 38: Completed – biometric security node and CLI components finalised with tests.
 - Stage 39: Completed – authority and bank CLI modules validated with unit tests.
+- Stage 40: In Progress – block CLI refactored with validation; remaining modules pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -860,8 +861,8 @@
 - [ ] cli/biometric_test.go
 - [ ] cli/biometrics_auth.go
 - [ ] cli/biometrics_auth_test.go
-- [ ] cli/block.go
-- [ ] cli/block_test.go
+- [x] cli/block.go – added argument validation and RunE handlers
+- [x] cli/block_test.go – covered block creation and header hashing
 - [ ] cli/centralbank.go
 - [ ] cli/centralbank_test.go
 - [ ] cli/charity.go
@@ -5894,8 +5895,8 @@
 | 40 | cli/biometric_test.go | [ ] |
 | 40 | cli/biometrics_auth.go | [ ] |
 | 40 | cli/biometrics_auth_test.go | [ ] |
-| 40 | cli/block.go | [ ] |
-| 40 | cli/block_test.go | [ ] |
+| 40 | cli/block.go | [x] |
+| 40 | cli/block_test.go | [x] |
 | 40 | cli/centralbank.go | [ ] |
 | 40 | cli/centralbank_test.go | [ ] |
 | 40 | cli/charity.go | [ ] |

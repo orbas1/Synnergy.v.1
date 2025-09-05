@@ -2,6 +2,7 @@
 
 Stage 23 updates consensus and governance CLI modules to emit gas information for enterprise planning.
 Stage 39 introduces liquidity pool modules and accompanying CLI commands used by the DEX Screener.
+Stage 40 refactors block utilities with argument validation and tests.
 
 ## Module Files
      1	access_control.go
