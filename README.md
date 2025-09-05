@@ -33,6 +33,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Role-based security** – biometric authentication and security node CLI (`core.NewBiometricService`, `synnergy bioauth`, `synnergy bsn`), zero‑trust data channels and PKI tooling.
 - **Extensible CLI** – built with [Cobra](https://github.com/spf13/cobra) and backed by `cli.Execute()`.
 - **Validated block utilities** – Stage 40 adds sub-block creation and block assembly commands with strict argument checking.
+- **Central bank controls** – `synnergy centralbank` manages monetary policy and CBDC issuance with structured JSON output.
 - **Data distribution monitor** – CLI and GUI for network telemetry.
 - **Node operations dashboard** – TypeScript CLI and GUI for real-time node health monitoring.
 - **Security operations center** – monitors and aggregates security events with a CLI-accessible GUI.
