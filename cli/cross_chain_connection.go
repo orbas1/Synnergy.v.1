@@ -20,16 +20,26 @@ func init() {
 
 	var listJSON bool
 	var getJSON bool
+	var openJSON bool
+	var closeJSON bool
 
 	openCmd := &cobra.Command{
 		Use:   "open <local_chain> <remote_chain>",
 		Args:  cobra.ExactArgs(2),
 		Short: "Establish a new connection",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			id := connectionManager.Open(args[0], args[1])
-			fmt.Printf("%d gas:%d\n", id, synnergy.GasCost("OpenConnection"))
+			gas := synnergy.GasCost("OpenConnection")
+			if openJSON {
+				enc, _ := json.Marshal(map[string]interface{}{"id": id, "gas": gas})
+				fmt.Println(string(enc))
+				return nil
+			}
+			fmt.Printf("%d gas:%d\n", id, gas)
+			return nil
 		},
 	}
+	openCmd.Flags().BoolVar(&openJSON, "json", false, "output as JSON")
 
 	closeCmd := &cobra.Command{
 		Use:   "close <connection_id>",
@@ -43,10 +53,17 @@ func init() {
 			if err := connectionManager.Close(id); err != nil {
 				return err
 			}
-			fmt.Printf("gas:%d\n", synnergy.GasCost("CloseConnection"))
+			gas := synnergy.GasCost("CloseConnection")
+			if closeJSON {
+				enc, _ := json.Marshal(map[string]interface{}{"status": "closed", "gas": gas})
+				fmt.Println(string(enc))
+				return nil
+			}
+			fmt.Printf("gas:%d\n", gas)
 			return nil
 		},
 	}
+	closeCmd.Flags().BoolVar(&closeJSON, "json", false, "output as JSON")
 
 	getCmd := &cobra.Command{
 		Use:   "get <connection_id>",

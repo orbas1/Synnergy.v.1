@@ -20,6 +20,8 @@ func init() {
 
 	var listJSON bool
 	var getJSON bool
+	var depositJSON bool
+	var claimJSON bool
 
 	depositCmd := &cobra.Command{
 		Use:   "deposit <bridge_id> <from> <to> <amount> [tokenID]",
@@ -38,10 +40,17 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("%s gas:%d\n", t.ID, synnergy.GasCost("BridgeDeposit"))
+			gas := synnergy.GasCost("BridgeDeposit")
+			if depositJSON {
+				enc, _ := json.Marshal(map[string]interface{}{"id": t.ID, "gas": gas})
+				fmt.Println(string(enc))
+				return nil
+			}
+			fmt.Printf("%s gas:%d\n", t.ID, gas)
 			return nil
 		},
 	}
+	depositCmd.Flags().BoolVar(&depositJSON, "json", false, "output as JSON")
 
 	claimCmd := &cobra.Command{
 		Use:   "claim <transfer_id> <proof>",
@@ -51,10 +60,17 @@ func init() {
 			if err := transferManager.Claim(args[0], args[1]); err != nil {
 				return err
 			}
-			fmt.Printf("gas:%d\n", synnergy.GasCost("BridgeClaim"))
+			gas := synnergy.GasCost("BridgeClaim")
+			if claimJSON {
+				enc, _ := json.Marshal(map[string]interface{}{"status": "claimed", "gas": gas})
+				fmt.Println(string(enc))
+				return nil
+			}
+			fmt.Printf("gas:%d\n", gas)
 			return nil
 		},
 	}
+	claimCmd.Flags().BoolVar(&claimJSON, "json", false, "output as JSON")
 
 	getCmd := &cobra.Command{
 		Use:   "get <id>",

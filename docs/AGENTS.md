@@ -45,7 +45,7 @@
 - Stage 39: Completed – authority and bank CLI modules validated with unit tests.
 - Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
 - Stage 41: Completed – consensus and contract management CLIs now validate inputs with accompanying tests.
-- Stage 42: In Progress – cross-chain bridge and transaction CLIs upgraded with structured output and integration tests; remaining cross-chain files pending.
+- Stage 42: Completed – cross-chain bridge, protocol, connection, contract and custodial CLIs now emit structured JSON with accompanying tests.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -900,26 +900,25 @@
 - [ ] cli/contracts_opcodes.go
 
 **Stage 42**
-- [ ] cli/contracts_opcodes_test.go
-- [ ] cli/contracts_test.go
+- [x] cli/contracts_opcodes_test.go – gas annotations verified
+- [x] cli/contracts_test.go – lists contracts with error checking
 - [x] cli/cross_chain.go – structured outputs and error handling for bridge commands
-- [ ] cli/cross_chain_agnostic_protocols.go
-- [ ] cli/cross_chain_agnostic_protocols_test.go
-- [ ] cli/cross_chain_bridge.go
-- [ ] cli/cross_chain_bridge_test.go
-- [ ] cli/cross_chain_cli_test.go
-- [ ] cli/cross_chain_connection.go
-- [ ] cli/cross_chain_connection_test.go
-- [ ] cli/cross_chain_contracts.go
-- [ ] cli/cross_chain_contracts_test.go
+- [x] cli/cross_chain_agnostic_protocols.go – registration emits JSON with gas
+- [x] cli/cross_chain_agnostic_protocols_test.go – protocol registry JSON test
+- [x] cli/cross_chain_bridge.go – deposit/claim commands output JSON and gas
+- [x] cli/cross_chain_bridge_test.go – deposit JSON response validated
+- [x] cli/cross_chain_cli_test.go – bridge deposit uses JSON response
+- [x] cli/cross_chain_connection.go – open/close provide structured JSON
+- [x] cli/cross_chain_connection_test.go – connection JSON workflow covered
+- [x] cli/cross_chain_contracts.go – mapping commands emit JSON
+- [x] cli/cross_chain_contracts_test.go – mapping lifecycle validated
 - [x] cli/cross_chain_test.go – end-to-end tests for register/list/get/authorize/revoke
-- [ ] cli/cross_chain_transactions.go
 - [x] cli/cross_chain_transactions.go – root json flag and structured outputs for lock‑mint/burn‑release
 - [x] cli/cross_chain_transactions_test.go – CLI coverage for lock‑mint, burn‑release, list and get
-- [ ] cli/cross_consensus_scaling_networks.go
-- [ ] cli/cross_consensus_scaling_networks_test.go
-- [ ] cli/custodial_node.go
-- [ ] cli/custodial_node_test.go
+- [x] cli/cross_consensus_scaling_networks.go – register/list/get/remove support JSON
+- [x] cli/cross_consensus_scaling_networks_test.go – consensus network JSON test
+- [x] cli/custodial_node.go – custody, release and holdings emit JSON
+- [x] cli/custodial_node_test.go – custodial operations verified
 
 **Stage 43**
 - [ ] cli/dao.go

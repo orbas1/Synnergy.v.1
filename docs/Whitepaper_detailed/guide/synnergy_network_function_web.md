@@ -20,7 +20,9 @@ registration, connection tracking and gas-priced transfer operations that UIs
 can invoke for inter-network workflows.
 Stage 42 builds on this by adding the `cross_tx` module so the function web can
 initiate lock‑mint and burn‑release flows with JSON responses and audited gas
-charges.
+charges. Bridge, protocol, connection, contract mapping and custodial node
+CLIs now emit structured JSON, letting web interfaces coordinate cross-chain
+transfers end‑to‑end.
 Stage 35 delivers a production-ready wallet interface with rigorous testing and
 CI integration, allowing web dashboards to securely sign and submit
 transactions through the same function web.
