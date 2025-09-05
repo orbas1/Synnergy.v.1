@@ -22,6 +22,9 @@ func NewSecureStorage() *SecureStorage {
 
 // Store encrypts data with key and stores it under hash.
 func (s *SecureStorage) Store(hash string, data, key []byte) error {
+	if len(key) != 32 {
+		return errors.New("key must be 32 bytes")
+	}
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return err
@@ -48,6 +51,9 @@ func (s *SecureStorage) Retrieve(hash string, key []byte) ([]byte, error) {
 	s.mu.RUnlock()
 	if !ok {
 		return nil, errors.New("model not found")
+	}
+	if len(key) != 32 {
+		return nil, errors.New("key must be 32 bytes")
 	}
 	block, err := aes.NewCipher(key)
 	if err != nil {

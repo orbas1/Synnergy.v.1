@@ -15,7 +15,10 @@ security: staticcheck gosec govulncheck
 
 
 bench:
-	go test -bench=TransactionManager -benchmem -run ^$ . | tee benchmarks/current.txt
+        go test -bench=TransactionManager -benchmem -run ^$ . | tee benchmarks/current.txt
+
+test:
+        go test ./...
 
 
 
@@ -25,10 +28,10 @@ docs:
 	mkdocs build
 
 docs-serve:
-	mkdocs serve
+        mkdocs serve
 
 build:
-	go build ./...
+        go build ./...
 
 build-experimental:
 	go build -tags experimental ./...
