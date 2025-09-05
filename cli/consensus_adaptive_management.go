@@ -21,12 +21,19 @@ func init() {
 		Use:   "adjust [demand] [stake]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Adjust weights and show result",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("Adjust")
-			d, _ := strconv.ParseFloat(args[0], 64)
-			s, _ := strconv.ParseFloat(args[1], 64)
+			d, err := strconv.ParseFloat(args[0], 64)
+			if err != nil {
+				return err
+			}
+			s, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return err
+			}
 			w := adaptiveManager.Adjust(d, s)
 			fmt.Printf("PoW: %.2f PoS: %.2f PoH: %.2f\n", w.PoW, w.PoS, w.PoH)
+			return nil
 		},
 	}
 
@@ -34,11 +41,18 @@ func init() {
 		Use:   "threshold [demand] [stake]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Compute switching threshold",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("Threshold")
-			d, _ := strconv.ParseFloat(args[0], 64)
-			s, _ := strconv.ParseFloat(args[1], 64)
+			d, err := strconv.ParseFloat(args[0], 64)
+			if err != nil {
+				return err
+			}
+			s, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return err
+			}
 			fmt.Println(adaptiveManager.Threshold(d, s))
+			return nil
 		},
 	}
 

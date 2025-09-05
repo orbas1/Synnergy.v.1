@@ -26,10 +26,8 @@ func init() {
 		Use:   "transfer [addr] [newOwner]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Transfer contract ownership",
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := contractMgr.Transfer(context.Background(), args[0], args[1]); err != nil {
-				printErr(err)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return contractMgr.Transfer(context.Background(), args[0], args[1])
 		},
 	}
 
@@ -37,10 +35,8 @@ func init() {
 		Use:   "pause [addr]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Pause a contract",
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := contractMgr.Pause(context.Background(), args[0]); err != nil {
-				printErr(err)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return contractMgr.Pause(context.Background(), args[0])
 		},
 	}
 
@@ -48,10 +44,8 @@ func init() {
 		Use:   "resume [addr]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Resume a paused contract",
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := contractMgr.Resume(context.Background(), args[0]); err != nil {
-				printErr(err)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return contractMgr.Resume(context.Background(), args[0])
 		},
 	}
 
@@ -59,16 +53,16 @@ func init() {
 		Use:   "upgrade [addr] [wasmHex] [gasLimit]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Upgrade contract bytecode",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			bytes, err := hex.DecodeString(args[1])
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			gas, _ := strconv.ParseUint(args[2], 10, 64)
-			if err := contractMgr.Upgrade(context.Background(), args[0], bytes, gas); err != nil {
-				printErr(err)
+			gas, err := strconv.ParseUint(args[2], 10, 64)
+			if err != nil {
+				return err
 			}
+			return contractMgr.Upgrade(context.Background(), args[0], bytes, gas)
 		},
 	}
 

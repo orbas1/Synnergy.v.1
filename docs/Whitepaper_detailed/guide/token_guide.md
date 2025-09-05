@@ -38,6 +38,7 @@ Biometric-secured token operations ensure that only enrolled addresses can
 execute sensitive transfers through the CLI.
 Stage 39 integrates a DEX Screener GUI that reports pool reserves for token pairs via CLI, helping traders evaluate liquidity before interacting with token contracts.
 Stage 40 strengthens monetary management by exposing the `coin` CLI with JSON output and validated parameters so wallets can query supply, rewards and staking thresholds securely. It also finalises biometric security node and compliance management commands with structured JSON, enabling wallets and dashboards to validate identity and policy status before executing token transfers.
+Stage 41 enhances consensus and contract management CLI modules with strict input validation, improving reliability for token operations invoked through the CLI.
 Stage 11 ensures token operations execute inside managed VM sandboxes with explicit cleanup semantics and idle sandboxes are automatically purged once their TTL expires.
 Stage 13 links token flows with regulatory nodes, allowing non-compliant transfers to be flagged in real time for audit trails.
 Stage 16 makes the base token and registry concurrency‑safe and includes micro‑benchmarks to monitor transfer throughput.

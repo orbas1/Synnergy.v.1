@@ -21,10 +21,14 @@ func init() {
 		Use:   "sample [seconds]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Add block time sample and show new difficulty",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("AddSample")
-			d, _ := strconv.ParseFloat(args[0], 64)
+			d, err := strconv.ParseFloat(args[0], 64)
+			if err != nil {
+				return err
+			}
 			fmt.Println(difficultyMgr.AddSample(d))
+			return nil
 		},
 	}
 
@@ -41,11 +45,21 @@ func init() {
 		Use:   "config [window] [initial] [target]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Reconfigure difficulty manager",
-		Run: func(cmd *cobra.Command, args []string) {
-			w, _ := strconv.Atoi(args[0])
-			initDiff, _ := strconv.ParseFloat(args[1], 64)
-			target, _ := strconv.ParseFloat(args[2], 64)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			w, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
+			}
+			initDiff, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return err
+			}
+			target, err := strconv.ParseFloat(args[2], 64)
+			if err != nil {
+				return err
+			}
 			difficultyMgr = core.NewDifficultyManager(consensus, w, initDiff, target)
+			return nil
 		},
 	}
 

@@ -20,9 +20,13 @@ func init() {
 		Use:   "create [mode] [id] [addr]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Create a node locked to a consensus mode",
-		Run: func(cmd *cobra.Command, args []string) {
-			mode := parseMode(args[0])
+		RunE: func(cmd *cobra.Command, args []string) error {
+			mode, err := parseMode(args[0])
+			if err != nil {
+				return err
+			}
 			csNode = core.NewConsensusSpecificNode(mode, args[1], args[2], ledger)
+			return nil
 		},
 	}
 
@@ -57,15 +61,15 @@ func init() {
 		Use:   "stake [address] [amount]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Assign stake on node ledger",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if csNode == nil {
-				fmt.Println("no node")
-				return
+				return fmt.Errorf("no node")
 			}
-			amt, _ := strconv.ParseUint(args[1], 10, 64)
-			if err := csNode.SetStake(args[0], amt); err != nil {
-				fmt.Println("error:", err)
+			amt, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return err
 			}
+			return csNode.SetStake(args[0], amt)
 		},
 	}
 

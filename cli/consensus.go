@@ -20,14 +20,18 @@ func init() {
 		Use:   "mine [difficulty]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Mine a block",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("MineBlock")
+			diff, err := strconv.ParseUint(args[0], 10, 8)
+			if err != nil {
+				return err
+			}
 			sb := core.NewSubBlock([]*core.Transaction{}, "validator")
 			b := core.NewBlock([]*core.SubBlock{sb}, "")
-			diff, _ := strconv.ParseUint(args[0], 10, 8)
 			consensus.MineBlock(b, uint8(diff))
 			ilog.Info("cli_mine", "nonce", b.Nonce)
 			fmt.Println("block mined with nonce", b.Nonce)
+			return nil
 		},
 	}
 
@@ -45,13 +49,20 @@ func init() {
 		Use:   "adjust [demand] [stake]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Adjust consensus weights",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("AdjustWeights")
-			d, _ := strconv.ParseFloat(args[0], 64)
-			s, _ := strconv.ParseFloat(args[1], 64)
+			d, err := strconv.ParseFloat(args[0], 64)
+			if err != nil {
+				return err
+			}
+			s, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return err
+			}
 			consensus.AdjustWeights(d, s)
 			ilog.Info("cli_adjust", "pow", consensus.Weights.PoW, "pos", consensus.Weights.PoS, "poh", consensus.Weights.PoH)
 			fmt.Printf("new weights -> PoW: %.2f PoS: %.2f PoH: %.2f\n", consensus.Weights.PoW, consensus.Weights.PoS, consensus.Weights.PoH)
+			return nil
 		},
 	}
 
@@ -59,13 +70,20 @@ func init() {
 		Use:   "threshold [demand] [stake]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Calculate switching threshold",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("Threshold")
-			d, _ := strconv.ParseFloat(args[0], 64)
-			s, _ := strconv.ParseFloat(args[1], 64)
+			d, err := strconv.ParseFloat(args[0], 64)
+			if err != nil {
+				return err
+			}
+			s, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return err
+			}
 			th := consensus.Threshold(d, s)
 			ilog.Info("cli_threshold", "value", th)
 			fmt.Println("threshold:", th)
+			return nil
 		},
 	}
 
@@ -73,14 +91,24 @@ func init() {
 		Use:   "transition [demand] [threat] [stake]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Compute full transition threshold",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("TransitionThreshold")
-			d, _ := strconv.ParseFloat(args[0], 64)
-			t, _ := strconv.ParseFloat(args[1], 64)
-			s, _ := strconv.ParseFloat(args[2], 64)
+			d, err := strconv.ParseFloat(args[0], 64)
+			if err != nil {
+				return err
+			}
+			t, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return err
+			}
+			s, err := strconv.ParseFloat(args[2], 64)
+			if err != nil {
+				return err
+			}
 			thr := consensus.TransitionThreshold(d, t, s)
 			ilog.Info("cli_transition", "value", thr)
 			fmt.Println("transition threshold:", thr)
+			return nil
 		},
 	}
 
@@ -88,14 +116,24 @@ func init() {
 		Use:   "difficulty [old] [actual] [expected]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Adjust mining difficulty",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("DifficultyAdjust")
-			old, _ := strconv.ParseFloat(args[0], 64)
-			actual, _ := strconv.ParseFloat(args[1], 64)
-			expected, _ := strconv.ParseFloat(args[2], 64)
+			old, err := strconv.ParseFloat(args[0], 64)
+			if err != nil {
+				return err
+			}
+			actual, err := strconv.ParseFloat(args[1], 64)
+			if err != nil {
+				return err
+			}
+			expected, err := strconv.ParseFloat(args[2], 64)
+			if err != nil {
+				return err
+			}
 			nd := consensus.DifficultyAdjust(old, actual, expected)
 			ilog.Info("cli_difficulty", "value", nd)
 			fmt.Println("new difficulty:", nd)
+			return nil
 		},
 	}
 
@@ -103,13 +141,23 @@ func init() {
 		Use:   "availability [pow] [pos] [poh]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Set validator availability flags",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("SetAvailability")
-			pow := args[0] == "true"
-			pos := args[1] == "true"
-			poh := args[2] == "true"
+			pow, err := strconv.ParseBool(args[0])
+			if err != nil {
+				return err
+			}
+			pos, err := strconv.ParseBool(args[1])
+			if err != nil {
+				return err
+			}
+			poh, err := strconv.ParseBool(args[2])
+			if err != nil {
+				return err
+			}
 			consensus.SetAvailability(pow, pos, poh)
 			ilog.Info("cli_availability", "pow", pow, "pos", pos, "poh", poh)
+			return nil
 		},
 	}
 
@@ -117,11 +165,15 @@ func init() {
 		Use:   "powrewards [enabled]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Toggle PoW rewards availability",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("SetPoWRewards")
-			en := args[0] == "true"
+			en, err := strconv.ParseBool(args[0])
+			if err != nil {
+				return err
+			}
 			consensus.SetPoWRewards(en)
 			ilog.Info("cli_pow_rewards", "enabled", en)
+			return nil
 		},
 	}
 
