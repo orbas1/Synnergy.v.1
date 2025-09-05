@@ -34,6 +34,10 @@ func init() {
 		Args:  cobra.MinimumNArgs(2),
 		Short: "Log event through audit node",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			addr, err := core.StringToAddress(args[0])
+			if err != nil {
+				return err
+			}
 			meta := make(map[string]string)
 			for _, kv := range args[2:] {
 				parts := strings.SplitN(kv, "=", 2)
@@ -41,7 +45,7 @@ func init() {
 					meta[parts[0]] = parts[1]
 				}
 			}
-			return auditNode.LogEvent(args[0], args[1], meta)
+			return auditNode.LogEvent(addr.Hex(), args[1], meta)
 		},
 	}
 
@@ -51,7 +55,11 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "List events via audit node",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			entries := auditNode.ListEvents(args[0])
+			addr, err := core.StringToAddress(args[0])
+			if err != nil {
+				return err
+			}
+			entries := auditNode.ListEvents(addr.Hex())
 			if jsonOut {
 				b, err := json.MarshalIndent(entries, "", "  ")
 				if err != nil {

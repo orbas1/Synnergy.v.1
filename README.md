@@ -128,6 +128,8 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `contracts compile|deploy|invoke|list|info` | WASM smart contract lifecycle through `core.NewContractRegistry` |
 | `system_health snapshot|log` | Emit metrics and structured logs |
 | `data monitor status` | Report network data distribution metrics |
+| `audit log|list` | Record and query audit events via `core.NewAuditManager` |
+| `audit_node start|log|list` | Operate a bootstrap audit node for network-wide logs |
 | `dex liquidity <pair>` | Query on-chain liquidity pool reserves |
 
 Additional modules cover DAO governance, cross-chain bridges, regulatory nodes, watchtowers and more.
