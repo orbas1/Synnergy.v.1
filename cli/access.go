@@ -8,6 +8,7 @@ import (
 )
 
 func init() {
+	// Stage 38 hardens role-based access control commands with explicit success messages.
 	accessCmd := &cobra.Command{Use: "access", Short: "Role based access control"}
 
 	grantCmd := &cobra.Command{

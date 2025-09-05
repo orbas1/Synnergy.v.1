@@ -27,7 +27,9 @@ import (
 // storage markets, DAO governance, NFT minting and AI model exchanges. Stage 35
 // records storage marketplace operations so listing and deal workflows are gas
 // priced. Stage 36 adds NFT marketplace operations to price minting and trading
-// tokens. Stage 39 records liquidity view operations for the DEX screener.
+// tokens. Stage 38 prices biometric security node enrollment and authentication
+// commands so secure transaction flows surface their costs. Stage 39 records
+// liquidity view operations for the DEX screener.
 type GasTable map[string]uint64
 
 // DefaultGasCost is used when an opcode is missing from the guide.

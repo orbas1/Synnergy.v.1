@@ -4,8 +4,8 @@
 
 Synnergy blockchain CLI
 
-Stage 35 introduces a hardened wallet module with CI, linting and end-to-end
-tests. The wallet commands remain accessible through this CLI, enabling secure
+Stage 38 finalises biometric security and associated CLI modules. Wallet and
+biometric commands are now fully tested and hardened, enabling secure
 configuration and automation in production environments.
 
 ### Options

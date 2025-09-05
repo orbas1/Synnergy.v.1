@@ -8,6 +8,7 @@ import (
 )
 
 func init() {
+	// Stage 38 documents zero address helpers for easier scripting.
 	zeroCmd := &cobra.Command{Use: "addrzero", Short: "Zero address utilities"}
 
 	showCmd := &cobra.Command{
