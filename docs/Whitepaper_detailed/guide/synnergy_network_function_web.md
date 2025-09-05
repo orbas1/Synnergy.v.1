@@ -18,6 +18,9 @@ managing proposals directly alongside execution results.
 Stage 24 extends cross-chain and Plasma management. The CLI now exposes bridge
 registration, connection tracking and gas-priced transfer operations that UIs
 can invoke for inter-network workflows.
+Stage 35 delivers a production-ready wallet interface with rigorous testing and
+CI integration, allowing web dashboards to securely sign and submit
+transactions through the same function web.
 Stage 25 finalises node operations. Full, light, mining, mobile, optimisation,
 staking, watchtower and warfare nodes offer JSON emitting commands allowing the
 function web and external dashboards to orchestrate infrastructure with defined

@@ -4,6 +4,10 @@
 
 Synnergy blockchain CLI
 
+Stage 35 introduces a hardened wallet module with CI, linting and end-to-end
+tests. The wallet commands remain accessible through this CLI, enabling secure
+configuration and automation in production environments.
+
 ### Options
 
 ```
