@@ -25,3 +25,4 @@ This group defines the mechanisms that drive agreement across the network. Core 
 These components coordinate to ensure blocks are validated and added securely while allowing dynamic algorithm changes and validator oversight.
 
 Stage 7 introduces a coded errors package and OpenTelemetry tracing across consensus modules, providing contextual diagnostics and observability for validator operations.
+Stage 41 adds resource-aware CLI tooling: the connection pool can release individual peers and contract opcode listings now include gas prices, enabling interfaces to budget consensus actions.

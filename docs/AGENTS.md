@@ -44,7 +44,7 @@
 - Stage 38: Completed – biometric security node and CLI components finalised with tests.
 - Stage 39: Completed – authority and bank CLI modules validated with unit tests.
 - Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
-- Stage 41: In Progress – initial CLI tests added for compression, connection pooling, consensus and contract management; remaining CLI upgrades pending.
+- Stage 41: In Progress – connection pool release command, gas-aware contract opcode listing and tests added; further consensus CLI upgrades pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -5911,8 +5911,8 @@
 | 40 | cli/compliance_test.go | [ ] |
 | 40 | cli/compression.go | [ ] |
 | 41 | cli/compression_test.go | [ ] |
-| 41 | cli/connpool.go | [ ] |
-| 41 | cli/connpool_test.go | [ ] |
+| 41 | cli/connpool.go | [x] | release command |
+| 41 | cli/connpool_test.go | [x] | lifecycle test |
 | 41 | cli/consensus.go | [ ] |
 | 41 | cli/consensus_adaptive_management.go | [ ] |
 | 41 | cli/consensus_adaptive_management_test.go | [ ] |
@@ -5928,7 +5928,7 @@
 | 41 | cli/contract_management.go | [ ] |
 | 41 | cli/contract_management_test.go | [ ] |
 | 41 | cli/contracts.go | [ ] |
-| 41 | cli/contracts_opcodes.go | [ ] |
+| 41 | cli/contracts_opcodes.go | [x] | gas cost listing |
 | 42 | cli/contracts_opcodes_test.go | [ ] |
 | 42 | cli/contracts_test.go | [ ] |
 | 42 | cli/cross_chain.go | [ ] |

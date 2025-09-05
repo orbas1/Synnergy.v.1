@@ -51,7 +51,7 @@ coverage.
 * [synnergy consensus-node](#synnergy-consensus-node)	 - Consensus specific node operations
 * [synnergy consensus-service](#synnergy-consensus-service)	 - Run consensus mining service
 * [synnergy contract-mgr](#synnergy-contract-mgr)	 - Administrative contract management
-* [synnergy contractopcodes](#synnergy-contractopcodes)	 - List contract-related opcodes
+* [synnergy contractopcodes](#synnergy-contractopcodes)	 - List contract-related opcodes with gas costs
 * [synnergy contracts](#synnergy-contracts)	 - Compile, deploy and invoke smart contracts
 * [synnergy cross-consensus](#synnergy-cross-consensus)	 - Manage cross-consensus scaling networks
 * [synnergy cross_chain](#synnergy-cross-chain)	 - Manage cross-chain bridges
@@ -3222,6 +3222,7 @@ Manage connection pool
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy connpool close](#synnergy-connpool-close)	 - Close the pool
 * [synnergy connpool dial](#synnergy-connpool-dial)	 - Dial an address using the pool
+* [synnergy connpool release](#synnergy-connpool-release)        - Release a connection from the pool
 * [synnergy connpool stats](#synnergy-connpool-stats)	 - Show pool statistics
 
 
@@ -3274,6 +3275,30 @@ synnergy connpool dial [addr] [flags]
 
 * [synnergy connpool](#synnergy-connpool)	 - Manage connection pool
 
+
+## synnergy connpool release
+
+Release a connection from the pool
+
+```
+synnergy connpool release [addr] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for release
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output results in JSON
+```
+
+### SEE ALSO
+
+* [synnergy connpool](#synnergy-connpool)        - Manage connection pool
 
 ## synnergy connpool stats
 
@@ -4203,7 +4228,7 @@ synnergy contract-mgr upgrade [addr] [wasmHex] [gasLimit] [flags]
 
 ## synnergy contractopcodes
 
-List contract-related opcodes
+List contract-related opcodes with gas costs
 
 ```
 synnergy contractopcodes [flags]

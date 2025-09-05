@@ -4,21 +4,30 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	synn "synnergy"
 	"synnergy/core"
 )
 
 func init() {
 	cmd := &cobra.Command{
 		Use:   "contractopcodes",
-		Short: "List contract-related opcodes",
+		Short: "List contract-related opcodes with gas costs",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			fmt.Fprintf(cmd.OutOrStdout(), "%d: OpInitContracts\n", core.OpInitContracts)
-			fmt.Fprintf(cmd.OutOrStdout(), "%d: OpPauseContract\n", core.OpPauseContract)
-			fmt.Fprintf(cmd.OutOrStdout(), "%d: OpResumeContract\n", core.OpResumeContract)
-			fmt.Fprintf(cmd.OutOrStdout(), "%d: OpUpgradeContract\n", core.OpUpgradeContract)
-			fmt.Fprintf(cmd.OutOrStdout(), "%d: OpContractInfo\n", core.OpContractInfo)
-			fmt.Fprintf(cmd.OutOrStdout(), "%d: OpDeployAIContract\n", core.OpDeployAIContract)
-			fmt.Fprintf(cmd.OutOrStdout(), "%d: OpInvokeAIContract\n", core.OpInvokeAIContract)
+			entries := []struct {
+				name string
+				op   core.Opcode
+			}{
+				{"InitContracts", core.OpInitContracts},
+				{"PauseContract", core.OpPauseContract},
+				{"ResumeContract", core.OpResumeContract},
+				{"UpgradeContract", core.OpUpgradeContract},
+				{"ContractInfo", core.OpContractInfo},
+				{"DeployAIContract", core.OpDeployAIContract},
+				{"InvokeAIContract", core.OpInvokeAIContract},
+			}
+			for _, e := range entries {
+				fmt.Fprintf(cmd.OutOrStdout(), "%d: %s (gas %d)\n", e.op, e.name, synn.GasCost(e.name))
+			}
 			return nil
 		},
 	}
