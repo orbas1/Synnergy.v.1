@@ -34,6 +34,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Extensible CLI** – built with [Cobra](https://github.com/spf13/cobra) and backed by `cli.Execute()`.
 - **Validated block utilities** – Stage 40 adds sub-block creation and block assembly commands with strict argument checking.
 - **Central bank controls** – `synnergy centralbank` manages monetary policy and CBDC issuance with structured JSON output.
+- **Charity pool management** – `synnergy charity_pool` and `charity_mgmt` support registration, donations and balance queries with JSON responses.
 - **Data distribution monitor** – CLI and GUI for network telemetry.
 - **Node operations dashboard** – TypeScript CLI and GUI for real-time node health monitoring.
 - **Security operations center** – monitors and aggregates security events with a CLI-accessible GUI.

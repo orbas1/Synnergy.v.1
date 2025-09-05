@@ -38,6 +38,17 @@ func TestAddressParse(t *testing.T) {
 	}
 }
 
+// TestRootHelp ensures the root command prints usage information.
+func TestRootHelp(t *testing.T) {
+	out, err := execCommand("--help")
+	if err != nil {
+		t.Fatalf("help failed: %v", err)
+	}
+	if !strings.Contains(out, "Synnergy blockchain CLI") {
+		t.Fatalf("unexpected help output: %s", out)
+	}
+}
+
 func TestNetworkStartStop(t *testing.T) {
 	network.Stop()
 	if _, err := execCommand("network", "start"); err != nil {
