@@ -40,7 +40,7 @@
 - Stage 33: Completed – validator-governance-portal source/tests and wallet-admin-interface base configs established.
 - Stage 35: Completed – wallet admin interface tests and wallet module production scaffolds hardened.
 - Stage 36: Completed – wallet GUI configuration, documentation and tests enhanced.
-- Stage 37: Not started – core security and AI modules pending review.
+- Stage 37: Completed – core security and AI modules upgraded with tests and encryption.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -788,26 +788,26 @@
 - [ ] GUI/wallet/tests/unit/example.test.ts
 - [ ] GUI/wallet/tsconfig.json
 
-**Stage 37** – status: pending evaluation of core security and AI modules
-- [ ] LICENSE
-- [ ] Makefile
-- [ ] README.md
-- [ ] SECURITY.md
-- [ ] access_control.go
-- [ ] access_control_test.go
-- [ ] address_zero.go
-- [ ] address_zero_test.go
-- [ ] ai.go
-- [ ] ai_drift_monitor.go
-- [ ] ai_drift_monitor_test.go
-- [ ] ai_enhanced_contract.go
-- [ ] ai_enhanced_contract_test.go
-- [ ] ai_inference_analysis.go
-- [ ] ai_inference_analysis_test.go
-- [ ] ai_model_management.go
-- [ ] ai_model_management_test.go
-- [ ] ai_modules_test.go
-- [ ] ai_secure_storage.go
+**Stage 37** – status: completed – AI modules hardened with tests and secure storage
+- [x] LICENSE
+- [x] Makefile
+- [x] README.md
+- [x] SECURITY.md
+- [x] access_control.go
+- [x] access_control_test.go
+- [x] address_zero.go
+- [x] address_zero_test.go
+- [x] ai.go
+- [x] ai_drift_monitor.go
+- [x] ai_drift_monitor_test.go
+- [x] ai_enhanced_contract.go
+- [x] ai_enhanced_contract_test.go
+- [x] ai_inference_analysis.go
+- [x] ai_inference_analysis_test.go
+- [x] ai_model_management.go
+- [x] ai_model_management_test.go
+- [x] ai_modules_test.go
+- [x] ai_secure_storage.go
 
 **Stage 38**
 - [ ] ai_secure_storage_test.go

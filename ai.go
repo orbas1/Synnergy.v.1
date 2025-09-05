@@ -159,7 +159,7 @@ func (s *AIService) ReleaseEscrow(id string) error {
 		return errors.New("escrow not found or already released")
 	}
 	escrow.Released = true
-	s.escrows[id] = escrow
+	delete(s.escrows, id)
 	s.mu.Unlock()
 	return nil
 }

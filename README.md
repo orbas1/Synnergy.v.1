@@ -185,6 +185,7 @@ See [SECURITY.md](SECURITY.md) for policies, and use `scripts/aml_kyc_process.sh
 ## Testing
 ```bash
 go test ./...
+make test                 # convenience wrapper
 scripts/run_tests.sh          # execute full suite including integration tests
 npm test --prefix GUI/storage-marketplace            # run storage marketplace tests
 npm test --prefix GUI/system-analytics-dashboard     # run dashboard tests
