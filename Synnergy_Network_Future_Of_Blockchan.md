@@ -408,12 +408,13 @@ Let `A_block` be the minted reward per block.  Distribution is
 ```
 A_pos      = 0.50 * A_block  # PoS validators
 A_poh      = 0.10 * A_block  # PoH schedulers
-A_pow      = 0.30 * A_block  # PoW miner
-A_treasury = 0.10 * A_block  # Treasury
+A_pow      = 0.40 * A_block  # PoW miners
 ```
 
-`A_pos` and `A_poh` are further subdivided in proportion to stake and time-slot
-attendance.  Rewards are locked for a cooldown period to deter short-term hopping.
+All block rewards accrue solely to consensus participants; treasuries are funded
+exclusively from transaction fees. `A_pos` and `A_poh` are further subdivided in
+proportion to stake and time-slot attendance. Rewards are locked for a
+cooldown period to deter short-term hopping.
 
 ### 6.4 Security and Performance Analysis
 The double-lock scheme provides layered defenses.  Pre-finalization secures against

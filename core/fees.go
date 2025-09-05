@@ -114,17 +114,17 @@ type FeeDistribution struct {
 
 // DistributeFees splits the total fees according to the network's policy.
 func DistributeFees(total uint64) FeeDistribution {
-	return FeeDistribution{
-		InternalDevelopment: total * 5 / 100,
-		InternalCharity:     total * 5 / 100,
-		ExternalCharity:     total * 5 / 100,
-		LoanPool:            total * 5 / 100,
-		PassiveIncome:       total * 5 / 100,
-		ValidatorsMiners:    total * 64 / 100,
-		AuthorityNodes:      total * 5 / 100,
-		NodeHosts:           total * 5 / 100,
-		CreatorWallet:       total * 1 / 100,
-	}
+        return FeeDistribution{
+                InternalDevelopment: total * 5 / 100,
+                InternalCharity:     total * 5 / 100,
+                ExternalCharity:     total * 5 / 100,
+                LoanPool:            total * 10 / 100,
+                PassiveIncome:       total * 5 / 100,
+                ValidatorsMiners:    total * 59 / 100,
+                AuthorityNodes:      total * 5 / 100,
+                NodeHosts:           total * 5 / 100,
+                CreatorWallet:       total * 1 / 100,
+        }
 }
 
 // ApplyFeeCapFloor constrains fees to the provided cap and floor values.

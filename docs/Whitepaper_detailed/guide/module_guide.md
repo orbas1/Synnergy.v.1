@@ -348,7 +348,7 @@ Every file under `core/` is listed below with a short description derived from i
 - **lightning_node.go** – LightningChannelID uniquely identifies a payment channel.
 - **liquidity_pools.go** – Constant-product Automated Market Maker (AMM) for Synnergy Network.
 - **liquidity_views.go** – PoolView exposes read-only information about a liquidity pool.
-- **loanpool.go** – LoanPool – treasury that accumulates protocol income (10% of each tx fee, 1% block
+- **loanpool.go** – LoanPool – treasury that accumulates protocol income (10% of each transaction fee).
 - **loanpool_apply.go** – LoanPoolApply implements a simplified application process that
 - **loanpool_approval_process.go** – ApprovalRequest represents an off-chain approval workflow state.
 - **loanpool_config.go** – LoanPoolConfig defines configuration parameters for LoanPool.
