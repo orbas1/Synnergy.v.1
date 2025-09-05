@@ -1,5 +1,5 @@
 import { main } from './main';
 
-test('main returns greeting', () => {
-  expect(main()).toContain('wallet');
+test('main renders home with balance', () => {
+  expect(main(5)).toContain('Current balance: 5');
 });

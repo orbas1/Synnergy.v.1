@@ -1,12 +1,12 @@
 {
   "name": "synnergy-wallet",
-  "version": "1.0.0",
-  "description": "wallet module",
+  "version": "1.0.1",
+  "description": "Synnergy network wallet GUI",
   "main": "dist/main.js",
   "scripts": {
     "build": "tsc",
     "start": "node dist/main.js",
-    "test": "echo \"No tests yet\"",
+    "test": "jest",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
