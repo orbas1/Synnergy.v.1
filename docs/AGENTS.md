@@ -42,6 +42,7 @@
 - Stage 36: Completed – wallet GUI configuration, documentation and tests enhanced.
 - Stage 37: Completed – core security and AI modules upgraded with tests and encryption.
 - Stage 38: In Progress – AI storage, training and anomaly detection modules tested; biometric security and CLI components pending.
+- Stage 39: In Progress – audit CLI and audit node validated with address checks and tests; authority and bank CLI modules pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -833,10 +834,10 @@
 - [ ] cli/ai_contract_test.go
 
 **Stage 39**
-- [ ] cli/audit.go
-- [ ] cli/audit_node.go
-- [ ] cli/audit_node_test.go
-- [ ] cli/audit_test.go
+- [x] cli/audit.go
+- [x] cli/audit_node.go
+- [x] cli/audit_node_test.go
+- [x] cli/audit_test.go
 - [ ] cli/authority_apply.go
 - [ ] cli/authority_apply_test.go
 - [ ] cli/authority_node_index.go
