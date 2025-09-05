@@ -1,1 +1,20 @@
-# Placeholder CI pipeline for wallet-admin-interface
+stages:
+  - test
+  - build
+
+test:
+  stage: test
+  image: node:20
+  script:
+    - npm ci
+    - npm test
+
+build:
+  stage: build
+  image: node:20
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - dist/

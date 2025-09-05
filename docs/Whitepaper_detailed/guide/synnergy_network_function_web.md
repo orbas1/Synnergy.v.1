@@ -41,7 +41,9 @@ applications from vetted building blocks.
 Stage 31 debuts a CLI‑driven GUI wallet that signs transactions locally and
 interacts with the function web via JSON responses, proving out end‑user
 workflows without trusting the browser with private keys.
-Stage 34 layers on a smart‑contract marketplace GUI that invokes new
+Stage 34 also delivers a wallet administration interface exposing signature
+verification and policy controls through the function web. In addition, Stage 34
+layers on a smart‑contract marketplace GUI that invokes new
 `marketplace` CLI commands to deploy WebAssembly modules and transfer contract
 ownership, expanding the function web to cover contract trading flows.
 Stage 35 introduces a storage marketplace GUI backed by `storage_marketplace`

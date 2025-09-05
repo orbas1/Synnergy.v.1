@@ -16,4 +16,13 @@ spec:
         - name: wallet-admin-interface
           image: wallet-admin-interface:latest
           ports:
-            - containerPort: 80
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
