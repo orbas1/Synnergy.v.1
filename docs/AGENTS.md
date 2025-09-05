@@ -1773,6 +1773,8 @@
 - [ ] docs/guides/node_setup.md
 - [ ] docs/index.md
 - [ ] docs/performance_benchmarks.md
+- [x] docs/benchmark_results.md – benchmark test details documented
+- [x] docs/security_audit_results.md – go vet and gosec findings summarised
 - [ ] docs/reference/errors_list.md
 - [ ] docs/reference/functions_list.txt
 - [ ] docs/reference/gas_table_list.md
@@ -6726,6 +6728,8 @@
 | 83 | docs/guides/node_setup.md | [ ] |
 | 83 | docs/index.md | [ ] |
 | 83 | docs/performance_benchmarks.md | [ ] |
+| 83 | docs/benchmark_results.md | [x] |
+| 83 | docs/security_audit_results.md | [x] |
 | 83 | docs/reference/errors_list.md | [ ] |
 | 83 | docs/reference/functions_list.txt | [ ] |
 | 83 | docs/reference/gas_table_list.md | [ ] |
