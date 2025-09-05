@@ -70,7 +70,10 @@ func TestModelMarketplace(t *testing.T) {
 
 func TestTrainingManager(t *testing.T) {
 	tm := NewTrainingManager()
-	id := tm.Start("data", "model")
+	id, err := tm.Start("data", "model")
+	if err != nil {
+		t.Fatalf("start: %v", err)
+	}
 	if _, ok := tm.Status(id); !ok {
 		t.Fatalf("status not found")
 	}

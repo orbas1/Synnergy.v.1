@@ -41,6 +41,7 @@
 - Stage 35: Completed – wallet admin interface tests and wallet module production scaffolds hardened.
 - Stage 36: Completed – wallet GUI configuration, documentation and tests enhanced.
 - Stage 37: Completed – core security and AI modules upgraded with tests and encryption.
+- Stage 38: In Progress – AI storage, training and anomaly detection modules tested; biometric security and CLI components pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -810,12 +811,12 @@
 - [x] ai_secure_storage.go
 
 **Stage 38**
-- [ ] ai_secure_storage_test.go
-- [ ] ai_test.go
-- [ ] ai_training.go
-- [ ] ai_training_test.go
-- [ ] anomaly_detection.go
-- [ ] anomaly_detection_test.go
+- [x] ai_secure_storage_test.go – added encryption round-trip tests
+- [x] ai_test.go – covered AI service publish and predict flows
+- [x] ai_training.go – validated inputs and added completion handling
+- [x] ai_training_test.go – exercised training lifecycle
+- [x] anomaly_detection.go – enforced default threshold
+- [x] anomaly_detection_test.go – verified anomaly detection logic
 - [ ] benchmarks/transaction_manager.txt
 - [ ] biometric_security_node.go
 - [ ] biometric_security_node_test.go
@@ -3395,12 +3396,12 @@
 - [ ] ai_model_management_test.go
 - [ ] ai_modules_test.go
 - [ ] ai_secure_storage.go
-- [ ] ai_secure_storage_test.go
-- [ ] ai_test.go
-- [ ] ai_training.go
-- [ ] ai_training_test.go
-- [ ] anomaly_detection.go
-- [ ] anomaly_detection_test.go
+- [x] ai_secure_storage_test.go
+- [x] ai_test.go
+- [x] ai_training.go
+- [x] ai_training_test.go
+- [x] anomaly_detection.go
+- [x] anomaly_detection_test.go
 - [ ] benchmarks/transaction_manager.txt
 - [ ] biometric_security_node.go
 - [ ] biometric_security_node_test.go
