@@ -44,6 +44,7 @@
 - Stage 38: Completed – biometric security node and CLI components finalised with tests.
 - Stage 39: Completed – authority and bank CLI modules validated with unit tests.
 - Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
+- Stage 41: In Progress – initial CLI tests added for compression, connection pooling, consensus and contract management; remaining CLI upgrades pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -877,9 +878,9 @@
  - [x] cli/compression.go – JSON snapshot save/load
 
 **Stage 41**
-- [ ] cli/compression_test.go
+- [x] cli/compression_test.go
 - [ ] cli/connpool.go
-- [ ] cli/connpool_test.go
+- [x] cli/connpool_test.go
 - [ ] cli/consensus.go
 - [ ] cli/consensus_adaptive_management.go
 - [ ] cli/consensus_adaptive_management_test.go
@@ -891,9 +892,9 @@
 - [ ] cli/consensus_service_test.go
 - [ ] cli/consensus_specific_node.go
 - [ ] cli/consensus_specific_node_test.go
-- [ ] cli/consensus_test.go
+- [x] cli/consensus_test.go
 - [ ] cli/contract_management.go
-- [ ] cli/contract_management_test.go
+- [x] cli/contract_management_test.go
 - [ ] cli/contracts.go
 - [ ] cli/contracts_opcodes.go
 

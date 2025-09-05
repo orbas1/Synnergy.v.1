@@ -1,7 +1,17 @@
 package cli
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
-func TestConsensusPlaceholder(t *testing.T) {
-	t.Skip("TODO: implement test")
+// TestConsensusWeights ensures consensus weights command prints expected values.
+func TestConsensusWeights(t *testing.T) {
+	out, err := execCommand("consensus", "weights")
+	if err != nil {
+		t.Fatalf("weights failed: %v", err)
+	}
+	if !strings.Contains(out, "PoW") || !strings.Contains(out, "PoS") {
+		t.Fatalf("unexpected output: %s", out)
+	}
 }
