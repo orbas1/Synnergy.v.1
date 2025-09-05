@@ -17,3 +17,25 @@ spec:
           image: wallet:latest
           ports:
             - containerPort: 80
+          env:
+            - name: NODE_ENV
+              value: "production"
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 15

@@ -39,6 +39,7 @@
 - Stage 32: Completed – validator-governance-portal configuration, docs and deployment scaffolds added.
 - Stage 33: Completed – validator-governance-portal source/tests and wallet-admin-interface base configs established.
 - Stage 35: Completed – wallet admin interface tests and wallet module production scaffolds hardened.
+- Stage 36: Completed – wallet GUI configuration, documentation and tests enhanced.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -766,22 +767,22 @@
 - [x] GUI/wallet/docs/.gitkeep
 
 **Stage 36**
-- [ ] GUI/wallet/docs/README.md
-- [ ] GUI/wallet/jest.config.js
-- [ ] GUI/wallet/k8s/.gitkeep
-- [ ] GUI/wallet/k8s/deployment.yaml
-- [ ] GUI/wallet/package-lock.json
-- [ ] GUI/wallet/package.json
-- [ ] GUI/wallet/src/components/.gitkeep
-- [ ] GUI/wallet/src/hooks/.gitkeep
-- [ ] GUI/wallet/src/main.test.ts
-- [ ] GUI/wallet/src/main.ts
-- [ ] GUI/wallet/src/pages/.gitkeep
-- [ ] GUI/wallet/src/services/.gitkeep
-- [ ] GUI/wallet/src/state/.gitkeep
-- [ ] GUI/wallet/src/styles/.gitkeep
-- [ ] GUI/wallet/tests/e2e/.gitkeep
-- [ ] GUI/wallet/tests/e2e/example.e2e.test.ts
+- [x] GUI/wallet/docs/README.md
+- [x] GUI/wallet/jest.config.js
+- [x] GUI/wallet/k8s/.gitkeep
+- [x] GUI/wallet/k8s/deployment.yaml
+- [x] GUI/wallet/package-lock.json
+- [x] GUI/wallet/package.json
+- [x] GUI/wallet/src/components/.gitkeep
+- [x] GUI/wallet/src/hooks/.gitkeep
+- [x] GUI/wallet/src/main.test.ts
+- [x] GUI/wallet/src/main.ts
+- [x] GUI/wallet/src/pages/.gitkeep
+- [x] GUI/wallet/src/services/.gitkeep
+- [x] GUI/wallet/src/state/.gitkeep
+- [x] GUI/wallet/src/styles/.gitkeep
+- [x] GUI/wallet/tests/e2e/.gitkeep
+- [x] GUI/wallet/tests/e2e/example.e2e.test.ts
 - [ ] GUI/wallet/tests/unit/.gitkeep
 - [ ] GUI/wallet/tests/unit/example.test.ts
 - [ ] GUI/wallet/tsconfig.json
