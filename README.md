@@ -33,6 +33,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Role-based security** – biometric authentication and security node CLI (`core.NewBiometricService`, `synnergy bioauth`, `synnergy bsn`), zero‑trust data channels and PKI tooling.
 - **Extensible CLI** – built with [Cobra](https://github.com/spf13/cobra) and backed by `cli.Execute()`.
 - **Resource-managed CLI** – connection pool commands can release individual peers and `contractopcodes` reports gas costs for contract operations.
+- **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output and ECDSA signature verification helpers.
 - **Validated block utilities** – Stage 40 adds sub-block creation and block assembly commands with strict argument checking.
 - **Consensus tooling** – Stage 41 adds validated commands for adaptive weighting, difficulty control and service management.
 - **Central bank controls** – `synnergy centralbank` manages monetary policy and CBDC issuance with structured JSON output.

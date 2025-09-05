@@ -9,6 +9,8 @@ biometric commands are now fully tested and hardened, enabling secure
 configuration and automation in production environments. Stage 40 adds
 robust block management with strict argument validation and accompanying test
 coverage.
+Stage 43 introduces DAO governance commands with optional JSON output and
+signature verification utilities for secure organisational workflows.
 
 ### Options
 
