@@ -15,6 +15,9 @@ Stage 6 integrates compliance checks into token operations via the new logging s
 
 Stage 7 adds coded error handling and telemetry spans to token registry and CLI interactions, enabling operators to correlate failures across services.
 Stage 8 introduces cross‑chain token bridging via the `CrossChainTxManager`, allowing assets to move between ledgers through gas‑priced CLI calls.
+Stage 42 enhances these flows with a dedicated `cross_tx` command offering
+lock‑mint and burn‑release operations that emit JSON, simplifying integration
+with wallets and dashboards.
 Stage 9 adds a dedicated DAO token ledger with staking support and burn capabilities for governance assets.
 Stage 25 extends staking usability via the `staking_node` CLI module which
 emits JSON responses for stake, unstake and balance queries, enabling wallets to

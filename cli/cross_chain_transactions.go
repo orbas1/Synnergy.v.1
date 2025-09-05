@@ -18,8 +18,9 @@ func init() {
 		Short: "Execute cross-chain asset transfers",
 	}
 
-	var listJSON bool
-	var getJSON bool
+	var jsonOut bool
+
+	cmd.PersistentFlags().BoolVar(&jsonOut, "json", false, "output results in JSON")
 
 	lockMintCmd := &cobra.Command{
 		Use:   "lockmint <bridge_id> <asset_id> <amount> <proof> --from <addr> --to <addr>",
@@ -32,11 +33,20 @@ func init() {
 			if err != nil {
 				return err
 			}
-			id, err := crossTxManager.LockMint(parseInt(args[0]), from, to, args[1], amount, args[3])
+			bridgeID, err := strconv.Atoi(args[0])
 			if err != nil {
 				return err
 			}
-			fmt.Printf("%d gas:%d\n", id, synnergy.GasCost("LockMint"))
+			id, err := crossTxManager.LockMint(bridgeID, from, to, args[1], amount, args[3])
+			if err != nil {
+				return err
+			}
+			if jsonOut {
+				enc, _ := json.Marshal(map[string]any{"id": id, "gas": synnergy.GasCost("LockMint")})
+				fmt.Fprintln(cmd.OutOrStdout(), string(enc))
+			} else {
+				fmt.Fprintf(cmd.OutOrStdout(), "%d gas:%d\n", id, synnergy.GasCost("LockMint"))
+			}
 			return nil
 		},
 	}
@@ -55,11 +65,20 @@ func init() {
 			if err != nil {
 				return err
 			}
-			id, err := crossTxManager.BurnRelease(parseInt(args[0]), from, args[1], args[2], amount)
+			bridgeID, err := strconv.Atoi(args[0])
 			if err != nil {
 				return err
 			}
-			fmt.Printf("%d gas:%d\n", id, synnergy.GasCost("BurnRelease"))
+			id, err := crossTxManager.BurnRelease(bridgeID, from, args[1], args[2], amount)
+			if err != nil {
+				return err
+			}
+			if jsonOut {
+				enc, _ := json.Marshal(map[string]any{"id": id, "gas": synnergy.GasCost("BurnRelease")})
+				fmt.Fprintln(cmd.OutOrStdout(), string(enc))
+			} else {
+				fmt.Fprintf(cmd.OutOrStdout(), "%d gas:%d\n", id, synnergy.GasCost("BurnRelease"))
+			}
 			return nil
 		},
 	}
@@ -79,39 +98,31 @@ func init() {
 			if err != nil {
 				return err
 			}
-			if getJSON {
+			if jsonOut {
 				enc, _ := json.Marshal(t)
-				fmt.Println(string(enc))
-				return nil
+				fmt.Fprintln(cmd.OutOrStdout(), string(enc))
+			} else {
+				fmt.Fprintf(cmd.OutOrStdout(), "%d: bridge=%d from=%s to=%s asset=%s amount=%d type=%s completed=%v\n", t.ID, t.BridgeID, t.From, t.To, t.AssetID, t.Amount, t.Type, t.Completed)
 			}
-			fmt.Printf("%d: bridge=%d from=%s to=%s asset=%s amount=%d type=%s completed=%v\n", t.ID, t.BridgeID, t.From, t.To, t.AssetID, t.Amount, t.Type, t.Completed)
 			return nil
 		},
 	}
-	getCmd.Flags().BoolVar(&getJSON, "json", false, "output as JSON")
 
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List cross-chain transfer records",
 		Run: func(cmd *cobra.Command, args []string) {
 			ts := crossTxManager.ListTransfers()
-			if listJSON {
+			if jsonOut {
 				enc, _ := json.Marshal(ts)
-				fmt.Println(string(enc))
+				fmt.Fprintln(cmd.OutOrStdout(), string(enc))
 				return
 			}
 			for _, t := range ts {
-				fmt.Printf("%d: bridge=%d from=%s to=%s asset=%s amount=%d type=%s completed=%v\n", t.ID, t.BridgeID, t.From, t.To, t.AssetID, t.Amount, t.Type, t.Completed)
+				fmt.Fprintf(cmd.OutOrStdout(), "%d: bridge=%d from=%s to=%s asset=%s amount=%d type=%s completed=%v\n", t.ID, t.BridgeID, t.From, t.To, t.AssetID, t.Amount, t.Type, t.Completed)
 			}
 		},
 	}
-	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
-
 	cmd.AddCommand(lockMintCmd, burnReleaseCmd, listCmd, getCmd)
 	rootCmd.AddCommand(cmd)
-}
-
-func parseInt(s string) int {
-	i, _ := strconv.Atoi(s)
-	return i
 }

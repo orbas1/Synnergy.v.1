@@ -20,7 +20,9 @@ import (
 // liquidity lookups so dashboards can surface fees. Stage 23 registers consensus
 // and governance CLI operations so their fees are visible to users. Stage 24
 // extends coverage to cross-chain bridges, protocol registration and Plasma
-// management so inter-network workflows remain predictable. Stage 25 adds node
+// management so inter-network workflows remain predictable. Stage 42 records
+// lock-mint and burn-release transfer opcodes so cross-chain transaction relays
+// surface their costs alongside bridge operations. Stage 25 adds node
 // management operations (full, light, mining, staking, watchtower and warfare
 // nodes) so dashboards can price infrastructure actions. Stage 22 prices node status queries for the node operations dashboard. Stage 29 introduces
 // pricing for deployable smart contract templates including token faucets,

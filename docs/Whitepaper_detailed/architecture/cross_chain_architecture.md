@@ -29,3 +29,8 @@ designed to be swapped with database backends for fault‑tolerant deployments.
 Stage 24 layers enterprise CLI tooling on top. Cross-chain bridges, protocol
 registries and Plasma controls emit gas metrics and optional JSON output so
 dashboards and automation can coordinate transfers across networks.
+Stage 42 extends this layer with the `cross_tx` command, enabling lock‑mint and
+burn‑release flows to be executed with the same structured outputs. Transfer
+records are persisted by `CrossChainTxManager` for auditability and can be
+queried or listed from the CLI, allowing user interfaces to drive
+interoperability through the function web.
