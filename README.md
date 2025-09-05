@@ -35,6 +35,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Validated block utilities** – Stage 40 adds sub-block creation and block assembly commands with strict argument checking.
 - **Central bank controls** – `synnergy centralbank` manages monetary policy and CBDC issuance with structured JSON output.
 - **Monetary policy utilities** – `synnergy coin` provides validated reward and supply queries with optional JSON.
+- **Compliance management** – `synnergy compliance` and `compliance_management` emit JSON results for KYC validation, fraud scoring and address policy status.
 - **Charity pool management** – `synnergy charity_pool` and `charity_mgmt` support registration, donations and balance queries with JSON responses.
 - **Data distribution monitor** – CLI and GUI for network telemetry.
 - **Node operations dashboard** – TypeScript CLI and GUI for real-time node health monitoring.

@@ -1,20 +1,39 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
 
+var compressJSON bool
+
+func compOut(v interface{}, plain string) {
+	if compressJSON {
+		b, err := json.Marshal(v)
+		if err == nil {
+			fmt.Println(string(b))
+		}
+	} else {
+		fmt.Println(plain)
+	}
+}
+
 func init() {
 	compCmd := &cobra.Command{Use: "compression", Short: "Compressed ledger snapshots"}
+	compCmd.PersistentFlags().BoolVar(&compressJSON, "json", false, "output results in JSON")
 
 	saveCmd := &cobra.Command{
 		Use:   "save [file]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Write a compressed ledger snapshot.",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return core.SaveCompressedSnapshot(ledger, args[0])
+			if err := core.SaveCompressedSnapshot(ledger, args[0]); err != nil {
+				return err
+			}
+			compOut(map[string]string{"status": "saved"}, "saved")
+			return nil
 		},
 	}
 
@@ -29,7 +48,7 @@ func init() {
 			}
 			ledger = l
 			h, _ := ledger.Head()
-			fmt.Println("height:", h)
+			compOut(map[string]uint64{"height": uint64(h)}, fmt.Sprintf("height: %d", h))
 			return nil
 		},
 	}

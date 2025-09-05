@@ -1,14 +1,17 @@
 package cli
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 // TestBSNAuthNoEnrollment verifies authentication fails when no template exists.
 func TestBSNAuthNoEnrollment(t *testing.T) {
-	out, err := execCommand("bsn", "auth", "addr1", "data", "00")
+	out, err := execCommand("bsn", "--json", "auth", "addr1", "data", "00")
 	if err != nil {
 		t.Fatalf("auth failed: %v", err)
 	}
-	if out != "false" {
-		t.Fatalf("expected false, got %q", out)
+	if !strings.Contains(out, "\"authenticated\":false") {
+		t.Fatalf("unexpected output: %s", out)
 	}
 }
