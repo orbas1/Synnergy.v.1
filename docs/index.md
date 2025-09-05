@@ -7,22 +7,26 @@ decisions, end‑user guides and benchmarking data for the core platform.
 
 ## Structure
 
-The documentation is split into three main sections:
+The documentation is split into several key sections:
 
 | Path | Description |
 |------|-------------|
 | [`guides/`](guides/) | Quickstart and how‑to articles for developers, node operators, and GUI users. |
 | [`api/`](api/) | Package‑level references and instructions for generating API documentation. |
 | [`adr/`](adr/) | Architecture Decision Records describing significant technical choices made during development. |
+| [`reference/`](reference/) | Opcode listings, error catalogues, and other low‑level references. |
+| [`ux/`](ux/) | User‑experience guidelines on accessibility, theming, and localization. |
+| [`Whitepaper_detailed/`](Whitepaper_detailed/) | Expanded whitepaper chapters covering background and rationale. |
+| [`financial_models.md`](financial_models.md) | Economic modelling and incentive design notes. |
 | [`performance_benchmarks.md`](performance_benchmarks.md) | Baseline performance figures and instructions for running benchmarks. |
 
-Additional reference material such as opcode listings and error catalogues can
-be found in the repository root. Links are provided throughout the guides where
-relevant.
+Links to additional material in the repository root are provided throughout the
+guides where relevant.
 
 ## Building the Site
 
-Install MkDocs and the material theme:
+Configuration for the site lives in [`mkdocs.yml`](../mkdocs.yml). Install
+MkDocs and the material theme:
 
 ```bash
 pip install mkdocs mkdocs-material
@@ -34,10 +38,22 @@ Serve the documentation locally while editing:
 mkdocs serve
 ```
 
+or use the Makefile target:
+
+```bash
+make docs-serve
+```
+
 or generate a static site under `site/`:
 
 ```bash
 mkdocs build
+```
+
+which is also available via:
+
+```bash
+make docs
 ```
 
 ## Contributing
