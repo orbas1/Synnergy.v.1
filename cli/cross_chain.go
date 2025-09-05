@@ -17,9 +17,6 @@ func init() {
 		Short: "Manage cross-chain bridges",
 	}
 
-	var listJSON bool
-	var getJSON bool
-
 	registerCmd := &cobra.Command{
 		Use:   "register <source_chain> <target_chain> <relayer_addr>",
 		Args:  cobra.ExactArgs(3),
@@ -29,7 +26,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Printf("%s gas:%d\n", b.ID, synnergy.GasCost("RegisterBridge"))
+			fmt.Fprintf(cmd.OutOrStdout(), "%s gas:%d\n", b.ID, synnergy.GasCost("RegisterBridge"))
 			return nil
 		},
 	}
@@ -39,17 +36,22 @@ func init() {
 		Short: "List registered bridges",
 		Run: func(cmd *cobra.Command, args []string) {
 			bridges := bridgeRegistry.ListBridges()
+			listJSON, _ := cmd.Flags().GetBool("json")
 			if listJSON {
-				enc, _ := json.Marshal(bridges)
-				fmt.Println(string(enc))
+				enc, err := json.Marshal(bridges)
+				if err != nil {
+					fmt.Fprintln(cmd.ErrOrStderr(), err)
+					return
+				}
+				fmt.Fprintln(cmd.OutOrStdout(), string(enc))
 				return
 			}
 			for _, b := range bridges {
-				fmt.Printf("%s: %s -> %s\n", b.ID, b.SourceChain, b.TargetChain)
+				fmt.Fprintf(cmd.OutOrStdout(), "%s: %s -> %s\n", b.ID, b.SourceChain, b.TargetChain)
 			}
 		},
 	}
-	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
+	listCmd.Flags().Bool("json", false, "output as JSON")
 
 	getCmd := &cobra.Command{
 		Use:   "get <bridge_id>",
@@ -60,16 +62,20 @@ func init() {
 			if !ok {
 				return fmt.Errorf("bridge not found")
 			}
+			getJSON, _ := cmd.Flags().GetBool("json")
 			if getJSON {
-				enc, _ := json.Marshal(b)
-				fmt.Println(string(enc))
+				enc, err := json.Marshal(b)
+				if err != nil {
+					return err
+				}
+				fmt.Fprintln(cmd.OutOrStdout(), string(enc))
 				return nil
 			}
-			fmt.Printf("%s: %s -> %s relayers=%d\n", b.ID, b.SourceChain, b.TargetChain, len(b.Relayers))
+			fmt.Fprintf(cmd.OutOrStdout(), "%s: %s -> %s relayers=%d\n", b.ID, b.SourceChain, b.TargetChain, len(b.Relayers))
 			return nil
 		},
 	}
-	getCmd.Flags().BoolVar(&getJSON, "json", false, "output as JSON")
+	getCmd.Flags().Bool("json", false, "output as JSON")
 
 	authorizeCmd := &cobra.Command{
 		Use:   "authorize <bridge_id> <relayer_addr>",
