@@ -28,11 +28,16 @@ func init() {
 		return err
 	}}
 
+	releaseCmd := &cobra.Command{Use: "release [addr]", Args: cobra.ExactArgs(1), Short: "Release a connection from the pool", Run: func(cmd *cobra.Command, args []string) {
+		pool.Release(args[0])
+		ilog.Info("cli_pool_release", "id", args[0])
+	}}
+
 	closeCmd := &cobra.Command{Use: "close", Short: "Close the pool", Run: func(cmd *cobra.Command, args []string) {
 		pool.Close()
 		ilog.Info("cli_pool_close")
 	}}
 
-	poolCmd.AddCommand(statsCmd, dialCmd, closeCmd)
+	poolCmd.AddCommand(statsCmd, dialCmd, releaseCmd, closeCmd)
 	rootCmd.AddCommand(poolCmd)
 }

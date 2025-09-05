@@ -64,6 +64,8 @@ group once the `synnergy` CLI is built. Common operations include starting the
 service, viewing current weights and simulating difficulty adjustments. See the
 CLI help output for a full list of subcommands.
 
+Stage 41 expands these tools with a `connpool release` command for freeing network connections and a `contractopcodes` helper that reports gas costs for contract operations, allowing operators to budget resources during tuning.
+
 ## Extending the Engine
 
 The consensus package is designed for experimentation. Potential extensions
