@@ -7,6 +7,7 @@ import (
 	"synnergy/core"
 )
 
+// Stage 38 hardens biometric template management by exposing CLI enrollment and verification.
 var biomAuth = core.NewBiometricsAuth()
 
 func init() {

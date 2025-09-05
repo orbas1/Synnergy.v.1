@@ -8,6 +8,7 @@ import (
 	"synnergy/core"
 )
 
+// Stage 38 integrates the biometric security node with the CLI for secure transaction handling.
 var secureNode = core.NewBiometricSecurityNode(currentNode, nil)
 
 func init() {

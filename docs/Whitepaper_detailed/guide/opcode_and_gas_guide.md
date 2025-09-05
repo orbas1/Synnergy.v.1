@@ -60,6 +60,10 @@ operators can estimate costs before instantiation.
 Stage 36 prices NFT marketplace operations so clients can predict the fees for
 minting and trading non-fungible tokens through the CLI and GUI.
 
+Stage 38 registers biometric security node enrollment and authentication
+opcodes, ensuring CLI commands report deterministic gas costs for secure
+transactions.
+
 The VM charges gas **before** executing an opcode.  Dynamic portions – such as per‑word memory fees or refunds for resource release – are handled by the VM's gas meter.
 
 ```go

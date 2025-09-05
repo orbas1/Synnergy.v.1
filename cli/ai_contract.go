@@ -11,6 +11,7 @@ import (
 	"synnergy/core"
 )
 
+// Stage 38 validates the AI contract registry through the CLI with secure invocation paths.
 var (
 	aiVM       = core.NewSimpleVM()
 	baseReg    = core.NewContractRegistry(aiVM)

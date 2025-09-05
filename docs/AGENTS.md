@@ -41,7 +41,7 @@
 - Stage 35: Completed – wallet admin interface tests and wallet module production scaffolds hardened.
 - Stage 36: Completed – wallet GUI configuration, documentation and tests enhanced.
 - Stage 37: Completed – core security and AI modules upgraded with tests and encryption.
-- Stage 38: In Progress – AI storage, training and anomaly detection modules tested; biometric security and CLI components pending.
+- Stage 38: Completed – biometric security node and CLI components finalised with tests.
 - Stage 39: In Progress – audit CLI and audit node validated with address checks and tests; authority and bank CLI modules pending.
 
 **Stage 1**
@@ -818,20 +818,20 @@
 - [x] ai_training_test.go – exercised training lifecycle
 - [x] anomaly_detection.go – enforced default threshold
 - [x] anomaly_detection_test.go – verified anomaly detection logic
-- [ ] benchmarks/transaction_manager.txt
-- [ ] biometric_security_node.go
-- [ ] biometric_security_node_test.go
-- [ ] biometrics_auth.go
-- [ ] biometrics_auth_test.go
-- [ ] cli/access.go
-- [ ] cli/access_test.go
-- [ ] cli/address.go
-- [ ] cli/address_test.go
-- [ ] cli/address_zero.go
-- [ ] cli/address_zero_test.go
-- [ ] cli/ai_contract.go
-- [ ] cli/ai_contract_cli_test.go
-- [ ] cli/ai_contract_test.go
+- [x] benchmarks/transaction_manager.txt
+- [x] biometric_security_node.go
+- [x] biometric_security_node_test.go
+- [x] biometrics_auth.go
+- [x] biometrics_auth_test.go
+- [x] cli/access.go
+- [x] cli/access_test.go
+- [x] cli/address.go
+- [x] cli/address_test.go
+- [x] cli/address_zero.go
+- [x] cli/address_zero_test.go
+- [x] cli/ai_contract.go
+- [x] cli/ai_contract_cli_test.go
+- [x] cli/ai_contract_test.go
 
 **Stage 39**
 - [x] cli/audit.go

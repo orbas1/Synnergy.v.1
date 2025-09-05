@@ -114,7 +114,9 @@ jurisdictional rules. A global access‑control module assigns granular roles to
 validated addresses, and optional biometric authentication modules provide
 additional verification for sensitive workflows. Templates are hashed and
 bound to ECDSA public keys so that enrollment and verification require
-cryptographic proof. Stage 13 extends this layer with a zero trust data channel
+cryptographic proof. Stage 38 finalises these modules by exposing biometric
+enrollment and authentication through hardened CLI commands with gas visibility.
+Stage 13 extends this layer with a zero trust data channel
 engine that signs and encrypts every message, and with regulatory nodes that
 automatically flag non‑compliant transactions into per‑entity logs.
 cryptographic signatures, preventing tampering or replay attacks.

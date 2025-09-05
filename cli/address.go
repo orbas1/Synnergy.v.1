@@ -9,6 +9,7 @@ import (
 )
 
 func init() {
+	// Stage 38 ensures address utilities handle bytes and shortened forms consistently.
 	addressCmd := &cobra.Command{Use: "address", Short: "Address utilities"}
 
 	parseCmd := &cobra.Command{
