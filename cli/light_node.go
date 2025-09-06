@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -21,37 +20,39 @@ func init() {
 		Use:   "add-header [hash] [height] [parent]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Add a block header",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LightAddHeader")
 			h, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				return fmt.Errorf("invalid height: %w", err)
+				printOutput(map[string]any{"error": "invalid height"})
+				return
 			}
 			header := nodes.BlockHeader{Hash: args[0], Height: h, ParentHash: args[2]}
 			lightNode.AddHeader(header)
 			printOutput(header)
-			return nil
 		},
 	}
 
 	latestCmd := &cobra.Command{
 		Use:   "latest",
 		Short: "Show latest header",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LightLatest")
 			h, ok := lightNode.LatestHeader()
 			if !ok {
-				return fmt.Errorf("no headers")
+				printOutput(map[string]any{"error": "no headers"})
+				return
 			}
 			printOutput(h)
-			return nil
 		},
 	}
 
 	listCmd := &cobra.Command{
 		Use:   "headers",
 		Short: "List all headers",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LightHeaders")
 			printOutput(lightNode.Headers())
-			return nil
 		},
 	}
 

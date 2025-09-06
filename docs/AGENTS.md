@@ -49,6 +49,7 @@
 - Stage 43: ✅ DAO CLI covers proposals, quadratic voting, staking, token and elected-node commands with JSON output and signature verification.
 - Stage 44: ✅ faucet, fees, firewall, forensic, full node and gas CLIs emit JSON with gas tracking and tests.
 - Stage 45: ✅ genesis, geospatial, government, high availability, historical, holographic node, identity, idwallet, immutability and initrep CLIs emit JSON output with gas tracking.
+- Stage 46: Completed – instruction, Kademlia, ledger, light node, liquidity pool, liquidity view and loan pool CLIs emit JSON with gas tracking.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -989,24 +990,24 @@
 - [x] cli/initrep_test.go
 
 **Stage 46**
-- [ ] cli/instruction.go
-- [ ] cli/instruction_test.go
-- [ ] cli/kademlia.go
-- [ ] cli/kademlia_test.go
-- [ ] cli/ledger.go
-- [ ] cli/ledger_test.go
-- [ ] cli/light_node.go
-- [ ] cli/light_node_test.go
-- [ ] cli/liquidity_pools.go
-- [ ] cli/liquidity_pools_test.go
-- [ ] cli/liquidity_views.go
-- [ ] cli/liquidity_views_cli_test.go
-- [ ] cli/liquidity_views_test.go
-- [ ] cli/loanpool.go
-- [ ] cli/loanpool_apply.go
-- [ ] cli/loanpool_apply_test.go
-- [ ] cli/loanpool_management.go
-- [ ] cli/loanpool_management_test.go
+- [x] cli/instruction.go
+- [x] cli/instruction_test.go
+- [x] cli/kademlia.go
+- [x] cli/kademlia_test.go
+- [x] cli/ledger.go
+- [x] cli/ledger_test.go
+- [x] cli/light_node.go
+- [x] cli/light_node_test.go
+- [x] cli/liquidity_pools.go
+- [x] cli/liquidity_pools_test.go
+- [x] cli/liquidity_views.go
+- [x] cli/liquidity_views_cli_test.go
+- [x] cli/liquidity_views_test.go
+- [x] cli/loanpool.go
+- [x] cli/loanpool_apply.go
+- [x] cli/loanpool_apply_test.go
+- [x] cli/loanpool_management.go
+- [x] cli/loanpool_management_test.go
 
 **Stage 47**
 - [ ] cli/loanpool_proposal.go

@@ -2,7 +2,6 @@ package cli
 
 import (
 	"encoding/hex"
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -22,11 +21,13 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Store a key/value pair",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("KademliaStore")
 			val, err := hex.DecodeString(args[1])
 			if err != nil {
 				val = []byte(args[1])
 			}
 			kademlia.Store(args[0], val)
+			printOutput(map[string]any{"key": args[0], "stored": true})
 		},
 	})
 
@@ -35,10 +36,11 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Retrieve a value",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("KademliaGet")
 			if v, ok := kademlia.FindValue(args[0]); ok {
-				fmt.Println(string(v))
+				printOutput(map[string]any{"value": string(v)})
 			} else {
-				fmt.Println("not found")
+				printOutput(map[string]any{"error": "not found"})
 			}
 		},
 	})
@@ -48,11 +50,10 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "List n closest keys to target",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("KademliaClosest")
 			n, _ := strconv.Atoi(args[1])
 			keys := kademlia.Closest(args[0], n)
-			for _, k := range keys {
-				fmt.Println(k)
-			}
+			printOutput(keys)
 		},
 	})
 

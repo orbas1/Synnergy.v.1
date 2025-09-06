@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -22,17 +20,18 @@ func init() {
 		Args:  cobra.ExactArgs(5),
 		Short: "Submit a loan proposal",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolSubmit")
 			amt, err := strconv.ParseUint(args[3], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
+				printOutput(map[string]any{"error": "invalid amount"})
 				return
 			}
 			id, err := loanPool.SubmitProposal(args[0], args[1], args[2], amt, args[4])
 			if err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Println("proposal submitted", id)
+			printOutput(map[string]any{"status": "submitted", "id": id})
 		},
 	}
 
@@ -41,10 +40,13 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Vote on a proposal",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolVote")
 			id, _ := strconv.ParseUint(args[1], 10, 64)
 			if err := loanPool.VoteProposal(args[0], id); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			printOutput("voted")
 		},
 	}
 
@@ -53,10 +55,13 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Disburse an approved proposal",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolDisburse")
 			id, _ := strconv.ParseUint(args[0], 10, 64)
 			if err := loanPool.Disburse(id); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			printOutput("disbursed")
 		},
 	}
 
@@ -64,8 +69,9 @@ func init() {
 		Use:   "tick",
 		Short: "Process proposals and update approvals",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolTick")
 			loanPool.Tick()
-			fmt.Println("processed")
+			printOutput("processed")
 		},
 	}
 
@@ -74,12 +80,12 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Display a proposal",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolGet")
 			id, _ := strconv.ParseUint(args[0], 10, 64)
 			if view, ok := loanPool.ProposalInfo(id); ok {
-				b, _ := json.MarshalIndent(view, "", "  ")
-				fmt.Println(string(b))
+				printOutput(view)
 			} else {
-				fmt.Println("not found")
+				printOutput(map[string]any{"error": "not found"})
 			}
 		},
 	}
@@ -88,9 +94,9 @@ func init() {
 		Use:   "list",
 		Short: "List proposals",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolList")
 			views := loanPool.ProposalViews()
-			b, _ := json.MarshalIndent(views, "", "  ")
-			fmt.Println(string(b))
+			printOutput(views)
 		},
 	}
 
@@ -99,10 +105,13 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Cancel an active proposal",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolCancel")
 			id, _ := strconv.ParseUint(args[1], 10, 64)
 			if err := loanPool.CancelProposal(args[0], id); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			printOutput("cancelled")
 		},
 	}
 
@@ -111,11 +120,14 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Extend voting deadline",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolExtend")
 			id, _ := strconv.ParseUint(args[1], 10, 64)
 			hrs, _ := strconv.Atoi(args[2])
 			if err := loanPool.ExtendProposal(args[0], id, hrs); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			printOutput("extended")
 		},
 	}
 

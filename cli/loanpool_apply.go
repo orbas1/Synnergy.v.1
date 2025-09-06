@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -22,10 +20,11 @@ func init() {
 		Args:  cobra.ExactArgs(4),
 		Short: "Submit a loan application",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolApplySubmit")
 			amt, _ := strconv.ParseUint(args[1], 10, 64)
 			term, _ := strconv.ParseUint(args[2], 10, 32)
 			id := loanApply.Submit(args[0], amt, uint32(term), args[3])
-			fmt.Println("application submitted", id)
+			printOutput(map[string]any{"status": "submitted", "id": id})
 		},
 	}
 
@@ -34,10 +33,13 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Vote on an application",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolApplyVote")
 			id, _ := strconv.ParseUint(args[1], 10, 64)
 			if err := loanApply.Vote(args[0], id); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			printOutput("voted")
 		},
 	}
 
@@ -45,8 +47,9 @@ func init() {
 		Use:   "process",
 		Short: "Process pending applications",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolApplyProcess")
 			loanApply.Process()
-			fmt.Println("processed")
+			printOutput("processed")
 		},
 	}
 
@@ -55,10 +58,13 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Disburse an approved application",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolApplyDisburse")
 			id, _ := strconv.ParseUint(args[0], 10, 64)
 			if err := loanApply.Disburse(id); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			printOutput("disbursed")
 		},
 	}
 
@@ -67,12 +73,12 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Display an application",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolApplyGet")
 			id, _ := strconv.ParseUint(args[0], 10, 64)
 			if view, ok := loanApply.ApplicationInfo(id); ok {
-				b, _ := json.MarshalIndent(view, "", "  ")
-				fmt.Println(string(b))
+				printOutput(view)
 			} else {
-				fmt.Println("not found")
+				printOutput(map[string]any{"error": "not found"})
 			}
 		},
 	}
@@ -81,9 +87,9 @@ func init() {
 		Use:   "list",
 		Short: "List applications",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanpoolApplyList")
 			views := loanApply.ApplicationViews()
-			b, _ := json.MarshalIndent(views, "", "  ")
-			fmt.Println(string(b))
+			printOutput(views)
 		},
 	}
 

@@ -1,9 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -19,22 +16,30 @@ func init() {
 	cmd.AddCommand(&cobra.Command{
 		Use:   "pause",
 		Short: "Pause new proposals",
-		Run:   func(cmd *cobra.Command, args []string) { loanMgr.Pause() },
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanmgrPause")
+			loanMgr.Pause()
+			printOutput("paused")
+		},
 	})
 
 	cmd.AddCommand(&cobra.Command{
 		Use:   "resume",
 		Short: "Resume proposal submissions",
-		Run:   func(cmd *cobra.Command, args []string) { loanMgr.Resume() },
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanmgrResume")
+			loanMgr.Resume()
+			printOutput("resumed")
+		},
 	})
 
 	cmd.AddCommand(&cobra.Command{
 		Use:   "stats",
 		Short: "Display treasury and proposal stats",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LoanmgrStats")
 			stats := loanMgr.Stats()
-			b, _ := json.MarshalIndent(stats, "", "  ")
-			fmt.Println(string(b))
+			printOutput(stats)
 		},
 	})
 
