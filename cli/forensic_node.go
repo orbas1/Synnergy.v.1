@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -21,15 +20,16 @@ func init() {
 		Use:   "record-tx",
 		Short: "Record a minimal transaction",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ForensicRecordTx")
 			hash, _ := cmd.Flags().GetString("hash")
 			from, _ := cmd.Flags().GetString("from")
 			to, _ := cmd.Flags().GetString("to")
 			value, _ := cmd.Flags().GetUint64("value")
 			tx := nodes.TransactionLite{Hash: hash, From: from, To: to, Value: value, Timestamp: time.Now()}
 			if err := forensic.RecordTransaction(tx); err != nil {
-				fmt.Printf("error: %v\n", err)
+				printOutput(err.Error())
 			} else {
-				fmt.Println("transaction recorded")
+				printOutput("transaction recorded")
 			}
 		},
 	}
@@ -43,13 +43,14 @@ func init() {
 		Use:   "record-trace",
 		Short: "Record a network trace",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ForensicRecordTrace")
 			peer, _ := cmd.Flags().GetString("peer")
 			event, _ := cmd.Flags().GetString("event")
 			trace := nodes.NetworkTrace{PeerID: peer, Event: event, Timestamp: time.Now()}
 			if err := forensic.RecordNetworkTrace(trace); err != nil {
-				fmt.Printf("error: %v\n", err)
+				printOutput(err.Error())
 			} else {
-				fmt.Println("trace recorded")
+				printOutput("trace recorded")
 			}
 		},
 	}
@@ -61,9 +62,8 @@ func init() {
 		Use:   "txs",
 		Short: "List recorded transactions",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, tx := range forensic.Transactions() {
-				fmt.Printf("%s %s->%s %d\n", tx.Hash, tx.From, tx.To, tx.Value)
-			}
+			gasPrint("ForensicListTx")
+			printOutput(forensic.Transactions())
 		},
 	}
 	cmd.AddCommand(listTx)
@@ -72,9 +72,8 @@ func init() {
 		Use:   "traces",
 		Short: "List recorded network traces",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, tr := range forensic.NetworkTraces() {
-				fmt.Printf("%s %s %s\n", tr.PeerID, tr.Event, tr.Timestamp.Format(time.RFC3339))
-			}
+			gasPrint("ForensicListTrace")
+			printOutput(forensic.NetworkTraces())
 		},
 	}
 	cmd.AddCommand(listTrace)

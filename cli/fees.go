@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -18,6 +17,7 @@ func init() {
 		Use:   "estimate",
 		Short: "Estimate fees for a transaction",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("FeesEstimate")
 			txTypeStr, _ := cmd.Flags().GetString("type")
 			units, _ := cmd.Flags().GetUint64("units")
 			tip, _ := cmd.Flags().GetUint64("tip")
@@ -36,16 +36,15 @@ func init() {
 			case "wallet":
 				txType = core.TxTypeWalletVerification
 			default:
-				fmt.Printf("unknown type %s\n", txTypeStr)
+				printOutput("unknown type")
 				return
 			}
 
-			// Placeholder for recent fee data which would be synced from the network.
 			recent := []uint64{1, 2, 1, 2, 1}
 			base := core.CalculateBaseFee(recent, load)
 			base, variable := core.AdjustFeeRates(base, 1, load)
 			fb := core.EstimateFee(txType, units, base, variable, tip)
-			fmt.Printf("Base: %d\nVariable: %d\nPriority: %d\nTotal: %d\n", fb.Base, fb.Variable, fb.Priority, fb.Total)
+			printOutput(fb)
 		},
 	}
 	estimateCmd.Flags().String("type", "transfer", "transaction type (transfer,purchase,token,contract,wallet)")
@@ -58,32 +57,28 @@ func init() {
 		Use:   "feedback",
 		Short: "Submit feedback about fee estimates",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("FeesFeedback")
 			message, _ := cmd.Flags().GetString("message")
-			fmt.Printf("feedback received: %s\n", message)
+			printOutput(map[string]string{"received": message})
 		},
 	}
 	feedbackCmd.Flags().String("message", "", "feedback message")
 	feesCmd.AddCommand(feedbackCmd)
-
-	rootCmd.AddCommand(feesCmd)
-	feeCmd := &cobra.Command{
-		Use:   "fees",
-		Short: "Fee utilities",
-	}
 
 	shareCmd := &cobra.Command{
 		Use:   "share [total] [validatorWeight] [minerWeight]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Compute proportional validator and miner fee shares",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("FeesShare")
 			total, _ := strconv.ParseUint(args[0], 10, 64)
 			v, _ := strconv.ParseUint(args[1], 10, 64)
 			m, _ := strconv.ParseUint(args[2], 10, 64)
 			shares := core.ShareProportional(total, map[string]uint64{"validator": v, "miner": m})
-			fmt.Printf("shares: %v\n", shares)
+			printOutput(shares)
 		},
 	}
 
-	feeCmd.AddCommand(shareCmd)
-	rootCmd.AddCommand(feeCmd)
+	feesCmd.AddCommand(shareCmd)
+	rootCmd.AddCommand(feesCmd)
 }

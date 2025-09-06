@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -20,8 +18,9 @@ func init() {
 		Short: "Allow connections from an IP",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("FirewallAllow")
 			firewall.Allow(args[0])
-			fmt.Println("ip allowed")
+			printOutput("ip allowed")
 		},
 	}
 	cmd.AddCommand(allowCmd)
@@ -31,8 +30,9 @@ func init() {
 		Short: "Block connections from an IP",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("FirewallBlock")
 			firewall.Block(args[0])
-			fmt.Println("ip blocked")
+			printOutput("ip blocked")
 		},
 	}
 	cmd.AddCommand(blockCmd)
@@ -42,7 +42,8 @@ func init() {
 		Short: "Check if an IP is allowed",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(firewall.IsAllowed(args[0]))
+			gasPrint("FirewallCheck")
+			printOutput(firewall.IsAllowed(args[0]))
 		},
 	}
 	cmd.AddCommand(checkCmd)
@@ -51,8 +52,9 @@ func init() {
 		Use:   "list",
 		Short: "List firewall rules",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("FirewallList")
 			allowed, blocked := firewall.Rules()
-			fmt.Printf("allowed: %v\nblocked: %v\n", allowed, blocked)
+			printOutput(map[string][]string{"allowed": allowed, "blocked": blocked})
 		},
 	}
 	cmd.AddCommand(listCmd)

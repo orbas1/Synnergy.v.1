@@ -1,7 +1,14 @@
 package cli
 
-import "testing"
+import (
+	"testing"
 
-func TestGastablePlaceholder(t *testing.T) {
-	t.Skip("TODO: implement test")
+	"synnergy/core"
+)
+
+func TestGasTableSnapshot(t *testing.T) {
+	snap := core.GasTableSnapshot()
+	if len(snap) == 0 {
+		t.Fatalf("expected snapshot to contain entries")
+	}
 }

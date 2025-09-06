@@ -2,6 +2,7 @@ package cli
 
 import (
 	"encoding/json"
+	"strings"
 	"testing"
 )
 
@@ -15,8 +16,10 @@ func TestGasSnapshotJSON(t *testing.T) {
 	if err != nil {
 		t.Fatalf("snapshot failed: %v", err)
 	}
+	lines := strings.Split(strings.TrimSpace(out), "\n")
+	jsonPart := lines[len(lines)-1]
 	var m map[string]uint64
-	if err := json.Unmarshal([]byte(out), &m); err != nil {
+	if err := json.Unmarshal([]byte(jsonPart), &m); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
 	if len(m) == 0 {
