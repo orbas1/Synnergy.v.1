@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -24,13 +22,14 @@ func init() {
 		Use:   "submit [tx ...]",
 		Args:  cobra.MinimumNArgs(1),
 		Short: "Submit a new rollup batch",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RollupSubmit")
 			id, err := rollupAgg.SubmitBatch(args)
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println(id)
+			printOutput(map[string]string{"id": id})
+			return nil
 		},
 	}
 
@@ -38,15 +37,17 @@ func init() {
 		Use:   "challenge [batchID] [txIdx] [proof]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Submit a fraud proof for a batch",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RollupChallenge")
 			idx, err := strconv.Atoi(args[1])
 			if err != nil {
-				fmt.Println("invalid index")
-				return
+				return err
 			}
 			if err := rollupAgg.ChallengeBatch(args[0], idx, []byte(args[2])); err != nil {
-				fmt.Println("error:", err)
+				return err
 			}
+			printOutput(map[string]string{"status": "challenged"})
+			return nil
 		},
 	}
 
@@ -54,15 +55,21 @@ func init() {
 		Use:   "finalize [batchID] [valid]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Finalize or revert a batch",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RollupFinalize")
 			valid, err := strconv.ParseBool(args[1])
 			if err != nil {
-				fmt.Println("invalid bool")
-				return
+				return err
 			}
 			if err := rollupAgg.FinalizeBatch(args[0], valid); err != nil {
-				fmt.Println("error:", err)
+				return err
 			}
+			status := "reverted"
+			if valid {
+				status = "finalized"
+			}
+			printOutput(map[string]string{"status": status})
+			return nil
 		},
 	}
 
@@ -70,24 +77,26 @@ func init() {
 		Use:   "info [batchID]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Display batch header and state",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RollupInfo")
 			b, ok := rollupAgg.BatchInfo(args[0])
 			if !ok {
-				fmt.Println("not found")
-				return
+				printOutput(map[string]string{"error": "not found"})
+				return nil
 			}
-			out, _ := json.MarshalIndent(b, "", "  ")
-			fmt.Println(string(out))
+			printOutput(b)
+			return nil
 		},
 	}
 
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List recent batches",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RollupList")
 			bs := rollupAgg.ListBatches()
-			out, _ := json.MarshalIndent(bs, "", "  ")
-			fmt.Println(string(out))
+			printOutput(bs)
+			return nil
 		},
 	}
 
@@ -95,46 +104,17 @@ func init() {
 		Use:   "txs [batchID]",
 		Args:  cobra.ExactArgs(1),
 		Short: "List transactions in a batch",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RollupTxs")
 			txs, err := rollupAgg.BatchTransactions(args[0])
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			for _, tx := range txs {
-				fmt.Println(tx)
-			}
+			printOutput(txs)
+			return nil
 		},
 	}
 
-	pauseCmd := &cobra.Command{
-		Use:   "pause",
-		Short: "Pause the rollup aggregator",
-		Run: func(cmd *cobra.Command, args []string) {
-			rollupMgr.Pause()
-		},
-	}
-
-	resumeCmd := &cobra.Command{
-		Use:   "resume",
-		Short: "Resume the rollup aggregator",
-		Run: func(cmd *cobra.Command, args []string) {
-			rollupMgr.Resume()
-		},
-	}
-
-	statusCmd := &cobra.Command{
-		Use:   "status",
-		Short: "Show aggregator status",
-		Run: func(cmd *cobra.Command, args []string) {
-			if rollupMgr.Status() {
-				fmt.Println("paused")
-			} else {
-				fmt.Println("running")
-			}
-		},
-	}
-
-	cmd.AddCommand(submitCmd, challengeCmd, finalizeCmd, infoCmd, listCmd, txsCmd, pauseCmd, resumeCmd, statusCmd)
+	cmd.AddCommand(submitCmd, challengeCmd, finalizeCmd, infoCmd, listCmd, txsCmd)
 	rootCmd.AddCommand(cmd)
 }

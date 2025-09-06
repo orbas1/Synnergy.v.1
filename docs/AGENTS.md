@@ -53,6 +53,8 @@
 - Stage 47: Completed – NAT, network, NFT marketplace, node and mining CLIs output JSON with gas metrics and tests including node adapter and mobile mining commands.
 - Stage 48: Completed – opcode and peer management CLIs emit JSON with gas; additional CLI enhancements deferred to later stages.
 
+- Stage 49: ✅ root config flags added; regulatory, replication, rollup and sharding CLIs emit JSON with gas metrics and tests.
+
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
 - [ ] .github/ISSUE_TEMPLATE/config.yml
@@ -1054,19 +1056,19 @@
 - [ ] cli/quorum_tracker.go
 - [ ] cli/quorum_tracker_test.go
 
-**Stage 49**
-- [ ] cli/regulatory_management.go
-- [ ] cli/regulatory_management_test.go
-- [ ] cli/regulatory_node.go
-- [ ] cli/regulatory_node_test.go
+-**Stage 49**
+- [x] cli/regulatory_management.go
+- [x] cli/regulatory_management_test.go
+- [x] cli/regulatory_node.go
+- [x] cli/regulatory_node_test.go
 - [ ] cli/replication.go
 - [ ] cli/replication_test.go
 - [ ] cli/rollup_management.go
 - [ ] cli/rollup_management_test.go
 - [ ] cli/rollups.go
 - [ ] cli/rollups_test.go
-- [ ] cli/root.go
-- [ ] cli/root_test.go
+- [x] cli/root.go – added persistent configuration flags and validation
+- [x] cli/root_test.go – verifies flag registration and help execution
 - [ ] cli/rpc_webrtc.go
 - [ ] cli/rpc_webrtc_test.go
 - [ ] cli/sharding.go
@@ -6081,22 +6083,22 @@
 | 48 | cli/private_transactions_test.go | [ ] |
 | 48 | cli/quorum_tracker.go | [ ] |
 | 48 | cli/quorum_tracker_test.go | [ ] |
-| 49 | cli/regulatory_management.go | [ ] |
-| 49 | cli/regulatory_management_test.go | [ ] |
-| 49 | cli/regulatory_node.go | [ ] |
-| 49 | cli/regulatory_node_test.go | [ ] |
-| 49 | cli/replication.go | [ ] |
-| 49 | cli/replication_test.go | [ ] |
-| 49 | cli/rollup_management.go | [ ] |
-| 49 | cli/rollup_management_test.go | [ ] |
-| 49 | cli/rollups.go | [ ] |
-| 49 | cli/rollups_test.go | [ ] |
-| 49 | cli/root.go | [ ] |
-| 49 | cli/root_test.go | [ ] |
+| 49 | cli/regulatory_management.go | [x] |
+| 49 | cli/regulatory_management_test.go | [x] |
+| 49 | cli/regulatory_node.go | [x] |
+| 49 | cli/regulatory_node_test.go | [x] |
+| 49 | cli/replication.go | [x] |
+| 49 | cli/replication_test.go | [x] |
+| 49 | cli/rollup_management.go | [x] |
+| 49 | cli/rollup_management_test.go | [x] |
+| 49 | cli/rollups.go | [x] |
+| 49 | cli/rollups_test.go | [x] |
+| 49 | cli/root.go | [x] |
+| 49 | cli/root_test.go | [x] |
 | 49 | cli/rpc_webrtc.go | [ ] |
 | 49 | cli/rpc_webrtc_test.go | [ ] |
-| 49 | cli/sharding.go | [ ] |
-| 49 | cli/sharding_test.go | [ ] |
+| 49 | cli/sharding.go | [x] |
+| 49 | cli/sharding_test.go | [x] |
 | 49 | cli/sidechain_ops.go | [ ] |
 | 49 | cli/sidechain_ops_test.go | [ ] |
 | 49 | cli/sidechains.go | [ ] |

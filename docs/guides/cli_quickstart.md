@@ -19,3 +19,25 @@ make build
 
 ## Help
 Run `synnergy --help` or `synnergy <command> --help` for more details.
+
+## Global Flags
+The root command provides options that apply to every sub-command:
+
+- `--config` – path to a CLI configuration file
+- `--log-level` – log verbosity (`info` or `debug`)
+
+## Regulatory Operations
+- `synnergy regulator add <id> <jurisdiction> <description> <max>` – register a transaction rule
+- `synnergy regnode approve <from> <amount>` – validate a transaction against regulations
+
+## Replication
+- `synnergy replication start --json` – launch the replication subsystem
+- `synnergy replication status --json` – check whether replication is running
+
+## Rollups
+- `synnergy rollups submit <tx...> --json` – create a new rollup batch
+- `synnergy rollupmgr pause --json` – pause the rollup aggregator
+
+## Sharding
+- `synnergy sharding leader set <id> <addr> --json` – assign a leader to a shard
+- `synnergy sharding map --json` – list shard-to-leader mappings

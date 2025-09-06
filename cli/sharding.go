@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -26,13 +24,18 @@ func init() {
 		Use:   "get [shardID]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show the leader for a shard",
-		Run: func(cmd *cobra.Command, args []string) {
-			id, _ := strconv.Atoi(args[0])
-			if addr, ok := shardMgr.GetLeader(id); ok {
-				fmt.Println(addr)
-			} else {
-				fmt.Println("not found")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("ShardingLeaderGet")
+			id, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
 			}
+			if addr, ok := shardMgr.GetLeader(id); ok {
+				printOutput(map[string]string{"leader": addr})
+			} else {
+				printOutput(map[string]string{"error": "not found"})
+			}
+			return nil
 		},
 	}
 
@@ -40,9 +43,15 @@ func init() {
 		Use:   "set [shardID] [addr]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Set the leader address for a shard",
-		Run: func(cmd *cobra.Command, args []string) {
-			id, _ := strconv.Atoi(args[0])
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("ShardingLeaderSet")
+			id, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
+			}
 			shardMgr.SetLeader(id, args[1])
+			printOutput(map[string]any{"status": "set", "id": id})
+			return nil
 		},
 	}
 
@@ -51,10 +60,11 @@ func init() {
 	mapCmd := &cobra.Command{
 		Use:   "map",
 		Short: "List shard-to-leader mappings",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("ShardingMap")
 			m := shardMgr.LeaderMap()
-			out, _ := json.MarshalIndent(m, "", "  ")
-			fmt.Println(string(out))
+			printOutput(m)
+			return nil
 		},
 	}
 
@@ -62,10 +72,19 @@ func init() {
 		Use:   "submit [fromShard] [toShard] [txHash]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Submit a cross-shard transaction header",
-		Run: func(cmd *cobra.Command, args []string) {
-			from, _ := strconv.Atoi(args[0])
-			to, _ := strconv.Atoi(args[1])
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("ShardingSubmit")
+			from, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
+			}
+			to, err := strconv.Atoi(args[1])
+			if err != nil {
+				return err
+			}
 			shardMgr.SubmitCrossShardTx(from, to, args[2])
+			printOutput(map[string]string{"status": "submitted"})
+			return nil
 		},
 	}
 
@@ -73,12 +92,15 @@ func init() {
 		Use:   "pull [shardID]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Pull receipts for a shard",
-		Run: func(cmd *cobra.Command, args []string) {
-			id, _ := strconv.Atoi(args[0])
-			rec := shardMgr.PullReceipts(id)
-			for _, tx := range rec {
-				fmt.Println(tx)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("ShardingPull")
+			id, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
 			}
+			rec := shardMgr.PullReceipts(id)
+			printOutput(rec)
+			return nil
 		},
 	}
 
@@ -86,9 +108,15 @@ func init() {
 		Use:   "reshard [newBits]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Increase the shard count",
-		Run: func(cmd *cobra.Command, args []string) {
-			bits, _ := strconv.Atoi(args[0])
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("ShardingReshard")
+			bits, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
+			}
 			shardMgr.Reshard(uint8(bits))
+			printOutput(map[string]any{"status": "resharded", "bits": bits})
+			return nil
 		},
 	}
 
@@ -96,16 +124,15 @@ func init() {
 		Use:   "rebalance [threshold]",
 		Args:  cobra.ExactArgs(1),
 		Short: "List shards exceeding load threshold",
-		Run: func(cmd *cobra.Command, args []string) {
-			th, _ := strconv.Atoi(args[0])
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("ShardingRebalance")
+			th, err := strconv.Atoi(args[0])
+			if err != nil {
+				return err
+			}
 			heavy := shardMgr.Rebalance(th)
-			if len(heavy) == 0 {
-				fmt.Println("none")
-				return
-			}
-			for _, id := range heavy {
-				fmt.Println(id)
-			}
+			printOutput(heavy)
+			return nil
 		},
 	}
 

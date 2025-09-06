@@ -1,6 +1,15 @@
 package cli
 
-import "github.com/spf13/cobra"
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+)
+
+var (
+	cfgFile  string
+	logLevel string
+)
 
 // rootCmd is the base command for the Synnergy CLI.
 var rootCmd = &cobra.Command{
@@ -8,6 +17,19 @@ var rootCmd = &cobra.Command{
 	Short:         "Synnergy blockchain CLI",
 	SilenceUsage:  true,
 	SilenceErrors: true,
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		switch logLevel {
+		case "info", "debug":
+			return nil
+		default:
+			return fmt.Errorf("invalid log level: %s", logLevel)
+		}
+	},
+}
+
+func init() {
+	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "Path to configuration file")
+	rootCmd.PersistentFlags().StringVar(&logLevel, "log-level", "info", "Log verbosity: info or debug")
 }
 
 // Execute runs the root command.
