@@ -48,6 +48,7 @@
 - Stage 42: Completed – cross-chain bridge, protocol, connection, contract and custodial CLIs now emit structured JSON with accompanying tests.
 - Stage 43: Completed – DAO CLI now covers proposals, quadratic voting, staking, token and elected-node commands with JSON output and signature verification.
 - Stage 44: Completed – faucet, fees, firewall, forensic, full node and gas CLIs emit JSON with gas tracking and tests.
+- Stage 45: In Progress – genesis, geospatial and government CLI tests implemented; high availability, historical, holographic node and identity CLIs pending.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -965,12 +966,12 @@
 - [ ] cli/genesis.go
 
 **Stage 45**
-- [ ] cli/genesis_cli_test.go
-- [ ] cli/genesis_test.go
-- [ ] cli/geospatial.go
-- [ ] cli/geospatial_test.go
-- [ ] cli/government.go
-- [ ] cli/government_test.go
+- [x] cli/genesis_cli_test.go
+- [x] cli/genesis_test.go
+- [x] cli/geospatial.go
+- [x] cli/geospatial_test.go
+- [x] cli/government.go
+- [x] cli/government_test.go
 - [ ] cli/high_availability.go
 - [ ] cli/high_availability_test.go
 - [ ] cli/historical.go
