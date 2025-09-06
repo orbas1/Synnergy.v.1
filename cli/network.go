@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"fmt"
 	"os/signal"
 	"syscall"
 
@@ -21,31 +20,29 @@ func init() {
 	startCmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start network services",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("NetworkStart")
 			network.Start()
-			fmt.Fprintln(cmd.OutOrStdout(), "network started")
-			return nil
+			printOutput("network started")
 		},
 	}
 
 	stopCmd := &cobra.Command{
 		Use:   "stop",
 		Short: "Stop network services",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("NetworkStop")
 			network.Stop()
-			fmt.Fprintln(cmd.OutOrStdout(), "network stopped")
-			return nil
+			printOutput("network stopped")
 		},
 	}
 
 	peersCmd := &cobra.Command{
 		Use:   "peers",
 		Short: "List peers",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			for _, p := range network.Peers() {
-				fmt.Fprintln(cmd.OutOrStdout(), p)
-			}
-			return nil
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("NetworkPeers")
+			printOutput(map[string][]string{"peers": network.Peers()})
 		},
 	}
 
@@ -53,9 +50,10 @@ func init() {
 		Use:   "broadcast [topic] [data]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Publish data on the network",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("NetworkBroadcast")
 			network.Publish(args[0], []byte(args[1]))
-			return nil
+			printOutput("message published")
 		},
 	}
 
@@ -64,13 +62,14 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Subscribe and print messages for a topic",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("NetworkSubscribe")
 			ch := network.Subscribe(args[0])
 			ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 			defer stop()
 			for {
 				select {
 				case msg := <-ch:
-					fmt.Fprintln(cmd.OutOrStdout(), string(msg))
+					printOutput(string(msg))
 				case <-ctx.Done():
 					return nil
 				}

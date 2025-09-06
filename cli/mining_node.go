@@ -20,6 +20,7 @@ func init() {
 		Use:   "start",
 		Short: "Start mining",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("MiningStart")
 			miningNode.Start()
 			printOutput("started")
 			return nil
@@ -30,6 +31,7 @@ func init() {
 		Use:   "stop",
 		Short: "Stop mining",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("MiningStop")
 			miningNode.Stop()
 			printOutput("stopped")
 			return nil
@@ -40,7 +42,8 @@ func init() {
 		Use:   "status",
 		Short: "Show mining status",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			printOutput(miningNode.IsMining())
+			gasPrint("MiningStatus")
+			printOutput(map[string]bool{"mining": miningNode.IsMining()})
 			return nil
 		},
 	}
@@ -50,11 +53,12 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Perform one mining attempt",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("MiningMine")
 			hash, err := miningNode.Mine([]byte(args[0]))
 			if err != nil {
 				return err
 			}
-			printOutput(hash)
+			printOutput(map[string]string{"hash": hash})
 			return nil
 		},
 	}
@@ -63,7 +67,8 @@ func init() {
 		Use:   "hashrate",
 		Short: "Display hash rate hint",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			printOutput(miningNode.HashRateHint())
+			gasPrint("MiningHashrate")
+			printOutput(map[string]uint64{"hashrate": miningNode.HashRateHint()})
 			return nil
 		},
 	}
@@ -74,6 +79,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Mine pre-hex-encoded input",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("MiningHex")
 			b, err := hex.DecodeString(args[0])
 			if err != nil {
 				return fmt.Errorf("invalid hex")
@@ -82,7 +88,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			printOutput(hash)
+			printOutput(map[string]string{"hash": hash})
 			return nil
 		},
 	}

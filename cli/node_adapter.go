@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -18,8 +16,10 @@ func init() {
 	infoCmd := &cobra.Command{
 		Use:   "info",
 		Short: "Show adapted node ID",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(adapter.ID())
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("NodeAdapterInfo")
+			printOutput(map[string]any{"id": adapter.ID()})
+			return nil
 		},
 	}
 
