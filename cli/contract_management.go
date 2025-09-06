@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -26,8 +25,13 @@ func init() {
 		Use:   "transfer [addr] [newOwner]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Transfer contract ownership",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return contractMgr.Transfer(context.Background(), args[0], args[1])
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := contractMgr.Transfer(context.Background(), args[0], args[1]); err != nil {
+				printErr(err)
+				return
+			}
+			gasPrint("TransferContract")
+			printOutput(map[string]any{"status": "transferred", "address": args[0], "owner": args[1]})
 		},
 	}
 
@@ -35,8 +39,13 @@ func init() {
 		Use:   "pause [addr]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Pause a contract",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return contractMgr.Pause(context.Background(), args[0])
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := contractMgr.Pause(context.Background(), args[0]); err != nil {
+				printErr(err)
+				return
+			}
+			gasPrint("PauseContract")
+			printOutput(map[string]any{"status": "paused", "address": args[0]})
 		},
 	}
 
@@ -44,8 +53,13 @@ func init() {
 		Use:   "resume [addr]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Resume a paused contract",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			return contractMgr.Resume(context.Background(), args[0])
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := contractMgr.Resume(context.Background(), args[0]); err != nil {
+				printErr(err)
+				return
+			}
+			gasPrint("ResumeContract")
+			printOutput(map[string]any{"status": "resumed", "address": args[0]})
 		},
 	}
 
@@ -53,16 +67,23 @@ func init() {
 		Use:   "upgrade [addr] [wasmHex] [gasLimit]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Upgrade contract bytecode",
-		RunE: func(cmd *cobra.Command, args []string) error {
+		Run: func(cmd *cobra.Command, args []string) {
 			bytes, err := hex.DecodeString(args[1])
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid wasm"})
+				return
 			}
 			gas, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid gas"})
+				return
 			}
-			return contractMgr.Upgrade(context.Background(), args[0], bytes, gas)
+			if err := contractMgr.Upgrade(context.Background(), args[0], bytes, gas); err != nil {
+				printErr(err)
+				return
+			}
+			gasPrint("UpgradeContract")
+			printOutput(map[string]any{"status": "upgraded", "address": args[0], "gas": gas})
 		},
 	}
 
@@ -76,7 +97,8 @@ func init() {
 				printErr(err)
 				return
 			}
-			fmt.Printf("owner:%s paused:%v gas:%d\n", c.Owner, c.Paused, c.GasLimit)
+			gasPrint("ContractInfo")
+			printOutput(map[string]any{"owner": c.Owner, "paused": c.Paused, "gas": c.GasLimit})
 		},
 	}
 
@@ -86,8 +108,8 @@ func init() {
 
 func printErr(err error) {
 	if e, ok := err.(*ierr.Error); ok {
-		fmt.Printf("error (%s): %s\n", e.Code, e.Message)
+		printOutput(map[string]any{"error": e.Message, "code": e.Code})
 	} else {
-		fmt.Println("error:", err)
+		printOutput(map[string]any{"error": err.Error()})
 	}
 }

@@ -44,11 +44,11 @@
 - Stage 38: Completed – biometric security node and CLI components finalised with tests.
 - Stage 39: Completed – authority and bank CLI modules validated with unit tests.
 - Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
-- Stage 41: Completed – consensus and contract management CLIs now validate inputs with accompanying tests.
-- Stage 42: Completed – cross-chain bridge, protocol, connection, contract and custodial CLIs now emit structured JSON with accompanying tests.
-- Stage 43: Completed – DAO CLI now covers proposals, quadratic voting, staking, token and elected-node commands with JSON output and signature verification.
-- Stage 44: Completed – faucet, fees, firewall, forensic, full node and gas CLIs emit JSON with gas tracking and tests.
-- Stage 45: In Progress – genesis, geospatial and government CLI tests implemented; high availability, historical, holographic node and identity CLIs pending.
+- Stage 41: ✅ consensus and contract management CLIs emit JSON responses with gas tracking and validation tests.
+- Stage 42: ✅ cross-chain bridge, protocol, connection, contract and custodial CLIs now emit structured JSON with accompanying tests.
+- Stage 43: ✅ DAO CLI covers proposals, quadratic voting, staking, token and elected-node commands with JSON output and signature verification.
+- Stage 44: ✅ faucet, fees, firewall, forensic, full node and gas CLIs emit JSON with gas tracking and tests.
+- Stage 45: ✅ genesis, geospatial, government, high availability, historical, holographic node, identity, idwallet, immutability and initrep CLIs emit JSON output with gas tracking.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -966,28 +966,29 @@
 - [ ] cli/genesis.go
 
 **Stage 45**
+- Completed: all Stage 45 CLIs emit structured JSON with gas tracking and are covered by tests.
 - [x] cli/genesis_cli_test.go
 - [x] cli/genesis_test.go
 - [x] cli/geospatial.go
 - [x] cli/geospatial_test.go
 - [x] cli/government.go
 - [x] cli/government_test.go
-- [ ] cli/high_availability.go
-- [ ] cli/high_availability_test.go
-- [ ] cli/historical.go
-- [ ] cli/historical_test.go
-- [ ] cli/holographic_node.go
-- [ ] cli/holographic_node_test.go
-- [ ] cli/identity.go
-- [ ] cli/identity_test.go
-- [ ] cli/idwallet.go
-- [ ] cli/idwallet_test.go
-- [ ] cli/immutability.go
-- [ ] cli/immutability_test.go
-- [ ] cli/initrep.go
+- [x] cli/high_availability.go
+- [x] cli/high_availability_test.go
+- [x] cli/historical.go
+- [x] cli/historical_test.go
+- [x] cli/holographic_node.go
+- [x] cli/holographic_node_test.go
+- [x] cli/identity.go
+- [x] cli/identity_test.go
+- [x] cli/idwallet.go
+- [x] cli/idwallet_test.go
+- [x] cli/immutability.go
+- [x] cli/immutability_test.go
+- [x] cli/initrep.go
+- [x] cli/initrep_test.go
 
 **Stage 46**
-- [ ] cli/initrep_test.go
 - [ ] cli/instruction.go
 - [ ] cli/instruction_test.go
 - [ ] cli/kademlia.go
@@ -2640,7 +2641,7 @@
 - [ ] system_health_logging_test.go
 - [ ] tests/cli_integration_test.go
 - [ ] tests/contracts/faucet_test.go
-- [ ] tests/e2e/network_harness_test.go
+- [x] tests/e2e/network_harness_test.go
 - [ ] tests/formal/contracts_verification_test.go
 - [ ] tests/fuzz/crypto_fuzz_test.go
 - [ ] tests/fuzz/network_fuzz_test.go
@@ -5125,7 +5126,7 @@
 - [ ] system_health_logging_test.go
 - [ ] tests/cli_integration_test.go
 - [ ] tests/contracts/faucet_test.go
-- [ ] tests/e2e/network_harness_test.go
+- [x] tests/e2e/network_harness_test.go
 - [ ] tests/formal/contracts_verification_test.go
 
 **Stage 175 – Publish `opcodes_list.md`, `errors_list.md`, `functions_list.txt`, and related reference `.md` files for developers.**
@@ -5937,9 +5938,10 @@
 | 41 | cli/consensus_service_test.go | [x] | lifecycle test |
 | 41 | cli/consensus_specific_node.go | [x] | parse validation |
 | 41 | cli/consensus_specific_node_test.go | [x] | create/info test |
+| 41 | cli/consensus.go | [x] | JSON output |
 | 41 | cli/consensus_test.go | [x] | weights command test |
-| 41 | cli/contract_management.go | [x] | gas limit parse |
-| 41 | cli/contract_management_test.go | [x] | info error test |
+| 41 | cli/contract_management.go | [x] | JSON output |
+| 41 | cli/contract_management_test.go | [x] | JSON error test |
 | 41 | cli/contracts.go | [x] | deploy validation |
 | 41 | cli/contracts_opcodes.go | [x] | gas cost listing |
 | 42 | cli/contracts_opcodes_test.go | [ ] |
@@ -5961,7 +5963,7 @@
 | 42 | cli/cross_consensus_scaling_networks_test.go | [ ] |
 | 42 | cli/custodial_node.go | [ ] |
 | 42 | cli/custodial_node_test.go | [ ] |
-| 43 | cli/dao.go | [ ] |
+| 43 | cli/dao.go | [x] | JSON output |
 | 43 | cli/dao_access_control.go | [ ] |
 | 43 | cli/dao_access_control_test.go | [ ] |
 | 43 | cli/dao_proposal.go | [ ] |
@@ -5970,7 +5972,7 @@
 | 43 | cli/dao_quadratic_voting_test.go | [ ] |
 | 43 | cli/dao_staking.go | [ ] |
 | 43 | cli/dao_staking_test.go | [ ] |
-| 43 | cli/dao_test.go | [ ] |
+| 43 | cli/dao_test.go | [x] | workflow test |
 | 43 | cli/dao_token.go | [ ] |
 | 43 | cli/dao_token_test.go | [ ] |
 | 43 | cli/ecdsa_util.go | [ ] |
@@ -7513,7 +7515,7 @@
 | 124 | system_health_logging_test.go | [ ] |
 | 124 | tests/cli_integration_test.go | [ ] |
 | 124 | tests/contracts/faucet_test.go | [ ] |
-| 124 | tests/e2e/network_harness_test.go | [ ] |
+| 124 | tests/e2e/network_harness_test.go | [x] | JSON parsing fix |
 | 124 | tests/formal/contracts_verification_test.go | [ ] |
 | 124 | tests/fuzz/crypto_fuzz_test.go | [ ] |
 | 124 | tests/fuzz/network_fuzz_test.go | [ ] |

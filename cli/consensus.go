@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -20,18 +19,18 @@ func init() {
 		Use:   "mine [difficulty]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Mine a block",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			gasPrint("MineBlock")
+		Run: func(cmd *cobra.Command, args []string) {
 			diff, err := strconv.ParseUint(args[0], 10, 8)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid difficulty"})
+				return
 			}
 			sb := core.NewSubBlock([]*core.Transaction{}, "validator")
 			b := core.NewBlock([]*core.SubBlock{sb}, "")
 			consensus.MineBlock(b, uint8(diff))
 			ilog.Info("cli_mine", "nonce", b.Nonce)
-			fmt.Println("block mined with nonce", b.Nonce)
-			return nil
+			gasPrint("MineBlock")
+			printOutput(map[string]any{"nonce": b.Nonce})
 		},
 	}
 
@@ -41,7 +40,7 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("Weights")
 			ilog.Info("cli_weights", "pow", consensus.Weights.PoW, "pos", consensus.Weights.PoS, "poh", consensus.Weights.PoH)
-			fmt.Printf("PoW: %.2f PoS: %.2f PoH: %.2f\n", consensus.Weights.PoW, consensus.Weights.PoS, consensus.Weights.PoH)
+			printOutput(map[string]float64{"pow": consensus.Weights.PoW, "pos": consensus.Weights.PoS, "poh": consensus.Weights.PoH})
 		},
 	}
 
@@ -49,20 +48,21 @@ func init() {
 		Use:   "adjust [demand] [stake]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Adjust consensus weights",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			gasPrint("AdjustWeights")
+		Run: func(cmd *cobra.Command, args []string) {
 			d, err := strconv.ParseFloat(args[0], 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid demand"})
+				return
 			}
 			s, err := strconv.ParseFloat(args[1], 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid stake"})
+				return
 			}
 			consensus.AdjustWeights(d, s)
 			ilog.Info("cli_adjust", "pow", consensus.Weights.PoW, "pos", consensus.Weights.PoS, "poh", consensus.Weights.PoH)
-			fmt.Printf("new weights -> PoW: %.2f PoS: %.2f PoH: %.2f\n", consensus.Weights.PoW, consensus.Weights.PoS, consensus.Weights.PoH)
-			return nil
+			gasPrint("AdjustWeights")
+			printOutput(map[string]float64{"pow": consensus.Weights.PoW, "pos": consensus.Weights.PoS, "poh": consensus.Weights.PoH})
 		},
 	}
 
@@ -70,20 +70,21 @@ func init() {
 		Use:   "threshold [demand] [stake]",
 		Args:  cobra.ExactArgs(2),
 		Short: "Calculate switching threshold",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			gasPrint("Threshold")
+		Run: func(cmd *cobra.Command, args []string) {
 			d, err := strconv.ParseFloat(args[0], 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid demand"})
+				return
 			}
 			s, err := strconv.ParseFloat(args[1], 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid stake"})
+				return
 			}
 			th := consensus.Threshold(d, s)
 			ilog.Info("cli_threshold", "value", th)
-			fmt.Println("threshold:", th)
-			return nil
+			gasPrint("Threshold")
+			printOutput(map[string]float64{"threshold": th})
 		},
 	}
 
@@ -91,24 +92,26 @@ func init() {
 		Use:   "transition [demand] [threat] [stake]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Compute full transition threshold",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			gasPrint("TransitionThreshold")
+		Run: func(cmd *cobra.Command, args []string) {
 			d, err := strconv.ParseFloat(args[0], 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid demand"})
+				return
 			}
 			t, err := strconv.ParseFloat(args[1], 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid threat"})
+				return
 			}
 			s, err := strconv.ParseFloat(args[2], 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid stake"})
+				return
 			}
 			thr := consensus.TransitionThreshold(d, t, s)
 			ilog.Info("cli_transition", "value", thr)
-			fmt.Println("transition threshold:", thr)
-			return nil
+			gasPrint("TransitionThreshold")
+			printOutput(map[string]float64{"threshold": thr})
 		},
 	}
 
@@ -116,24 +119,26 @@ func init() {
 		Use:   "difficulty [old] [actual] [expected]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Adjust mining difficulty",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			gasPrint("DifficultyAdjust")
+		Run: func(cmd *cobra.Command, args []string) {
 			old, err := strconv.ParseFloat(args[0], 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid old"})
+				return
 			}
 			actual, err := strconv.ParseFloat(args[1], 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid actual"})
+				return
 			}
 			expected, err := strconv.ParseFloat(args[2], 64)
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid expected"})
+				return
 			}
 			nd := consensus.DifficultyAdjust(old, actual, expected)
 			ilog.Info("cli_difficulty", "value", nd)
-			fmt.Println("new difficulty:", nd)
-			return nil
+			gasPrint("DifficultyAdjust")
+			printOutput(map[string]float64{"difficulty": nd})
 		},
 	}
 
@@ -141,23 +146,26 @@ func init() {
 		Use:   "availability [pow] [pos] [poh]",
 		Args:  cobra.ExactArgs(3),
 		Short: "Set validator availability flags",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			gasPrint("SetAvailability")
+		Run: func(cmd *cobra.Command, args []string) {
 			pow, err := strconv.ParseBool(args[0])
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid pow"})
+				return
 			}
 			pos, err := strconv.ParseBool(args[1])
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid pos"})
+				return
 			}
 			poh, err := strconv.ParseBool(args[2])
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid poh"})
+				return
 			}
 			consensus.SetAvailability(pow, pos, poh)
 			ilog.Info("cli_availability", "pow", pow, "pos", pos, "poh", poh)
-			return nil
+			gasPrint("SetAvailability")
+			printOutput(map[string]bool{"pow": pow, "pos": pos, "poh": poh})
 		},
 	}
 
@@ -165,15 +173,16 @@ func init() {
 		Use:   "powrewards [enabled]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Toggle PoW rewards availability",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			gasPrint("SetPoWRewards")
+		Run: func(cmd *cobra.Command, args []string) {
 			en, err := strconv.ParseBool(args[0])
 			if err != nil {
-				return err
+				printOutput(map[string]any{"error": "invalid flag"})
+				return
 			}
 			consensus.SetPoWRewards(en)
 			ilog.Info("cli_pow_rewards", "enabled", en)
-			return nil
+			gasPrint("SetPoWRewards")
+			printOutput(map[string]bool{"enabled": en})
 		},
 	}
 

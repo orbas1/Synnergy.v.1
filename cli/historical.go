@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -25,13 +24,16 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			h, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
-				fmt.Println("invalid height:", err)
+				printOutput("invalid height: " + err.Error())
 				return
 			}
 			summary := nodes.BlockSummary{Height: h, Hash: args[1], Timestamp: time.Now()}
 			if err := historicalNode.ArchiveBlock(summary); err != nil {
-				fmt.Println("archive error:", err)
+				printOutput("archive error: " + err.Error())
+				return
 			}
+			gasPrint("HistoricalArchive")
+			printOutput(map[string]any{"status": "archived", "height": h, "hash": args[1]})
 		},
 	}
 
@@ -42,15 +44,16 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			h, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
-				fmt.Println("invalid height:", err)
+				printOutput("invalid height: " + err.Error())
 				return
 			}
 			b, ok := historicalNode.GetBlockByHeight(h)
 			if !ok {
-				fmt.Println("not found")
+				printOutput("not found")
 				return
 			}
-			fmt.Printf("%d %s %s\n", b.Height, b.Hash, b.Timestamp.Format(time.RFC3339))
+			gasPrint("HistoricalHeight")
+			printOutput(map[string]any{"height": b.Height, "hash": b.Hash, "timestamp": b.Timestamp.Format(time.RFC3339)})
 		},
 	}
 
@@ -61,10 +64,11 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			b, ok := historicalNode.GetBlockByHash(args[0])
 			if !ok {
-				fmt.Println("not found")
+				printOutput("not found")
 				return
 			}
-			fmt.Printf("%d %s %s\n", b.Height, b.Hash, b.Timestamp.Format(time.RFC3339))
+			gasPrint("HistoricalHash")
+			printOutput(map[string]any{"height": b.Height, "hash": b.Hash, "timestamp": b.Timestamp.Format(time.RFC3339)})
 		},
 	}
 
@@ -72,7 +76,8 @@ func init() {
 		Use:   "total",
 		Short: "Show total archived blocks",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(historicalNode.TotalBlocks())
+			gasPrint("HistoricalTotal")
+			printOutput(map[string]int{"total": historicalNode.TotalBlocks()})
 		},
 	}
 

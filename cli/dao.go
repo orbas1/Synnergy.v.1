@@ -1,9 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -21,13 +18,13 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Create a new DAO",
 		Run: func(cmd *cobra.Command, args []string) {
-			gasPrint("CreateDAO")
 			dao := daoMgr.Create(args[0], args[1])
 			if dao == nil {
-				fmt.Fprintln(cmd.OutOrStdout(), "invalid parameters")
+				printOutput(map[string]any{"error": "invalid parameters"})
 				return
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), dao.ID)
+			gasPrint("CreateDAO")
+			printOutput(map[string]any{"id": dao.ID})
 		},
 	}
 
@@ -36,10 +33,12 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Join a DAO",
 		Run: func(cmd *cobra.Command, args []string) {
-			gasPrint("JoinDAO")
 			if err := daoMgr.Join(args[0], args[1]); err != nil {
-				fmt.Fprintln(cmd.OutOrStdout(), err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			gasPrint("JoinDAO")
+			printOutput(map[string]any{"status": "joined", "id": args[0], "address": args[1]})
 		},
 	}
 
@@ -48,53 +47,44 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Leave a DAO",
 		Run: func(cmd *cobra.Command, args []string) {
-			gasPrint("LeaveDAO")
 			if err := daoMgr.Leave(args[0], args[1]); err != nil {
-				fmt.Fprintln(cmd.OutOrStdout(), err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			gasPrint("LeaveDAO")
+			printOutput(map[string]any{"status": "left", "id": args[0], "address": args[1]})
 		},
 	}
 
-	var infoJSON bool
 	infoCmd := &cobra.Command{
 		Use:   "info <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show DAO information",
 		Run: func(cmd *cobra.Command, args []string) {
-			gasPrint("DAOInfo")
 			dao, err := daoMgr.Info(args[0])
 			if err != nil {
-				fmt.Println(err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			if infoJSON {
-				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(dao)
-				return
-			}
-			fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n", dao.ID, dao.Name)
-			fmt.Fprintf(cmd.OutOrStdout(), "creator: %s\n", dao.Creator)
-			fmt.Fprintf(cmd.OutOrStdout(), "members: %d\n", len(dao.Members))
+			gasPrint("DAOInfo")
+			printOutput(map[string]any{
+				"id":      dao.ID,
+				"name":    dao.Name,
+				"creator": dao.Creator,
+				"members": len(dao.Members),
+			})
 		},
 	}
-	infoCmd.Flags().BoolVar(&infoJSON, "json", false, "output as JSON")
 
-	var listJSON bool
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all DAOs",
 		Run: func(cmd *cobra.Command, args []string) {
-			gasPrint("ListDAOs")
 			daos := daoMgr.List()
-			if listJSON {
-				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(daos)
-				return
-			}
-			for _, d := range daos {
-				fmt.Fprintf(cmd.OutOrStdout(), "%s %s\n", d.ID, d.Name)
-			}
+			gasPrint("ListDAOs")
+			printOutput(daos)
 		},
 	}
-	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	daoCmd.AddCommand(createCmd, joinCmd, leaveCmd, infoCmd, listCmd)
 	rootCmd.AddCommand(daoCmd)

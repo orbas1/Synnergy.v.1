@@ -37,7 +37,17 @@ func execCLI(t *testing.T, args ...string) (string, error) {
 	os.Stdout = old
 	out, _ := io.ReadAll(r)
 	r.Close()
-	return strings.TrimSpace(buf.String() + string(out)), err
+	outStr := strings.TrimSpace(buf.String() + string(out))
+	if start := strings.IndexAny(outStr, "{"); start != -1 {
+		if end := strings.LastIndex(outStr, "}"); end != -1 && end >= start {
+			outStr = outStr[start : end+1]
+		}
+	} else if start := strings.Index(outStr, "["); start != -1 {
+		if end := strings.LastIndex(outStr, "]"); end != -1 && end >= start {
+			outStr = outStr[start : end+1]
+		}
+	}
+	return outStr, err
 }
 
 // TestNetworkHarness spins up core components and exercises a full flow

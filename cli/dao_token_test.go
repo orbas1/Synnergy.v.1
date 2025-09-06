@@ -1,13 +1,13 @@
 package cli
 
 import (
-	"bytes"
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"synnergy/core"
@@ -36,15 +36,17 @@ func TestDAOTokenMintJSON(t *testing.T) {
 	pubHex := hex.EncodeToString(pub)
 	msgHex := hex.EncodeToString(msg)
 
-	buf := new(bytes.Buffer)
-	rootCmd.SetOut(buf)
-	rootCmd.SetArgs([]string{"dao-token", "mint", addr, amt, "--pub", pubHex, "--msg", msgHex, "--sig", sigHex, "--json"})
-	if err := rootCmd.Execute(); err != nil {
+	out, err := execCommand("dao-token", "mint", addr, amt, "--pub", pubHex, "--msg", msgHex, "--sig", sigHex, "--json")
+	if err != nil {
 		t.Fatalf("execute: %v", err)
 	}
-
+	start := strings.LastIndex(out, "{")
+	end := strings.LastIndex(out, "}")
+	if start != -1 && end != -1 {
+		out = out[start : end+1]
+	}
 	var resp map[string]string
-	if err := json.Unmarshal(buf.Bytes(), &resp); err != nil {
+	if err := json.Unmarshal([]byte(out), &resp); err != nil {
 		t.Fatalf("decode: %v", err)
 	}
 	if resp["status"] != "minted" {

@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -21,8 +19,11 @@ func init() {
 		Short: "Register an ID wallet",
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := idRegistry.Register(args[0], args[1]); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			gasPrint("IDWalletRegister")
+			printOutput(map[string]any{"status": "registered", "address": args[0]})
 		},
 	}
 
@@ -33,10 +34,11 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			info, ok := idRegistry.Info(args[0])
 			if !ok {
-				fmt.Println("not registered")
+				printOutput(map[string]any{"error": "not registered"})
 				return
 			}
-			fmt.Println(info)
+			gasPrint("IDWalletCheck")
+			printOutput(map[string]any{"info": info})
 		},
 	}
 

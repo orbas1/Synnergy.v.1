@@ -8,6 +8,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
+	"strings"
 	"testing"
 )
 
@@ -40,8 +41,14 @@ func TestElectedNodeCreateJSON(t *testing.T) {
 		t.Fatalf("execute: %v", err)
 	}
 
+	out := buf.String()
+	start := strings.LastIndex(out, "{")
+	end := strings.LastIndex(out, "}")
+	if start != -1 && end != -1 {
+		out = out[start : end+1]
+	}
 	var resp map[string]string
-	if err := json.Unmarshal(buf.Bytes(), &resp); err != nil {
+	if err := json.Unmarshal([]byte(out), &resp); err != nil {
 		t.Fatalf("decode: %v", err)
 	}
 	if resp["status"] != "created" {

@@ -21,6 +21,8 @@ func init() {
 		Short: "Bootstrap ledger and start replication",
 		Run: func(cmd *cobra.Command, args []string) {
 			initSvc.Start()
+			gasPrint("InitrepStart")
+			printOutput(map[string]any{"status": "started"})
 		},
 	}
 
@@ -29,6 +31,8 @@ func init() {
 		Short: "Stop initialization service",
 		Run: func(cmd *cobra.Command, args []string) {
 			initSvc.Stop()
+			gasPrint("InitrepStop")
+			printOutput(map[string]any{"status": "stopped"})
 		},
 	}
 
