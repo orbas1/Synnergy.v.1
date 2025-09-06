@@ -51,6 +51,7 @@
 - Stage 45: ✅ genesis, geospatial, government, high availability, historical, holographic node, identity, idwallet, immutability and initrep CLIs emit JSON output with gas tracking.
 - Stage 46: Completed – instruction, Kademlia, ledger, light node, liquidity pool, liquidity view and loan pool CLIs emit JSON with gas tracking.
 - Stage 47: Completed – NAT, network, NFT marketplace, node and mining CLIs output JSON with gas metrics and tests including node adapter and mobile mining commands.
+- Stage 48: Completed – opcode and peer management CLIs emit JSON with gas; additional CLI enhancements deferred to later stages.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -1032,15 +1033,16 @@
 - [x] cli/node_types.go
 
 **Stage 48**
+- Remaining CLI upgrades (optimization, output, plasma, private transactions and quorum tracker) deferred to later stages.
 - [x] cli/node_types_test.go
-- [ ] cli/opcodes.go
-- [ ] cli/opcodes_test.go
+ - [x] cli/opcodes.go
+ - [x] cli/opcodes_test.go
 - [ ] cli/optimization_node.go
 - [ ] cli/optimization_node_test.go
 - [ ] cli/output.go
 - [ ] cli/output_test.go
-- [ ] cli/peer_management.go
-- [ ] cli/peer_management_test.go
+- [x] cli/peer_management.go
+- [x] cli/peer_management_test.go
 - [ ] cli/plasma.go
 - [ ] cli/plasma_management.go
 - [ ] cli/plasma_management_test.go
@@ -1684,7 +1686,7 @@
 - [ ] docs/Whitepaper_detailed/How to become an authority node.md
 
 **Stage 79**
-- [ ] docs/Whitepaper_detailed/How to connect to a node.md
+- [x] docs/Whitepaper_detailed/How to connect to a node.md
 - [ ] docs/Whitepaper_detailed/How to create a node.md
 - [ ] docs/Whitepaper_detailed/How to create our various tokens.md
 - [ ] docs/Whitepaper_detailed/How to deploy a contract.md
@@ -3462,9 +3464,9 @@
  - [x] cli/centralbank.go
  - [x] cli/centralbank_test.go
 - [ ] cli/charity.go
-- [ ] cli/charity_test.go
-- [ ] cli/cli_core_test.go
-- [ ] cli/coin.go
+ - [ ] cli/charity_test.go
+ - [x] cli/cli_core_test.go
+ - [ ] cli/coin.go
 - [ ] cli/coin_test.go
 - [ ] cli/compliance.go
 - [ ] cli/compliance_mgmt.go
@@ -3618,8 +3620,8 @@
 - [ ] cli/optimization_node_test.go
 - [ ] cli/output.go
 - [ ] cli/output_test.go
-- [ ] cli/peer_management.go
-- [ ] cli/peer_management_test.go
+- [x] cli/peer_management.go
+- [x] cli/peer_management_test.go
 - [ ] cli/plasma.go
 - [ ] cli/plasma_management.go
 - [ ] cli/plasma_management_test.go
@@ -4225,7 +4227,7 @@
 - [ ] docs/Whitepaper_detailed/How to apply to charity pool.md
 - [ ] docs/Whitepaper_detailed/How to be secure.md
 - [ ] docs/Whitepaper_detailed/How to become an authority node.md
-- [ ] docs/Whitepaper_detailed/How to connect to a node.md
+- [x] docs/Whitepaper_detailed/How to connect to a node.md
 - [ ] docs/Whitepaper_detailed/How to create a node.md
 - [ ] docs/Whitepaper_detailed/How to create our various tokens.md
 
@@ -5918,7 +5920,7 @@
 | 40 | cli/centralbank_test.go | [x] |
 | 40 | cli/charity.go | [ ] |
 | 40 | cli/charity_test.go | [ ] |
-| 40 | cli/cli_core_test.go | [ ] |
+| 40 | cli/cli_core_test.go | [x] |
 | 40 | cli/coin.go | [ ] |
 | 40 | cli/coin_test.go | [ ] |
 | 40 | cli/compliance.go | [ ] |
@@ -6067,8 +6069,8 @@
 | 48 | cli/optimization_node_test.go | [ ] |
 | 48 | cli/output.go | [ ] |
 | 48 | cli/output_test.go | [ ] |
-| 48 | cli/peer_management.go | [ ] |
-| 48 | cli/peer_management_test.go | [ ] |
+| 48 | cli/peer_management.go | [x] |
+| 48 | cli/peer_management_test.go | [x] |
 | 48 | cli/plasma.go | [ ] |
 | 48 | cli/plasma_management.go | [ ] |
 | 48 | cli/plasma_management_test.go | [ ] |
@@ -6650,7 +6652,7 @@
 | 78 | docs/Whitepaper_detailed/How to apply to charity pool.md | [ ] |
 | 78 | docs/Whitepaper_detailed/How to be secure.md | [ ] |
 | 78 | docs/Whitepaper_detailed/How to become an authority node.md | [ ] |
-| 79 | docs/Whitepaper_detailed/How to connect to a node.md | [ ] |
+| 79 | docs/Whitepaper_detailed/How to connect to a node.md | [x] |
 | 79 | docs/Whitepaper_detailed/How to create a node.md | [ ] |
 | 79 | docs/Whitepaper_detailed/How to create our various tokens.md | [ ] |
 | 79 | docs/Whitepaper_detailed/How to deploy a contract.md | [ ] |

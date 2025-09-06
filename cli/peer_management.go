@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -20,15 +18,14 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 		Short: "List known peers or those advertising a topic",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("PeerDiscover")
+			var peers []string
 			if len(args) == 1 {
-				for _, id := range peerMgr.Discover(args[0]) {
-					fmt.Fprintln(cmd.OutOrStdout(), id)
-				}
-				return nil
+				peers = peerMgr.Discover(args[0])
+			} else {
+				peers = peerMgr.ListPeers()
 			}
-			for _, id := range peerMgr.ListPeers() {
-				fmt.Fprintln(cmd.OutOrStdout(), id)
-			}
+			printOutput(peers)
 			return nil
 		},
 	}
@@ -38,8 +35,9 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Connect to a peer by address",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("PeerConnect")
 			id := peerMgr.Connect(args[0])
-			fmt.Fprintln(cmd.OutOrStdout(), "connected", id)
+			printOutput(map[string]string{"status": "connected", "id": id})
 			return nil
 		},
 	}
@@ -49,7 +47,9 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Advertise current node on a topic",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("PeerAdvertise")
 			peerMgr.Advertise(currentNode.ID, args[0])
+			printOutput(map[string]string{"status": "advertised", "topic": args[0]})
 			return nil
 		},
 	}

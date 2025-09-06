@@ -2,8 +2,6 @@ package cli
 
 import (
 	"encoding/hex"
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -18,9 +16,8 @@ func init() {
 		Use:   "list",
 		Short: "List all opcode mappings",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, line := range core.DebugDump() {
-				fmt.Println(line)
-			}
+			gasPrint("OpcodesList")
+			printOutput(core.Catalogue())
 		},
 	}
 
@@ -29,12 +26,13 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show opcode hex for a function name",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("OpcodesHex")
 			h, err := core.HexDump(args[0])
 			if err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Println(h)
+			printOutput(map[string]string{"hex": h})
 		},
 	}
 
@@ -43,12 +41,13 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show raw opcode bytes",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("OpcodesBytes")
 			b, err := core.ToBytecode(args[0])
 			if err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Println(hex.EncodeToString(b))
+			printOutput(map[string]string{"bytes": hex.EncodeToString(b)})
 		},
 	}
 

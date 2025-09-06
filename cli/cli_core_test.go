@@ -66,8 +66,8 @@ func TestPeerDiscoverEmpty(t *testing.T) {
 	if err != nil {
 		t.Fatalf("discover failed: %v", err)
 	}
-	if out != "" {
-		t.Fatalf("expected no peers, got %q", out)
+	if !strings.Contains(out, "gas cost") || !strings.Contains(out, "[]") {
+		t.Fatalf("expected gas cost and empty result, got %q", out)
 	}
 }
 

@@ -59,12 +59,12 @@ To join an existing mesh, run the base node module and dial a seed peer. The mod
 After the seed handshake completes, the node populates its peer table and begins syncing.
 
 ## Peer Discovery and Management
-Peer discovery is handled by the `peer` command set built on the `PeerManager` structure【F:cli/peer_management.go†L1-L44】【F:core/peer_management.go†L21-L60】. Typical workflow:
+Peer discovery is handled by the `peer` command set built on the `PeerManager` structure【F:cli/peer_management.go†L1-L44】【F:core/peer_management.go†L21-L60】. Each subcommand reports its gas cost and honors the global `--json` flag for machine‑readable responses. Typical workflow:
 
 ```bash
-./synnergy peer connect <addr>      # record a peer by address
-./synnergy peer advertise <topic>   # announce presence on a topic
-./synnergy peer discover <topic>    # list peers advertising the topic
+./synnergy peer connect <addr> --json      # record a peer by address
+./synnergy peer advertise <topic> --json   # announce presence on a topic
+./synnergy peer discover <topic> --json    # list peers advertising the topic
 ```
 
 Connections are pooled and reused through `ConnectionPool`, which creates, dials, and releases link objects while enforcing capacity limits【F:core/connection_pool.go†L22-L75】.
