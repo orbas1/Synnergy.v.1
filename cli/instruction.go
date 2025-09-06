@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -33,23 +32,23 @@ func init() {
 		Args:  cobra.RangeArgs(1, 2),
 		Short: "Create an instruction",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("InstructionNew")
 			op, err := parseOpcode(args[0])
 			if err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
 			var val int64
 			if len(args) == 2 {
 				v, err := strconv.ParseInt(args[1], 10, 64)
 				if err != nil {
-					fmt.Println("invalid value")
+					printOutput("invalid value")
 					return
 				}
 				val = v
 			}
 			inst := core.Instruction{Op: op, Value: val}
-			b, _ := json.Marshal(inst)
-			fmt.Println(string(b))
+			printOutput(inst)
 		},
 	})
 
@@ -57,9 +56,9 @@ func init() {
 		Use:   "list",
 		Short: "List registered opcodes",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("InstructionList")
 			cat := core.Catalogue()
-			b, _ := json.MarshalIndent(cat, "", "  ")
-			fmt.Println(string(b))
+			printOutput(cat)
 		},
 	})
 

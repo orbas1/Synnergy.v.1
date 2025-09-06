@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -21,8 +19,9 @@ func init() {
 		Use:   "head",
 		Short: "Show chain height and latest block hash",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LedgerHead")
 			h, hash := ledger.Head()
-			fmt.Printf("%d %s\n", h, hash)
+			printOutput(map[string]any{"height": h, "hash": hash})
 		},
 	})
 
@@ -31,16 +30,16 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Fetch a block by height",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LedgerBlock")
 			ht, err := strconv.Atoi(args[0])
 			if err != nil {
-				fmt.Println("invalid height:", err)
+				printOutput(map[string]any{"error": "invalid height"})
 				return
 			}
 			if b, ok := ledger.GetBlock(ht); ok {
-				out, _ := json.MarshalIndent(b, "", "  ")
-				fmt.Println(string(out))
+				printOutput(b)
 			} else {
-				fmt.Println("not found")
+				printOutput(map[string]any{"error": "not found"})
 			}
 		},
 	})
@@ -50,7 +49,8 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Display token balance of an address",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(ledger.GetBalance(args[0]))
+			gasPrint("LedgerBalance")
+			printOutput(ledger.GetBalance(args[0]))
 		},
 	})
 
@@ -59,9 +59,9 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "List UTXOs for an address",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LedgerUTXO")
 			outs := ledger.GetUTXOs(args[0])
-			out, _ := json.MarshalIndent(outs, "", "  ")
-			fmt.Println(string(out))
+			printOutput(outs)
 		},
 	})
 
@@ -69,8 +69,8 @@ func init() {
 		Use:   "pool",
 		Short: "List mem-pool transactions",
 		Run: func(cmd *cobra.Command, args []string) {
-			out, _ := json.MarshalIndent(ledger.Pool(), "", "  ")
-			fmt.Println(string(out))
+			gasPrint("LedgerPool")
+			printOutput(ledger.Pool())
 		},
 	})
 
@@ -79,12 +79,14 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Mint tokens to an address",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LedgerMint")
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
+				printOutput(map[string]any{"error": "invalid amount"})
 				return
 			}
 			ledger.Mint(args[0], amt)
+			printOutput(map[string]any{"status": "minted", "address": args[0], "amount": amt})
 		},
 	})
 
@@ -93,22 +95,25 @@ func init() {
 		Args:  cobra.RangeArgs(3, 4),
 		Short: "Transfer tokens between addresses",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LedgerTransfer")
 			amt, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
+				printOutput(map[string]any{"error": "invalid amount"})
 				return
 			}
 			var fee uint64
 			if len(args) == 4 {
 				fee, err = strconv.ParseUint(args[3], 10, 64)
 				if err != nil {
-					fmt.Println("invalid fee")
+					printOutput(map[string]any{"error": "invalid fee"})
 					return
 				}
 			}
 			if err := ledger.Transfer(args[0], args[1], amt, fee); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			printOutput(map[string]any{"status": "transferred", "from": args[0], "to": args[1], "amount": amt, "fee": fee})
 		},
 	})
 

@@ -1,9 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
-	"fmt"
-
 	"github.com/spf13/cobra"
 )
 
@@ -18,11 +15,11 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show pool state",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LiquidityViewsInfo")
 			if view, ok := poolRegistry.PoolInfo(args[0]); ok {
-				b, _ := json.MarshalIndent(view, "", "  ")
-				fmt.Println(string(b))
+				printOutput(view)
 			} else {
-				fmt.Println("not found")
+				printOutput(map[string]any{"error": "not found"})
 			}
 		},
 	})
@@ -31,9 +28,9 @@ func init() {
 		Use:   "list",
 		Short: "List all pools",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("LiquidityViewsList")
 			views := poolRegistry.PoolViews()
-			b, _ := json.MarshalIndent(views, "", "  ")
-			fmt.Println(string(b))
+			printOutput(views)
 		},
 	})
 
