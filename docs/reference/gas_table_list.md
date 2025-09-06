@@ -213,7 +213,21 @@
 | `HexDump` | `1` |
 | `Hex` | `1` |
 | `History` | `1` |
+| `HolographicDial` | `1` |
+| `HolographicPeers` | `1` |
+| `HolographicRetrieve` | `1` |
+| `HolographicStore` | `1` |
 | `ID` | `1` |
+| `IDWalletCheck` | `1` |
+| `IDWalletRegister` | `1` |
+| `IdentityInfo` | `1` |
+| `IdentityLogs` | `1` |
+| `IdentityRegister` | `1` |
+| `IdentityVerify` | `1` |
+| `ImmutabilityCheck` | `1` |
+| `ImmutabilityInit` | `1` |
+| `InitrepStart` | `1` |
+| `InitrepStop` | `1` |
 | `IPFS_Add` | `1000` |
 | `IPFS_Get` | `400` |
 | `IPFS_Unpin` | `200` |
@@ -735,3 +749,4 @@
 | `zero_trust_data_channels_NewZeroTrustEngine` | `5` |
 | `zero_trust_data_channels_OpenChannel` | `5` |
 | `zero_trust_data_channels_Send` | `10` |
+| `TransferContract` | `250` |

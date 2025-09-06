@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -21,8 +19,11 @@ func init() {
 		Short: "Register identity information",
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := identitySvc.Register(args[0], args[1], args[2], args[3]); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			gasPrint("IdentityRegister")
+			printOutput(map[string]any{"status": "registered", "address": args[0]})
 		},
 	}
 
@@ -32,8 +33,11 @@ func init() {
 		Short: "Record a verification method",
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := identitySvc.Verify(args[0], args[1]); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]any{"error": err.Error()})
+				return
 			}
+			gasPrint("IdentityVerify")
+			printOutput(map[string]any{"status": "verified", "address": args[0], "method": args[1]})
 		},
 	}
 
@@ -44,10 +48,11 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			info, ok := identitySvc.Info(args[0])
 			if !ok {
-				fmt.Println("not found")
+				printOutput(map[string]any{"error": "not found"})
 				return
 			}
-			fmt.Printf("Name: %s DOB: %s Nationality: %s\n", info.Name, info.DateOfBirth, info.Nationality)
+			gasPrint("IdentityInfo")
+			printOutput(map[string]any{"name": info.Name, "dob": info.DateOfBirth, "nationality": info.Nationality})
 		},
 	}
 
@@ -57,9 +62,8 @@ func init() {
 		Short: "Show verification logs",
 		Run: func(cmd *cobra.Command, args []string) {
 			logs := identitySvc.Logs(args[0])
-			for _, l := range logs {
-				fmt.Printf("%s %s\n", l.Method, l.Timestamp.Format("2006-01-02T15:04:05"))
-			}
+			gasPrint("IdentityLogs")
+			printOutput(logs)
 		},
 	}
 

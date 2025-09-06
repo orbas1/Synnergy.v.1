@@ -1,8 +1,6 @@
 package cli
 
 import (
-	"fmt"
-
 	"github.com/spf13/cobra"
 	"synnergy/core"
 )
@@ -23,7 +21,8 @@ func init() {
 			gen.Hash = gen.HeaderHash(0)
 			ledger.AddBlock(gen)
 			enforcer = core.NewImmutabilityEnforcer(gen)
-			fmt.Println("genesis hash", gen.Hash)
+			gasPrint("ImmutabilityInit")
+			printOutput(map[string]any{"genesis": gen.Hash})
 		},
 	}
 
@@ -32,14 +31,15 @@ func init() {
 		Short: "Verify ledger against genesis hash",
 		Run: func(cmd *cobra.Command, args []string) {
 			if enforcer == nil {
-				fmt.Println("enforcer not initialised")
+				printOutput("enforcer not initialised")
 				return
 			}
 			if err := enforcer.CheckLedger(ledger); err != nil {
-				fmt.Println("check failed:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Println("ledger matches genesis hash")
+			gasPrint("ImmutabilityCheck")
+			printOutput(map[string]any{"status": "ok"})
 		},
 	}
 

@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -24,12 +23,13 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			n, err := strconv.Atoi(args[2])
 			if err != nil {
-				fmt.Println("invalid shard count:", err)
+				printOutput("invalid shard count: " + err.Error())
 				return
 			}
 			frame := synnergy.SplitHolographic(args[0], []byte(args[1]), n)
 			holoNode.Store(frame)
-			fmt.Println("stored")
+			gasPrint("HolographicStore")
+			printOutput(map[string]any{"status": "stored", "id": args[0], "shards": n})
 		},
 	}
 
@@ -40,11 +40,12 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			frame, ok := holoNode.Retrieve(args[0])
 			if !ok {
-				fmt.Println("not found")
+				printOutput("not found")
 				return
 			}
 			data := synnergy.ReconstructHolographic(frame)
-			fmt.Println(string(data))
+			gasPrint("HolographicRetrieve")
+			printOutput(map[string]any{"id": args[0], "data": string(data)})
 		},
 	}
 
@@ -52,9 +53,8 @@ func init() {
 		Use:   "peers",
 		Short: "List known peers",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, p := range holoNode.Peers() {
-				fmt.Println(p)
-			}
+			gasPrint("HolographicPeers")
+			printOutput(map[string]any{"peers": holoNode.Peers()})
 		},
 	}
 
@@ -64,8 +64,11 @@ func init() {
 		Short: "Dial a seed peer",
 		Run: func(cmd *cobra.Command, args []string) {
 			if err := holoNode.DialSeed(nodes.Address(args[0])); err != nil {
-				fmt.Println("dial error:", err)
+				printOutput("dial error: " + err.Error())
+				return
 			}
+			gasPrint("HolographicDial")
+			printOutput(map[string]any{"status": "connected", "addr": args[0]})
 		},
 	}
 

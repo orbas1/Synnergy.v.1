@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -24,10 +23,12 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			t, err := strconv.ParseInt(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid timeout:", err)
+				printOutput("invalid timeout: " + err.Error())
 				return
 			}
 			failover = core.NewFailoverManager(args[0], time.Duration(t)*time.Second)
+			gasPrint("FailoverInit")
+			printOutput(map[string]any{"status": "initialised", "primary": args[0], "timeout": t})
 		},
 	}
 
@@ -37,10 +38,12 @@ func init() {
 		Short: "Register a backup node",
 		Run: func(cmd *cobra.Command, args []string) {
 			if failover == nil {
-				fmt.Println("manager not initialised")
+				printOutput("manager not initialised")
 				return
 			}
 			failover.RegisterBackup(args[0])
+			gasPrint("FailoverRegister")
+			printOutput(map[string]any{"status": "registered", "id": args[0]})
 		},
 	}
 
@@ -50,10 +53,12 @@ func init() {
 		Short: "Record a heartbeat",
 		Run: func(cmd *cobra.Command, args []string) {
 			if failover == nil {
-				fmt.Println("manager not initialised")
+				printOutput("manager not initialised")
 				return
 			}
 			failover.Heartbeat(args[0])
+			gasPrint("FailoverHeartbeat")
+			printOutput(map[string]any{"status": "heartbeat", "id": args[0]})
 		},
 	}
 
@@ -62,10 +67,11 @@ func init() {
 		Short: "Show active node",
 		Run: func(cmd *cobra.Command, args []string) {
 			if failover == nil {
-				fmt.Println("manager not initialised")
+				printOutput("manager not initialised")
 				return
 			}
-			fmt.Println(failover.Active())
+			gasPrint("FailoverActive")
+			printOutput(map[string]any{"active": failover.Active()})
 		},
 	}
 
