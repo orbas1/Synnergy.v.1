@@ -11,6 +11,7 @@ DEX liquidity queries so operational dashboards can estimate fees prior to
 invocation.
 
 Stage 28 validates that storage marketplace and analytics dashboard operations leverage this canonical gas schedule, ensuring user interfaces surface accurate fee estimates when invoking CLI commands.
+Stage 43 adds pricing for DAO membership operations so governance tooling can anticipate the cost of adding or removing members via the `dao-members` CLI.
 
 ## Opcode Structure
 

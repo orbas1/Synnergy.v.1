@@ -23,3 +23,4 @@ Governance modules implement decentralized decision-making and staking mechanism
 - cli/custodial_node.go
 
 These components enable proposal submission, voting, staking, custodial asset management and cross-consensus network registration for scalable governance.
+Stage 43 enhances `cli/dao_access_control.go` with JSON-formatted outputs and ECDSA signature checks so membership mutations are both scriptable and authenticated.

@@ -46,7 +46,7 @@
 - Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
 - Stage 41: Completed – consensus and contract management CLIs now validate inputs with accompanying tests.
 - Stage 42: Completed – cross-chain bridge, protocol, connection, contract and custodial CLIs now emit structured JSON with accompanying tests.
-- Stage 43: In Progress – DAO CLI gains JSON output and signature verification with initial tests; advanced governance commands pending.
+- Stage 43: In Progress – DAO CLI membership commands emit JSON and verify signatures; proposal and staking subcommands remain.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -923,8 +923,8 @@
 
 **Stage 43**
 - [x] cli/dao.go
-- [ ] cli/dao_access_control.go
-- [ ] cli/dao_access_control_test.go
+- [x] cli/dao_access_control.go – membership commands output JSON and verify signatures
+- [x] cli/dao_access_control_test.go – adds ECDSA-signed member addition test
 - [ ] cli/dao_proposal.go
 - [ ] cli/dao_proposal_test.go
 - [ ] cli/dao_quadratic_voting.go
