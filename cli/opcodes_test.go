@@ -1,7 +1,17 @@
 package cli
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
-func TestOpcodesPlaceholder(t *testing.T) {
-	t.Skip("TODO: implement test")
+// TestOpcodesHex ensures the hex subcommand emits gas metrics and output.
+func TestOpcodesHex(t *testing.T) {
+	out, err := execCommand("opcodes", "hex", "AddBlock")
+	if err != nil {
+		t.Fatalf("execute failed: %v", err)
+	}
+	if !strings.Contains(out, "gas cost") {
+		t.Fatalf("expected gas cost, got %q", out)
+	}
 }

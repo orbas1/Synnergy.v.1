@@ -514,6 +514,9 @@
 | `Offer` | `1` |
 | `Once` | `1` |
 | `Opcodes` | `1` |
+| `OpcodesBytes` | `1` |
+| `OpcodesHex` | `1` |
+| `OpcodesList` | `1` |
 | `OpenChannel` | `1` |
 | `OpenConnection` | `1` |
 | `OpenDeal` | `500` |
@@ -525,6 +528,9 @@
 | `Pause` | `1` |
 | `PayPremium` | `1` |
 | `Pay` | `1` |
+| `PeerAdvertise` | `1` |
+| `PeerConnect` | `1` |
+| `PeerDiscover` | `1` |
 | `Peers` | `1` |
 | `Pending` | `1` |
 | `PlaceBet` | `1` |
