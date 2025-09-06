@@ -145,6 +145,7 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `basenode start|stop|running|peers|dial` | Control a base network node (`core.NewBaseNode`) |
 | `basetoken init|mint|balance` | Interact with a basic token (`tokens.NewBaseToken`) |
 | `dex liquidity <pair>` | Query on-chain liquidity pool reserves |
+| `dao-members add|remove|role|list` | Manage DAO membership with JSON output and ECDSA verification |
 
 Additional modules cover DAO governance, cross-chain bridges, regulatory nodes, watchtowers and more.
 

@@ -7,6 +7,7 @@ Blackridge Group Ltd. designs Synnergy Network governance as a layered system th
 - **Authority Nodes** – regulated entities that validate proposals and execute approved changes. They operate dedicated tooling and are subject to continuous monitoring. The core `AuthorityNodeRegistry` catalogs addresses, assigns roles, records votes and can sample a weighted electorate for committee formation【F:core/authority_nodes.go†L12-L95】.
 - **Token‑Weighted Voting** – community participants wield governance tokens to propose upgrades, delegate voting power and ratify decisions.
 - **Modular Services** – audit logging, replay protection and weight registries are implemented as isolated modules that can be composed into higher‑level governance applications.
+- **Authenticated Membership** – the `dao-members` CLI validates ECDSA signatures and emits JSON when modifying roles, enabling auditable access control.
 
 ## Governance Tokens
 ### SYN300 – Proposal and Voting Engine
