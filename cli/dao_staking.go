@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -16,56 +17,103 @@ func init() {
 		Short: "DAO staking operations",
 	}
 
+	var stakeJSON bool
+	var stakePub, stakeMsg, stakeSig string
 	stakeCmd := &cobra.Command{
 		Use:   "stake <addr> <amount>",
 		Args:  cobra.ExactArgs(2),
 		Short: "Stake tokens",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("DAO_Stake")
+			ok, err := VerifySignature(stakePub, stakeMsg, stakeSig)
+			if err != nil || !ok {
+				fmt.Fprintln(cmd.OutOrStdout(), "signature verification failed")
+				return
+			}
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
+				fmt.Fprintln(cmd.OutOrStdout(), "invalid amount")
 				return
 			}
 			daoStaking.Stake(args[0], amt)
+			if stakeJSON {
+				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(map[string]string{"status": "staked"})
+				return
+			}
+			fmt.Fprintln(cmd.OutOrStdout(), "staked")
 		},
 	}
+	stakeCmd.Flags().BoolVar(&stakeJSON, "json", false, "output as JSON")
+	stakeCmd.Flags().StringVar(&stakePub, "pub", "", "hex encoded public key")
+	stakeCmd.Flags().StringVar(&stakeMsg, "msg", "", "hex encoded message")
+	stakeCmd.Flags().StringVar(&stakeSig, "sig", "", "hex encoded signature")
 
+	var unstakeJSON bool
+	var unstakePub, unstakeMsg, unstakeSig string
 	unstakeCmd := &cobra.Command{
 		Use:   "unstake <addr> <amount>",
 		Args:  cobra.ExactArgs(2),
 		Short: "Unstake tokens",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("DAO_Unstake")
+			ok, err := VerifySignature(unstakePub, unstakeMsg, unstakeSig)
+			if err != nil || !ok {
+				fmt.Fprintln(cmd.OutOrStdout(), "signature verification failed")
+				return
+			}
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
+				fmt.Fprintln(cmd.OutOrStdout(), "invalid amount")
 				return
 			}
 			if err := daoStaking.Unstake(args[0], amt); err != nil {
-				fmt.Println(err)
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
 			}
+			if unstakeJSON {
+				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(map[string]string{"status": "unstaked"})
+				return
+			}
+			fmt.Fprintln(cmd.OutOrStdout(), "unstaked")
 		},
 	}
+	unstakeCmd.Flags().BoolVar(&unstakeJSON, "json", false, "output as JSON")
+	unstakeCmd.Flags().StringVar(&unstakePub, "pub", "", "hex encoded public key")
+	unstakeCmd.Flags().StringVar(&unstakeMsg, "msg", "", "hex encoded message")
+	unstakeCmd.Flags().StringVar(&unstakeSig, "sig", "", "hex encoded signature")
 
+	var balanceJSON bool
 	balanceCmd := &cobra.Command{
 		Use:   "balance <addr>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show staked balance",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("DAO_Staked")
-			fmt.Println(daoStaking.Balance(args[0]))
+			bal := daoStaking.Balance(args[0])
+			if balanceJSON {
+				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(map[string]uint64{"balance": bal})
+				return
+			}
+			fmt.Fprintln(cmd.OutOrStdout(), bal)
 		},
 	}
+	balanceCmd.Flags().BoolVar(&balanceJSON, "json", false, "output as JSON")
 
+	var totalJSON bool
 	totalCmd := &cobra.Command{
 		Use:   "total",
 		Short: "Show total staked tokens",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("DAO_TotalStaked")
-			fmt.Println(daoStaking.TotalStaked())
+			t := daoStaking.TotalStaked()
+			if totalJSON {
+				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(map[string]uint64{"total": t})
+				return
+			}
+			fmt.Fprintln(cmd.OutOrStdout(), t)
 		},
 	}
+	totalCmd.Flags().BoolVar(&totalJSON, "json", false, "output as JSON")
 
 	stakingCmd.AddCommand(stakeCmd, unstakeCmd, balanceCmd, totalCmd)
 	rootCmd.AddCommand(stakingCmd)

@@ -46,7 +46,7 @@
 - Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
 - Stage 41: Completed – consensus and contract management CLIs now validate inputs with accompanying tests.
 - Stage 42: Completed – cross-chain bridge, protocol, connection, contract and custodial CLIs now emit structured JSON with accompanying tests.
-- Stage 43: In Progress – DAO CLI membership commands emit JSON and verify signatures; proposal and staking subcommands remain.
+- Stage 43: Completed – DAO CLI now covers proposals, quadratic voting, staking, token and elected-node commands with JSON output and signature verification.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -925,19 +925,19 @@
 - [x] cli/dao.go
 - [x] cli/dao_access_control.go – membership commands output JSON and verify signatures
 - [x] cli/dao_access_control_test.go – adds ECDSA-signed member addition test
-- [ ] cli/dao_proposal.go
-- [ ] cli/dao_proposal_test.go
-- [ ] cli/dao_quadratic_voting.go
-- [ ] cli/dao_quadratic_voting_test.go
-- [ ] cli/dao_staking.go
-- [ ] cli/dao_staking_test.go
+- [x] cli/dao_proposal.go
+- [x] cli/dao_proposal_test.go
+- [x] cli/dao_quadratic_voting.go
+- [x] cli/dao_quadratic_voting_test.go
+- [x] cli/dao_staking.go
+- [x] cli/dao_staking_test.go
 - [x] cli/dao_test.go
-- [ ] cli/dao_token.go
-- [ ] cli/dao_token_test.go
+- [x] cli/dao_token.go
+- [x] cli/dao_token_test.go
 - [x] cli/ecdsa_util.go
 - [x] cli/ecdsa_util_test.go
-- [ ] cli/elected_authority_node.go
-- [ ] cli/elected_authority_node_test.go
+- [x] cli/elected_authority_node.go
+- [x] cli/elected_authority_node_test.go
 - [ ] cli/experimental_node.go
 - [ ] cli/experimental_node_test.go
 - [ ] cli/faucet.go
@@ -3510,19 +3510,19 @@
 - [ ] cli/dao.go
 - [ ] cli/dao_access_control.go
 - [ ] cli/dao_access_control_test.go
-- [ ] cli/dao_proposal.go
-- [ ] cli/dao_proposal_test.go
-- [ ] cli/dao_quadratic_voting.go
-- [ ] cli/dao_quadratic_voting_test.go
-- [ ] cli/dao_staking.go
-- [ ] cli/dao_staking_test.go
+- [x] cli/dao_proposal.go
+- [x] cli/dao_proposal_test.go
+- [x] cli/dao_quadratic_voting.go
+- [x] cli/dao_quadratic_voting_test.go
+- [x] cli/dao_staking.go
+- [x] cli/dao_staking_test.go
 - [ ] cli/dao_test.go
-- [ ] cli/dao_token.go
-- [ ] cli/dao_token_test.go
+- [x] cli/dao_token.go
+- [x] cli/dao_token_test.go
 - [ ] cli/ecdsa_util.go
 - [ ] cli/ecdsa_util_test.go
-- [ ] cli/elected_authority_node.go
-- [ ] cli/elected_authority_node_test.go
+- [x] cli/elected_authority_node.go
+- [x] cli/elected_authority_node_test.go
 
 **Stage 143 – Require >90% code coverage with automated enforcement in CI pipelines.**
 - [ ] cli/experimental_node.go
