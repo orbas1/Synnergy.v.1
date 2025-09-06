@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 	"time"
 
@@ -24,15 +23,17 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			lat, err := strconv.ParseFloat(args[1], 64)
 			if err != nil {
-				fmt.Println("invalid latitude:", err)
+				printOutput("invalid latitude: " + err.Error())
 				return
 			}
 			lon, err := strconv.ParseFloat(args[2], 64)
 			if err != nil {
-				fmt.Println("invalid longitude:", err)
+				printOutput("invalid longitude: " + err.Error())
 				return
 			}
+			gasPrint("GeospatialRecord")
 			geoNode.Record(args[0], lat, lon)
+			printOutput("recorded")
 		},
 	}
 
@@ -42,9 +43,17 @@ func init() {
 		Short: "Show recorded locations",
 		Run: func(cmd *cobra.Command, args []string) {
 			recs := geoNode.History(args[0])
-			for _, r := range recs {
-				fmt.Printf("%s %f %f %s\n", r.Subject, r.Latitude, r.Longitude, r.Timestamp.Format(time.RFC3339))
+			out := make([]map[string]any, len(recs))
+			for i, r := range recs {
+				out[i] = map[string]any{
+					"subject":   r.Subject,
+					"lat":       r.Latitude,
+					"lon":       r.Longitude,
+					"timestamp": r.Timestamp.Format(time.RFC3339),
+				}
 			}
+			gasPrint("GeospatialHistory")
+			printOutput(out)
 		},
 	}
 
