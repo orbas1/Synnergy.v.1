@@ -10,7 +10,7 @@ func TestFullNodeCreateJSON(t *testing.T) {
 	if err != nil {
 		t.Fatalf("create failed: %v", err)
 	}
-	if !strings.Contains(out, "\"status\": \"created\"") {
+	if !strings.Contains(out, "gas cost") || !strings.Contains(out, "\"status\": \"created\"") {
 		t.Fatalf("unexpected output: %s", out)
 	}
 }

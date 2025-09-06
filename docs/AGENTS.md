@@ -50,6 +50,7 @@
 - Stage 44: ✅ faucet, fees, firewall, forensic, full node and gas CLIs emit JSON with gas tracking and tests.
 - Stage 45: ✅ genesis, geospatial, government, high availability, historical, holographic node, identity, idwallet, immutability and initrep CLIs emit JSON output with gas tracking.
 - Stage 46: Completed – instruction, Kademlia, ledger, light node, liquidity pool, liquidity view and loan pool CLIs emit JSON with gas tracking.
+- Stage 47: Completed – NAT, network, NFT marketplace, node and mining CLIs output JSON with gas metrics and tests including node adapter and mobile mining commands.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -1010,28 +1011,28 @@
 - [x] cli/loanpool_management_test.go
 
 **Stage 47**
-- [ ] cli/loanpool_proposal.go
-- [ ] cli/loanpool_proposal_test.go
-- [ ] cli/loanpool_test.go
-- [ ] cli/mining_node.go
-- [ ] cli/mining_node_test.go
-- [ ] cli/mobile_mining_node.go
-- [ ] cli/mobile_mining_node_test.go
-- [ ] cli/nat.go
-- [ ] cli/nat_test.go
-- [ ] cli/network.go
-- [ ] cli/network_test.go
-- [ ] cli/nft_marketplace.go
-- [ ] cli/nft_marketplace_test.go
-- [ ] cli/node.go
-- [ ] cli/node_adapter.go
-- [ ] cli/node_adapter_test.go
-- [ ] cli/node_commands_test.go
-- [ ] cli/node_test.go
-- [ ] cli/node_types.go
+- [x] cli/loanpool_proposal.go – switched to JSON output with gas tracking
+- [x] cli/loanpool_proposal_test.go – covers creation, voting and retrieval
+- [x] cli/loanpool_test.go – exercises submit/vote/get flow
+- [x] cli/mining_node.go
+- [x] cli/mining_node_test.go
+- [x] cli/mobile_mining_node.go
+- [x] cli/mobile_mining_node_test.go
+- [x] cli/nat.go – added validation, id flag, and output messages
+- [x] cli/nat_test.go – covers mapping, unmapping and invalid inputs
+- [x] cli/network.go – emits JSON with gas tracking
+- [x] cli/network_test.go – tests start/stop, peers and broadcast
+- [x] cli/nft_marketplace.go – gas metrics and JSON output
+- [x] cli/nft_marketplace_test.go – covers mint, list, buy and invalid price
+- [x] cli/node.go
+- [x] cli/node_adapter.go
+- [x] cli/node_adapter_test.go
+- [x] cli/node_commands_test.go
+- [x] cli/node_test.go
+- [x] cli/node_types.go
 
 **Stage 48**
-- [ ] cli/node_types_test.go
+- [x] cli/node_types_test.go
 - [ ] cli/opcodes.go
 - [ ] cli/opcodes_test.go
 - [ ] cli/optimization_node.go
@@ -3602,8 +3603,8 @@
 - [ ] cli/nat_test.go
 - [ ] cli/network.go
 - [ ] cli/network_test.go
-- [ ] cli/nft_marketplace.go
-- [ ] cli/nft_marketplace_test.go
+- [x] cli/nft_marketplace.go – gas metrics and JSON output
+- [x] cli/nft_marketplace_test.go – covers mint, list, buy and invalid price
 - [ ] cli/node.go
 - [ ] cli/node_adapter.go
 - [ ] cli/node_adapter_test.go
@@ -6047,12 +6048,12 @@
 | 47 | cli/mining_node_test.go | [ ] |
 | 47 | cli/mobile_mining_node.go | [ ] |
 | 47 | cli/mobile_mining_node_test.go | [ ] |
-| 47 | cli/nat.go | [ ] |
-| 47 | cli/nat_test.go | [ ] |
-| 47 | cli/network.go | [ ] |
-| 47 | cli/network_test.go | [ ] |
-| 47 | cli/nft_marketplace.go | [ ] |
-| 47 | cli/nft_marketplace_test.go | [ ] |
+| 47 | cli/nat.go | [x] |
+| 47 | cli/nat_test.go | [x] |
+| 47 | cli/network.go | [x] |
+| 47 | cli/network_test.go | [x] |
+| 47 | cli/nft_marketplace.go | [x] |
+| 47 | cli/nft_marketplace_test.go | [x] |
 | 47 | cli/node.go | [ ] |
 | 47 | cli/node_adapter.go | [ ] |
 | 47 | cli/node_adapter_test.go | [ ] |

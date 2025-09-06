@@ -25,11 +25,22 @@ func init() {
 		Short: "Mint a new NFT",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			price, err := strconv.ParseUint(args[3], 10, 64)
+			if err != nil || price == 0 {
+				return fmt.Errorf("invalid price: %s", args[3])
+			}
+			gasPrint("MintNFT")
+			_, err = nftMarket.Mint(cmd.Context(), args[0], args[1], args[2], price, synn.GasCost("MintNFT"))
 			if err != nil {
 				return err
 			}
-			_, err = nftMarket.Mint(cmd.Context(), args[0], args[1], args[2], price, synn.GasCost("MintNFT"))
-			return err
+			printOutput(map[string]any{
+				"status":   "minted",
+				"id":       args[0],
+				"owner":    args[1],
+				"metadata": args[2],
+				"price":    price,
+			})
+			return nil
 		},
 	}
 
@@ -42,7 +53,8 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Fprintf(cmd.OutOrStdout(), "%s %s %s %d\n", nft.ID, nft.Owner, nft.Metadata, nft.Price)
+			gasPrint("ListNFT")
+			printOutput(nft)
 			return nil
 		},
 	}
@@ -52,7 +64,12 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Transfer ownership of an NFT",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return nftMarket.Buy(context.Background(), args[0], args[1], synn.GasCost("BuyNFT"))
+			gasPrint("BuyNFT")
+			if err := nftMarket.Buy(context.Background(), args[0], args[1], synn.GasCost("BuyNFT")); err != nil {
+				return err
+			}
+			printOutput(map[string]any{"status": "transferred", "id": args[0], "newOwner": args[1]})
+			return nil
 		},
 	}
 

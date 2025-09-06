@@ -20,6 +20,7 @@ func init() {
 		Use:   "start",
 		Short: "Start mobile mining",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("MobileMiningStart")
 			mobileMiner.Start()
 			printOutput("started")
 			return nil
@@ -30,6 +31,7 @@ func init() {
 		Use:   "stop",
 		Short: "Stop mobile mining",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("MobileMiningStop")
 			mobileMiner.Stop()
 			printOutput("stopped")
 			return nil
@@ -40,7 +42,8 @@ func init() {
 		Use:   "status",
 		Short: "Show mining status",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			printOutput(mobileMiner.IsMining())
+			gasPrint("MobileMiningStatus")
+			printOutput(map[string]bool{"mining": mobileMiner.IsMining()})
 			return nil
 		},
 	}
@@ -50,11 +53,12 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Mine once with provided data",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("MobileMiningMine")
 			hash, err := mobileMiner.Mine([]byte(args[0]))
 			if err != nil {
 				return err
 			}
-			printOutput(hash)
+			printOutput(map[string]string{"hash": hash})
 			return nil
 		},
 	}
@@ -64,6 +68,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Set power limit",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("MobileMiningSetPower")
 			limit, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
 				return fmt.Errorf("invalid limit")
@@ -78,7 +83,8 @@ func init() {
 		Use:   "power",
 		Short: "Show power limit",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			printOutput(mobileMiner.PowerLimit())
+			gasPrint("MobileMiningPower")
+			printOutput(map[string]uint64{"limit": mobileMiner.PowerLimit()})
 			return nil
 		},
 	}
