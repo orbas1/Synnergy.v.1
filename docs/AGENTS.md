@@ -47,6 +47,7 @@
 - Stage 41: Completed – consensus and contract management CLIs now validate inputs with accompanying tests.
 - Stage 42: Completed – cross-chain bridge, protocol, connection, contract and custodial CLIs now emit structured JSON with accompanying tests.
 - Stage 43: Completed – DAO CLI now covers proposals, quadratic voting, staking, token and elected-node commands with JSON output and signature verification.
+- Stage 44: Completed – faucet, fees, firewall, forensic, full node and gas CLIs emit JSON with gas tracking and tests.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -943,21 +944,21 @@
 - [ ] cli/faucet.go
 
 **Stage 44**
-- [ ] cli/faucet_test.go
-- [ ] cli/fees.go
-- [ ] cli/fees_test.go
-- [ ] cli/firewall.go
-- [ ] cli/firewall_test.go
-- [ ] cli/forensic_node.go
-- [ ] cli/forensic_node_test.go
-- [ ] cli/full_node.go
-- [ ] cli/full_node_test.go
-- [ ] cli/gas.go
-- [ ] cli/gas_print.go
-- [ ] cli/gas_print_test.go
-- [ ] cli/gas_table.go
-- [ ] cli/gas_table_cli_test.go
-- [ ] cli/gas_table_test.go
+- [x] cli/faucet_test.go
+- [x] cli/fees.go
+- [x] cli/fees_test.go
+- [x] cli/firewall.go
+- [x] cli/firewall_test.go
+- [x] cli/forensic_node.go
+- [x] cli/forensic_node_test.go
+- [x] cli/full_node.go
+- [x] cli/full_node_test.go
+- [x] cli/gas.go
+- [x] cli/gas_print.go
+- [x] cli/gas_print_test.go
+- [x] cli/gas_table.go
+- [x] cli/gas_table_cli_test.go
+- [x] cli/gas_table_test.go
 - [ ] cli/gas_test.go
 - [ ] cli/gateway.go
 - [ ] cli/gateway_test.go

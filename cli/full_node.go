@@ -20,6 +20,7 @@ func init() {
 		Use:   "create",
 		Short: "Create a full node",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("FullNodeCreate")
 			id, _ := cmd.Flags().GetString("id")
 			modeStr, _ := cmd.Flags().GetString("mode")
 			var mode core.FullNodeMode
@@ -44,6 +45,7 @@ func init() {
 		Use:   "mode",
 		Short: "Show current node mode",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("FullNodeMode")
 			if fullNode == nil {
 				return fmt.Errorf("node not initialised")
 			}
@@ -58,6 +60,7 @@ func init() {
 		Short: "Update node mode",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("FullNodeSetMode")
 			if fullNode == nil {
 				return fmt.Errorf("node not initialised")
 			}

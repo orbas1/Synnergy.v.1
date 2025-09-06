@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -20,11 +19,12 @@ func init() {
 		Use:   "init",
 		Short: "Initialise faucet balance and parameters",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("FaucetInit")
 			bal, _ := cmd.Flags().GetUint64("balance")
 			amt, _ := cmd.Flags().GetUint64("amount")
 			cd, _ := cmd.Flags().GetDuration("cooldown")
 			faucet = core.NewFaucet(bal, amt, cd)
-			fmt.Println("faucet initialised")
+			printOutput("faucet initialised")
 		},
 	}
 	initCmd.Flags().Uint64("balance", 1000, "initial balance")
@@ -37,16 +37,17 @@ func init() {
 		Short: "Request funds from the faucet",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("FaucetRequest")
 			if faucet == nil {
-				fmt.Println("faucet not initialised")
+				printOutput("faucet not initialised")
 				return
 			}
 			amt, err := faucet.Request(args[0])
 			if err != nil {
-				fmt.Printf("error: %v\n", err)
+				printOutput(err.Error())
 				return
 			}
-			fmt.Printf("dispensed %d tokens\n", amt)
+			printOutput(map[string]uint64{"dispensed": amt})
 		},
 	}
 	cmd.AddCommand(requestCmd)
@@ -55,11 +56,12 @@ func init() {
 		Use:   "balance",
 		Short: "Show remaining faucet balance",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("FaucetBalance")
 			if faucet == nil {
-				fmt.Println("faucet not initialised")
+				printOutput("faucet not initialised")
 				return
 			}
-			fmt.Printf("balance: %d\n", faucet.Balance())
+			printOutput(map[string]uint64{"balance": faucet.Balance()})
 		},
 	}
 	cmd.AddCommand(balCmd)
@@ -68,14 +70,15 @@ func init() {
 		Use:   "config",
 		Short: "Update faucet configuration",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("FaucetConfig")
 			if faucet == nil {
-				fmt.Println("faucet not initialised")
+				printOutput("faucet not initialised")
 				return
 			}
 			amt, _ := cmd.Flags().GetUint64("amount")
 			cd, _ := cmd.Flags().GetDuration("cooldown")
 			faucet.UpdateConfig(amt, cd)
-			fmt.Println("configuration updated")
+			printOutput("configuration updated")
 		},
 	}
 	cfgCmd.Flags().Uint64("amount", 1, "dispense amount")

@@ -20,9 +20,12 @@ func init() {
 		Use:   "list",
 		Short: "List gas costs",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("GasList")
+			out := map[string]uint64{}
 			for op, cost := range gasTable {
-				fmt.Printf("%v: %d\n", op, cost)
+				out[fmt.Sprintf("%v", op)] = cost
 			}
+			printOutput(out)
 		},
 	}
 	gasCmd.AddCommand(listCmd)
