@@ -1,10 +1,6 @@
 package cli
 
-import (
-	"fmt"
-
-	"github.com/spf13/cobra"
-)
+import "github.com/spf13/cobra"
 
 func init() {
 	cmd := &cobra.Command{
@@ -15,28 +11,32 @@ func init() {
 	pauseCmd := &cobra.Command{
 		Use:   "pause",
 		Short: "Pause aggregator",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RollupPause")
 			rollupMgr.Pause()
+			printOutput(map[string]string{"status": "paused"})
+			return nil
 		},
 	}
 
 	resumeCmd := &cobra.Command{
 		Use:   "resume",
 		Short: "Resume aggregator",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RollupResume")
 			rollupMgr.Resume()
+			printOutput(map[string]string{"status": "resumed"})
+			return nil
 		},
 	}
 
 	statusCmd := &cobra.Command{
 		Use:   "status",
 		Short: "Show pause status",
-		Run: func(cmd *cobra.Command, args []string) {
-			if rollupMgr.Status() {
-				fmt.Println("paused")
-			} else {
-				fmt.Println("running")
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RollupStatus")
+			printOutput(map[string]bool{"paused": rollupMgr.Status()})
+			return nil
 		},
 	}
 

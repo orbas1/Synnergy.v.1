@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -20,12 +19,18 @@ func init() {
 		Use:   "add [id] [jurisdiction] [description] [maxAmount]",
 		Args:  cobra.ExactArgs(4),
 		Short: "Add a new regulation",
-		Run: func(cmd *cobra.Command, args []string) {
-			amt, _ := strconv.ParseUint(args[3], 10, 64)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RegulatorAdd")
+			amt, err := strconv.ParseUint(args[3], 10, 64)
+			if err != nil {
+				return err
+			}
 			reg := core.Regulation{ID: args[0], Jurisdiction: args[1], Description: args[2], MaxAmount: amt}
 			if err := regManager.AddRegulation(reg); err != nil {
-				fmt.Println("error:", err)
+				return err
 			}
+			printOutput(map[string]any{"status": "added", "id": reg.ID})
+			return nil
 		},
 	}
 
@@ -33,16 +38,22 @@ func init() {
 		Use:   "remove [id]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Remove a regulation",
-		Run:   func(cmd *cobra.Command, args []string) { regManager.RemoveRegulation(args[0]) },
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RegulatorRemove")
+			regManager.RemoveRegulation(args[0])
+			printOutput(map[string]string{"status": "removed", "id": args[0]})
+			return nil
+		},
 	}
 
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all regulations",
-		Run: func(cmd *cobra.Command, args []string) {
-			for _, r := range regManager.ListRegulations() {
-				fmt.Printf("%s %s %d\n", r.ID, r.Jurisdiction, r.MaxAmount)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RegulatorList")
+			regs := regManager.ListRegulations()
+			printOutput(regs)
+			return nil
 		},
 	}
 
@@ -50,15 +61,20 @@ func init() {
 		Use:   "evaluate [amount]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Check amount against regulations",
-		Run: func(cmd *cobra.Command, args []string) {
-			amt, _ := strconv.ParseUint(args[0], 10, 64)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("RegulatorEvaluate")
+			amt, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return err
+			}
 			tx := core.Transaction{Amount: amt}
 			v := regManager.EvaluateTransaction(tx)
 			if len(v) == 0 {
-				fmt.Println("ok")
-				return
+				printOutput(map[string]string{"status": "ok"})
+			} else {
+				printOutput(v)
 			}
-			fmt.Println(v)
+			return nil
 		},
 	}
 
