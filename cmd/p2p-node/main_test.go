@@ -2,27 +2,22 @@ package main
 
 import (
 	"bytes"
-	"io"
-	"os"
+	"strings"
 	"testing"
+
+	"synnergy/internal/p2p"
 )
 
-func captureOutput(f func()) string {
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-	f()
-	w.Close()
-	os.Stdout = old
+func TestRunAddAndListPeers(t *testing.T) {
+	mgr := p2p.NewManager()
+	if code := runWithManager(mgr, []string{"add-peer", "-id", "p1", "-addr", "127.0.0.1:1"}, &bytes.Buffer{}); code != 0 {
+		t.Fatalf("add-peer exit code %d", code)
+	}
 	var buf bytes.Buffer
-	io.Copy(&buf, r)
-	return buf.String()
-}
-
-func TestMainOutput(t *testing.T) {
-	got := captureOutput(main)
-	expected := "p2p node CLI placeholder\n"
-	if got != expected {
-		t.Fatalf("expected %q, got %q", expected, got)
+	if code := runWithManager(mgr, []string{"list-peers"}, &buf); code != 0 {
+		t.Fatalf("list-peers exit code %d", code)
+	}
+	if !strings.Contains(buf.String(), "p1") {
+		t.Fatalf("expected peer in output, got %q", buf.String())
 	}
 }

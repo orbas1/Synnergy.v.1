@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
+
+CLI=${SYN_CLI:-./synnergy}
+if [ ! -x "$CLI" ]; then
+  echo "synnergy CLI not found at $CLI" >&2
+  exit 1
+fi
+
 interval=${1:-1000}
-./synnergy consensus-service start "$interval"
+"$CLI" consensus-service start "$interval"

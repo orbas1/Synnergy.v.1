@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
-set -e
-if [ -z "$1" ]; then
-  echo "Usage: $0 <address> [role]"
+set -euo pipefail
+
+CLI=${SYN_CLI:-./synnergy}
+if [ ! -x "$CLI" ]; then
+  echo "synnergy CLI not found at $CLI" >&2
+  exit 1
+fi
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 <address> [role]" >&2
   exit 1
 fi
 role=${2:-validator}
-./synnergy authority_apply submit "$1" "$role" "auto-generated"
+"$CLI" authority_apply submit "$1" "$role" "auto-generated"

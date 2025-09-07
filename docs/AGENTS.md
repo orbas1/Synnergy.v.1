@@ -62,6 +62,8 @@
 - Stage 54: Completed – SYN5000, SYN70, SYN700, SYN800 and SYN845 token CLIs validated with tests.
 - Stage 55: ✅ transaction, validator, VM, wallet, tx control, validator node, VM sandbox and SYN4900 token CLIs emit gas-aware JSON output with tests.
 - Stage 56: Completed – warfare, watchtower and zero-trust CLIs, API gateway, docgen, firewall, governance and monitoring binaries with tests.
+- Stage 57: Completed – CLI utilities and scripts hardened with error handling and tests.
+- Stage 58: In Progress – additional scripts hardened; secrets manager and smart contracts pending.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1234,40 +1236,40 @@
 - [x] cmd/monitoring/main_test.go – validates /metrics endpoint
 - [x] cmd/opcodegen/Dockerfile – cached multi-stage build with non-root user
 
-**Stage 57**
-- [ ] cmd/opcodegen/main.go
-- [ ] cmd/opcodegen/main_test.go
-- [ ] cmd/p2p-node/main.go
-- [ ] cmd/p2p-node/main_test.go
-- [ ] cmd/scripts/authority_apply.sh
-- [ ] cmd/scripts/build_cli.sh
-- [ ] cmd/scripts/coin_mint.sh
-- [ ] cmd/scripts/consensus_start.sh
-- [ ] cmd/scripts/contracts_deploy.sh
-- [ ] cmd/scripts/cross_chain_register.sh
-- [ ] cmd/scripts/dao_vote.sh
-- [ ] cmd/scripts/faucet_fund.sh
-- [ ] cmd/scripts/fault_check.sh
-- [ ] cmd/scripts/governance_propose.sh
-- [ ] cmd/scripts/loanpool_apply.sh
-- [ ] cmd/scripts/marketplace_list.sh
-- [ ] cmd/scripts/network_peers.sh
-- [ ] cmd/scripts/network_start.sh
-- [ ] cmd/scripts/replication_status.sh
+**Stage 57** ✅ CLI utilities and scripts hardened with error handling and tests
+- [x] cmd/opcodegen/main.go
+- [x] cmd/opcodegen/main_test.go
+- [x] cmd/p2p-node/main.go
+- [x] cmd/p2p-node/main_test.go
+- [x] cmd/scripts/authority_apply.sh
+- [x] cmd/scripts/build_cli.sh
+- [x] cmd/scripts/coin_mint.sh
+- [x] cmd/scripts/consensus_start.sh
+- [x] cmd/scripts/contracts_deploy.sh
+- [x] cmd/scripts/cross_chain_register.sh
+- [x] cmd/scripts/dao_vote.sh
+- [x] cmd/scripts/faucet_fund.sh
+- [x] cmd/scripts/fault_check.sh
+- [x] cmd/scripts/governance_propose.sh
+- [x] cmd/scripts/loanpool_apply.sh
+- [x] cmd/scripts/marketplace_list.sh
+- [x] cmd/scripts/network_peers.sh
+- [x] cmd/scripts/network_start.sh
+- [x] cmd/scripts/replication_status.sh
 
-**Stage 58**
-- [ ] cmd/scripts/rollup_submit_batch.sh
-- [ ] cmd/scripts/security_merkle.sh
-- [ ] cmd/scripts/sharding_leader.sh
-- [ ] cmd/scripts/sidechain_sync.sh
-- [ ] cmd/scripts/start_synnergy_network.sh
-- [ ] cmd/scripts/state_channel_open.sh
-- [ ] cmd/scripts/storage_marketplace_pin.sh
-- [ ] cmd/scripts/storage_pin.sh
-- [ ] cmd/scripts/token_transfer.sh
-- [ ] cmd/scripts/transactions_submit.sh
-- [ ] cmd/scripts/vm_start.sh
-- [ ] cmd/scripts/wallet_create.sh
+**Stage 58** In Progress – additional scripts hardened; secrets manager and smart contracts pending
+- [x] cmd/scripts/rollup_submit_batch.sh
+- [x] cmd/scripts/security_merkle.sh
+- [x] cmd/scripts/sharding_leader.sh
+- [x] cmd/scripts/sidechain_sync.sh
+- [x] cmd/scripts/start_synnergy_network.sh
+- [x] cmd/scripts/state_channel_open.sh
+- [x] cmd/scripts/storage_marketplace_pin.sh
+- [x] cmd/scripts/storage_pin.sh
+- [x] cmd/scripts/token_transfer.sh
+- [x] cmd/scripts/transactions_submit.sh
+- [x] cmd/scripts/vm_start.sh
+- [x] cmd/scripts/wallet_create.sh
 - [ ] cmd/secrets-manager/main.go
 - [ ] cmd/secrets-manager/main_test.go
 - [ ] cmd/smart_contracts/cross_chain_eth.sol
@@ -3757,25 +3759,25 @@
 | 56 | cmd/monitoring/main.go | [ ] |
 | 56 | cmd/monitoring/main_test.go | [ ] |
 | 56 | cmd/opcodegen/Dockerfile | [ ] |
-| 57 | cmd/opcodegen/main.go | [ ] |
-| 57 | cmd/opcodegen/main_test.go | [ ] |
-| 57 | cmd/p2p-node/main.go | [ ] |
-| 57 | cmd/p2p-node/main_test.go | [ ] |
-| 57 | cmd/scripts/authority_apply.sh | [ ] |
-| 57 | cmd/scripts/build_cli.sh | [ ] |
-| 57 | cmd/scripts/coin_mint.sh | [ ] |
-| 57 | cmd/scripts/consensus_start.sh | [ ] |
-| 57 | cmd/scripts/contracts_deploy.sh | [ ] |
-| 57 | cmd/scripts/cross_chain_register.sh | [ ] |
-| 57 | cmd/scripts/dao_vote.sh | [ ] |
-| 57 | cmd/scripts/faucet_fund.sh | [ ] |
-| 57 | cmd/scripts/fault_check.sh | [ ] |
-| 57 | cmd/scripts/governance_propose.sh | [ ] |
-| 57 | cmd/scripts/loanpool_apply.sh | [ ] |
-| 57 | cmd/scripts/marketplace_list.sh | [ ] |
-| 57 | cmd/scripts/network_peers.sh | [ ] |
-| 57 | cmd/scripts/network_start.sh | [ ] |
-| 57 | cmd/scripts/replication_status.sh | [ ] |
+| 57 | cmd/opcodegen/main.go | [x] | flag-driven opcode generator |
+| 57 | cmd/opcodegen/main_test.go | [x] | table generation test |
+| 57 | cmd/p2p-node/main.go | [x] | peer management CLI |
+| 57 | cmd/p2p-node/main_test.go | [x] | peer CLI tests |
+| 57 | cmd/scripts/authority_apply.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/build_cli.sh | [x] | env validation |
+| 57 | cmd/scripts/coin_mint.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/consensus_start.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/contracts_deploy.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/cross_chain_register.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/dao_vote.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/faucet_fund.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/fault_check.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/governance_propose.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/loanpool_apply.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/marketplace_list.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/network_peers.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/network_start.sh | [x] | strict flags & SYN_CLI |
+| 57 | cmd/scripts/replication_status.sh | [x] | strict flags & SYN_CLI |
 | 58 | cmd/scripts/rollup_submit_batch.sh | [ ] |
 | 58 | cmd/scripts/security_merkle.sh | [ ] |
 | 58 | cmd/scripts/sharding_leader.sh | [ ] |
