@@ -21,14 +21,17 @@ func init() {
 		Use:   "register <recipient> <program> <amount>",
 		Args:  cobra.ExactArgs(3),
 		Short: "Register a new benefit",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if args[0] == "" || args[1] == "" {
+				return fmt.Errorf("recipient and program required")
+			}
 			amt, err := strconv.ParseUint(args[2], 10, 64)
-			if err != nil {
-				fmt.Println("invalid amount")
-				return
+			if err != nil || amt == 0 {
+				return fmt.Errorf("invalid amount")
 			}
 			id := benefitRegistry.RegisterBenefit(args[0], args[1], amt)
-			fmt.Println("benefit registered", id)
+			fmt.Fprintln(cmd.OutOrStdout(), id)
+			return nil
 		},
 	}
 
@@ -36,11 +39,16 @@ func init() {
 		Use:   "claim <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Claim a benefit",
-		Run: func(cmd *cobra.Command, args []string) {
-			id, _ := strconv.ParseUint(args[0], 10, 64)
-			if err := benefitRegistry.Claim(id); err != nil {
-				fmt.Println("error:", err)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid id")
 			}
+			if err := benefitRegistry.Claim(id); err != nil {
+				return err
+			}
+			cmd.Println("claimed")
+			return nil
 		},
 	}
 
@@ -48,14 +56,18 @@ func init() {
 		Use:   "get <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show benefit details",
-		Run: func(cmd *cobra.Command, args []string) {
-			id, _ := strconv.ParseUint(args[0], 10, 64)
-			if b, ok := benefitRegistry.GetBenefit(id); ok {
-				data, _ := json.MarshalIndent(b, "", "  ")
-				fmt.Println(string(data))
-			} else {
-				fmt.Println("not found")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid id")
 			}
+			b, ok := benefitRegistry.GetBenefit(id)
+			if !ok {
+				return fmt.Errorf("not found")
+			}
+			data, _ := json.MarshalIndent(b, "", "  ")
+			cmd.Println(string(data))
+			return nil
 		},
 	}
 

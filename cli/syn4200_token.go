@@ -19,12 +19,16 @@ func init() {
 		Use:   "donate <symbol>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Donate to a charity campaign",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			from, _ := cmd.Flags().GetString("from")
 			amt, _ := cmd.Flags().GetUint64("amt")
 			purpose, _ := cmd.Flags().GetString("purpose")
+			if from == "" || amt == 0 {
+				return fmt.Errorf("from and positive amt required")
+			}
 			syn4200.Donate(args[0], from, amt, purpose)
-			fmt.Println("donation recorded")
+			cmd.Println("donation recorded")
+			return nil
 		},
 	}
 	donateCmd.Flags().String("from", "", "donor address")
@@ -37,12 +41,13 @@ func init() {
 		Use:   "progress <symbol>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show campaign progress",
-		Run: func(cmd *cobra.Command, args []string) {
-			if amt, ok := syn4200.CampaignProgress(args[0]); ok {
-				fmt.Println(amt)
-			} else {
-				fmt.Println("not found")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			amt, ok := syn4200.CampaignProgress(args[0])
+			if !ok {
+				return fmt.Errorf("not found")
 			}
+			fmt.Fprintln(cmd.OutOrStdout(), amt)
+			return nil
 		},
 	}
 

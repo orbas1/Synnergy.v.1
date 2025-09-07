@@ -58,6 +58,8 @@
 
 - Stage 51: Completed – syn200, syn20, syn1100, syn12, syn1300, syn131, syn1401, syn1600 and syn1700 token CLIs validated with required flags and tests.
 
+- Stage 53: Complete – bill registry, forex pair, SYN3500 token, futures contract, index token, grant registry, government benefit, charity token, legal token and SYN500 utility token CLIs validated with tests; Stage 54 will address SYN5000+ commands.
+
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
 - [ ] .github/ISSUE_TEMPLATE/config.yml
@@ -1145,32 +1147,32 @@
 - [x] cli/syn300_token_test.go
 
 **Stage 53**
-- [ ] cli/syn3200.go
-- [ ] cli/syn3200_test.go
-- [ ] cli/syn3400.go
-- [ ] cli/syn3400_test.go
-- [ ] cli/syn3500_token.go
-- [ ] cli/syn3500_token_test.go
-- [ ] cli/syn3600.go
-- [ ] cli/syn3600_test.go
-- [ ] cli/syn3700_token.go
-- [ ] cli/syn3700_token_test.go
-- [ ] cli/syn3800.go
-- [ ] cli/syn3800_test.go
-- [ ] cli/syn3900.go
-- [ ] cli/syn3900_test.go
-- [ ] cli/syn4200_token.go
-- [ ] cli/syn4200_token_test.go
-- [ ] cli/syn4700.go
-- [ ] cli/syn4700_test.go
-- [ ] cli/syn500.go
+- [x] cli/syn3200.go – validation and error handling added
+- [x] cli/syn3200_test.go – lifecycle tests implemented
+- [x] cli/syn3400.go – input validation and error reporting
+- [x] cli/syn3400_test.go – lifecycle and validation tests
+- [x] cli/syn3500_token.go – validation and balance commands added
+- [x] cli/syn3500_token_test.go – lifecycle and validation tests
+- [x] cli/syn3600.go – validation and settlement commands hardened
+- [x] cli/syn3600_test.go – lifecycle and validation tests
+- [x] cli/syn3700_token.go – index token CLI with validation
+- [x] cli/syn3700_token_test.go – lifecycle and validation tests
+- [x] cli/syn3800.go – grant registry CLI validated
+- [x] cli/syn3800_test.go – grant registry lifecycle tests
+- [x] cli/syn3900.go – government benefit CLI validated
+- [x] cli/syn3900_test.go – benefit registry tests
+- [x] cli/syn4200_token.go – charity token CLI validated
+- [x] cli/syn4200_token_test.go – charity token tests
+- [x] cli/syn4700.go – legal token CLI validated
+- [x] cli/syn4700_test.go – legal token tests
+- [x] cli/syn500.go – utility token CLI validated
+- [x] cli/syn500_test.go – utility token tests
 
 **Stage 54**
 - [ ] cli/syn5000.go
 - [ ] cli/syn5000_index.go
 - [ ] cli/syn5000_index_test.go
 - [ ] cli/syn5000_test.go
-- [ ] cli/syn500_test.go
 - [ ] cli/syn70.go
 - [ ] cli/syn700.go
 - [ ] cli/syn700_test.go
@@ -3718,32 +3720,32 @@
 - [ ] cli/syn2900_test.go
 - [ ] cli/syn300_token.go
 - [ ] cli/syn300_token_test.go
-- [ ] cli/syn3200.go
-- [ ] cli/syn3200_test.go
-- [ ] cli/syn3400.go
-- [ ] cli/syn3400_test.go
-- [ ] cli/syn3500_token.go
-- [ ] cli/syn3500_token_test.go
-- [ ] cli/syn3600.go
-- [ ] cli/syn3600_test.go
-- [ ] cli/syn3700_token.go
-- [ ] cli/syn3700_token_test.go
-- [ ] cli/syn3800.go
-- [ ] cli/syn3800_test.go
-- [ ] cli/syn3900.go
-- [ ] cli/syn3900_test.go
-- [ ] cli/syn4200_token.go
-- [ ] cli/syn4200_token_test.go
-- [ ] cli/syn4700.go
-- [ ] cli/syn4700_test.go
+- [x] cli/syn3200.go
+- [x] cli/syn3200_test.go
+- [x] cli/syn3400.go
+- [x] cli/syn3400_test.go
+- [x] cli/syn3500_token.go
+- [x] cli/syn3500_token_test.go
+- [x] cli/syn3600.go
+- [x] cli/syn3600_test.go
+- [x] cli/syn3700_token.go
+- [x] cli/syn3700_token_test.go
+- [x] cli/syn3800.go
+- [x] cli/syn3800_test.go
+- [x] cli/syn3900.go
+- [x] cli/syn3900_test.go
+- [x] cli/syn4200_token.go
+- [x] cli/syn4200_token_test.go
+- [x] cli/syn4700.go
+- [x] cli/syn4700_test.go
 
 **Stage 147 – Launch a public bug bounty program with tiered rewards.**
-- [ ] cli/syn500.go
+[x] cli/syn500.go
 - [ ] cli/syn5000.go
 - [ ] cli/syn5000_index.go
 - [ ] cli/syn5000_index_test.go
 - [ ] cli/syn5000_test.go
-- [ ] cli/syn500_test.go
+[x] cli/syn500_test.go
 - [ ] cli/syn70.go
 - [ ] cli/syn700.go
 - [ ] cli/syn700_test.go
@@ -6163,30 +6165,30 @@
 | 52 | cli/syn2900_test.go | [x] | Settlement flow tests |
 | 52 | cli/syn300_token.go | [x] | Stablecoin CLI validation |
 | 52 | cli/syn300_token_test.go | [x] | Mint/burn and freeze tests |
-| 53 | cli/syn3200.go | [ ] |
-| 53 | cli/syn3200_test.go | [ ] |
-| 53 | cli/syn3400.go | [ ] |
-| 53 | cli/syn3400_test.go | [ ] |
-| 53 | cli/syn3500_token.go | [ ] |
-| 53 | cli/syn3500_token_test.go | [ ] |
-| 53 | cli/syn3600.go | [ ] |
-| 53 | cli/syn3600_test.go | [ ] |
-| 53 | cli/syn3700_token.go | [ ] |
-| 53 | cli/syn3700_token_test.go | [ ] |
-| 53 | cli/syn3800.go | [ ] |
-| 53 | cli/syn3800_test.go | [ ] |
-| 53 | cli/syn3900.go | [ ] |
-| 53 | cli/syn3900_test.go | [ ] |
-| 53 | cli/syn4200_token.go | [ ] |
-| 53 | cli/syn4200_token_test.go | [ ] |
-| 53 | cli/syn4700.go | [ ] |
-| 53 | cli/syn4700_test.go | [ ] |
-| 53 | cli/syn500.go | [ ] |
+| 53 | cli/syn3200.go | [x] | Bill registry CLI validation |
+| 53 | cli/syn3200_test.go | [x] | Bill registry lifecycle tests |
+| 53 | cli/syn3400.go | [x] | Forex pair registry validation |
+| 53 | cli/syn3400_test.go | [x] | Forex registry lifecycle tests |
+| 53 | cli/syn3500_token.go | [x] | Stable token CLI validation |
+| 53 | cli/syn3500_token_test.go | [x] | Stable token lifecycle tests |
+| 53 | cli/syn3600.go | [x] | Futures contract CLI validation |
+| 53 | cli/syn3600_test.go | [x] | Futures contract tests |
+| 53 | cli/syn3700_token.go | [x] | Index token CLI validation |
+| 53 | cli/syn3700_token_test.go | [x] | Index token tests |
+| 53 | cli/syn3800.go | [x] | Grant registry CLI |
+| 53 | cli/syn3800_test.go | [x] | Grant registry tests |
+| 53 | cli/syn3900.go | [x] | Benefit registry CLI |
+| 53 | cli/syn3900_test.go | [x] | Benefit registry tests |
+| 53 | cli/syn4200_token.go | [x] | Charity token CLI |
+| 53 | cli/syn4200_token_test.go | [x] | Charity token tests |
+| 53 | cli/syn4700.go | [x] | Legal token CLI |
+| 53 | cli/syn4700_test.go | [x] | Legal token tests |
+| 53 | cli/syn500.go | [x] | Utility token CLI |
+| 53 | cli/syn500_test.go | [x] | Utility token tests |
 | 54 | cli/syn5000.go | [ ] |
 | 54 | cli/syn5000_index.go | [ ] |
 | 54 | cli/syn5000_index_test.go | [ ] |
 | 54 | cli/syn5000_test.go | [ ] |
-| 54 | cli/syn500_test.go | [ ] |
 | 54 | cli/syn70.go | [ ] |
 | 54 | cli/syn700.go | [ ] |
 | 54 | cli/syn700_test.go | [ ] |

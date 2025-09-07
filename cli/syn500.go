@@ -18,14 +18,21 @@ func init() {
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a SYN500 token",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			name, _ := cmd.Flags().GetString("name")
 			symbol, _ := cmd.Flags().GetString("symbol")
 			owner, _ := cmd.Flags().GetString("owner")
 			dec, _ := cmd.Flags().GetUint("dec")
 			supply, _ := cmd.Flags().GetUint64("supply")
+			if name == "" || symbol == "" || owner == "" {
+				return fmt.Errorf("name, symbol and owner required")
+			}
+			if dec == 0 || supply == 0 {
+				return fmt.Errorf("decimals and supply must be positive")
+			}
 			syn500Token = core.NewSYN500Token(name, symbol, owner, uint8(dec), supply)
-			fmt.Println("token created")
+			cmd.Println("token created")
+			return nil
 		},
 	}
 	createCmd.Flags().String("name", "", "token name")
@@ -36,20 +43,25 @@ func init() {
 	createCmd.MarkFlagRequired("name")
 	createCmd.MarkFlagRequired("symbol")
 	createCmd.MarkFlagRequired("owner")
+	createCmd.MarkFlagRequired("dec")
+	createCmd.MarkFlagRequired("supply")
 
 	grantCmd := &cobra.Command{
 		Use:   "grant <addr>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Grant a usage tier",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn500Token == nil {
-				fmt.Println("token not created")
-				return
+				return fmt.Errorf("token not created")
 			}
 			tier, _ := cmd.Flags().GetInt("tier")
 			max, _ := cmd.Flags().GetUint64("max")
+			if tier <= 0 || max == 0 {
+				return fmt.Errorf("tier and max must be positive")
+			}
 			syn500Token.Grant(args[0], tier, max)
-			fmt.Println("granted")
+			cmd.Println("granted")
+			return nil
 		},
 	}
 	grantCmd.Flags().Int("tier", 0, "service tier")
@@ -61,16 +73,15 @@ func init() {
 		Use:   "use <addr>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Record usage",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn500Token == nil {
-				fmt.Println("token not created")
-				return
+				return fmt.Errorf("token not created")
 			}
 			if err := syn500Token.Use(args[0]); err != nil {
-				fmt.Println("error:", err)
-			} else {
-				fmt.Println("usage recorded")
+				return err
 			}
+			cmd.Println("usage recorded")
+			return nil
 		},
 	}
 

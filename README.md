@@ -145,6 +145,11 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `basenode start|stop|running|peers|dial` | Control a base network node (`core.NewBaseNode`) |
 | `basetoken init|mint|balance` | Interact with a basic token (`tokens.NewBaseToken`) |
 | `dex liquidity <pair>` | Query on-chain liquidity pool reserves |
+| `syn500 create|grant|use` | Manage service-tier utility tokens |
+| `syn3800 create|release|get|list` | Manage programmatic grants via `core.GrantRegistry` |
+| `syn3900 register|claim|get` | Track government benefits (`core.BenefitRegistry`) |
+| `syn4200_token donate|progress` | Record charity donations and view campaign totals |
+| `syn4700 create|sign|status|info|dispute` | Administer legal-document tokens |
 | `dao-members add|remove|role|list` | Manage DAO membership with JSON output and ECDSA verification |
 
 Additional modules cover DAO governance, cross-chain bridges, regulatory nodes, watchtowers and more.

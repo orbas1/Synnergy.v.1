@@ -21,14 +21,17 @@ func init() {
 		Use:   "create <beneficiary> <name> <amount>",
 		Args:  cobra.ExactArgs(3),
 		Short: "Create a new grant",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if args[0] == "" || args[1] == "" {
+				return fmt.Errorf("beneficiary and name required")
+			}
 			amt, err := strconv.ParseUint(args[2], 10, 64)
-			if err != nil {
-				fmt.Println("invalid amount")
-				return
+			if err != nil || amt == 0 {
+				return fmt.Errorf("invalid amount")
 			}
 			id := grantRegistry.CreateGrant(args[0], args[1], amt)
-			fmt.Println("grant created", id)
+			fmt.Fprintln(cmd.OutOrStdout(), id)
+			return nil
 		},
 	}
 
@@ -36,20 +39,24 @@ func init() {
 		Use:   "release <id> <amount> [note]",
 		Args:  cobra.RangeArgs(2, 3),
 		Short: "Release funds for a grant",
-		Run: func(cmd *cobra.Command, args []string) {
-			id, _ := strconv.ParseUint(args[0], 10, 64)
-			amt, err := strconv.ParseUint(args[1], 10, 64)
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
-				return
+				return fmt.Errorf("invalid id")
+			}
+			amt, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil || amt == 0 {
+				return fmt.Errorf("invalid amount")
 			}
 			note := ""
 			if len(args) == 3 {
 				note = args[2]
 			}
 			if err := grantRegistry.Disburse(id, amt, note); err != nil {
-				fmt.Println("error:", err)
+				return err
 			}
+			cmd.Println("released")
+			return nil
 		},
 	}
 
@@ -57,14 +64,18 @@ func init() {
 		Use:   "get <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Show grant details",
-		Run: func(cmd *cobra.Command, args []string) {
-			id, _ := strconv.ParseUint(args[0], 10, 64)
-			if g, ok := grantRegistry.GetGrant(id); ok {
-				b, _ := json.MarshalIndent(g, "", "  ")
-				fmt.Println(string(b))
-			} else {
-				fmt.Println("not found")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid id")
 			}
+			g, ok := grantRegistry.GetGrant(id)
+			if !ok {
+				return fmt.Errorf("not found")
+			}
+			b, _ := json.MarshalIndent(g, "", "  ")
+			cmd.Println(string(b))
+			return nil
 		},
 	}
 
@@ -74,7 +85,7 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			gs := grantRegistry.ListGrants()
 			b, _ := json.MarshalIndent(gs, "", "  ")
-			fmt.Println(string(b))
+			cmd.Println(string(b))
 		},
 	}
 
