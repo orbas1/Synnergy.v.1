@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
-set -e
-if [ $# -ne 3 ]; then
-  echo "Usage: $0 <srcChain> <dstChain> <relayerAddress>"
+set -euo pipefail
+
+CLI=${SYN_CLI:-./synnergy}
+if [ ! -x "$CLI" ]; then
+  echo "synnergy CLI not found at $CLI" >&2
   exit 1
 fi
-./synnergy cross_chain register "$1" "$2" "$3"
+
+if [ $# -ne 3 ]; then
+  echo "Usage: $0 <srcChain> <dstChain> <relayerAddress>" >&2
+  exit 1
+fi
+"$CLI" cross_chain register "$1" "$2" "$3"

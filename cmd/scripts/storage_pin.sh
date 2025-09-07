@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
-set -e
-if [ -z "$1" ]; then
-  echo "Usage: $0 <file>"
+set -euo pipefail
+
+CLI=${SYN_CLI:-./synnergy}
+if [ ! -x "$CLI" ]; then
+  echo "synnergy CLI not found at $CLI" >&2
   exit 1
 fi
-./synnergy storage pin "$1"
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $0 <file>" >&2
+  exit 1
+fi
+
+"$CLI" storage pin "$1"

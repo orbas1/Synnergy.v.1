@@ -154,6 +154,8 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 
 Additional modules cover DAO governance, cross-chain bridges, regulatory nodes, watchtowers and more.
 
+Helper scripts under `cmd/scripts` honour a `SYN_CLI` environment variable to locate the compiled binary and enable `set -euo pipefail` for safer automation.
+
 ## Production Deployment
 
 ### Docker Compose

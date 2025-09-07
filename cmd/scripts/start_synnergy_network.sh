@@ -1,18 +1,31 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
+
+CLI=${SYN_CLI:-./synnergy}
+if ! command -v go >/dev/null 2>&1; then
+  echo "go command not found" >&2
+  exit 1
+fi
+
 # Compile the synnergy CLI
-GO111MODULE=on go build -trimpath -o synnergy ../synnergy
+GO111MODULE=on go build -trimpath -o "$CLI" ../synnergy
+
 # Start core services
-./synnergy network start &
+"$CLI" network start &
 NET_PID=$!
-./synnergy consensus-service start 1000 &
+"$CLI" consensus-service start 1000 &
 CONS_PID=$!
-./synnergy replication start &
+"$CLI" replication start &
 REP_PID=$!
-./synnergy simplevm start &
+"$CLI" simplevm start &
 VM_PID=$!
+
 # Run a sample security command
-./synnergy security merkle "deadbeef,baadf00d"
-# Wait for Ctrl+C
-trap 'kill $NET_PID $CONS_PID $REP_PID $VM_PID' INT TERM
+"$CLI" security merkle "deadbeef,baadf00d"
+
+cleanup() {
+  kill "$NET_PID" "$CONS_PID" "$REP_PID" "$VM_PID" 2>/dev/null || true
+}
+trap cleanup INT TERM
+
 wait
