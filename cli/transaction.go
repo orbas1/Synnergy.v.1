@@ -4,7 +4,6 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"encoding/hex"
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -27,11 +26,12 @@ func init() {
 		Args:  cobra.ExactArgs(5),
 		Short: "Create a transaction",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxCreate")
 			amt, _ := strconv.ParseUint(args[2], 10, 64)
 			fee, _ := strconv.ParseUint(args[3], 10, 64)
 			nonce, _ := strconv.ParseUint(args[4], 10, 64)
 			tx := core.NewTransaction(args[0], args[1], amt, fee, nonce)
-			fmt.Printf("tx: %+v\n", tx)
+			printOutput(tx)
 		},
 	}
 
@@ -40,22 +40,23 @@ func init() {
 		Args:  cobra.ExactArgs(5),
 		Short: "Create and sign a transaction with a new wallet",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxSign")
 			amt, _ := strconv.ParseUint(args[2], 10, 64)
 			fee, _ := strconv.ParseUint(args[3], 10, 64)
 			nonce, _ := strconv.ParseUint(args[4], 10, 64)
 			tx := core.NewTransaction(args[0], args[1], amt, fee, nonce)
 			w, err := core.NewWallet()
 			if err != nil {
-				fmt.Println("wallet err:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
 			sig, err := w.Sign(tx)
 			if err != nil {
-				fmt.Println("sign err:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
 			pubBytes := elliptic.Marshal(elliptic.P256(), w.PrivateKey.PublicKey.X, w.PrivateKey.PublicKey.Y)
-			fmt.Printf("txID: %s\npublicKey: %x\nsignature: %x\n", tx.ID, pubBytes, sig)
+			printOutput(map[string]any{"txID": tx.ID, "publicKey": hex.EncodeToString(pubBytes), "signature": hex.EncodeToString(sig)})
 		},
 	}
 
@@ -64,6 +65,7 @@ func init() {
 		Args:  cobra.ExactArgs(7),
 		Short: "Verify a transaction signature",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxVerify")
 			amt, _ := strconv.ParseUint(args[2], 10, 64)
 			fee, _ := strconv.ParseUint(args[3], 10, 64)
 			nonce, _ := strconv.ParseUint(args[4], 10, 64)
@@ -72,7 +74,7 @@ func init() {
 			sig, _ := hex.DecodeString(args[6])
 			x, y := elliptic.Unmarshal(elliptic.P256(), pubBytes)
 			pub := &ecdsa.PublicKey{Curve: elliptic.P256(), X: x, Y: y}
-			fmt.Println("valid:", core.VerifySignature(tx, sig, pub))
+			printOutput(map[string]bool{"valid": core.VerifySignature(tx, sig, pub)})
 		},
 	}
 
@@ -81,6 +83,7 @@ func init() {
 		Args:  cobra.ExactArgs(5),
 		Short: "Estimate transaction fees and distribution",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxFee")
 			val, _ := strconv.ParseUint(args[1], 10, 64)
 			base, _ := strconv.ParseUint(args[2], 10, 64)
 			rate, _ := strconv.ParseUint(args[3], 10, 64)
@@ -100,17 +103,17 @@ func init() {
 			case "feeless":
 				fb = core.FeeForValidatedTransfer(val, base, rate, tip, true)
 			default:
-				fmt.Println("unknown type")
+				printOutput(map[string]string{"error": "unknown type"})
 				return
 			}
 			policy := core.FeePolicy{Cap: feeCap, Floor: feeFloor}
 			adj, note := policy.Enforce(fb.Total)
 			fb.Total = adj
 			if note != "" {
-				fmt.Println("note:", note)
+				printOutput(map[string]string{"note": note})
 			}
 			dist := core.DistributeFees(fb.Total)
-			fmt.Printf("fee breakdown: %+v\nfee distribution: %+v\n", fb, dist)
+			printOutput(map[string]any{"breakdown": fb, "distribution": dist})
 		},
 	}
 	feeCmd.Flags().Uint64Var(&feeCap, "cap", 0, "fee cap")
@@ -121,13 +124,14 @@ func init() {
 		Args:  cobra.MinimumNArgs(2),
 		Short: "Calculate base fee from recent block fees",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxBaseFee")
 			adj, _ := strconv.ParseFloat(args[0], 64)
 			var fees []uint64
 			for _, a := range args[1:] {
 				v, _ := strconv.ParseUint(a, 10, 64)
 				fees = append(fees, v)
 			}
-			fmt.Println(core.CalculateBaseFee(fees, adj))
+			printOutput(core.CalculateBaseFee(fees, adj))
 		},
 	}
 
@@ -136,9 +140,10 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Calculate variable fee component",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxVariableFee")
 			units, _ := strconv.ParseUint(args[0], 10, 64)
 			price, _ := strconv.ParseUint(args[1], 10, 64)
-			fmt.Println(core.CalculateVariableFee(units, price))
+			printOutput(core.CalculateVariableFee(units, price))
 		},
 	}
 

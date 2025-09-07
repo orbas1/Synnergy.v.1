@@ -3,7 +3,6 @@ package cli
 import (
 	"context"
 	"encoding/hex"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -24,6 +23,7 @@ func init() {
 		Args:  cobra.MaximumNArgs(1),
 		Short: "Create a new VM instance",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("VMCreate")
 			mode := core.VMLight
 			if len(args) == 1 {
 				switch args[0] {
@@ -34,7 +34,7 @@ func init() {
 				}
 			}
 			simpleVM = core.NewSimpleVM(mode)
-			fmt.Println("vm created")
+			printOutput(map[string]string{"status": "created"})
 		},
 	}
 	cmd.AddCommand(createCmd)
@@ -43,15 +43,16 @@ func init() {
 		Use:   "start",
 		Short: "Start the VM",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("VMStart")
 			if simpleVM == nil {
-				fmt.Println("vm not created")
+				printOutput(map[string]string{"error": "vm not created"})
 				return
 			}
 			if err := simpleVM.Start(); err != nil {
-				fmt.Println("start error:", err)
+				printOutput(map[string]string{"error": err.Error()})
 				return
 			}
-			fmt.Println("vm started")
+			printOutput(map[string]string{"status": "started"})
 		},
 	}
 	cmd.AddCommand(startCmd)
@@ -60,15 +61,16 @@ func init() {
 		Use:   "stop",
 		Short: "Stop the VM",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("VMStop")
 			if simpleVM == nil {
-				fmt.Println("vm not created")
+				printOutput(map[string]string{"error": "vm not created"})
 				return
 			}
 			if err := simpleVM.Stop(); err != nil {
-				fmt.Println("stop error:", err)
+				printOutput(map[string]string{"error": err.Error()})
 				return
 			}
-			fmt.Println("vm stopped")
+			printOutput(map[string]string{"status": "stopped"})
 		},
 	}
 	cmd.AddCommand(stopCmd)
@@ -77,11 +79,12 @@ func init() {
 		Use:   "status",
 		Short: "Show running status",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("VMStatus")
 			if simpleVM == nil {
-				fmt.Println("vm not created")
+				printOutput(map[string]string{"error": "vm not created"})
 				return
 			}
-			fmt.Println(simpleVM.Status())
+			printOutput(map[string]bool{"running": simpleVM.Status()})
 		},
 	}
 	cmd.AddCommand(statusCmd)
@@ -92,24 +95,25 @@ func init() {
 		Args:  cobra.RangeArgs(1, 3),
 		Short: "Execute bytecode on the VM",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("VMExec")
 			if simpleVM == nil {
-				fmt.Println("vm not created")
+				printOutput(map[string]string{"error": "vm not created"})
 				return
 			}
 			if !simpleVM.Status() {
-				fmt.Println("vm not running")
+				printOutput(map[string]string{"error": "vm not running"})
 				return
 			}
 			wasm, err := hex.DecodeString(args[0])
 			if err != nil {
-				fmt.Println("invalid wasm")
+				printOutput(map[string]string{"error": "invalid wasm"})
 				return
 			}
 			var in []byte
 			if len(args) > 1 {
 				in, err = hex.DecodeString(args[1])
 				if err != nil {
-					fmt.Println("invalid args")
+					printOutput(map[string]string{"error": "invalid args"})
 					return
 				}
 			}
@@ -117,7 +121,7 @@ func init() {
 			if len(args) > 2 {
 				gas, err = strconv.ParseUint(args[2], 10, 64)
 				if err != nil {
-					fmt.Println("invalid gas")
+					printOutput(map[string]string{"error": "invalid gas"})
 					return
 				}
 			}
@@ -129,10 +133,10 @@ func init() {
 			}
 			out, used, err := simpleVM.ExecuteContext(ctx, wasm, "", in, gas)
 			if err != nil {
-				fmt.Println("exec error:", err)
+				printOutput(map[string]string{"error": err.Error()})
 				return
 			}
-			fmt.Printf("out: %x gasUsed: %d\n", out, used)
+			printOutput(map[string]any{"out": hex.EncodeToString(out), "gasUsed": used})
 		},
 	}
 	execCmd.Flags().IntVar(&timeoutMS, "timeout", 0, "execution timeout in ms (0 for none)")

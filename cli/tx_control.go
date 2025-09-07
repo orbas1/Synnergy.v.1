@@ -2,7 +2,6 @@ package cli
 
 import (
 	"encoding/hex"
-	"fmt"
 	"strconv"
 	"time"
 
@@ -21,13 +20,14 @@ func init() {
 		Args:  cobra.ExactArgs(6),
 		Short: "Schedule a transaction for future execution",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxSchedule")
 			amt, _ := strconv.ParseUint(args[2], 10, 64)
 			fee, _ := strconv.ParseUint(args[3], 10, 64)
 			nonce, _ := strconv.ParseUint(args[4], 10, 64)
 			exec, _ := strconv.ParseInt(args[5], 10, 64)
 			tx := core.NewTransaction(args[0], args[1], amt, fee, nonce)
 			st := core.ScheduleTransaction(tx, time.Unix(exec, 0))
-			fmt.Printf("scheduled tx %s for %s\n", st.Tx.ID, st.ExecuteAt)
+			printOutput(map[string]any{"txID": st.Tx.ID, "executeAt": st.ExecuteAt})
 		},
 	}
 
@@ -36,6 +36,7 @@ func init() {
 		Args:  cobra.ExactArgs(6),
 		Short: "Schedule and then cancel a transaction",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxCancel")
 			amt, _ := strconv.ParseUint(args[2], 10, 64)
 			fee, _ := strconv.ParseUint(args[3], 10, 64)
 			nonce, _ := strconv.ParseUint(args[4], 10, 64)
@@ -43,7 +44,7 @@ func init() {
 			tx := core.NewTransaction(args[0], args[1], amt, fee, nonce)
 			st := core.ScheduleTransaction(tx, time.Unix(exec, 0))
 			canceled := core.CancelTransaction(st)
-			fmt.Printf("canceled: %v\n", canceled)
+			printOutput(map[string]any{"canceled": canceled})
 		},
 	}
 
@@ -52,6 +53,7 @@ func init() {
 		Args:  cobra.ExactArgs(5),
 		Short: "Apply then reverse a transaction on a fresh ledger",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxReverse")
 			amt, _ := strconv.ParseUint(args[2], 10, 64)
 			fee, _ := strconv.ParseUint(args[3], 10, 64)
 			nonce, _ := strconv.ParseUint(args[4], 10, 64)
@@ -59,14 +61,14 @@ func init() {
 			l.Credit(args[0], amt+fee)
 			tx := core.NewTransaction(args[0], args[1], amt, fee, nonce)
 			if err := l.ApplyTransaction(tx); err != nil {
-				fmt.Println("apply err:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
 			if err := core.ReverseTransaction(l, tx); err != nil {
-				fmt.Println("reverse err:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Printf("balances after reverse: %s=%d %s=%d\n", args[0], l.GetBalance(args[0]), args[1], l.GetBalance(args[1]))
+			printOutput(map[string]any{"balance": map[string]uint64{args[0]: l.GetBalance(args[0]), args[1]: l.GetBalance(args[1])}})
 		},
 	}
 
@@ -75,6 +77,7 @@ func init() {
 		Args:  cobra.ExactArgs(6),
 		Short: "Convert a transaction to private and decrypt it",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxPrivate")
 			amt, _ := strconv.ParseUint(args[2], 10, 64)
 			fee, _ := strconv.ParseUint(args[3], 10, 64)
 			nonce, _ := strconv.ParseUint(args[4], 10, 64)
@@ -82,15 +85,15 @@ func init() {
 			tx := core.NewTransaction(args[0], args[1], amt, fee, nonce)
 			pt, err := core.ConvertToPrivate(tx, key)
 			if err != nil {
-				fmt.Println("private err:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
 			dec, err := pt.Decrypt(key)
 			if err != nil {
-				fmt.Println("decrypt err:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Printf("private payload %x decrypted tx %s->%s\n", pt.Payload, dec.From, dec.To)
+			printOutput(map[string]any{"payload": hex.EncodeToString(pt.Payload), "from": dec.From, "to": dec.To})
 		},
 	}
 
@@ -99,11 +102,12 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Generate and store a transaction receipt",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("TxReceipt")
 			r := core.GenerateReceipt(args[0], args[1], args[2])
 			store := core.NewReceiptStore()
 			store.Store(r)
 			got, _ := store.Get(args[0])
-			fmt.Printf("receipt: %+v\n", got)
+			printOutput(got)
 		},
 	}
 

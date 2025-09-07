@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -20,12 +19,13 @@ func init() {
 		Use:   "create",
 		Short: "Create a validator node",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ValidatorNodeCreate")
 			id, _ := cmd.Flags().GetString("id")
 			addr, _ := cmd.Flags().GetString("addr")
 			minStake, _ := cmd.Flags().GetUint64("minstake")
 			quorum, _ := cmd.Flags().GetInt("quorum")
 			validatorNode = core.NewValidatorNode(id, addr, core.NewLedger(), minStake, quorum)
-			fmt.Println("validator node created")
+			printOutput(map[string]any{"status": "created", "id": id})
 		},
 	}
 	createCmd.Flags().String("id", "", "node id")
@@ -39,20 +39,21 @@ func init() {
 		Short: "Add a validator",
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ValidatorNodeAdd")
 			if validatorNode == nil {
-				fmt.Println("node not initialised")
+				printOutput(map[string]any{"error": "node not initialised"})
 				return
 			}
 			stake, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid stake")
+				printOutput(map[string]any{"error": "invalid stake"})
 				return
 			}
 			if err := validatorNode.AddValidator(args[0], stake); err != nil {
-				fmt.Println("add validator error:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Println("validator added")
+			printOutput(map[string]any{"status": "added", "address": args[0]})
 		},
 	}
 	cmd.AddCommand(addCmd)
@@ -62,12 +63,13 @@ func init() {
 		Short: "Remove a validator",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ValidatorNodeRemove")
 			if validatorNode == nil {
-				fmt.Println("node not initialised")
+				printOutput(map[string]any{"error": "node not initialised"})
 				return
 			}
 			validatorNode.RemoveValidator(args[0])
-			fmt.Println("validator removed")
+			printOutput(map[string]any{"status": "removed", "address": args[0]})
 		},
 	}
 	cmd.AddCommand(removeCmd)
@@ -77,12 +79,13 @@ func init() {
 		Short: "Slash a validator",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ValidatorNodeSlash")
 			if validatorNode == nil {
-				fmt.Println("node not initialised")
+				printOutput(map[string]any{"error": "node not initialised"})
 				return
 			}
 			validatorNode.SlashValidator(args[0])
-			fmt.Println("validator slashed")
+			printOutput(map[string]any{"status": "slashed", "address": args[0]})
 		},
 	}
 	cmd.AddCommand(slashCmd)
@@ -91,11 +94,12 @@ func init() {
 		Use:   "quorum",
 		Short: "Check if quorum is reached",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("ValidatorNodeQuorum")
 			if validatorNode == nil {
-				fmt.Println("node not initialised")
+				printOutput(map[string]any{"error": "node not initialised"})
 				return
 			}
-			fmt.Println(validatorNode.HasQuorum())
+			printOutput(map[string]bool{"quorum": validatorNode.HasQuorum()})
 		},
 	}
 	cmd.AddCommand(quorumCmd)

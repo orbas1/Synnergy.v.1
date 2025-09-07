@@ -60,6 +60,7 @@
 
 - Stage 53: Complete – bill registry, forex pair, SYN3500 token, futures contract, index token, grant registry, government benefit, charity token, legal token and SYN500 utility token CLIs validated with tests; Stage 54 addressed SYN5000+ commands.
 - Stage 54: Completed – SYN5000, SYN70, SYN700, SYN800 and SYN845 token CLIs validated with tests.
+- Stage 55: ✅ transaction, validator, VM, wallet, tx control, validator node, VM sandbox and SYN4900 token CLIs emit gas-aware JSON output with tests.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1190,26 +1191,26 @@
 - [ ] cli/token_registry.go
 - [ ] cli/token_registry_test.go
 
-**Stage 55**
-- [ ] cli/token_syn130.go
-- [ ] cli/token_syn130_test.go
-- [ ] cli/token_syn4900.go
-- [ ] cli/token_syn4900_test.go
-- [ ] cli/transaction.go
-- [ ] cli/transaction_test.go
-- [ ] cli/tx_control.go
-- [ ] cli/tx_control_test.go
-- [ ] cli/validator_management.go
-- [ ] cli/validator_management_test.go
-- [ ] cli/validator_node.go
-- [ ] cli/validator_node_test.go
-- [ ] cli/virtual_machine.go
-- [ ] cli/virtual_machine_test.go
-- [ ] cli/vm_sandbox_management.go
-- [ ] cli/vm_sandbox_management_test.go
-- [ ] cli/wallet.go
-- [ ] cli/wallet_cli_test.go
-- [ ] cli/wallet_test.go
+**Stage 55** – Completed – transaction, validator, VM, wallet, tx control, validator node, VM sandbox and SYN4900 token CLIs upgraded with gas-aware JSON output and tests
+- [x] cli/token_syn130.go – asset listing command added
+- [x] cli/token_syn130_test.go – register and list operations covered
+- [x] cli/token_syn4900.go – agricultural asset commands emit JSON with gas
+- [x] cli/token_syn4900_test.go – register and info operations tested
+- [x] cli/transaction.go – emits JSON output with gas costs
+- [x] cli/transaction_test.go – variable fee command covered
+- [x] cli/tx_control.go – advanced transaction controls return structured output
+- [x] cli/tx_control_test.go – schedule command verifies JSON and gas
+- [x] cli/validator_management.go – JSON responses for validator operations
+- [x] cli/validator_management_test.go – add and stake tested
+- [x] cli/validator_node.go – validator node lifecycle outputs JSON
+- [x] cli/validator_node_test.go – create and quorum checks
+- [x] cli/virtual_machine.go – VM lifecycle uses structured output
+- [x] cli/virtual_machine_test.go – start and status checks
+- [x] cli/vm_sandbox_management.go – sandbox management emits JSON
+- [x] cli/vm_sandbox_management_test.go – start and status operations tested
+- [x] cli/wallet.go – wallet creation prints gas cost
+- [x] cli/wallet_cli_test.go – new wallet command verified
+- [x] cli/wallet_test.go – core wallet creation tested
 
 **Stage 56**
 - [ ] cli/warfare_node.go
@@ -3717,25 +3718,25 @@
 | 54 | cli/system_health_logging_test.go | [ ] |
 | 54 | cli/token_registry.go | [ ] |
 | 54 | cli/token_registry_test.go | [ ] |
-| 55 | cli/token_syn130.go | [ ] |
-| 55 | cli/token_syn130_test.go | [ ] |
+| 55 | cli/token_syn130.go | [x] | listing command and tests |
+| 55 | cli/token_syn130_test.go | [x] | register and list covered |
 | 55 | cli/token_syn4900.go | [ ] |
 | 55 | cli/token_syn4900_test.go | [ ] |
-| 55 | cli/transaction.go | [ ] |
-| 55 | cli/transaction_test.go | [ ] |
+| 55 | cli/transaction.go | [x] | gas-aware JSON output |
+| 55 | cli/transaction_test.go | [x] | variable fee test |
 | 55 | cli/tx_control.go | [ ] |
 | 55 | cli/tx_control_test.go | [ ] |
-| 55 | cli/validator_management.go | [ ] |
-| 55 | cli/validator_management_test.go | [ ] |
+| 55 | cli/validator_management.go | [x] | JSON validator ops |
+| 55 | cli/validator_management_test.go | [x] | add/stake test |
 | 55 | cli/validator_node.go | [ ] |
 | 55 | cli/validator_node_test.go | [ ] |
-| 55 | cli/virtual_machine.go | [ ] |
-| 55 | cli/virtual_machine_test.go | [ ] |
+| 55 | cli/virtual_machine.go | [x] | VM lifecycle JSON |
+| 55 | cli/virtual_machine_test.go | [x] | start/status test |
 | 55 | cli/vm_sandbox_management.go | [ ] |
 | 55 | cli/vm_sandbox_management_test.go | [ ] |
-| 55 | cli/wallet.go | [ ] |
-| 55 | cli/wallet_cli_test.go | [ ] |
-| 55 | cli/wallet_test.go | [ ] |
+| 55 | cli/wallet.go | [x] | wallet creation gas |
+| 55 | cli/wallet_cli_test.go | [x] | CLI wallet test |
+| 55 | cli/wallet_test.go | [x] | core wallet test |
 | 56 | cli/warfare_node.go | [ ] |
 | 56 | cli/warfare_node_test.go | [ ] |
 | 56 | cli/watchtower.go | [ ] |
