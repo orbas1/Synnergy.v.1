@@ -2,6 +2,11 @@ package cli
 
 import "testing"
 
-func TestWatchtowerPlaceholder(t *testing.T) {
-	t.Skip("TODO: implement test")
+func TestWatchtowerLifecycle(t *testing.T) {
+	if err := watchtowerNode.Start(watchtowerCtx); err != nil {
+		t.Fatalf("start: %v", err)
+	}
+	if err := watchtowerNode.Stop(); err != nil {
+		t.Fatalf("stop: %v", err)
+	}
 }

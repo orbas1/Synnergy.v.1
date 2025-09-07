@@ -22,6 +22,9 @@ func init() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			id, _ := cmd.Flags().GetString("id")
 			addr, _ := cmd.Flags().GetString("addr")
+			if id == "" || addr == "" {
+				return fmt.Errorf("id and addr required")
+			}
 			base := core.NewNode(id, addr, core.NewLedger())
 			warfareNode = core.NewWarfareNode(base)
 			printOutput("warfare node created")

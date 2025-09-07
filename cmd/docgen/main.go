@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -12,9 +13,13 @@ import (
 )
 
 func main() {
-	// Output file for combined CLI documentation.
-	out := "docs/guides/cli_guide.md"
-	if err := os.MkdirAll("docs/guides", 0o755); err != nil {
+	// Output file for combined CLI documentation. Allow overriding the
+	// location via DOCGEN_OUTPUT to support tests and custom workflows.
+	out := os.Getenv("DOCGEN_OUTPUT")
+	if out == "" {
+		out = "docs/guides/cli_guide.md"
+	}
+	if err := os.MkdirAll(filepath.Dir(out), 0o755); err != nil {
 		log.Fatalf("create guides dir: %v", err)
 	}
 	f, err := os.Create(out)
