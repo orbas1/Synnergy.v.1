@@ -58,7 +58,8 @@
 
 - Stage 51: Completed – syn200, syn20, syn1100, syn12, syn1300, syn131, syn1401, syn1600 and syn1700 token CLIs validated with required flags and tests.
 
-- Stage 53: Complete – bill registry, forex pair, SYN3500 token, futures contract, index token, grant registry, government benefit, charity token, legal token and SYN500 utility token CLIs validated with tests; Stage 54 will address SYN5000+ commands.
+- Stage 53: Complete – bill registry, forex pair, SYN3500 token, futures contract, index token, grant registry, government benefit, charity token, legal token and SYN500 utility token CLIs validated with tests; Stage 54 addressed SYN5000+ commands.
+- Stage 54: Completed – SYN5000, SYN70, SYN700, SYN800 and SYN845 token CLIs validated with tests.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1170,18 +1171,18 @@
 - [x] cli/syn500_test.go – utility token tests
 
 **Stage 54**
-- [ ] cli/syn5000.go
-- [ ] cli/syn5000_index.go
-- [ ] cli/syn5000_index_test.go
-- [ ] cli/syn5000_test.go
-- [ ] cli/syn70.go
-- [ ] cli/syn700.go
-- [ ] cli/syn700_test.go
-- [ ] cli/syn70_test.go
-- [ ] cli/syn800_token.go
-- [ ] cli/syn800_token_test.go
-- [ ] cli/syn845.go
-- [ ] cli/syn845_test.go
+- [x] cli/syn5000.go
+- [x] cli/syn5000_index.go
+- [x] cli/syn5000_index_test.go
+- [x] cli/syn5000_test.go
+- [x] cli/syn70.go – validated commands with error handling
+- [x] cli/syn700.go – IP registry CLI emits structured responses
+- [x] cli/syn700_test.go – coverage for register, license, royalty and info
+- [x] cli/syn70_test.go – asset lifecycle tests
+- [x] cli/syn800_token.go – asset registry CLI validation
+- [x] cli/syn800_token_test.go – asset workflow tests
+- [x] cli/syn845.go – debt token CLI with required flags
+- [x] cli/syn845_test.go – debt issuance and payment tests
 - [ ] cli/synchronization.go
 - [ ] cli/synchronization_test.go
 - [ ] cli/system_health_logging.go
