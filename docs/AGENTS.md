@@ -61,6 +61,7 @@
 - Stage 53: Complete – bill registry, forex pair, SYN3500 token, futures contract, index token, grant registry, government benefit, charity token, legal token and SYN500 utility token CLIs validated with tests; Stage 54 addressed SYN5000+ commands.
 - Stage 54: Completed – SYN5000, SYN70, SYN700, SYN800 and SYN845 token CLIs validated with tests.
 - Stage 55: ✅ transaction, validator, VM, wallet, tx control, validator node, VM sandbox and SYN4900 token CLIs emit gas-aware JSON output with tests.
+- Stage 56: Completed – warfare, watchtower and zero-trust CLIs, API gateway, docgen, firewall, governance and monitoring binaries with tests.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1213,25 +1214,25 @@
 - [x] cli/wallet_test.go – core wallet creation tested
 
 **Stage 56**
-- [ ] cli/warfare_node.go
-- [ ] cli/warfare_node_test.go
-- [ ] cli/watchtower.go
-- [ ] cli/watchtower_node.go
-- [ ] cli/watchtower_node_test.go
-- [ ] cli/watchtower_test.go
-- [ ] cli/zero_trust_data_channels.go
-- [ ] cli/zero_trust_data_channels_test.go
-- [ ] cmd/api-gateway/main.go
-- [ ] cmd/api-gateway/main_test.go
-- [ ] cmd/docgen/main.go
-- [ ] cmd/docgen/main_test.go
-- [ ] cmd/firewall/main.go
-- [ ] cmd/firewall/main_test.go
-- [ ] cmd/governance/main.go
-- [ ] cmd/governance/main_test.go
-- [ ] cmd/monitoring/main.go
-- [ ] cmd/monitoring/main_test.go
-- [ ] cmd/opcodegen/Dockerfile
+- [x] cli/warfare_node.go – CLI secured and command set validated
+- [x] cli/warfare_node_test.go – logistics and command flow tested
+- [x] cli/watchtower.go – init subcommand added for reconfiguration
+- [x] cli/watchtower_node.go – command errors handled and aliases added
+- [x] cli/watchtower_node_test.go – lifecycle coverage
+- [x] cli/watchtower_test.go – start/stop flow tested
+- [x] cli/zero_trust_data_channels.go – command handlers return errors
+- [x] cli/zero_trust_data_channels_test.go – open/send/receive/close tested
+- [x] cmd/api-gateway/main.go – HTTP health server scaffolding
+- [x] cmd/api-gateway/main_test.go – health endpoint verified
+- [x] cmd/docgen/main.go – generates single-file CLI guide with env override
+- [x] cmd/docgen/main_test.go – verifies guide creation
+- [x] cmd/firewall/main.go – delegates to firewall subcommand with gas table
+- [x] cmd/firewall/main_test.go – checks firewall query output
+- [x] cmd/governance/main.go – wraps government CLI for standalone use
+- [x] cmd/governance/main_test.go – exercises government node creation
+- [x] cmd/monitoring/main.go – exposes watchtower metrics via HTTP
+- [x] cmd/monitoring/main_test.go – validates /metrics endpoint
+- [x] cmd/opcodegen/Dockerfile – cached multi-stage build with non-root user
 
 **Stage 57**
 - [ ] cmd/opcodegen/main.go

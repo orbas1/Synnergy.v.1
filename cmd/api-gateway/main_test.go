@@ -1,29 +1,23 @@
 package main
 
 import (
-	"bytes"
 	"io"
-	"os"
+	"net/http"
+	"net/http/httptest"
 	"testing"
 )
 
-// captureOutput runs f and returns its stdout output.
-func captureOutput(f func()) string {
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-	f()
-	w.Close()
-	os.Stdout = old
-	var buf bytes.Buffer
-	io.Copy(&buf, r)
-	return buf.String()
-}
+func TestHealthEndpoint(t *testing.T) {
+	srv := httptest.NewServer(newHandler())
+	defer srv.Close()
 
-func TestMainOutput(t *testing.T) {
-	got := captureOutput(main)
-	expected := "api gateway CLI placeholder\n"
-	if got != expected {
-		t.Fatalf("expected %q, got %q", expected, got)
+	resp, err := http.Get(srv.URL + "/health")
+	if err != nil {
+		t.Fatalf("request: %v", err)
+	}
+	defer resp.Body.Close()
+	b, _ := io.ReadAll(resp.Body)
+	if string(b) != "ok" {
+		t.Fatalf("unexpected body %q", string(b))
 	}
 }

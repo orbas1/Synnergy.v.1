@@ -1,28 +1,39 @@
 package main
 
 import (
-	"bytes"
-	"io"
-	"os"
+	"context"
+	"encoding/json"
+	"net/http"
+	"net/http/httptest"
 	"testing"
+
+	synn "synnergy"
+	"synnergy/internal/nodes/extra/watchtower"
 )
 
-func captureOutput(f func()) string {
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-	f()
-	w.Close()
-	os.Stdout = old
-	var buf bytes.Buffer
-	io.Copy(&buf, r)
-	return buf.String()
-}
+// TestMetricsEndpoint ensures the monitoring server exposes watchtower metrics
+// over HTTP.
+func TestMetricsEndpoint(t *testing.T) {
+	wt := synn.NewWatchtowerNode("t", nil)
+	if err := wt.Start(context.Background()); err != nil {
+		t.Fatalf("start watchtower: %v", err)
+	}
+	defer wt.Stop()
 
-func TestMainOutput(t *testing.T) {
-	got := captureOutput(main)
-	expected := "monitoring CLI placeholder\n"
-	if got != expected {
-		t.Fatalf("expected %q, got %q", expected, got)
+	srv := httptest.NewServer(newHandler(wt))
+	defer srv.Close()
+
+	resp, err := http.Get(srv.URL + "/metrics")
+	if err != nil {
+		t.Fatalf("request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	var m watchtower.Metrics
+	if err := json.NewDecoder(resp.Body).Decode(&m); err != nil {
+		t.Fatalf("decode: %v", err)
+	}
+	if m.PeerCount != 0 {
+		t.Fatalf("unexpected metrics: %+v", m)
 	}
 }

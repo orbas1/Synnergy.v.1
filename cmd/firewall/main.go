@@ -1,7 +1,20 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"os"
 
+	synn "synnergy"
+	"synnergy/cli"
+)
+
+// main executes the firewall subcommands from the shared Synnergy CLI. It
+// preloads the gas table so reported costs match runtime expectations.
 func main() {
-	fmt.Println("firewall CLI placeholder")
+	synn.LoadGasTable()
+	cmd := cli.RootCmd()
+	cmd.SetArgs(append([]string{"firewall"}, os.Args[1:]...))
+	if err := cmd.Execute(); err != nil {
+		log.Fatal(err)
+	}
 }

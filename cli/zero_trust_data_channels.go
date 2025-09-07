@@ -52,11 +52,12 @@ func init() {
 		Use:   "messages [id]",
 		Args:  cobra.ExactArgs(1),
 		Short: "List encrypted messages",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			msgs := ztEngine.Messages(args[0])
 			for i, m := range msgs {
 				fmt.Printf("%d:%x\n", i, m.Cipher)
 			}
+			return nil
 		},
 	}
 

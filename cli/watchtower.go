@@ -24,6 +24,17 @@ func init() {
 		Short: "Watchtower node operations",
 	}
 
+	initCmd := &cobra.Command{
+		Use:   "init [id]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Initialise watchtower with ID",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			watchtowerNode = synnergy.NewWatchtowerNode(args[0], watchtowerLogger)
+			printOutput("initialised")
+			return nil
+		},
+	}
+
 	startCmd := &cobra.Command{
 		Use:   "start",
 		Short: "Start monitoring",
@@ -79,6 +90,6 @@ func init() {
 		},
 	}
 
-	cmd.AddCommand(startCmd, stopCmd, forkCmd, metricsCmd)
+	cmd.AddCommand(initCmd, startCmd, stopCmd, forkCmd, metricsCmd)
 	rootCmd.AddCommand(cmd)
 }
