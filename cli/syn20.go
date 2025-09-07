@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 	"synnergy/internal/tokens"
 )
@@ -17,19 +18,26 @@ func init() {
 	initCmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialise SYN20 token",
-		Run: func(cmd *cobra.Command, args []string) {
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			name, _ := cmd.Flags().GetString("name")
 			symbol, _ := cmd.Flags().GetString("symbol")
 			dec, _ := cmd.Flags().GetUint32("decimals")
+			if name == "" || symbol == "" {
+				return fmt.Errorf("name and symbol must be provided")
+			}
 			id := tokenRegistry.NextID()
 			syn20 = tokens.NewSYN20Token(id, name, symbol, uint8(dec))
 			tokenRegistry.Register(syn20)
-			fmt.Println("syn20 initialised")
+			cmd.Println(id)
+			return nil
 		},
 	}
 	initCmd.Flags().String("name", "", "token name")
 	initCmd.Flags().String("symbol", "", "token symbol")
 	initCmd.Flags().Uint32("decimals", 18, "decimal places")
+	initCmd.MarkFlagRequired("name")
+	initCmd.MarkFlagRequired("symbol")
 	cmd.AddCommand(initCmd)
 
 	pauseCmd := &cobra.Command{
@@ -37,11 +45,11 @@ func init() {
 		Short: "Pause token operations",
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn20 == nil {
-				fmt.Println("token not initialised")
+				cmd.Println("token not initialised")
 				return
 			}
 			syn20.Pause()
-			fmt.Println("paused")
+			cmd.Println("paused")
 		},
 	}
 	cmd.AddCommand(pauseCmd)
@@ -51,11 +59,11 @@ func init() {
 		Short: "Resume operations",
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn20 == nil {
-				fmt.Println("token not initialised")
+				cmd.Println("token not initialised")
 				return
 			}
 			syn20.Unpause()
-			fmt.Println("unpaused")
+			cmd.Println("unpaused")
 		},
 	}
 	cmd.AddCommand(unpauseCmd)
@@ -66,11 +74,11 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn20 == nil {
-				fmt.Println("token not initialised")
+				cmd.Println("token not initialised")
 				return
 			}
 			syn20.Freeze(args[0])
-			fmt.Println("frozen")
+			cmd.Println("frozen")
 		},
 	}
 	cmd.AddCommand(freezeCmd)
@@ -81,11 +89,11 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn20 == nil {
-				fmt.Println("token not initialised")
+				cmd.Println("token not initialised")
 				return
 			}
 			syn20.Unfreeze(args[0])
-			fmt.Println("unfrozen")
+			cmd.Println("unfrozen")
 		},
 	}
 	cmd.AddCommand(unfreezeCmd)
@@ -96,16 +104,16 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn20 == nil {
-				fmt.Println("token not initialised")
+				cmd.Println("token not initialised")
 				return
 			}
 			var amt uint64
 			fmt.Sscanf(args[1], "%d", &amt)
 			if err := syn20.Mint(args[0], amt); err != nil {
-				fmt.Println("error:", err)
+				cmd.Printf("error: %v\n", err)
 				return
 			}
-			fmt.Println("minted")
+			cmd.Println("minted")
 		},
 	}
 	cmd.AddCommand(mintCmd)
@@ -116,16 +124,16 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn20 == nil {
-				fmt.Println("token not initialised")
+				cmd.Println("token not initialised")
 				return
 			}
 			var amt uint64
 			fmt.Sscanf(args[1], "%d", &amt)
 			if err := syn20.Burn(args[0], amt); err != nil {
-				fmt.Println("error:", err)
+				cmd.Printf("error: %v\n", err)
 				return
 			}
-			fmt.Println("burned")
+			cmd.Println("burned")
 		},
 	}
 	cmd.AddCommand(burnCmd)
@@ -136,16 +144,16 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn20 == nil {
-				fmt.Println("token not initialised")
+				cmd.Println("token not initialised")
 				return
 			}
 			var amt uint64
 			fmt.Sscanf(args[2], "%d", &amt)
 			if err := syn20.Transfer(args[0], args[1], amt); err != nil {
-				fmt.Println("error:", err)
+				cmd.Printf("error: %v\n", err)
 				return
 			}
-			fmt.Println("transferred")
+			cmd.Println("transferred")
 		},
 	}
 	cmd.AddCommand(transferCmd)
@@ -156,10 +164,10 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn20 == nil {
-				fmt.Println("token not initialised")
+				cmd.Println("token not initialised")
 				return
 			}
-			fmt.Println(syn20.BalanceOf(args[0]))
+			cmd.Println(syn20.BalanceOf(args[0]))
 		},
 	}
 	cmd.AddCommand(balanceCmd)

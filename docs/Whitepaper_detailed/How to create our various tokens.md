@@ -32,6 +32,7 @@ Every Synnergy token embeds the concurrency‑safe `BaseToken` type, which offer
 - **Data structures** – `SYN131Token` stores name, symbol, owner and valuation, while the registry maintains a map of issued tokens.
 - **Core operations** – `Create`, `UpdateValuation`, and `Get` manage digital-only property such as patents or licences.
 - **Enterprise applications** – enables marketplaces to tokenise intellectual property and perform royalty or IP-rights management at scale.
+- **CLI usage** – `synnergy syn131 create --id <id> --name <name> --symbol <symbol> --owner <owner> [--valuation <val>]` issues a token; `synnergy syn131 value <id> <val>` updates valuation and `synnergy syn131 get <id>` retrieves details.
 
 ### 3.3 SYN500 – Utility Tokens
 `NewSYN500Token` issues tiered service credits; `Grant` assigns usage quotas and `Use` consumes them with limit enforcement【F:core/syn500.go†L5-L43】.
@@ -56,24 +57,28 @@ Every Synnergy token embeds the concurrency‑safe `BaseToken` type, which offer
 - **Data structures** – `SupplyChainAsset` embeds location, owner and an event `History` made of `SupplyChainEvent` entries.
 - **Core operations** – `Register`, `Update`, and `Get` provide a tamper-evident trail from origin to delivery.
 - **Enterprise applications** – supports cross‑organisational logistics, enabling manufacturers and shippers to reconcile inventory and compliance data.
+- **CLI usage** – `synnergy syn1300 register --id <id> --desc <description> --owner <owner> --loc <location>` registers assets; `synnergy syn1300 update <id> --loc <location> [--status <status>] [--note <note>]` appends events and `synnergy syn1300 get <id>` shows current state.
 
 ### 3.7 SYN1401 – Investment Tokens
 `InvestmentRegistry` issues interest-bearing positions, accrues returns over time and redeems principal plus interest at maturity【F:core/syn1401.go†L8-L74】.
 - **Data structures** – each `InvestmentRecord` stores principal, rate, maturity and accrued amounts.
 - **Core operations** – `Issue`, `Accrue`, and `Redeem` automate fixed-income lifecycle management.
 - **Enterprise applications** – asset managers can structure debt instruments, pooled notes or revenue-share deals with deterministic yield tracking.
+- **CLI usage** – `synnergy syn1401 issue --id <id> --owner <owner> --principal <amount> --rate <annual_rate> --maturity <unix>` issues an investment; `synnergy syn1401 get <id>` retrieves records and `synnergy syn1401 redeem <id> <owner>` settles matured positions.
 
 ### 3.8 SYN1600 – Music Royalty Tokens
 `MusicToken` tracks song metadata, assigns royalty shares and distributes payouts proportionally to share holders【F:core/syn1600.go†L8-L70】.
 - **Data structures** – token metadata stores title, artist and album, with `royaltySplits` mapping recipients to shares.
 - **Core operations** – `Update`, `SetRoyaltyShare`, `Distribute`, and `Info` settle royalties transparently.
 - **Enterprise applications** – record labels and streaming platforms can manage catalogues and automate complex royalty splits across thousands of artists.
+- **CLI usage** – `synnergy syn1600 init --title <title> --artist <artist> --album <album>` initialises metadata; `synnergy syn1600 update [--title <title>] [--artist <artist>] [--album <album>]` adjusts fields and `synnergy syn1600 info` displays them.
 
 ### 3.9 SYN1700 – Event Ticket Tokens
 `EventMetadata` manages ticket issuance, transfers and verification for limited-supply events【F:core/syn1700_token.go†L8-L75】.
 - **Data structures** – `EventMetadata` holds event details and a map of `Ticket` records keyed by ID.
 - **Core operations** – `IssueTicket`, `TransferTicket`, and `VerifyTicket` secure ticket life cycles and prevent double‑spends.
 - **Enterprise applications** – arenas and promoters can curb fraud, monitor attendance and integrate secondary-market controls.
+- **CLI usage** – `synnergy syn1700 init --name <name> --desc <desc> --location <location> --start <unix> --end <unix> --supply <n>` configures an event; `synnergy syn1700 issue <owner> <class> <type> <price>` mints tickets and `synnergy syn1700 verify <id> <holder>` checks ownership.
 
 ### 3.10 SYN2100 – Trade Finance Tokens
 `TradeFinanceToken` registers financial documents, marks them as financed and maintains pooled liquidity balances【F:core/syn2100.go†L9-L107】.
@@ -194,6 +199,7 @@ For generic DAO balance management, `DAOTokenLedger` mints, transfers and burns 
 - **Data structures** – mutex-guarded flags track paused state and a `frozen` map records restricted addresses.
 - **Core operations** – `Pause`, `Unpause`, `Freeze`, `Unfreeze`, `Transfer`, `Mint`, and `Burn` provide emergency controls without altering balances.
 - **Enterprise applications** – satisfies regulatory requirements for stoppages or incident response in consumer token systems.
+- **CLI usage** – initialise via `syn20 init --name <NAME> --symbol <SYMBOL> [--decimals <N>]`; the command outputs the new token ID and subcommands cover pause, freeze, mint, burn, transfer and balance queries.
 
 ### 3.30 SYN70 – Gaming Asset Tokens
 `SYN70Token` registers in‑game assets, supports transfers, attributes and achievement tracking while minting one unit per asset to represent ownership【F:internal/tokens/syn70.go†L8-L118】.
