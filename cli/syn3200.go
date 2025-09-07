@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -19,19 +20,25 @@ func init() {
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a bill",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			id, _ := cmd.Flags().GetString("id")
 			issuer, _ := cmd.Flags().GetString("issuer")
 			payer, _ := cmd.Flags().GetString("payer")
 			amt, _ := cmd.Flags().GetUint64("amount")
 			dueStr, _ := cmd.Flags().GetString("due")
 			meta, _ := cmd.Flags().GetString("meta")
-			due, _ := time.Parse(time.RFC3339, dueStr)
-			if _, err := bills.Create(id, issuer, payer, amt, due, meta); err != nil {
-				fmt.Printf("error: %v\n", err)
-			} else {
-				fmt.Println("bill created")
+			if id == "" || issuer == "" || payer == "" {
+				return fmt.Errorf("id, issuer and payer required")
 			}
+			due, err := time.Parse(time.RFC3339, dueStr)
+			if err != nil {
+				return fmt.Errorf("invalid due date: %w", err)
+			}
+			if _, err := bills.Create(id, issuer, payer, amt, due, meta); err != nil {
+				return err
+			}
+			cmd.Println("bill created")
+			return nil
 		},
 	}
 	createCmd.Flags().String("id", "", "bill id")
@@ -40,20 +47,26 @@ func init() {
 	createCmd.Flags().Uint64("amount", 0, "amount")
 	createCmd.Flags().String("due", time.Now().Add(24*time.Hour).Format(time.RFC3339), "due time")
 	createCmd.Flags().String("meta", "", "metadata")
+	_ = createCmd.MarkFlagRequired("id")
+	_ = createCmd.MarkFlagRequired("issuer")
+	_ = createCmd.MarkFlagRequired("payer")
+	_ = createCmd.MarkFlagRequired("amount")
 	cmd.AddCommand(createCmd)
 
 	payCmd := &cobra.Command{
 		Use:   "pay <id> <payer> <amt>",
 		Short: "Record a payment",
 		Args:  cobra.ExactArgs(3),
-		Run: func(cmd *cobra.Command, args []string) {
-			var amt uint64
-			fmt.Sscanf(args[2], "%d", &amt)
-			if err := bills.Pay(args[0], args[1], amt); err != nil {
-				fmt.Printf("error: %v\n", err)
-			} else {
-				fmt.Println("payment recorded")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			amt, err := strconv.ParseUint(args[2], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid amount: %w", err)
 			}
+			if err := bills.Pay(args[0], args[1], amt); err != nil {
+				return err
+			}
+			cmd.Println("payment recorded")
+			return nil
 		},
 	}
 	cmd.AddCommand(payCmd)
@@ -62,14 +75,16 @@ func init() {
 		Use:   "adjust <id> <amt>",
 		Short: "Adjust bill amount",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			var amt uint64
-			fmt.Sscanf(args[1], "%d", &amt)
-			if err := bills.Adjust(args[0], amt); err != nil {
-				fmt.Printf("error: %v\n", err)
-			} else {
-				fmt.Println("bill adjusted")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			amt, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid amount: %w", err)
 			}
+			if err := bills.Adjust(args[0], amt); err != nil {
+				return err
+			}
+			cmd.Println("bill adjusted")
+			return nil
 		},
 	}
 	cmd.AddCommand(adjustCmd)
@@ -78,13 +93,13 @@ func init() {
 		Use:   "get <id>",
 		Short: "Get bill info",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			b, ok := bills.Get(args[0])
 			if !ok {
-				fmt.Println("not found")
-				return
+				return fmt.Errorf("not found")
 			}
-			fmt.Printf("%+v\n", *b)
+			cmd.Printf("%+v\n", *b)
+			return nil
 		},
 	}
 	cmd.AddCommand(getCmd)

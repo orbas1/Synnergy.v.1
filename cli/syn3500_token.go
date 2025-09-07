@@ -19,33 +19,47 @@ func init() {
 	initCmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialise the token",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			name, _ := cmd.Flags().GetString("name")
 			symbol, _ := cmd.Flags().GetString("symbol")
 			issuer, _ := cmd.Flags().GetString("issuer")
 			rate, _ := cmd.Flags().GetFloat64("rate")
+			if name == "" || symbol == "" || issuer == "" {
+				return fmt.Errorf("name, symbol and issuer required")
+			}
+			if rate <= 0 {
+				return fmt.Errorf("rate must be positive")
+			}
 			syn3500 = core.NewSYN3500Token(name, symbol, issuer, rate)
-			fmt.Println("token initialised")
+			cmd.Println("token initialised")
+			return nil
 		},
 	}
 	initCmd.Flags().String("name", "", "name")
 	initCmd.Flags().String("symbol", "", "symbol")
 	initCmd.Flags().String("issuer", "", "issuer")
 	initCmd.Flags().Float64("rate", 1.0, "exchange rate")
+	_ = initCmd.MarkFlagRequired("name")
+	_ = initCmd.MarkFlagRequired("symbol")
+	_ = initCmd.MarkFlagRequired("issuer")
+	_ = initCmd.MarkFlagRequired("rate")
 	cmd.AddCommand(initCmd)
 
 	rateCmd := &cobra.Command{
 		Use:   "setrate <rate>",
 		Short: "Update exchange rate",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn3500 == nil {
-				fmt.Println("token not initialised")
-				return
+				return fmt.Errorf("token not initialised")
 			}
-			r, _ := strconv.ParseFloat(args[0], 64)
+			r, err := strconv.ParseFloat(args[0], 64)
+			if err != nil || r <= 0 {
+				return fmt.Errorf("invalid rate")
+			}
 			syn3500.SetRate(r)
-			fmt.Println("rate updated")
+			cmd.Println("rate updated")
+			return nil
 		},
 	}
 	cmd.AddCommand(rateCmd)
@@ -53,13 +67,13 @@ func init() {
 	infoCmd := &cobra.Command{
 		Use:   "info",
 		Short: "Show token info",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn3500 == nil {
-				fmt.Println("token not initialised")
-				return
+				return fmt.Errorf("token not initialised")
 			}
 			sym, issuer, rate := syn3500.Info()
-			fmt.Printf("%s %s %.2f\n", sym, issuer, rate)
+			cmd.Printf("%s %s %.2f\n", sym, issuer, rate)
+			return nil
 		},
 	}
 	cmd.AddCommand(infoCmd)
@@ -68,15 +82,17 @@ func init() {
 		Use:   "mint <addr> <amt>",
 		Short: "Mint tokens",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn3500 == nil {
-				fmt.Println("token not initialised")
-				return
+				return fmt.Errorf("token not initialised")
 			}
-			var amt uint64
-			fmt.Sscanf(args[1], "%d", &amt)
+			amt, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid amount: %w", err)
+			}
 			syn3500.Mint(args[0], amt)
-			fmt.Println("minted")
+			cmd.Println("minted")
+			return nil
 		},
 	}
 	cmd.AddCommand(mintCmd)
@@ -85,18 +101,19 @@ func init() {
 		Use:   "redeem <addr> <amt>",
 		Short: "Redeem tokens",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn3500 == nil {
-				fmt.Println("token not initialised")
-				return
+				return fmt.Errorf("token not initialised")
 			}
-			var amt uint64
-			fmt.Sscanf(args[1], "%d", &amt)
+			amt, err := strconv.ParseUint(args[1], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid amount: %w", err)
+			}
 			if err := syn3500.Redeem(args[0], amt); err != nil {
-				fmt.Printf("error: %v\n", err)
-			} else {
-				fmt.Println("redeemed")
+				return err
 			}
+			cmd.Println("redeemed")
+			return nil
 		},
 	}
 	cmd.AddCommand(redeemCmd)
@@ -105,12 +122,12 @@ func init() {
 		Use:   "balance <addr>",
 		Short: "Show balance",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn3500 == nil {
-				fmt.Println("token not initialised")
-				return
+				return fmt.Errorf("token not initialised")
 			}
-			fmt.Println(syn3500.BalanceOf(args[0]))
+			cmd.Println(syn3500.BalanceOf(args[0]))
+			return nil
 		},
 	}
 	cmd.AddCommand(balCmd)

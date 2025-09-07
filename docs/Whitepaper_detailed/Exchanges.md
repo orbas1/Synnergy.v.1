@@ -8,10 +8,31 @@ The Synnergy Network, engineered and operated by **Blackridge Group Ltd.**, enab
 `SYN10Token` embeds a concurrency‑safe ledger and tracks issuer information alongside a mutable fiat exchange rate, allowing central banks to adjust parity while preserving total supply data【F:internal/tokens/syn10.go†L1-L41】.
 
 ### SYN3400 – Forex Pair Registry
-The `ForexRegistry` registers currency pairs and records time‑stamped rate updates so markets can query live foreign‑exchange data or integrate external price feeds【F:internal/tokens/syn3400.go†L10-L44】.
+The `ForexRegistry` registers currency pairs and records time‑stamped rate updates so markets can query live foreign‑exchange data or integrate external price feeds【F:internal/tokens/syn3400.go†L10-L44】. Operators manage pairs via the `syn3400` CLI, which requires explicit base and quote currencies and a positive rate when registering new entries【F:cli/syn3400.go†L19-L42】.
 
 ### SYN3500 – Stable Value Token
-`SYN3500Token` models centrally issued or asset‑backed stablecoins with an adjustable exchange rate and mint/redeem hooks for monetary policy control【F:core/syn3500_token.go†L8-L41】.
+`SYN3500Token` models centrally issued or asset‑backed stablecoins with an adjustable exchange rate and mint/redeem hooks for monetary policy control【F:core/syn3500_token.go†L8-L41】. Operators configure the currency via the `syn3500` CLI, which enforces non‑empty name, symbol and issuer fields and a positive exchange rate during initialization, while guarding rate updates and balance operations with explicit validation【F:cli/syn3500_token.go†L19-L92】.
+
+### SYN3600 – Futures Contract
+`FuturesContract` records the underlying asset, quantity, entry price and expiration for derivative positions, settling against a market price to compute profit or loss【F:core/syn3600.go†L9-L29】. The `syn3600` CLI requires an underlying asset, positive quantity and price, and a valid RFC3339 expiration while exposing status and settlement commands for managing positions【F:cli/syn3600.go†L20-L83】.
+
+### SYN3700 – Index Token
+`SYN3700Token` aggregates multiple assets into a weighted index and calculates composite values from supplied price data【F:core/syn3700_token.go†L8-L50】. Operators manage index composition through the `syn3700` CLI, which validates initialization, component weights, listing, valuation and removal commands for deterministic index management【F:cli/syn3700_token.go†L15-L120】.
+
+### SYN3800 – Grant Token
+`GrantRegistry` manages programmatic grants, recording beneficiary, name, amount and release notes, while the `syn3800` CLI validates inputs, disburses funds and exposes JSON queries for grant details and listings【F:core/syn3800.go†L8-L56】【F:cli/syn3800.go†L20-L89】.
+
+### SYN3900 – Government Benefit Token
+`BenefitRegistry` tracks government benefit allocations and claim status. The `syn3900` CLI enforces recipient and program fields, requires positive amounts, supports claims and returns structured benefit data for auditing【F:core/syn3900.go†L8-L51】【F:cli/syn3900.go†L20-L75】.
+
+### SYN4200 – Charity Token
+`SYN4200Token` logs donations per campaign and reports raised totals. The `syn4200_token` CLI requires donor addresses and positive amounts, recording contributions and querying progress directly from the command line【F:core/syn4200_token.go†L7-L42】【F:cli/syn4200_token.go†L18-L52】.
+
+### SYN4700 – Legal Process Token
+`LegalToken` binds hashed legal documents, participant signatures and dispute history. Operators manage tokens with the `syn4700` CLI, which validates creation parameters, signature management, status changes and dispute logging while outputting JSON for downstream inspection【F:core/syn4700.go†L9-L146】【F:cli/syn4700.go†L20-L160】.
+
+### SYN500 – Utility Token
+`SYN500Token` assigns service tiers with usage quotas, and the `syn500` CLI enforces required metadata and positive values when creating tokens, granting tiers and recording consumption【F:core/syn500.go†L5-L43】【F:cli/syn500.go†L17-L69】.
 
 ### SYN2100 – Trade‑Finance Liquidity
 `TradeFinanceToken` tracks invoices and maintains pooled liquidity balances, enabling financiers to deposit or withdraw capital against on‑chain trade documents【F:core/syn2100.go†L9-L107】.
