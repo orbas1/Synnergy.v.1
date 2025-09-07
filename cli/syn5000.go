@@ -18,13 +18,17 @@ func init() {
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a gambling token",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			name, _ := cmd.Flags().GetString("name")
 			symbol, _ := cmd.Flags().GetString("symbol")
 			dec, _ := cmd.Flags().GetUint("dec")
+			if name == "" || symbol == "" {
+				return fmt.Errorf("name and symbol required")
+			}
 			t := core.NewSYN5000Token(name, symbol, uint8(dec))
 			syn5000Tokens[symbol] = t
-			fmt.Println("token created", symbol)
+			cmd.Printf("token created %s\n", symbol)
+			return nil
 		},
 	}
 	createCmd.Flags().String("name", "", "token name")
@@ -37,18 +41,18 @@ func init() {
 		Use:   "bet <bettor>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Place a bet",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			tokenID, _ := cmd.Flags().GetString("id")
 			amt, _ := cmd.Flags().GetUint64("amt")
 			odds, _ := cmd.Flags().GetFloat64("odds")
 			game, _ := cmd.Flags().GetString("game")
 			t, ok := syn5000Tokens[tokenID]
 			if !ok {
-				fmt.Println("token not found")
-				return
+				return fmt.Errorf("token not found")
 			}
 			id := t.PlaceBet(args[0], amt, odds, game)
-			fmt.Println("bet placed", id)
+			cmd.Printf("bet placed %d\n", id)
+			return nil
 		},
 	}
 	betCmd.Flags().String("id", "", "token symbol")
@@ -63,21 +67,20 @@ func init() {
 	resolveCmd := &cobra.Command{
 		Use:   "resolve",
 		Short: "Resolve a bet",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			tokenID, _ := cmd.Flags().GetString("id")
 			betID, _ := cmd.Flags().GetUint64("bet")
 			win, _ := cmd.Flags().GetBool("win")
 			t, ok := syn5000Tokens[tokenID]
 			if !ok {
-				fmt.Println("token not found")
-				return
+				return fmt.Errorf("token not found")
 			}
 			payout, err := t.ResolveBet(betID, win)
 			if err != nil {
-				fmt.Println("error:", err)
-				return
+				return err
 			}
-			fmt.Println("payout", payout)
+			cmd.Printf("payout %d\n", payout)
+			return nil
 		},
 	}
 	resolveCmd.Flags().String("id", "", "token symbol")

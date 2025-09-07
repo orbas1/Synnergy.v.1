@@ -1,7 +1,24 @@
 package cli
 
-import "testing"
+import (
+	"strings"
+	"testing"
 
-func TestSyn5000indexPlaceholder(t *testing.T) {
-	t.Skip("TODO: implement test")
+	"synnergy/core"
+)
+
+// TestSyn5000Index ensures tokens can be added and listed.
+func TestSyn5000Index(t *testing.T) {
+	gamblingIndex = map[string]core.GamblingToken{}
+
+	if _, err := execCommand("syn5000_index", "add", "GMB"); err != nil {
+		t.Fatalf("add: %v", err)
+	}
+	out, err := execCommand("syn5000_index", "list")
+	if err != nil {
+		t.Fatalf("list: %v", err)
+	}
+	if !strings.Contains(out, "GMB") {
+		t.Fatalf("expected GMB in list, got %s", out)
+	}
 }
