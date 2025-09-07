@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -33,10 +34,14 @@ func init() {
 	initCmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialise token with balances",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			balStr, _ := cmd.Flags().GetString("balances")
+			if balStr == "" {
+				return errors.New("balances required")
+			}
 			syn300 = core.NewSYN300Token(parseBalances(balStr))
 			fmt.Println("token initialised")
+			return nil
 		},
 	}
 	initCmd.Flags().String("balances", "", "initial balances addr=amt,comma-separated")
@@ -46,13 +51,13 @@ func init() {
 		Use:   "delegate <owner> <delegate>",
 		Short: "Delegate voting power",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn300 == nil {
-				fmt.Println("token not initialised")
-				return
+				return errors.New("token not initialised")
 			}
 			syn300.Delegate(args[0], args[1])
 			fmt.Println("delegated")
+			return nil
 		},
 	}
 	cmd.AddCommand(delCmd)
@@ -61,13 +66,13 @@ func init() {
 		Use:   "revoke <owner>",
 		Short: "Revoke delegation",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn300 == nil {
-				fmt.Println("token not initialised")
-				return
+				return errors.New("token not initialised")
 			}
 			syn300.RevokeDelegation(args[0])
 			fmt.Println("revoked")
+			return nil
 		},
 	}
 	cmd.AddCommand(revokeCmd)
@@ -76,12 +81,12 @@ func init() {
 		Use:   "power <addr>",
 		Short: "Show voting power",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn300 == nil {
-				fmt.Println("token not initialised")
-				return
+				return errors.New("token not initialised")
 			}
 			fmt.Println(syn300.VotingPower(args[0]))
+			return nil
 		},
 	}
 	cmd.AddCommand(powerCmd)
@@ -90,13 +95,13 @@ func init() {
 		Use:   "propose <creator> <desc>",
 		Short: "Create proposal",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn300 == nil {
-				fmt.Println("token not initialised")
-				return
+				return errors.New("token not initialised")
 			}
 			id := syn300.CreateProposal(args[0], args[1])
 			fmt.Printf("proposal %d created\n", id)
+			return nil
 		},
 	}
 	cmd.AddCommand(propCmd)
@@ -105,19 +110,20 @@ func init() {
 		Use:   "vote <id> <voter> <approve>",
 		Short: "Cast vote",
 		Args:  cobra.ExactArgs(3),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn300 == nil {
-				fmt.Println("token not initialised")
-				return
+				return errors.New("token not initialised")
 			}
 			var id uint64
-			fmt.Sscanf(args[0], "%d", &id)
+			if _, err := fmt.Sscanf(args[0], "%d", &id); err != nil {
+				return err
+			}
 			approve := args[2] == "true"
 			if err := syn300.Vote(id, args[1], approve); err != nil {
-				fmt.Printf("error: %v\n", err)
-			} else {
-				fmt.Println("vote recorded")
+				return err
 			}
+			fmt.Println("vote recorded")
+			return nil
 		},
 	}
 	cmd.AddCommand(voteCmd)
@@ -126,19 +132,22 @@ func init() {
 		Use:   "execute <id> <quorum>",
 		Short: "Execute proposal if quorum met",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn300 == nil {
-				fmt.Println("token not initialised")
-				return
+				return errors.New("token not initialised")
 			}
 			var id, quorum uint64
-			fmt.Sscanf(args[0], "%d", &id)
-			fmt.Sscanf(args[1], "%d", &quorum)
-			if err := syn300.Execute(id, quorum); err != nil {
-				fmt.Printf("error: %v\n", err)
-			} else {
-				fmt.Println("proposal executed")
+			if _, err := fmt.Sscanf(args[0], "%d", &id); err != nil {
+				return err
 			}
+			if _, err := fmt.Sscanf(args[1], "%d", &quorum); err != nil {
+				return err
+			}
+			if err := syn300.Execute(id, quorum); err != nil {
+				return err
+			}
+			fmt.Println("proposal executed")
+			return nil
 		},
 	}
 	cmd.AddCommand(execCmd)
@@ -147,19 +156,20 @@ func init() {
 		Use:   "status <id>",
 		Short: "Show proposal status",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn300 == nil {
-				fmt.Println("token not initialised")
-				return
+				return errors.New("token not initialised")
 			}
 			var id uint64
-			fmt.Sscanf(args[0], "%d", &id)
+			if _, err := fmt.Sscanf(args[0], "%d", &id); err != nil {
+				return err
+			}
 			p, err := syn300.ProposalStatus(id)
 			if err != nil {
-				fmt.Printf("error: %v\n", err)
-				return
+				return err
 			}
 			fmt.Printf("%+v\n", *p)
+			return nil
 		},
 	}
 	cmd.AddCommand(statusCmd)
@@ -167,14 +177,14 @@ func init() {
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List proposals",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn300 == nil {
-				fmt.Println("token not initialised")
-				return
+				return errors.New("token not initialised")
 			}
 			for _, p := range syn300.ListProposals() {
 				fmt.Printf("%d %s executed:%v\n", p.ID, p.Description, p.Executed)
 			}
+			return nil
 		},
 	}
 	cmd.AddCommand(listCmd)

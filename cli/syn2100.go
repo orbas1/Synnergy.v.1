@@ -31,16 +31,20 @@ func init() {
 	regCmd := &cobra.Command{
 		Use:   "register",
 		Short: "Register a financial document",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			id, _ := cmd.Flags().GetString("id")
 			issuer, _ := cmd.Flags().GetString("issuer")
 			recipient, _ := cmd.Flags().GetString("recipient")
 			amount, _ := cmd.Flags().GetUint64("amount")
+			if id == "" || issuer == "" || recipient == "" || amount == 0 {
+				return fmt.Errorf("id, issuer, recipient and amount are required")
+			}
 			issueStr, _ := cmd.Flags().GetString("issue")
 			dueStr, _ := cmd.Flags().GetString("due")
 			desc, _ := cmd.Flags().GetString("desc")
 			syn2100.RegisterDocument(id, issuer, recipient, amount, parseTime(issueStr), parseTime(dueStr), desc)
 			fmt.Println("document registered")
+			return nil
 		},
 	}
 	regCmd.Flags().String("id", "", "document id")
@@ -56,12 +60,12 @@ func init() {
 		Use:   "finance <docID> <financier>",
 		Short: "Finance a document",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if err := syn2100.FinanceDocument(args[0], args[1]); err != nil {
-				fmt.Printf("error: %v\n", err)
-			} else {
-				fmt.Println("document financed")
+				return err
 			}
+			fmt.Println("document financed")
+			return nil
 		},
 	}
 	cmd.AddCommand(finCmd)
@@ -96,11 +100,15 @@ func init() {
 		Use:   "add-liquidity <addr> <amt>",
 		Short: "Add liquidity",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			amt := uint64(0)
 			fmt.Sscanf(args[1], "%d", &amt)
+			if amt == 0 {
+				return fmt.Errorf("amount must be greater than zero")
+			}
 			syn2100.AddLiquidity(args[0], amt)
 			fmt.Println("liquidity added")
+			return nil
 		},
 	}
 	cmd.AddCommand(addLiq)
@@ -109,14 +117,14 @@ func init() {
 		Use:   "remove-liquidity <addr> <amt>",
 		Short: "Remove liquidity",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			amt := uint64(0)
 			fmt.Sscanf(args[1], "%d", &amt)
 			if err := syn2100.RemoveLiquidity(args[0], amt); err != nil {
-				fmt.Printf("error: %v\n", err)
-			} else {
-				fmt.Println("liquidity removed")
+				return err
 			}
+			fmt.Println("liquidity removed")
+			return nil
 		},
 	}
 	cmd.AddCommand(remLiq)

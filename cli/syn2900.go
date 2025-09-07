@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -19,7 +20,7 @@ func init() {
 	issueCmd := &cobra.Command{
 		Use:   "issue",
 		Short: "Issue a new policy",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			holder, _ := cmd.Flags().GetString("holder")
 			coverage, _ := cmd.Flags().GetString("coverage")
 			premium, _ := cmd.Flags().GetUint64("premium")
@@ -28,14 +29,23 @@ func init() {
 			limit, _ := cmd.Flags().GetUint64("limit")
 			startStr, _ := cmd.Flags().GetString("start")
 			endStr, _ := cmd.Flags().GetString("end")
-			start, _ := time.Parse(time.RFC3339, startStr)
-			end, _ := time.Parse(time.RFC3339, endStr)
+			if holder == "" || coverage == "" || premium == 0 || payout == 0 {
+				return errors.New("holder, coverage, premium and payout are required")
+			}
+			start, err := time.Parse(time.RFC3339, startStr)
+			if err != nil {
+				return err
+			}
+			end, err := time.Parse(time.RFC3339, endStr)
+			if err != nil {
+				return err
+			}
 			p, err := insuranceRegistry.IssuePolicy(holder, coverage, premium, payout, deductible, limit, start, end)
 			if err != nil {
-				fmt.Printf("error: %v\n", err)
-				return
+				return err
 			}
 			fmt.Println(p.PolicyID)
+			return nil
 		},
 	}
 	issueCmd.Flags().String("holder", "", "policy holder")
@@ -52,12 +62,13 @@ func init() {
 		Use:   "claim <policy> <desc> <amount>",
 		Short: "File a claim",
 		Args:  cobra.ExactArgs(3),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			var amt uint64
-			fmt.Sscanf(args[2], "%d", &amt)
-			if _, err := insuranceRegistry.FileClaim(args[0], args[1], amt); err != nil {
-				fmt.Printf("error: %v\n", err)
+			if _, err := fmt.Sscanf(args[2], "%d", &amt); err != nil {
+				return err
 			}
+			_, err := insuranceRegistry.FileClaim(args[0], args[1], amt)
+			return err
 		},
 	}
 	cmd.AddCommand(claimCmd)
@@ -66,16 +77,16 @@ func init() {
 		Use:   "get <policy>",
 		Short: "Get policy info",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			p, ok := insuranceRegistry.GetPolicy(args[0])
 			if !ok {
-				fmt.Println("policy not found")
-				return
+				return errors.New("policy not found")
 			}
 			fmt.Printf("ID:%s Holder:%s Coverage:%s Premium:%d Payout:%d Active:%t\n", p.PolicyID, p.Holder, p.Coverage, p.Premium, p.Payout, p.Active)
 			for _, c := range p.Claims {
 				fmt.Printf("claim %s %d %s settled:%t\n", c.ClaimID, c.Amount, c.Time.Format(time.RFC3339), c.Settled)
 			}
+			return nil
 		},
 	}
 	cmd.AddCommand(getCmd)
@@ -83,11 +94,12 @@ func init() {
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List policies",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			policies := insuranceRegistry.ListPolicies()
 			for _, p := range policies {
 				fmt.Printf("%s %s %s %d %d\n", p.PolicyID, p.Holder, p.Coverage, p.Premium, p.Payout)
 			}
+			return nil
 		},
 	}
 	cmd.AddCommand(listCmd)
@@ -96,10 +108,8 @@ func init() {
 		Use:   "deactivate <policy>",
 		Short: "Deactivate a policy",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := insuranceRegistry.Deactivate(args[0]); err != nil {
-				fmt.Printf("error: %v\n", err)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return insuranceRegistry.Deactivate(args[0])
 		},
 	}
 	cmd.AddCommand(deactivateCmd)

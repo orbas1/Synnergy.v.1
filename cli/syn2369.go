@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -33,13 +34,17 @@ func init() {
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a virtual item",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			owner, _ := cmd.Flags().GetString("owner")
 			name, _ := cmd.Flags().GetString("name")
+			if owner == "" || name == "" {
+				return errors.New("owner and name are required")
+			}
 			desc, _ := cmd.Flags().GetString("desc")
 			attrs, _ := cmd.Flags().GetString("attrs")
 			it := itemRegistry.CreateItem(owner, name, desc, parseAttrs(attrs))
 			fmt.Println(it.ItemID)
+			return nil
 		},
 	}
 	createCmd.Flags().String("owner", "", "owner address")
@@ -52,10 +57,8 @@ func init() {
 		Use:   "transfer <id> <newOwner>",
 		Short: "Transfer item ownership",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := itemRegistry.TransferItem(args[0], args[1]); err != nil {
-				fmt.Printf("error: %v\n", err)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return itemRegistry.TransferItem(args[0], args[1])
 		},
 	}
 	cmd.AddCommand(transferCmd)
@@ -64,10 +67,8 @@ func init() {
 		Use:   "update-attrs <id> <attrs>",
 		Short: "Update item attributes",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := itemRegistry.UpdateAttributes(args[0], parseAttrs(args[1])); err != nil {
-				fmt.Printf("error: %v\n", err)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return itemRegistry.UpdateAttributes(args[0], parseAttrs(args[1]))
 		},
 	}
 	cmd.AddCommand(updateCmd)
@@ -76,11 +77,10 @@ func init() {
 		Use:   "get <id>",
 		Short: "Get item info",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			it, ok := itemRegistry.GetItem(args[0])
 			if !ok {
-				fmt.Println("item not found")
-				return
+				return errors.New("item not found")
 			}
 			fmt.Printf("ID:%s Owner:%s Name:%s Desc:%s\n", it.ItemID, it.Owner, it.Name, it.Description)
 			if len(it.Attributes) > 0 {
@@ -89,6 +89,7 @@ func init() {
 				}
 				fmt.Println()
 			}
+			return nil
 		},
 	}
 	cmd.AddCommand(getCmd)
@@ -96,11 +97,12 @@ func init() {
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List virtual items",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			items := itemRegistry.ListItems()
 			for _, it := range items {
 				fmt.Printf("%s %s %s\n", it.ItemID, it.Owner, it.Name)
 			}
+			return nil
 		},
 	}
 	cmd.AddCommand(listCmd)

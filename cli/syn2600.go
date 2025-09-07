@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -19,18 +20,24 @@ func init() {
 	issueCmd := &cobra.Command{
 		Use:   "issue",
 		Short: "Issue a new investor token",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			asset, _ := cmd.Flags().GetString("asset")
 			owner, _ := cmd.Flags().GetString("owner")
 			shares, _ := cmd.Flags().GetUint64("shares")
 			expStr, _ := cmd.Flags().GetString("expiry")
-			expiry, _ := time.Parse(time.RFC3339, expStr)
+			if asset == "" || owner == "" || shares == 0 {
+				return errors.New("asset, owner and shares are required")
+			}
+			expiry, err := time.Parse(time.RFC3339, expStr)
+			if err != nil {
+				return err
+			}
 			tok, err := investorRegistry.Issue(asset, owner, shares, expiry)
 			if err != nil {
-				fmt.Printf("error: %v\n", err)
-				return
+				return err
 			}
 			fmt.Println(tok.ID)
+			return nil
 		},
 	}
 	issueCmd.Flags().String("asset", "", "underlying asset")
@@ -43,10 +50,8 @@ func init() {
 		Use:   "transfer <id> <newOwner>",
 		Short: "Transfer token ownership",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := investorRegistry.Transfer(args[0], args[1]); err != nil {
-				fmt.Printf("error: %v\n", err)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return investorRegistry.Transfer(args[0], args[1])
 		},
 	}
 	cmd.AddCommand(transferCmd)
@@ -55,12 +60,12 @@ func init() {
 		Use:   "return <id> <amount>",
 		Short: "Record a return payment",
 		Args:  cobra.ExactArgs(2),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			var amt uint64
-			fmt.Sscanf(args[1], "%d", &amt)
-			if err := investorRegistry.RecordReturn(args[0], amt); err != nil {
-				fmt.Printf("error: %v\n", err)
+			if _, err := fmt.Sscanf(args[1], "%d", &amt); err != nil {
+				return err
 			}
+			return investorRegistry.RecordReturn(args[0], amt)
 		},
 	}
 	cmd.AddCommand(returnCmd)
@@ -69,16 +74,16 @@ func init() {
 		Use:   "get <id>",
 		Short: "Get token info",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			tok, ok := investorRegistry.Get(args[0])
 			if !ok {
-				fmt.Println("token not found")
-				return
+				return errors.New("token not found")
 			}
 			fmt.Printf("ID:%s Asset:%s Owner:%s Shares:%d Active:%t\n", tok.ID, tok.Asset, tok.Owner, tok.Shares, tok.Active)
 			for _, r := range tok.Returns {
 				fmt.Printf("return %d %s\n", r.Amount, r.Time.Format(time.RFC3339))
 			}
+			return nil
 		},
 	}
 	cmd.AddCommand(getCmd)
@@ -86,11 +91,12 @@ func init() {
 	listCmd := &cobra.Command{
 		Use:   "list",
 		Short: "List investor tokens",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			tokens := investorRegistry.List()
 			for _, tok := range tokens {
 				fmt.Printf("%s %s %s %d\n", tok.ID, tok.Asset, tok.Owner, tok.Shares)
 			}
+			return nil
 		},
 	}
 	cmd.AddCommand(listCmd)
@@ -99,10 +105,8 @@ func init() {
 		Use:   "deactivate <id>",
 		Short: "Deactivate an investor token",
 		Args:  cobra.ExactArgs(1),
-		Run: func(cmd *cobra.Command, args []string) {
-			if err := investorRegistry.Deactivate(args[0]); err != nil {
-				fmt.Printf("error: %v\n", err)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return investorRegistry.Deactivate(args[0])
 		},
 	}
 	cmd.AddCommand(deactivateCmd)
