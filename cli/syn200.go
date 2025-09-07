@@ -19,12 +19,17 @@ func init() {
 	registerCmd := &cobra.Command{
 		Use:   "register",
 		Short: "Register a carbon project",
-		Run: func(cmd *cobra.Command, args []string) {
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			owner, _ := cmd.Flags().GetString("owner")
 			name, _ := cmd.Flags().GetString("name")
 			total, _ := cmd.Flags().GetUint64("total")
+			if owner == "" || name == "" || total == 0 {
+				return fmt.Errorf("owner, name and total must be provided")
+			}
 			p := carbonRegistry.Register(owner, name, total)
-			fmt.Println(p.ID)
+			cmd.Println(p.ID)
+			return nil
 		},
 	}
 	registerCmd.Flags().String("owner", "", "project owner")
@@ -40,7 +45,7 @@ func init() {
 			var amt uint64
 			fmt.Sscanf(args[2], "%d", &amt)
 			if err := carbonRegistry.Issue(args[0], args[1], amt); err != nil {
-				fmt.Printf("error: %v\n", err)
+				cmd.Printf("error: %v\n", err)
 			}
 		},
 	}
@@ -54,7 +59,7 @@ func init() {
 			var amt uint64
 			fmt.Sscanf(args[2], "%d", &amt)
 			if err := carbonRegistry.Retire(args[0], args[1], amt); err != nil {
-				fmt.Printf("error: %v\n", err)
+				cmd.Printf("error: %v\n", err)
 			}
 		},
 	}
@@ -70,7 +75,7 @@ func init() {
 				status = args[3]
 			}
 			if err := carbonRegistry.AddVerification(args[0], args[1], args[2], status); err != nil {
-				fmt.Printf("error: %v\n", err)
+				cmd.Printf("error: %v\n", err)
 			}
 		},
 	}
@@ -83,11 +88,11 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			verifs, ok := carbonRegistry.Verifications(args[0])
 			if !ok {
-				fmt.Println("project not found")
+				cmd.Println("project not found")
 				return
 			}
 			for _, v := range verifs {
-				fmt.Printf("%s %s %s %s\n", v.Verifier, v.RecordID, v.Status, v.Time.Format(time.RFC3339))
+				cmd.Printf("%s %s %s %s\n", v.Verifier, v.RecordID, v.Status, v.Time.Format(time.RFC3339))
 			}
 		},
 	}
@@ -100,10 +105,10 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			p, ok := carbonRegistry.ProjectInfo(args[0])
 			if !ok {
-				fmt.Println("project not found")
+				cmd.Println("project not found")
 				return
 			}
-			fmt.Printf("ID:%s Owner:%s Name:%s Total:%d Issued:%d Retired:%d\n", p.ID, p.Owner, p.Name, p.TotalCredits, p.IssuedCredits, p.RetiredCredits)
+			cmd.Printf("ID:%s Owner:%s Name:%s Total:%d Issued:%d Retired:%d\n", p.ID, p.Owner, p.Name, p.TotalCredits, p.IssuedCredits, p.RetiredCredits)
 		},
 	}
 	cmd.AddCommand(infoCmd)
@@ -114,7 +119,7 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			projects := carbonRegistry.ListProjects()
 			for _, p := range projects {
-				fmt.Printf("%s %s %s %d %d %d\n", p.ID, p.Owner, p.Name, p.TotalCredits, p.IssuedCredits, p.RetiredCredits)
+				cmd.Printf("%s %s %s %d %d %d\n", p.ID, p.Owner, p.Name, p.TotalCredits, p.IssuedCredits, p.RetiredCredits)
 			}
 		},
 	}

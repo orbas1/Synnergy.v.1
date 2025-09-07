@@ -19,17 +19,21 @@ func init() {
 	createCmd := &cobra.Command{
 		Use:   "create",
 		Short: "Create a new token",
-		Run: func(cmd *cobra.Command, args []string) {
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			id, _ := cmd.Flags().GetString("id")
 			name, _ := cmd.Flags().GetString("name")
 			symbol, _ := cmd.Flags().GetString("symbol")
 			owner, _ := cmd.Flags().GetString("owner")
 			val, _ := cmd.Flags().GetUint64("valuation")
-			if _, err := syn131.Create(id, name, symbol, owner, val); err != nil {
-				fmt.Println(err)
-				return
+			if id == "" || name == "" || symbol == "" || owner == "" {
+				return fmt.Errorf("id, name, symbol and owner must be provided")
 			}
-			fmt.Println("token created")
+			if _, err := syn131.Create(id, name, symbol, owner, val); err != nil {
+				return err
+			}
+			cmd.Println("token created")
+			return nil
 		},
 	}
 	createCmd.Flags().String("id", "", "token id")
@@ -37,21 +41,26 @@ func init() {
 	createCmd.Flags().String("symbol", "", "symbol")
 	createCmd.Flags().String("owner", "", "owner")
 	createCmd.Flags().Uint64("valuation", 0, "valuation")
+	createCmd.MarkFlagRequired("id")
+	createCmd.MarkFlagRequired("name")
+	createCmd.MarkFlagRequired("symbol")
+	createCmd.MarkFlagRequired("owner")
 	cmd.AddCommand(createCmd)
 
 	valCmd := &cobra.Command{
 		Use:   "value <id> <valuation>",
 		Args:  cobra.ExactArgs(2),
 		Short: "Update valuation",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			val, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid valuation")
-				return
+				return fmt.Errorf("invalid valuation")
 			}
 			if err := syn131.UpdateValuation(args[0], val); err != nil {
-				fmt.Println(err)
+				return err
 			}
+			cmd.Println("valuation updated")
+			return nil
 		},
 	}
 	cmd.AddCommand(valCmd)
@@ -60,13 +69,13 @@ func init() {
 		Use:   "get <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Get token info",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			tok, ok := syn131.Get(args[0])
 			if !ok {
-				fmt.Println("not found")
-				return
+				return fmt.Errorf("not found")
 			}
-			fmt.Printf("%s %s %s owner:%s val:%d\n", tok.ID, tok.Name, tok.Symbol, tok.Owner, tok.Valuation)
+			cmd.Printf("%s %s %s owner:%s val:%d\n", tok.ID, tok.Name, tok.Symbol, tok.Owner, tok.Valuation)
+			return nil
 		},
 	}
 	cmd.AddCommand(getCmd)

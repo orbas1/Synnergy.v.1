@@ -19,29 +19,38 @@ func init() {
 	initCmd := &cobra.Command{
 		Use:   "init",
 		Short: "Initialise a music token",
-		Run: func(cmd *cobra.Command, args []string) {
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			title, _ := cmd.Flags().GetString("title")
 			artist, _ := cmd.Flags().GetString("artist")
 			album, _ := cmd.Flags().GetString("album")
+			if title == "" || artist == "" || album == "" {
+				return fmt.Errorf("title, artist and album must be provided")
+			}
 			musicToken = core.NewMusicToken(title, artist, album)
-			fmt.Println("token initialised")
+			cmd.Println("token initialised")
+			return nil
 		},
 	}
 	initCmd.Flags().String("title", "", "song title")
 	initCmd.Flags().String("artist", "", "artist")
 	initCmd.Flags().String("album", "", "album")
+	initCmd.MarkFlagRequired("title")
+	initCmd.MarkFlagRequired("artist")
+	initCmd.MarkFlagRequired("album")
 	cmd.AddCommand(initCmd)
 
 	infoCmd := &cobra.Command{
 		Use:   "info",
 		Short: "Show token info",
-		Run: func(cmd *cobra.Command, args []string) {
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if musicToken == nil {
-				fmt.Println("token not initialised")
-				return
+				return fmt.Errorf("token not initialised")
 			}
 			t, a, al := musicToken.Info()
-			fmt.Printf("%s by %s on %s\n", t, a, al)
+			cmd.Printf("%s by %s on %s\n", t, a, al)
+			return nil
 		},
 	}
 	cmd.AddCommand(infoCmd)
@@ -49,15 +58,21 @@ func init() {
 	updateCmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update token metadata",
-		Run: func(cmd *cobra.Command, args []string) {
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if musicToken == nil {
-				fmt.Println("token not initialised")
-				return
+				return fmt.Errorf("token not initialised")
+			}
+			changed := cmd.Flags().Changed("title") || cmd.Flags().Changed("artist") || cmd.Flags().Changed("album")
+			if !changed {
+				return fmt.Errorf("at least one metadata field must be provided")
 			}
 			title, _ := cmd.Flags().GetString("title")
 			artist, _ := cmd.Flags().GetString("artist")
 			album, _ := cmd.Flags().GetString("album")
 			musicToken.Update(title, artist, album)
+			cmd.Println("metadata updated")
+			return nil
 		},
 	}
 	updateCmd.Flags().String("title", "", "song title")
@@ -69,17 +84,16 @@ func init() {
 		Use:   "share <addr> <share>",
 		Args:  cobra.ExactArgs(2),
 		Short: "Set royalty share",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if musicToken == nil {
-				fmt.Println("token not initialised")
-				return
+				return fmt.Errorf("token not initialised")
 			}
 			s, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid share")
-				return
+				return fmt.Errorf("invalid share")
 			}
 			musicToken.SetRoyaltyShare(args[0], s)
+			return nil
 		},
 	}
 	cmd.AddCommand(shareCmd)
@@ -88,24 +102,22 @@ func init() {
 		Use:   "payout <amount>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Distribute payout",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			if musicToken == nil {
-				fmt.Println("token not initialised")
-				return
+				return fmt.Errorf("token not initialised")
 			}
 			amt, err := strconv.ParseUint(args[0], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
-				return
+				return fmt.Errorf("invalid amount")
 			}
 			payouts, err := musicToken.Distribute(amt)
 			if err != nil {
-				fmt.Println(err)
-				return
+				return err
 			}
 			for addr, p := range payouts {
 				fmt.Printf("%s:%d\n", addr, p)
 			}
+			return nil
 		},
 	}
 	cmd.AddCommand(payoutCmd)
