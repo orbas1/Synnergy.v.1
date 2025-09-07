@@ -1,6 +1,6 @@
 # Development Stages and File Index
 
-## Stages 1-135 – File Upgrade Checklist
+## Stages 1-136 – File Upgrade Checklist
 
 ### Progress
 - Stage 1: In Progress – issue templates, PR template, README and root `.gitignore` upgraded; remaining files pending.
@@ -59,6 +59,7 @@
 - Stage 51: Completed – syn200, syn20, syn1100, syn12, syn1300, syn131, syn1401, syn1600 and syn1700 token CLIs validated with required flags and tests.
 
 - Stage 53: Complete – bill registry, forex pair, SYN3500 token, futures contract, index token, grant registry, government benefit, charity token, legal token and SYN500 utility token CLIs validated with tests; Stage 54 will address SYN5000+ commands.
+- Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -7568,3 +7569,93 @@
 | 133 | docs/ux/command_history.md | [ ] |
 | 134 | docs/ux/authentication_roles.md | [ ] |
 | 135 | docs/ux/status_indicators.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/All Token standard Benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/All Token standard Benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Authority node benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Authority node benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Benchmarks_full_report_and_assessment.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Benchmarks_full_report_and_assessment_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Charity benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Charity benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Coin benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Coin benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Compliance benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Compliance benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Consensus_benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Consensus_benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Contract benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Contract benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Governance benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Governance benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/High availability benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/High availability benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Ledger benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Ledger benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Loanpool benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Loanpool benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Network benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Network benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Node benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Node benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Opcode benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Opcode benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Security benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Security benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Speed Benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Speed Benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Storage benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Storage benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/VM benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/VM benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Validation benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Validation benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Wallet benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/Wallet benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/ai benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/ai benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/transactions benchmarks.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Benchmarks/transactions benchmarks_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Ai security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Ai security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Authority node security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Authority node security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Block security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Block security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Charity security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Charity security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Compliance security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Compliance security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Consensus security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Consensus security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Contract security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Contract security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Gas security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Gas security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Governance security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Governance security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Ledger security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Ledger security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Loanpool security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Loanpool security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Network security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Network security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Node security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Node security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Opcode security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Opcode security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Speed security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Speed security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Storage security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Storage security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Sub blocks security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Sub blocks security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Token standards security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Token standards security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Transaction security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Transaction security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Treasury security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Treasury security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Vm security.md | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/Vm security_test.go | [ ] |
+| 136 | Security assessments & Benchmark assessments/Security assessments/go.mod | [ ] |
+| 136 | Security assessments & Benchmark assessments/go.mod | [ ] |
