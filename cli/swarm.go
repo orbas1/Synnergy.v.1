@@ -20,10 +20,11 @@ func init() {
 		Use:   "join <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Join a node to the swarm",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			n := core.NewNode(args[0], args[0], core.NewLedger())
 			swarm.Join(n)
-			fmt.Println("node joined")
+			printOutput(map[string]string{"status": "joined", "id": args[0]})
+			return nil
 		},
 	}
 
@@ -31,18 +32,19 @@ func init() {
 		Use:   "leave <id>",
 		Args:  cobra.ExactArgs(1),
 		Short: "Remove a node from the swarm",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			swarm.Leave(args[0])
+			printOutput(map[string]string{"status": "left", "id": args[0]})
+			return nil
 		},
 	}
 
 	peersCmd := &cobra.Command{
 		Use:   "peers",
 		Short: "List peer IDs",
-		Run: func(cmd *cobra.Command, args []string) {
-			for _, id := range swarm.Peers() {
-				fmt.Println(id)
-			}
+		RunE: func(cmd *cobra.Command, args []string) error {
+			printOutput(swarm.Peers())
+			return nil
 		},
 	}
 
@@ -50,23 +52,25 @@ func init() {
 		Use:   "broadcast <from> <to> <amount>",
 		Args:  cobra.ExactArgs(3),
 		Short: "Broadcast a transaction to all members",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			amt, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
-				return
+				return fmt.Errorf("invalid amount")
 			}
 			tx := core.NewTransaction(args[0], args[1], amt, 0, 0)
 			swarm.Broadcast(tx)
+			printOutput(map[string]string{"status": "broadcast"})
+			return nil
 		},
 	}
 
 	consensusCmd := &cobra.Command{
 		Use:   "consensus",
 		Short: "Start consensus on the swarm",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			blocks := swarm.StartConsensus()
-			fmt.Printf("mined %d blocks\n", len(blocks))
+			printOutput(map[string]int{"mined": len(blocks)})
+			return nil
 		},
 	}
 

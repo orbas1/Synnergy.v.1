@@ -1,12 +1,11 @@
 package cli
 
 import (
-	"encoding/json"
-	"fmt"
-	"strconv"
+        "fmt"
+        "strconv"
 
-	"github.com/spf13/cobra"
-	"synnergy/core"
+        "github.com/spf13/cobra"
+        "synnergy/core"
 )
 
 var (
@@ -25,13 +24,12 @@ func init() {
 		Args:  cobra.MinimumNArgs(2),
 		Short: "Register a new side-chain",
 		Run: func(cmd *cobra.Command, args []string) {
-			sc, err := sideReg.Register(args[0], args[1], args[2:])
-			if err != nil {
-				fmt.Println("error:", err)
-				return
-			}
-			out, _ := json.MarshalIndent(sc, "", "  ")
-			fmt.Println(string(out))
+                        sc, err := sideReg.Register(args[0], args[1], args[2:])
+                        if err != nil {
+                                fmt.Println("error:", err)
+                                return
+                        }
+                        printOutput(sc)
 		},
 	}
 
@@ -51,11 +49,11 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Fetch a submitted side-chain header",
 		Run: func(cmd *cobra.Command, args []string) {
-			if h, ok := sideReg.GetHeader(args[0]); ok {
-				fmt.Println(h)
-			} else {
-				fmt.Println("not found")
-			}
+                        if h, ok := sideReg.GetHeader(args[0]); ok {
+                                printOutput(h)
+                        } else {
+                                printOutput("not found")
+                        }
 		},
 	}
 
@@ -64,12 +62,11 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Display side-chain metadata",
 		Run: func(cmd *cobra.Command, args []string) {
-			if sc, ok := sideReg.Meta(args[0]); ok {
-				out, _ := json.MarshalIndent(sc, "", "  ")
-				fmt.Println(string(out))
-			} else {
-				fmt.Println("not found")
-			}
+                        if sc, ok := sideReg.Meta(args[0]); ok {
+                                printOutput(sc)
+                        } else {
+                                printOutput("not found")
+                        }
 		},
 	}
 
@@ -77,11 +74,10 @@ func init() {
 		Use:   "list",
 		Short: "List registered side-chains",
 		Run: func(cmd *cobra.Command, args []string) {
-			scs := sideReg.List()
-			out, _ := json.MarshalIndent(scs, "", "  ")
-			fmt.Println(string(out))
-		},
-	}
+                        scs := sideReg.List()
+                        printOutput(scs)
+                },
+        }
 
 	pauseCmd := &cobra.Command{
 		Use:   "pause [id]",

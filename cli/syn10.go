@@ -26,7 +26,7 @@ func init() {
 			id := tokenRegistry.NextID()
 			syn10 = tokens.NewSYN10Token(id, name, symbol, issuer, rate, uint8(dec))
 			tokenRegistry.Register(syn10)
-			fmt.Println("syn10 initialised")
+			printOutput(map[string]any{"status": "initialised", "id": id})
 		},
 	}
 	initCmd.Flags().String("name", "", "token name")
@@ -42,13 +42,13 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn10 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
 			var rate float64
 			fmt.Sscanf(args[0], "%f", &rate)
 			syn10.SetExchangeRate(rate)
-			fmt.Println("rate updated")
+			printOutput(map[string]string{"status": "rate updated"})
 		},
 	}
 	cmd.AddCommand(setRateCmd)
@@ -58,11 +58,11 @@ func init() {
 		Short: "Show token info",
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn10 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
 			info := syn10.Info()
-			fmt.Printf("Name:%s Symbol:%s Issuer:%s Rate:%f Supply:%d\n", info.Name, info.Symbol, info.Issuer, info.ExchangeRate, info.TotalSupply)
+			printOutput(info)
 		},
 	}
 	cmd.AddCommand(infoCmd)
@@ -73,16 +73,16 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn10 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
 			var amt uint64
 			fmt.Sscanf(args[1], "%d", &amt)
 			if err := syn10.Mint(args[0], amt); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]string{"error": err.Error()})
 				return
 			}
-			fmt.Println("minted")
+			printOutput(map[string]string{"status": "minted"})
 		},
 	}
 	cmd.AddCommand(mintCmd)
@@ -93,16 +93,16 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn10 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
 			var amt uint64
 			fmt.Sscanf(args[2], "%d", &amt)
 			if err := syn10.Transfer(args[0], args[1], amt); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]string{"error": err.Error()})
 				return
 			}
-			fmt.Println("transferred")
+			printOutput(map[string]string{"status": "transferred"})
 		},
 	}
 	cmd.AddCommand(transferCmd)
@@ -113,10 +113,10 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn10 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
-			fmt.Println(syn10.BalanceOf(args[0]))
+			printOutput(map[string]uint64{"balance": syn10.BalanceOf(args[0])})
 		},
 	}
 	cmd.AddCommand(balanceCmd)

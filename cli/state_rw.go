@@ -2,7 +2,6 @@ package cli
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -91,6 +90,7 @@ func init() {
 		Short: "Set a key/value pair",
 		Run: func(cmd *cobra.Command, args []string) {
 			state.SetState([]byte(args[0]), []byte(args[1]))
+			printOutput(map[string]string{"status": "ok"})
 		},
 	}
 
@@ -101,10 +101,10 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			v, err := state.GetState([]byte(args[0]))
 			if err != nil {
-				fmt.Println("not found")
+				printOutput(map[string]string{"error": "not found"})
 				return
 			}
-			fmt.Println(string(v))
+			printOutput(map[string]string{"value": string(v)})
 		},
 	}
 
@@ -114,7 +114,7 @@ func init() {
 		Short: "Check if key exists",
 		Run: func(cmd *cobra.Command, args []string) {
 			ok, _ := state.HasState([]byte(args[0]))
-			fmt.Println(ok)
+			printOutput(map[string]bool{"exists": ok})
 		},
 	}
 
@@ -125,12 +125,14 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			amt, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
+				printOutput(map[string]string{"error": "invalid amount"})
 				return
 			}
 			if err := state.Transfer(core.Address(args[0]), core.Address(args[1]), amt); err != nil {
-				fmt.Println(err)
+				printOutput(map[string]string{"error": err.Error()})
+				return
 			}
+			printOutput(map[string]string{"status": "ok"})
 		},
 	}
 
@@ -139,7 +141,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show balance",
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println(state.BalanceOf(core.Address(args[0])))
+			printOutput(map[string]uint64{"balance": state.BalanceOf(core.Address(args[0]))})
 		},
 	}
 
@@ -149,9 +151,11 @@ func init() {
 		Short: "List key/values with prefix",
 		Run: func(cmd *cobra.Command, args []string) {
 			it := state.PrefixIterator([]byte(args[0]))
+			vals := make([]string, 0)
 			for it.Next() {
-				fmt.Println(string(it.Value()))
+				vals = append(vals, string(it.Value()))
 			}
+			printOutput(vals)
 		},
 	}
 
