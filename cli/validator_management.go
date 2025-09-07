@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -27,11 +26,13 @@ func init() {
 			stake, _ := strconv.ParseUint(args[1], 10, 64)
 			if err := validatorMgr.Add(context.Background(), args[0], stake); err != nil {
 				if e, ok := err.(*ierr.Error); ok {
-					fmt.Printf("error (%s): %s\n", e.Code, e.Message)
+					printOutput(map[string]any{"error": e.Message, "code": e.Code})
 				} else {
-					fmt.Println("error:", err)
+					printOutput(map[string]any{"error": err.Error()})
 				}
+				return
 			}
+			printOutput(map[string]any{"status": "added", "address": args[0]})
 		},
 	}
 
@@ -42,6 +43,7 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("RemoveValidator")
 			validatorMgr.Remove(context.Background(), args[0])
+			printOutput(map[string]any{"status": "removed", "address": args[0]})
 		},
 	}
 
@@ -52,6 +54,7 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("SlashValidator")
 			validatorMgr.Slash(context.Background(), args[0])
+			printOutput(map[string]any{"status": "slashed", "address": args[0]})
 		},
 	}
 
@@ -60,9 +63,7 @@ func init() {
 		Short: "List eligible validators",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("Eligible")
-			for addr, stake := range validatorMgr.Eligible() {
-				fmt.Printf("%s:%d\n", addr, stake)
-			}
+			printOutput(validatorMgr.Eligible())
 		},
 	}
 
@@ -72,7 +73,7 @@ func init() {
 		Short: "Show validator stake",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("Stake")
-			fmt.Println(validatorMgr.Stake(args[0]))
+			printOutput(map[string]uint64{"stake": validatorMgr.Stake(args[0])})
 		},
 	}
 
@@ -81,8 +82,10 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Set minimum stake requirement",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("SetMinStake")
 			s, _ := strconv.ParseUint(args[0], 10, 64)
 			validatorMgr = core.NewValidatorManager(s)
+			printOutput(map[string]any{"minStake": s})
 		},
 	}
 

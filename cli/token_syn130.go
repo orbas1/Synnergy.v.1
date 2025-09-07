@@ -10,7 +10,10 @@ import (
 	"synnergy/core"
 )
 
-var syn130Registry = core.NewTangibleAssetRegistry()
+var (
+	syn130Registry = core.NewTangibleAssetRegistry()
+	syn130IDs      []string
+)
 
 func init() {
 	cmd := &cobra.Command{
@@ -26,6 +29,8 @@ func init() {
 			val, _ := strconv.ParseUint(args[3], 10, 64)
 			if _, err := syn130Registry.Register(args[0], args[1], args[2], val); err != nil {
 				fmt.Println("error:", err)
+			} else {
+				syn130IDs = append(syn130IDs, args[0])
 			}
 		},
 	}
@@ -93,6 +98,21 @@ func init() {
 		},
 	}
 
-	cmd.AddCommand(registerCmd, valueCmd, saleCmd, leaseCmd, endLeaseCmd, infoCmd)
+	listCmd := &cobra.Command{
+		Use:   "list",
+		Short: "List all tangible assets",
+		Run: func(cmd *cobra.Command, args []string) {
+			var assets []*core.TangibleAsset
+			for _, id := range syn130IDs {
+				if a, ok := syn130Registry.Get(id); ok {
+					assets = append(assets, a)
+				}
+			}
+			b, _ := json.MarshalIndent(assets, "", "  ")
+			fmt.Println(string(b))
+		},
+	}
+
+	cmd.AddCommand(registerCmd, valueCmd, saleCmd, leaseCmd, endLeaseCmd, infoCmd, listCmd)
 	rootCmd.AddCommand(cmd)
 }

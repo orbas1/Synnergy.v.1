@@ -15,6 +15,7 @@ func init() {
 		Use:   "new",
 		Short: "Generate a new wallet",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("WalletNew")
 			w, err := core.NewWallet()
 			if err != nil {
 				return err

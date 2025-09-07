@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -21,21 +20,22 @@ func init() {
 		Args:  cobra.ExactArgs(4),
 		Short: "Start a sandbox",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("SandboxStart")
 			gas, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
-				fmt.Println("invalid gas")
+				printOutput(map[string]any{"error": "invalid gas"})
 				return
 			}
 			mem, err := strconv.ParseUint(args[3], 10, 64)
 			if err != nil {
-				fmt.Println("invalid memory limit")
+				printOutput(map[string]any{"error": "invalid memory"})
 				return
 			}
 			if _, err := sandboxMgr.StartSandbox(args[0], args[1], gas, mem); err != nil {
-				fmt.Println("start error:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Println("sandbox started")
+			printOutput(map[string]any{"status": "started", "id": args[0]})
 		},
 	}
 	cmd.AddCommand(startCmd)
@@ -45,11 +45,12 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Stop a sandbox",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("SandboxStop")
 			if err := sandboxMgr.StopSandbox(args[0]); err != nil {
-				fmt.Println("stop error:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Println("sandbox stopped")
+			printOutput(map[string]any{"status": "stopped", "id": args[0]})
 		},
 	}
 	cmd.AddCommand(stopCmd)
@@ -59,11 +60,12 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Delete a sandbox",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("SandboxDelete")
 			if err := sandboxMgr.DeleteSandbox(args[0]); err != nil {
-				fmt.Println("delete error:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Println("sandbox deleted")
+			printOutput(map[string]any{"status": "deleted", "id": args[0]})
 		},
 	}
 	cmd.AddCommand(deleteCmd)
@@ -73,11 +75,12 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Reset sandbox timer",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("SandboxReset")
 			if err := sandboxMgr.ResetSandbox(args[0]); err != nil {
-				fmt.Println("reset error:", err)
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
-			fmt.Println("sandbox reset")
+			printOutput(map[string]any{"status": "reset", "id": args[0]})
 		},
 	}
 	cmd.AddCommand(resetCmd)
@@ -87,12 +90,13 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show sandbox status",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("SandboxStatus")
 			sb, ok := sandboxMgr.SandboxStatus(args[0])
 			if !ok {
-				fmt.Println("sandbox not found")
+				printOutput(map[string]any{"error": "not found"})
 				return
 			}
-			fmt.Printf("%+v\n", sb)
+			printOutput(sb)
 		},
 	}
 	cmd.AddCommand(statusCmd)
@@ -101,9 +105,8 @@ func init() {
 		Use:   "list",
 		Short: "List sandboxes",
 		Run: func(cmd *cobra.Command, args []string) {
-			for _, sb := range sandboxMgr.ListSandboxes() {
-				fmt.Printf("%+v\n", sb)
-			}
+			gasPrint("SandboxList")
+			printOutput(sandboxMgr.ListSandboxes())
 		},
 	}
 	cmd.AddCommand(listCmd)
@@ -112,8 +115,9 @@ func init() {
 		Use:   "purge",
 		Short: "Remove stopped sandboxes past TTL",
 		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("SandboxPurge")
 			sandboxMgr.PurgeInactive()
-			fmt.Println("purge complete")
+			printOutput(map[string]any{"status": "purged"})
 		},
 	}
 	cmd.AddCommand(purgeCmd)

@@ -3,6 +3,7 @@ package cli
 import (
 	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -12,7 +13,13 @@ func TestWalletNewCLI(t *testing.T) {
 	if err != nil {
 		t.Fatalf("exec: %v", err)
 	}
+	if err := rootCmd.PersistentFlags().Set("json", "false"); err != nil {
+		t.Fatalf("reset json: %v", err)
+	}
 	defer os.Remove(path)
+	if idx := strings.Index(out, "\n"); idx != -1 {
+		out = out[idx+1:]
+	}
 	var resp struct {
 		Address string `json:"address"`
 		Path    string `json:"path"`
