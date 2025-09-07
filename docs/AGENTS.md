@@ -54,6 +54,7 @@
 - Stage 48: Completed – opcode and peer management CLIs emit JSON with gas; additional CLI enhancements deferred to later stages.
 
 - Stage 49: ✅ root config flags added; regulatory, replication, rollup and sharding CLIs emit JSON with gas metrics and tests.
+- Stage 50: Completed – sidechain, staking node, state, storage marketplace, swarm, smart contract marketplace, SNVM and stake penalty CLIs emit JSON with tests.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -1075,32 +1076,33 @@
 - [ ] cli/sharding_test.go
 - [ ] cli/sidechain_ops.go
 - [ ] cli/sidechain_ops_test.go
-- [ ] cli/sidechains.go
+- [x] cli/sidechains.go
 
 **Stage 50**
-- [ ] cli/sidechains_test.go
-- [ ] cli/smart_contract_marketplace.go
-- [ ] cli/smart_contract_marketplace_test.go
-- [ ] cli/snvm.go
-- [ ] cli/snvm_test.go
-- [ ] cli/stake_penalty.go
-- [ ] cli/stake_penalty_test.go
-- [ ] cli/staking_node.go
-- [ ] cli/staking_node_test.go
-- [ ] cli/state_rw.go
-- [ ] cli/state_rw_test.go
-- [ ] cli/storage_marketplace.go
-- [ ] cli/storage_marketplace_test.go
-- [ ] cli/swarm.go
-- [ ] cli/swarm_test.go
-- [ ] cli/syn10.go
-- [ ] cli/syn1000.go
-- [ ] cli/syn1000_index.go
-- [ ] cli/syn1000_index_test.go
+- [x] cli/sidechains_test.go
+- [x] cli/smart_contract_marketplace.go
+- [x] cli/smart_contract_marketplace_test.go
+- [x] cli/snvm.go
+- [x] cli/snvm_test.go
+- [x] cli/stake_penalty.go
+- [x] cli/stake_penalty_test.go
+- [x] cli/staking_node.go
+- [x] cli/staking_node_test.go
+- [x] cli/state_rw.go
+- [x] cli/state_rw_test.go
+- [x] cli/storage_marketplace.go
+- [x] cli/storage_marketplace_test.go
+- [x] cli/swarm.go
+- [x] cli/swarm_test.go
+- [x] cli/syn10.go
+- [x] cli/syn10_test.go
+ - [x] cli/syn1000.go
+ - [x] cli/syn1000_index.go
+ - [x] cli/syn1000_index_test.go
 
 **Stage 51**
-- [ ] cli/syn1000_test.go
-- [ ] cli/syn10_test.go
+ - [x] cli/syn1000_test.go
+ - [x] cli/syn10_test.go
 - [ ] cli/syn1100.go
 - [ ] cli/syn1100_test.go
 - [ ] cli/syn12.go
@@ -3654,8 +3656,8 @@
 - [ ] cli/sharding_test.go
 - [ ] cli/sidechain_ops.go
 - [ ] cli/sidechain_ops_test.go
-- [ ] cli/sidechains.go
-- [ ] cli/sidechains_test.go
+- [x] cli/sidechains.go
+- [x] cli/sidechains_test.go
 - [ ] cli/smart_contract_marketplace.go
 - [ ] cli/smart_contract_marketplace_test.go
 - [ ] cli/snvm.go

@@ -20,14 +20,14 @@ func init() {
 		Use:   "slash <addr> <amount>",
 		Args:  cobra.ExactArgs(2),
 		Short: "Slash staked tokens",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
-				return
+				return fmt.Errorf("invalid amount")
 			}
 			stakePenaltyMgr.Slash(stakingNode, args[0], amt)
-			fmt.Println("slashed")
+			printOutput(map[string]string{"status": "slashed"})
+			return nil
 		},
 	}
 
@@ -35,14 +35,14 @@ func init() {
 		Use:   "reward <addr> <amount>",
 		Args:  cobra.ExactArgs(2),
 		Short: "Reward staked tokens",
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			amt, err := strconv.ParseUint(args[1], 10, 64)
 			if err != nil {
-				fmt.Println("invalid amount")
-				return
+				return fmt.Errorf("invalid amount")
 			}
 			stakePenaltyMgr.Reward(stakingNode, args[0], amt)
-			fmt.Println("rewarded")
+			printOutput(map[string]string{"status": "rewarded"})
+			return nil
 		},
 	}
 

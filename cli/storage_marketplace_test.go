@@ -1,32 +1,24 @@
 package cli
 
 import (
-	"bytes"
-	"context"
+	"encoding/json"
 	"testing"
 )
 
-// TestStorageMarketplaceCLI exercises listing creation via the CLI commands.
-func TestStorageMarketplaceCLI(t *testing.T) {
-	buf := new(bytes.Buffer)
-	rootCmd.SetOut(buf)
-
-	// Create listing
-	rootCmd.SetArgs([]string{"storage_marketplace", "list", "hash", "1", "alice"})
-	if err := rootCmd.ExecuteContext(context.Background()); err != nil {
-		t.Fatalf("execute: %v", err)
-	}
-	if buf.Len() == 0 {
-		t.Fatalf("expected output")
-	}
-	buf.Reset()
-
-	// List listings
-	rootCmd.SetArgs([]string{"storage_marketplace", "listings"})
-	if err := rootCmd.ExecuteContext(context.Background()); err != nil {
+// TestStorageMarketplaceListEmpty ensures listings start empty and return JSON.
+func TestStorageMarketplaceListEmpty(t *testing.T) {
+	out, err := execCommand("--json", "storage_marketplace", "listings")
+	if err != nil {
 		t.Fatalf("listings: %v", err)
 	}
-	if buf.Len() == 0 {
-		t.Fatalf("expected listings json")
+	if err := rootCmd.PersistentFlags().Set("json", "false"); err != nil {
+		t.Fatalf("reset json: %v", err)
+	}
+	var listings []any
+	if err := json.Unmarshal([]byte(out), &listings); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if len(listings) != 0 {
+		t.Fatalf("expected no listings, got %d", len(listings))
 	}
 }

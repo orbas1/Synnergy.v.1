@@ -50,7 +50,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Println(res)
+			printOutput(map[string]int64{"result": res})
 			return nil
 		},
 	}

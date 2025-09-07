@@ -26,7 +26,7 @@ func init() {
 			id := tokenRegistry.NextID()
 			syn1000 = tokens.NewSYN1000Token(id, name, symbol, uint8(dec))
 			tokenRegistry.Register(syn1000)
-			fmt.Println("syn1000 initialised")
+			printOutput(map[string]any{"status": "initialised", "id": id})
 		},
 	}
 	initCmd.Flags().String("name", "", "token name")
@@ -40,16 +40,16 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn1000 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
 			amt, ok := new(big.Rat).SetString(args[1])
 			if !ok {
-				fmt.Println("invalid amount")
+				printOutput(map[string]string{"error": "invalid amount"})
 				return
 			}
 			syn1000.AddReserve(args[0], amt)
-			fmt.Println("reserve added")
+			printOutput(map[string]string{"status": "reserve added"})
 		},
 	}
 	cmd.AddCommand(addResCmd)
@@ -60,16 +60,16 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn1000 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
 			price, ok := new(big.Rat).SetString(args[1])
 			if !ok {
-				fmt.Println("invalid price")
+				printOutput(map[string]string{"error": "invalid price"})
 				return
 			}
 			syn1000.SetReservePrice(args[0], price)
-			fmt.Println("price updated")
+			printOutput(map[string]string{"status": "price updated"})
 		},
 	}
 	cmd.AddCommand(setPriceCmd)
@@ -79,10 +79,10 @@ func init() {
 		Short: "Show total reserve value",
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn1000 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
-			fmt.Println(syn1000.TotalReserveValue().FloatString(2))
+			printOutput(map[string]string{"value": syn1000.TotalReserveValue().FloatString(2)})
 		},
 	}
 	cmd.AddCommand(valueCmd)
@@ -93,16 +93,16 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn1000 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
 			var amt uint64
 			fmt.Sscanf(args[1], "%d", &amt)
 			if err := syn1000.Mint(args[0], amt); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]string{"error": err.Error()})
 				return
 			}
-			fmt.Println("minted")
+			printOutput(map[string]string{"status": "minted"})
 		},
 	}
 	cmd.AddCommand(mintCmd)
@@ -113,16 +113,16 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn1000 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
 			var amt uint64
 			fmt.Sscanf(args[2], "%d", &amt)
 			if err := syn1000.Transfer(args[0], args[1], amt); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]string{"error": err.Error()})
 				return
 			}
-			fmt.Println("transferred")
+			printOutput(map[string]string{"status": "transferred"})
 		},
 	}
 	cmd.AddCommand(transferCmd)
@@ -133,10 +133,10 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			if syn1000 == nil {
-				fmt.Println("token not initialised")
+				printOutput("token not initialised")
 				return
 			}
-			fmt.Println(syn1000.BalanceOf(args[0]))
+			printOutput(map[string]uint64{"balance": syn1000.BalanceOf(args[0])})
 		},
 	}
 	cmd.AddCommand(balanceCmd)

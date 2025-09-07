@@ -2,7 +2,6 @@ package cli
 
 import (
 	"context"
-	"fmt"
 	"os"
 
 	synn "synnergy"
@@ -33,7 +32,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), addr)
+			printOutput(map[string]string{"address": addr})
 			return nil
 		},
 	}
@@ -43,7 +42,11 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Transfer ownership of a deployed contract",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return marketplace.TradeContract(context.Background(), args[0], args[1])
+			if err := marketplace.TradeContract(context.Background(), args[0], args[1]); err != nil {
+				return err
+			}
+			printOutput(map[string]string{"status": "traded"})
+			return nil
 		},
 	}
 

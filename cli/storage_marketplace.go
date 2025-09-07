@@ -2,8 +2,6 @@ package cli
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"strconv"
 
 	synn "synnergy"
@@ -34,7 +32,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), id)
+			printOutput(map[string]string{"id": id})
 			return nil
 		},
 	}
@@ -48,8 +46,8 @@ func init() {
 			if err != nil {
 				return err
 			}
-			enc := json.NewEncoder(cmd.OutOrStdout())
-			return enc.Encode(l)
+			printOutput(l)
+			return nil
 		},
 	}
 
@@ -63,7 +61,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), id)
+			printOutput(map[string]string{"id": id})
 			return nil
 		},
 	}

@@ -23,7 +23,7 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			dec, _ := cmd.Flags().GetUint32("decimals")
 			id := syn1000Index.Create(args[0], args[1], uint8(dec))
-			fmt.Println(id)
+			printOutput(map[string]uint64{"id": uint64(id)})
 		},
 	}
 	createCmd.Flags().Uint32("decimals", 18, "decimal places")
@@ -38,14 +38,14 @@ func init() {
 			fmt.Sscanf(args[0], "%d", &id)
 			amt, ok := new(big.Rat).SetString(args[2])
 			if !ok {
-				fmt.Println("invalid amount")
+				printOutput(map[string]string{"error": "invalid amount"})
 				return
 			}
 			if err := syn1000Index.AddReserve(tokens.TokenID(id), args[1], amt); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]string{"error": err.Error()})
 				return
 			}
-			fmt.Println("reserve added")
+			printOutput(map[string]string{"status": "reserve added"})
 		},
 	}
 	cmd.AddCommand(addResCmd)
@@ -59,14 +59,14 @@ func init() {
 			fmt.Sscanf(args[0], "%d", &id)
 			price, ok := new(big.Rat).SetString(args[2])
 			if !ok {
-				fmt.Println("invalid price")
+				printOutput(map[string]string{"error": "invalid price"})
 				return
 			}
 			if err := syn1000Index.SetReservePrice(tokens.TokenID(id), args[1], price); err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]string{"error": err.Error()})
 				return
 			}
-			fmt.Println("price updated")
+			printOutput(map[string]string{"status": "price updated"})
 		},
 	}
 	cmd.AddCommand(setPriceCmd)
@@ -80,10 +80,10 @@ func init() {
 			fmt.Sscanf(args[0], "%d", &id)
 			v, err := syn1000Index.TotalValue(tokens.TokenID(id))
 			if err != nil {
-				fmt.Println("error:", err)
+				printOutput(map[string]string{"error": err.Error()})
 				return
 			}
-			fmt.Println(v.FloatString(2))
+			printOutput(map[string]string{"value": v.FloatString(2)})
 		},
 	}
 	cmd.AddCommand(valueCmd)
