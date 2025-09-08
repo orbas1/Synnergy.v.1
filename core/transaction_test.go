@@ -30,7 +30,9 @@ func TestAttachBiometric(t *testing.T) {
 	if err != nil {
 		t.Fatalf("gen key: %v", err)
 	}
-	svc.Enroll(user, bio, pub)
+	if err := svc.Enroll(user, bio, pub); err != nil {
+		t.Fatalf("enroll: %v", err)
+	}
 	hash := sha256.Sum256(bio)
 	sig := ed25519.Sign(priv, hash[:])
 

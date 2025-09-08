@@ -33,7 +33,9 @@ func TestNetworkBroadcast(t *testing.T) {
 	if err != nil {
 		t.Fatalf("gen key: %v", err)
 	}
-	svc.Enroll("alice", bio, pub)
+	if err := svc.Enroll("alice", bio, pub); err != nil {
+		t.Fatalf("enroll: %v", err)
+	}
 	h := sha256.Sum256(bio)
 	sig := ed25519.Sign(priv, h[:])
 	tx := NewTransaction("alice", "bob", 1, 1, 1)

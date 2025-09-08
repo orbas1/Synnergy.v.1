@@ -3,6 +3,7 @@ package core
 import (
 	"crypto/ed25519"
 	"crypto/sha256"
+	"errors"
 	"sync"
 )
 
@@ -17,16 +18,35 @@ type biometricTemplate struct {
 	pub  ed25519.PublicKey
 }
 
+var (
+	ErrAddressRequired = errors.New("address required")
+	ErrAlreadyEnrolled = errors.New("biometric already enrolled")
+)
+
 // NewBiometricsAuth creates a new biometrics authentication manager.
 func NewBiometricsAuth() *BiometricsAuth {
 	return &BiometricsAuth{templates: make(map[string]biometricTemplate)}
 }
 
 // Enroll stores a hashed biometric template for the given address.
-func (b *BiometricsAuth) Enroll(addr string, biometric []byte, pub ed25519.PublicKey) {
+// Returns an error if input is invalid or the address already exists.
+func (b *BiometricsAuth) Enroll(addr string, biometric []byte, pub ed25519.PublicKey) error {
+	if addr == "" {
+		return ErrAddressRequired
+	}
+	if len(biometric) == 0 {
+		return ErrInvalidBiometric
+	}
+	if len(pub) != ed25519.PublicKeySize {
+		return ErrInvalidPublicKey
+	}
 	b.mu.Lock()
 	defer b.mu.Unlock()
+	if _, exists := b.templates[addr]; exists {
+		return ErrAlreadyEnrolled
+	}
 	b.templates[addr] = biometricTemplate{hash: sha256.Sum256(biometric), pub: pub}
+	return nil
 }
 
 // Verify compares the provided biometric data with the stored template for the address.
@@ -38,7 +58,7 @@ func (b *BiometricsAuth) Verify(addr string, biometric []byte, sig []byte) bool 
 		return false
 	}
 	h := sha256.Sum256(biometric)
-	if h != tmpl.hash || len(tmpl.pub) != ed25519.PublicKeySize {
+	if h != tmpl.hash || len(tmpl.pub) != ed25519.PublicKeySize || len(sig) != ed25519.SignatureSize {
 		return false
 	}
 	return ed25519.Verify(tmpl.pub, h[:], sig)

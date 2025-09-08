@@ -29,7 +29,10 @@ func init() {
 				fmt.Println("invalid public key:", err)
 				return
 			}
-			biometricSvc.Enroll(args[0], []byte(args[1]), ed25519.PublicKey(pubBytes))
+			if err := biometricSvc.Enroll(args[0], []byte(args[1]), ed25519.PublicKey(pubBytes)); err != nil {
+				fmt.Println("enroll failed:", err)
+				return
+			}
 			fmt.Println("biometric enrolled")
 		},
 	}
