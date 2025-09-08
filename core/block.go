@@ -16,6 +16,8 @@ type SubBlock struct {
 	Signature    string
 }
 
+const maxTimeDriftSeconds = 300 // five minutes
+
 // NewSubBlock constructs a sub-block from the given transactions and validator.
 func NewSubBlock(txs []*Transaction, validator string) *SubBlock {
 	sb := &SubBlock{Transactions: txs, Validator: validator, Timestamp: time.Now().Unix()}
@@ -40,6 +42,42 @@ func (sb *SubBlock) Hash() string {
 func (sb *SubBlock) VerifySignature() bool {
 	expected := signSubBlock(sb.Validator, sb.PohHash)
 	return sb.Signature == expected
+}
+
+// Validate checks the internal consistency of the sub-block and ensures it was
+// signed by the declared validator. It returns an error if any field is
+// malformed or tampered with.
+func (sb *SubBlock) Validate() error {
+	if len(sb.Transactions) == 0 {
+		return fmt.Errorf("no transactions")
+	}
+	seen := make(map[string]struct{})
+	for _, tx := range sb.Transactions {
+		if tx == nil {
+			return fmt.Errorf("nil transaction")
+		}
+		if _, ok := seen[tx.ID]; ok {
+			return fmt.Errorf("duplicate transaction %s", tx.ID)
+		}
+		seen[tx.ID] = struct{}{}
+	}
+	if sb.Validator == "" {
+		return fmt.Errorf("validator required")
+	}
+	now := time.Now().Unix()
+	if sb.Timestamp == 0 {
+		return fmt.Errorf("timestamp required")
+	}
+	if sb.Timestamp > now+maxTimeDriftSeconds {
+		return fmt.Errorf("timestamp in future")
+	}
+	if sb.PohHash != sb.Hash() {
+		return fmt.Errorf("poh hash mismatch")
+	}
+	if !sb.VerifySignature() {
+		return fmt.Errorf("invalid signature")
+	}
+	return nil
 }
 
 // Block aggregates validated sub-blocks and is finalized via PoW.
@@ -71,4 +109,37 @@ func (b *Block) HeaderHash(nonce uint64) string {
 func signSubBlock(validator, msg string) string {
 	h := sha256.Sum256([]byte(validator + msg))
 	return hex.EncodeToString(h[:])
+}
+
+// Validate checks that the block and its sub-blocks are internally consistent.
+// For non-genesis blocks it also verifies the stored header hash matches the
+// computed hash for the provided nonce.
+func (b *Block) Validate() error {
+	if len(b.SubBlocks) == 0 {
+		return fmt.Errorf("no sub-blocks")
+	}
+	now := time.Now().Unix()
+	if b.Timestamp == 0 {
+		return fmt.Errorf("timestamp required")
+	}
+	if b.Timestamp > now+maxTimeDriftSeconds {
+		return fmt.Errorf("timestamp in future")
+	}
+	for _, sb := range b.SubBlocks {
+		if err := sb.Validate(); err != nil {
+			return fmt.Errorf("sub-block invalid: %w", err)
+		}
+		if sb.Timestamp > b.Timestamp {
+			return fmt.Errorf("sub-block timestamp after block timestamp")
+		}
+	}
+	if b.PrevHash != "" {
+		if b.Hash == "" {
+			return fmt.Errorf("hash required")
+		}
+		if b.Hash != b.HeaderHash(b.Nonce) {
+			return fmt.Errorf("hash mismatch")
+		}
+	}
+	return nil
 }

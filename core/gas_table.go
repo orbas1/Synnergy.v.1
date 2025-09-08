@@ -3,11 +3,11 @@ package core
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -87,21 +87,43 @@ func GasTableSnapshot() GasTable {
 	return snapshot
 }
 
-// GasTableSnapshotJSON serialises the current gas schedule to JSON.  Opcode keys
+// GasTableSnapshotJSON serialises the current gas schedule to JSON. Opcode keys
 // are rendered in hexadecimal ("0x000000") form so external tooling does not
-// need awareness of internal catalogue names.  The function never returns an
-// error; JSON marshaling on simple map types is deterministic.
+// need awareness of internal catalogue names. Map iteration in Go is randomised,
+// so the function sorts the keys to produce deterministic output for hashing or
+// signature checks.
 func GasTableSnapshotJSON() ([]byte, error) {
 	snap := GasTableSnapshot()
-	out := make(map[string]uint64, len(snap))
+	type kv struct {
+		key  string
+		cost uint64
+	}
+	pairs := make([]kv, 0, len(snap))
 	for op, cost := range snap {
-		out[fmt.Sprintf("0x%06X", op)] = cost
+		pairs = append(pairs, kv{fmt.Sprintf("0x%06X", op), cost})
 	}
-	b, err := json.Marshal(out)
+	sort.Slice(pairs, func(i, j int) bool { return pairs[i].key < pairs[j].key })
+	var b bytes.Buffer
+	b.WriteByte('{')
+	for i, p := range pairs {
+		if i > 0 {
+			b.WriteByte(',')
+		}
+		fmt.Fprintf(&b, "%q:%d", p.key, p.cost)
+	}
+	b.WriteByte('}')
+	return b.Bytes(), nil
+}
+
+// WriteGasTableSnapshot persists the current gas table snapshot to the
+// provided path. The file is written in the same deterministic JSON format as
+// returned by GasTableSnapshotJSON.
+func WriteGasTableSnapshot(path string) error {
+	data, err := GasTableSnapshotJSON()
 	if err != nil {
-		return nil, err
+		return err
 	}
-	return b, nil
+	return os.WriteFile(path, data, 0644)
 }
 
 // GasCostByName returns the gas price for an exported function name. It

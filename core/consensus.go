@@ -181,10 +181,10 @@ func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
 // It verifies that the sub-block is non-nil, contains transactions and has a
 // valid signature from its declared validator.
 func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {
-	if sb == nil || len(sb.Transactions) == 0 {
+	if sb == nil {
 		return false
 	}
-	return sb.VerifySignature()
+	return sb.Validate() == nil
 }
 
 // MineBlock performs a simple SHA-256 proof-of-work using the provided
@@ -215,4 +215,13 @@ func clamp(v, min, max float64) float64 {
 	}
 	return v
 
+}
+
+// ValidateBlock checks that a block and its sub-blocks are well-formed.
+// It delegates to the block's internal validation routine.
+func (sc *SynnergyConsensus) ValidateBlock(b *Block) bool {
+	if b == nil {
+		return false
+	}
+	return b.Validate() == nil
 }

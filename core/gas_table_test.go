@@ -1,6 +1,8 @@
 package core
 
 import (
+	"bytes"
+	"encoding/json"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -124,5 +126,47 @@ func TestGasCostByName(t *testing.T) {
 	}
 	if c := GasCostByName("NotARealOp"); c != DefaultGasCost {
 		t.Fatalf("expected default cost %d for unknown, got %d", DefaultGasCost, c)
+	}
+}
+
+func TestGasTableSnapshotJSONDeterministic(t *testing.T) {
+	initGasTable()
+	first, err := GasTableSnapshotJSON()
+	if err != nil {
+		t.Fatalf("snapshot json: %v", err)
+	}
+	second, err := GasTableSnapshotJSON()
+	if err != nil {
+		t.Fatalf("snapshot json: %v", err)
+	}
+	if !bytes.Equal(first, second) {
+		t.Fatalf("expected deterministic json, got %q vs %q", first, second)
+	}
+	var m map[string]uint64
+	if err := json.Unmarshal(first, &m); err != nil {
+		t.Fatalf("invalid json: %v", err)
+	}
+	if len(m) == 0 {
+		t.Fatalf("expected non-empty gas table json")
+	}
+}
+
+func TestWriteGasTableSnapshot(t *testing.T) {
+	initGasTable()
+	dir := t.TempDir()
+	path := filepath.Join(dir, "snap.json")
+	if err := WriteGasTableSnapshot(path); err != nil {
+		t.Fatalf("write snapshot: %v", err)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read snapshot: %v", err)
+	}
+	expected, err := GasTableSnapshotJSON()
+	if err != nil {
+		t.Fatalf("snapshot json: %v", err)
+	}
+	if !bytes.Equal(data, expected) {
+		t.Fatalf("snapshot file mismatch: %q vs %q", data, expected)
 	}
 }

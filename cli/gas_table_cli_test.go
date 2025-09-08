@@ -1,9 +1,14 @@
 package cli
 
 import (
+	"bytes"
 	"encoding/json"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
+
+	"synnergy/core"
 )
 
 // TestGasSnapshotJSON ensures the snapshot command emits valid JSON and reflects
@@ -24,5 +29,26 @@ func TestGasSnapshotJSON(t *testing.T) {
 	}
 	if len(m) == 0 {
 		t.Fatalf("expected non-empty snapshot")
+	}
+}
+
+// TestGasSnapshotWrite verifies the snapshot command can persist the gas table
+// to a file in the same deterministic JSON format produced by the core helpers.
+func TestGasSnapshotWrite(t *testing.T) {
+	dir := t.TempDir()
+	path := filepath.Join(dir, "snap.json")
+	if _, err := execCommand("gas", "snapshot", "--out", path); err != nil {
+		t.Fatalf("snapshot write: %v", err)
+	}
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read snapshot: %v", err)
+	}
+	expected, err := core.GasTableSnapshotJSON()
+	if err != nil {
+		t.Fatalf("snapshot json: %v", err)
+	}
+	if !bytes.Equal(data, expected) {
+		t.Fatalf("snapshot mismatch: %q vs %q", data, expected)
 	}
 }
