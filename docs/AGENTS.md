@@ -67,7 +67,8 @@
 - Stage 59: Completed – content-node registry, secrets manager CLI, gas/opcode references and web UI wired for deterministic pricing.
 - Stage 60: Completed – contract language compatibility, contract registry and access utilities refined with tests.
 - Stage 61: Completed – audit, authority, banking, base-node peering and biometric modules hardened with Ed25519 signatures.
-- Stage 62: ✅ biometric authentication and banking node interfaces hardened with signature-verified registration and tests; CLI bank node tests run without hanging.
+- Stage 62: ✅ biometric authentication, block validation with timestamp, duplicate, and header hash checks, compression, synchronization, central banking, charity, coin (optimized supply calculations) and compliance modules with tests; gas table snapshots now emit deterministic JSON for CLI tooling, support persistence via `WriteGasTableSnapshot`, and the CLI can write snapshots directly to disk.
+- Stage 63: In Progress – consensus module now delegates block and sub-block validation to shared routines; connection pool components pending.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1367,27 +1368,32 @@
 - [x] core/biometrics_auth.go – input validation and error handling
 - [x] core/biometrics_auth_test.go – coverage for validation errors
 - [x] core/bank_institutional_node_test.go – rejects mismatched addresses and signatures
-- [ ] core/block.go
-- [ ] core/block_test.go
-- [ ] core/blockchain_compression.go
-- [ ] core/blockchain_compression_test.go
-- [ ] core/blockchain_synchronization.go
-- [ ] core/blockchain_synchronization_test.go
-- [ ] core/central_banking_node.go
-- [ ] core/central_banking_node_test.go
-- [ ] core/charity.go
-- [ ] core/charity_test.go
-- [ ] core/coin.go
-- [ ] core/coin_test.go
-- [ ] core/compliance.go
-- [ ] core/compliance_management.go
-- [ ] core/compliance_management_test.go
-- [ ] core/compliance_test.go
+- [x] core/block.go – added validation for sub-block and block structures with timestamp, duplicate transaction, sub-block ordering, and header hash verification checks
+- [x] core/block_test.go – exercises validation paths including timestamp, duplicate, ordering, hash required, and mismatch cases
+- [x] core/blockchain_compression.go – gzip ledger snapshot utilities
+- [x] core/blockchain_compression_test.go – round-trip compression test
+- [x] core/blockchain_synchronization.go – in-memory sync manager
+- [x] core/blockchain_synchronization_test.go – lifecycle coverage
+- [x] core/central_banking_node.go – CBDC minting with policy updates
+- [x] core/central_banking_node_test.go – verifies CBDC issuance restrictions
+- [x] core/charity.go – registration, voting and deposit handling
+- [x] core/charity_test.go – exercises deposit and voting flows
+- [x] core/coin.go – optimized capped supply economics helpers
+- [x] core/coin_test.go – reward and economics calculations
+- [x] core/compliance.go – KYC and fraud monitoring service
+- [x] core/compliance_management.go – address suspension and whitelist controls
+- [x] core/compliance_management_test.go – suspension and whitelist coverage
+- [x] core/compliance_test.go – KYC and anomaly detection tests
+- [x] core/gas_table.go – deterministic snapshot sorting and file persistence helper
+- [x] core/gas_table_test.go – verifies deterministic JSON output and persistence
+- [x] cli/gas_table.go – gas snapshot command writes to disk and prints JSON
+- [x] cli/gas_table_cli_test.go – covers JSON output and snapshot file writing
+- [x] cli/gas_table_test.go – ensures snapshot contains entries
 
 **Stage 63**
 - [ ] core/connection_pool.go
 - [ ] core/connection_pool_test.go
-- [ ] core/consensus.go
+- [x] core/consensus.go – delegates block and sub-block checks to internal validation
 - [ ] core/consensus_adaptive_management.go
 - [ ] core/consensus_adaptive_management_test.go
 - [ ] core/consensus_difficulty.go

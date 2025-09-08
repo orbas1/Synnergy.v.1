@@ -73,3 +73,18 @@ func TestValidateSubBlock(t *testing.T) {
 		t.Fatalf("expected invalid sub-block")
 	}
 }
+
+func TestValidateBlock(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	tx := NewTransaction("a", "b", 1, 0, 0)
+	sb := NewSubBlock([]*Transaction{tx}, "val")
+	block := NewBlock([]*SubBlock{sb}, "")
+	sc.MineBlock(block, 1)
+	if !sc.ValidateBlock(block) {
+		t.Fatalf("expected valid block")
+	}
+	block.SubBlocks[0].Transactions = nil
+	if sc.ValidateBlock(block) {
+		t.Fatalf("expected invalid block")
+	}
+}

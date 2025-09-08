@@ -31,11 +31,20 @@ func init() {
 	}
 
 	var jsonOut bool
+	var outPath string
 	snapCmd := &cobra.Command{
 		Use:   "snapshot",
-		Short: "Print current gas table snapshot",
+		Short: "Print or persist current gas table snapshot",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("GasSnapshot")
+			if outPath != "" {
+				if err := core.WriteGasTableSnapshot(outPath); err != nil {
+					printOutput(err.Error())
+					return
+				}
+				printOutput("snapshot written")
+				return
+			}
 			if jsonOut {
 				data, err := core.GasTableSnapshotJSON()
 				if err != nil {
@@ -50,6 +59,7 @@ func init() {
 		},
 	}
 	snapCmd.Flags().BoolVar(&jsonOut, "json", false, "output JSON")
+	snapCmd.Flags().StringVar(&outPath, "out", "", "write snapshot to file")
 
 	gasCmd.AddCommand(setCmd)
 	gasCmd.AddCommand(snapCmd)

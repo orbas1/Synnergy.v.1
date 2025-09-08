@@ -2,7 +2,6 @@ package core
 
 import "math"
 
-
 const (
 	// CoinName represents the name of the native coin.
 	CoinName = "Synthron"
@@ -21,6 +20,9 @@ const (
 // is returned once all halvings have completed.
 func BlockReward(height uint64) uint64 {
 	halvings := height / HalvingInterval
+	if halvings >= 63 {
+		return 0
+	}
 	reward := InitialBlockReward >> halvings
 	return reward
 }
@@ -29,11 +31,28 @@ func BlockReward(height uint64) uint64 {
 // the given block height, taking the halving schedule into account.
 func CirculatingSupply(height uint64) uint64 {
 	supply := GenesisAllocation
-	for i := uint64(0); i < height; i++ {
-		supply += BlockReward(i)
-		if supply >= MaxSupply {
-			return MaxSupply
+	reward := InitialBlockReward
+	blocks := height
+
+	for blocks > 0 && reward > 0 {
+		interval := HalvingInterval
+		if blocks < interval {
+			interval = blocks
 		}
+
+		if reward > 0 {
+			if reward >= (MaxSupply-supply)/interval {
+				return MaxSupply
+			}
+			supply += reward * interval
+		}
+
+		blocks -= interval
+		reward >>= 1
+	}
+
+	if supply > MaxSupply {
+		return MaxSupply
 	}
 	return supply
 }
@@ -84,4 +103,3 @@ func LockupDuration(base, V, threshold, sigma float64) float64 {
 func PriceToSupplyRatio(price float64, height uint64) float64 {
 	return price / math.Max(float64(CirculatingSupply(height)), 1)
 }
-
