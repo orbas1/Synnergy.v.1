@@ -1,24 +1,53 @@
 package synnergy
 
-import "testing"
+import (
+	"sort"
+	"testing"
+)
 
-func TestIsLanguageSupported(t *testing.T) {
-	cases := []struct {
-		lang string
-		want bool
-	}{
-		{"wasm", true},
-		{"golang", true},
-		{"javascript", true},
-		{"solidity", true},
-		{"rust", true},
-		{"python", true},
-		{"yul", true},
-		{"haskell", false},
+// resetLanguages restores the default set for test isolation.
+func resetLanguages() {
+	langMu.Lock()
+	supportedLangs = map[string]struct{}{
+		"wasm":       {},
+		"golang":     {},
+		"javascript": {},
+		"solidity":   {},
+		"rust":       {},
+		"python":     {},
+		"yul":        {},
 	}
-	for _, c := range cases {
-		if got := IsLanguageSupported(c.lang); got != c.want {
-			t.Errorf("%s: expected %v got %v", c.lang, c.want, got)
+	langMu.Unlock()
+}
+
+func TestLanguageRegistry(t *testing.T) {
+	resetLanguages()
+
+	// Default languages should be supported
+	defaults := []string{"wasm", "golang", "javascript", "solidity", "rust", "python", "yul"}
+	for _, l := range defaults {
+		if !IsLanguageSupported(l) {
+			t.Fatalf("%s should be supported", l)
 		}
+	}
+
+	// Adding and removing languages is case insensitive
+	if err := AddSupportedLanguage("Move"); err != nil {
+		t.Fatalf("add: %v", err)
+	}
+	if !IsLanguageSupported("MOVE") {
+		t.Fatalf("move should be supported after addition")
+	}
+	if !RemoveSupportedLanguage("move") {
+		t.Fatalf("expected removal to succeed")
+	}
+	if IsLanguageSupported("move") {
+		t.Fatalf("move should not be supported after removal")
+	}
+
+	// SupportedContractLanguages should return a sorted list
+	langs := SupportedContractLanguages()
+	if !sort.StringsAreSorted(langs) {
+		t.Fatalf("languages not sorted: %v", langs)
 	}
 }

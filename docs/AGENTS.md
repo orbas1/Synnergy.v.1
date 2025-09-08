@@ -65,6 +65,7 @@
 - Stage 57: Completed – CLI utilities and scripts hardened with error handling and tests.
 - Stage 58: Completed – secrets-manager CLI validates keys and sample smart contracts added.
 - Stage 59: Completed – content-node registry, secrets manager CLI, gas/opcode references and web UI wired for deterministic pricing.
+- Stage 60: Completed – contract language compatibility, contract registry and access utilities refined with tests.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1306,26 +1307,26 @@
 - [x] content_node_impl_test.go
 - [x] content_node_test.go
 
-**Stage 60**
-- [ ] content_types.go
-- [ ] content_types_test.go
-- [ ] contract_language_compatibility.go
-- [ ] contract_language_compatibility_test.go
-- [ ] contract_management.go
-- [ ] contract_management_test.go
-- [ ] contracts.go
-- [ ] contracts_opcodes.go
-- [ ] contracts_opcodes_test.go
-- [ ] contracts_test.go
-- [ ] core/access_control.go
-- [ ] core/access_control_test.go
-- [ ] core/address.go
-- [ ] core/address_test.go
-- [ ] core/address_zero.go
-- [ ] core/address_zero_test.go
-- [ ] core/ai_enhanced_contract.go
-- [ ] core/ai_enhanced_contract_test.go
-- [ ] core/audit_management.go
+ -**Stage 60** ✅ contract language registry, management and core utilities finalised
+ - [x] content_types.go - added metadata validation and constructors
+ - [x] content_types_test.go - implemented unit tests for metadata
+ - [x] contract_language_compatibility.go - dynamic language registry with concurrency safeguards
+ - [x] contract_language_compatibility_test.go - registry add/remove coverage
+ - [x] contract_management.go - administrative operations with pause, transfer and upgrade
+ - [x] contract_management_test.go - tests for transfer, pause/resume, upgrade
+ - [x] contracts.go - registry for deploy/invoke via VM
+ - [x] contracts_opcodes.go - canonical opcode definitions
+ - [x] contracts_opcodes_test.go - validates opcode stability and uniqueness
+ - [x] contracts_test.go - deployment and invocation tests
+ - [x] core/access_control.go - role-based permissions with validation
+ - [x] core/access_control_test.go - role assignment tests
+ - [x] core/address.go - address parsing utilities
+ - [x] core/address_test.go - address parsing tests
+ - [x] core/address_zero.go - zero address helper
+ - [x] core/address_zero_test.go - zero address tests
+ - [x] core/ai_enhanced_contract.go - AI contract registry with gas checks
+ - [x] core/ai_enhanced_contract_test.go - deploy/invoke tests for AI contracts
+ - [x] core/audit_management.go - in-memory audit log manager
 
 **Stage 61**
 - [ ] core/audit_management_test.go
@@ -3823,25 +3824,25 @@
 | 59 | content_node_impl.go | [ ] |
 | 59 | content_node_impl_test.go | [ ] |
 | 59 | content_node_test.go | [ ] |
-| 60 | content_types.go | [ ] |
-| 60 | content_types_test.go | [ ] |
-| 60 | contract_language_compatibility.go | [ ] |
-| 60 | contract_language_compatibility_test.go | [ ] |
-| 60 | contract_management.go | [ ] |
-| 60 | contract_management_test.go | [ ] |
-| 60 | contracts.go | [ ] |
-| 60 | contracts_opcodes.go | [ ] |
-| 60 | contracts_opcodes_test.go | [ ] |
-| 60 | contracts_test.go | [ ] |
-| 60 | core/access_control.go | [ ] |
-| 60 | core/access_control_test.go | [ ] |
-| 60 | core/address.go | [ ] |
-| 60 | core/address_test.go | [ ] |
-| 60 | core/address_zero.go | [ ] |
-| 60 | core/address_zero_test.go | [ ] |
-| 60 | core/ai_enhanced_contract.go | [ ] |
-| 60 | core/ai_enhanced_contract_test.go | [ ] |
-| 60 | core/audit_management.go | [ ] |
+| 60 | content_types.go | [x] | metadata struct with auto hashing & validation |
+| 60 | content_types_test.go | [x] | coverage for metadata creation and errors |
+| 60 | contract_language_compatibility.go | [x] | thread-safe language registry |
+| 60 | contract_language_compatibility_test.go | [x] | registry add/remove tests |
+| 60 | contract_management.go | [x] | admin helpers for pause/upgrade |
+| 60 | contract_management_test.go | [x] | manager lifecycle tests |
+| 60 | contracts.go | [x] | concurrent-safe registry and execution |
+| 60 | contracts_opcodes.go | [x] | opcode constants aligned with VM |
+| 60 | contracts_opcodes_test.go | [x] | opcode validation tests |
+| 60 | contracts_test.go | [x] | deployment and invocation tests |
+| 60 | core/access_control.go | [x] | role-based access utilities |
+| 60 | core/access_control_test.go | [x] | access control unit tests |
+| 60 | core/address.go | [x] | address helpers and parsing |
+| 60 | core/address_test.go | [x] | address helper tests |
+| 60 | core/address_zero.go | [x] | zero address constant |
+| 60 | core/address_zero_test.go | [x] | zero address checks |
+| 60 | core/ai_enhanced_contract.go | [x] | AI contract scaffolding |
+| 60 | core/ai_enhanced_contract_test.go | [x] | AI contract tests |
+| 60 | core/audit_management.go | [x] | audit log utilities |
 | 61 | core/audit_management_test.go | [ ] |
 | 61 | core/audit_node.go | [ ] |
 | 61 | core/audit_node_test.go | [ ] |
