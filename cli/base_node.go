@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"crypto/ed25519"
+	"encoding/hex"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -44,14 +46,27 @@ func init() {
 		},
 	}
 
+	var dialPub, dialSig string
 	dialCmd := &cobra.Command{
 		Use:   "dial [addr]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Dial a seed peer",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return baseNode.DialSeed(nodes.Address(args[0]))
+			pub, err := hex.DecodeString(dialPub)
+			if err != nil {
+				return err
+			}
+			sig, err := hex.DecodeString(dialSig)
+			if err != nil {
+				return err
+			}
+			return baseNode.DialSeedSigned(nodes.Address(args[0]), sig, ed25519.PublicKey(pub))
 		},
 	}
+	dialCmd.Flags().StringVar(&dialPub, "pub", "", "hex-encoded public key")
+	dialCmd.Flags().StringVar(&dialSig, "sig", "", "hex-encoded signature")
+	dialCmd.MarkFlagRequired("pub")
+	dialCmd.MarkFlagRequired("sig")
 
 	bnCmd.AddCommand(startCmd, stopCmd, runningCmd, peersCmd, dialCmd)
 	rootCmd.AddCommand(bnCmd)

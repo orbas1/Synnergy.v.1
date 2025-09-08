@@ -1,8 +1,7 @@
 package core
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
 	"testing"
@@ -16,16 +15,13 @@ func TestBiometricSecurityNode(t *testing.T) {
 
 	admin := "admin"
 	bio := []byte("admin-bio")
-	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	pub, priv, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		t.Fatalf("gen key: %v", err)
 	}
-	bsn.Enroll(admin, bio, &key.PublicKey)
+	bsn.Enroll(admin, bio, pub)
 	hash := sha256.Sum256(bio)
-	sig, err := ecdsa.SignASN1(rand.Reader, key, hash[:])
-	if err != nil {
-		t.Fatalf("sign: %v", err)
-	}
+	sig := ed25519.Sign(priv, hash[:])
 
 	tx := NewTransaction("from", "to", 1, 0, 0)
 	if err := bsn.SecureAddTransaction(admin, bio, sig, tx); err != nil {
@@ -37,7 +33,7 @@ func TestBiometricSecurityNode(t *testing.T) {
 
 	tx2 := NewTransaction("from", "to", 1, 0, 1)
 	wrongHash := sha256.Sum256([]byte("wrong"))
-	wrongSig, _ := ecdsa.SignASN1(rand.Reader, key, wrongHash[:])
+	wrongSig := ed25519.Sign(priv, wrongHash[:])
 	if err := bsn.SecureAddTransaction(admin, []byte("wrong"), wrongSig, tx2); err == nil {
 		t.Fatal("expected authentication failure")
 	}
@@ -56,7 +52,7 @@ func TestBiometricSecurityNode(t *testing.T) {
 		t.Fatal("secure execute did not run")
 	}
 	badHash := sha256.Sum256([]byte("bad"))
-	badSig, _ := ecdsa.SignASN1(rand.Reader, key, badHash[:])
+	badSig := ed25519.Sign(priv, badHash[:])
 	if err := bsn.SecureExecute(admin, []byte("bad"), badSig, nil); err == nil {
 		t.Fatal("expected verification failure")
 	}

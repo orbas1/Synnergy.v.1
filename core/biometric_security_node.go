@@ -1,7 +1,7 @@
 package core
 
 import (
-	"crypto/ecdsa"
+	"crypto/ed25519"
 	"errors"
 )
 
@@ -30,7 +30,7 @@ func (b *BiometricSecurityNode) GetID() string {
 }
 
 // Enroll registers biometric data for the given address.
-func (b *BiometricSecurityNode) Enroll(addr string, biometric []byte, pub *ecdsa.PublicKey) {
+func (b *BiometricSecurityNode) Enroll(addr string, biometric []byte, pub ed25519.PublicKey) {
 	b.Auth.Enroll(addr, biometric, pub)
 }
 

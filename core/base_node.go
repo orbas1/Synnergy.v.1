@@ -1,6 +1,8 @@
 package core
 
 import (
+	"crypto/ed25519"
+	"encoding/hex"
 	"fmt"
 	"sync"
 
@@ -72,6 +74,24 @@ func (n *BaseNode) DialSeed(addr nodes.Address) error {
 	defer n.mu.Unlock()
 	if !n.running {
 		return fmt.Errorf("node not running")
+	}
+	n.peers[addr] = struct{}{}
+	return nil
+}
+
+// DialSeedSigned records a connection to a seed peer after verifying the
+// provided signature matches the peer's address.
+func (n *BaseNode) DialSeedSigned(addr nodes.Address, sig []byte, pub ed25519.PublicKey) error {
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	if !n.running {
+		return fmt.Errorf("node not running")
+	}
+	if hex.EncodeToString(pub) != string(addr) {
+		return fmt.Errorf("address mismatch")
+	}
+	if !ed25519.Verify(pub, []byte(addr), sig) {
+		return fmt.Errorf("invalid signature")
 	}
 	n.peers[addr] = struct{}{}
 	return nil

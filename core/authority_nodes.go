@@ -1,12 +1,14 @@
 package core
 
 import (
-        "encoding/json"
-        "errors"
-        "math/rand"
-        "sort"
-        "sync"
-        "time"
+	"crypto/ed25519"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"math/rand"
+	"sort"
+	"sync"
+	"time"
 )
 
 // AuthorityNode represents a node eligible for governance actions.
@@ -21,14 +23,14 @@ func (n *AuthorityNode) TotalVotes() int { return len(n.Votes) }
 
 // MarshalJSON outputs the node with aggregated vote count for external consumers.
 func (n *AuthorityNode) MarshalJSON() ([]byte, error) {
-        type alias AuthorityNode
-        return json.Marshal(&struct {
-                Votes int `json:"votes"`
-                *alias
-        }{
-                Votes: len(n.Votes),
-                alias: (*alias)(n),
-        })
+	type alias AuthorityNode
+	return json.Marshal(&struct {
+		Votes int `json:"votes"`
+		*alias
+	}{
+		Votes: len(n.Votes),
+		alias: (*alias)(n),
+	})
 }
 
 // AuthorityNodeRegistry manages authority nodes and voting.
@@ -54,8 +56,16 @@ func (r *AuthorityNodeRegistry) Register(addr, role string) (*AuthorityNode, err
 	return node, nil
 }
 
-// Vote casts a vote for a candidate authority node.
-func (r *AuthorityNodeRegistry) Vote(voterAddr, candidateAddr string) error {
+// Vote casts a signed vote for a candidate authority node.
+// voterAddr must match the provided pubKey and the signature must be over the candidate address.
+func (r *AuthorityNodeRegistry) Vote(voterAddr, candidateAddr string, sig []byte, pubKey ed25519.PublicKey) error {
+	if hex.EncodeToString(pubKey) != voterAddr {
+		return errors.New("voter address mismatch")
+	}
+	if !ed25519.Verify(pubKey, []byte(candidateAddr), sig) {
+		return errors.New("invalid signature")
+	}
+
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	node, ok := r.index.Get(candidateAddr)
@@ -68,11 +78,11 @@ func (r *AuthorityNodeRegistry) Vote(voterAddr, candidateAddr string) error {
 
 // RemoveVote removes a previous vote by a voter for a candidate.
 func (r *AuthorityNodeRegistry) RemoveVote(voterAddr, candidateAddr string) {
-        r.mu.Lock()
-        defer r.mu.Unlock()
-        if node, ok := r.index.Get(candidateAddr); ok {
-                delete(node.Votes, voterAddr)
-        }
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if node, ok := r.index.Get(candidateAddr); ok {
+		delete(node.Votes, voterAddr)
+	}
 }
 
 // Electorate samples up to size authority nodes weighted by votes.

@@ -1,12 +1,14 @@
 package cli
 
 import (
-        "encoding/json"
-        "fmt"
-        "strconv"
+	"crypto/ed25519"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
+	"strconv"
 
-        "github.com/spf13/cobra"
-        "synnergy/core"
+	"github.com/spf13/cobra"
+	"synnergy/core"
 )
 
 var authorityReg = core.NewAuthorityNodeRegistry()
@@ -35,9 +37,21 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Vote for a candidate authority node",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return authorityReg.Vote(args[0], args[1])
+			sigHex, _ := cmd.Flags().GetString("sig")
+			pubHex, _ := cmd.Flags().GetString("pub")
+			sig, err := hex.DecodeString(sigHex)
+			if err != nil {
+				return err
+			}
+			pubBytes, err := hex.DecodeString(pubHex)
+			if err != nil {
+				return err
+			}
+			return authorityReg.Vote(args[0], args[1], sig, ed25519.PublicKey(pubBytes))
 		},
 	}
+	voteCmd.Flags().String("sig", "", "hex-encoded signature of candidate address")
+	voteCmd.Flags().String("pub", "", "hex-encoded public key of voter")
 
 	electCmd := &cobra.Command{
 		Use:   "elect [n]",
@@ -51,45 +65,45 @@ func init() {
 		},
 	}
 
-        var infoJSON bool
-        var listJSON bool
+	var infoJSON bool
+	var listJSON bool
 
-        infoCmd := &cobra.Command{
-                Use:   "info [address]",
-                Args:  cobra.ExactArgs(1),
-                Short: "Show information about an authority node",
-                RunE: func(cmd *cobra.Command, args []string) error {
-                        n, err := authorityReg.Info(args[0])
-                        if err != nil {
-                                return err
-                        }
-                        if infoJSON {
-                                enc, _ := json.Marshal(n)
-                                fmt.Println(string(enc))
-                        } else {
-                                fmt.Printf("address: %s role: %s votes: %d\n", n.Address, n.Role, len(n.Votes))
-                        }
-                        return nil
-                },
-        }
-        infoCmd.Flags().BoolVar(&infoJSON, "json", false, "output as JSON")
+	infoCmd := &cobra.Command{
+		Use:   "info [address]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Show information about an authority node",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			n, err := authorityReg.Info(args[0])
+			if err != nil {
+				return err
+			}
+			if infoJSON {
+				enc, _ := json.Marshal(n)
+				fmt.Println(string(enc))
+			} else {
+				fmt.Printf("address: %s role: %s votes: %d\n", n.Address, n.Role, len(n.Votes))
+			}
+			return nil
+		},
+	}
+	infoCmd.Flags().BoolVar(&infoJSON, "json", false, "output as JSON")
 
-        listCmd := &cobra.Command{
-                Use:   "list",
-                Short: "List all authority nodes",
-                Run: func(cmd *cobra.Command, args []string) {
-                        nodes := authorityReg.List()
-                        if listJSON {
-                                enc, _ := json.Marshal(nodes)
-                                fmt.Println(string(enc))
-                                return
-                        }
-                        for _, n := range nodes {
-                                fmt.Printf("%s (%s) votes:%d\n", n.Address, n.Role, len(n.Votes))
-                        }
-                },
-        }
-        listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
+	listCmd := &cobra.Command{
+		Use:   "list",
+		Short: "List all authority nodes",
+		Run: func(cmd *cobra.Command, args []string) {
+			nodes := authorityReg.List()
+			if listJSON {
+				enc, _ := json.Marshal(nodes)
+				fmt.Println(string(enc))
+				return
+			}
+			for _, n := range nodes {
+				fmt.Printf("%s (%s) votes:%d\n", n.Address, n.Role, len(n.Votes))
+			}
+		},
+	}
+	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	isCmd := &cobra.Command{
 		Use:   "is [address]",

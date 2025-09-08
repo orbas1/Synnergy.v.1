@@ -47,3 +47,18 @@ func (n *AuditNode) ListEvents(address string) []AuditEntry {
 	}
 	return n.Manager.List(address)
 }
+
+// VerifyEvent checks the signature of an audit entry at the given index for an address.
+func (n *AuditNode) VerifyEvent(address string, index int) (bool, error) {
+	if n.Manager == nil {
+		return false, errors.New("audit manager not configured")
+	}
+	if index < 0 {
+		return false, errors.New("index out of range")
+	}
+	entries := n.Manager.List(address)
+	if index >= len(entries) {
+		return false, errors.New("index out of range")
+	}
+	return n.Manager.Verify(entries[index]), nil
+}

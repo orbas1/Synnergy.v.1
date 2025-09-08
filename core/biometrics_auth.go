@@ -1,7 +1,7 @@
 package core
 
 import (
-	"crypto/ecdsa"
+	"crypto/ed25519"
 	"crypto/sha256"
 	"sync"
 )
@@ -14,7 +14,7 @@ type BiometricsAuth struct {
 
 type biometricTemplate struct {
 	hash [32]byte
-	pub  *ecdsa.PublicKey
+	pub  ed25519.PublicKey
 }
 
 // NewBiometricsAuth creates a new biometrics authentication manager.
@@ -23,7 +23,7 @@ func NewBiometricsAuth() *BiometricsAuth {
 }
 
 // Enroll stores a hashed biometric template for the given address.
-func (b *BiometricsAuth) Enroll(addr string, biometric []byte, pub *ecdsa.PublicKey) {
+func (b *BiometricsAuth) Enroll(addr string, biometric []byte, pub ed25519.PublicKey) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	b.templates[addr] = biometricTemplate{hash: sha256.Sum256(biometric), pub: pub}
@@ -38,10 +38,10 @@ func (b *BiometricsAuth) Verify(addr string, biometric []byte, sig []byte) bool 
 		return false
 	}
 	h := sha256.Sum256(biometric)
-	if h != tmpl.hash || tmpl.pub == nil {
+	if h != tmpl.hash || len(tmpl.pub) != ed25519.PublicKeySize {
 		return false
 	}
-	return ecdsa.VerifyASN1(tmpl.pub, h[:], sig)
+	return ed25519.Verify(tmpl.pub, h[:], sig)
 }
 
 // Remove deletes the biometric template for the given address.

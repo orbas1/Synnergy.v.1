@@ -16,6 +16,12 @@ make build
 - `synnergy charity_mgmt donate <from> <amount>` – donate tokens to the charity pool
 - `synnergy coin --json info` – inspect monetary parameters
 - `synnergy cross_chain_bridge deposit <bridge> <from> <to> <amount> --json` – lock assets for bridging with structured output
+- `synnergy authority vote <voter> <candidate> --pub <hex> --sig <hex>` – cast a signed vote for an authority node
+- `synnergy authority_apply vote <voter> <id> <approve> --pub <hex> --sig <hex>` – cast a signed vote on an authority application
+- `synnergy bankinst register <name> --pub <hex> --sig <hex>` – enrol a bank institution with a signed request
+- `synnergy bank_index add <id> <type>` – record a bank node in the index
+- `synnergy basenode dial <addr> --pub <hex> --sig <hex>` – connect to a peer with signature validation
+- `synnergy bioauth enroll <addr> <data> <pubHex>` – register a biometric template with an Ed25519 key
 
 ## Help
 Run `synnergy --help` or `synnergy <command> --help` for more details.

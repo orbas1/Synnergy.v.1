@@ -1,8 +1,7 @@
 package core
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
 	"testing"
@@ -30,16 +29,13 @@ func TestNetworkBroadcast(t *testing.T) {
 	network.AddRelay(relay)
 
 	bio := []byte("finger")
-	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	pub, priv, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		t.Fatalf("gen key: %v", err)
 	}
-	svc.Enroll("alice", bio, &key.PublicKey)
+	svc.Enroll("alice", bio, pub)
 	h := sha256.Sum256(bio)
-	sig, err := ecdsa.SignASN1(rand.Reader, key, h[:])
-	if err != nil {
-		t.Fatalf("sign: %v", err)
-	}
+	sig := ed25519.Sign(priv, h[:])
 	tx := NewTransaction("alice", "bob", 1, 1, 1)
 	if err := network.Broadcast(tx, "alice", bio, sig); err != nil {
 		t.Fatalf("broadcast failed: %v", err)

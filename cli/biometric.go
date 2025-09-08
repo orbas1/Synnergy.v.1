@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"crypto/ed25519"
+	"encoding/hex"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -22,12 +24,12 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Enroll biometric data for a user",
 		Run: func(cmd *cobra.Command, args []string) {
-			pub, err := parsePubKey(args[2])
-			if err != nil {
+			pubBytes, err := hex.DecodeString(args[2])
+			if err != nil || len(pubBytes) != ed25519.PublicKeySize {
 				fmt.Println("invalid public key:", err)
 				return
 			}
-			biometricSvc.Enroll(args[0], []byte(args[1]), pub)
+			biometricSvc.Enroll(args[0], []byte(args[1]), ed25519.PublicKey(pubBytes))
 			fmt.Println("biometric enrolled")
 		},
 	}
@@ -37,7 +39,7 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Verify biometric data for a user",
 		Run: func(cmd *cobra.Command, args []string) {
-			sig, err := decodeSig(args[2])
+			sig, err := hex.DecodeString(args[2])
 			if err != nil {
 				fmt.Println("invalid signature:", err)
 				return

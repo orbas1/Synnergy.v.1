@@ -1,11 +1,14 @@
 package cli
 
 import (
-        "encoding/json"
-        "fmt"
+	"crypto/ed25519"
+	"encoding/hex"
+	"encoding/json"
+	"fmt"
 
-        "github.com/spf13/cobra"
-        "synnergy/core"
+	"github.com/spf13/cobra"
+	synnergy "synnergy"
+	"synnergy/core"
 )
 
 var bankInstNode = core.NewBankInstitutionalNode("bank1", "addr1", ledger)
@@ -16,31 +19,76 @@ func init() {
 		Short: "Bank institutional node operations",
 	}
 
+	var regPub, regSig string
 	regCmd := &cobra.Command{
 		Use:   "register [name]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Register a participating institution",
-		Run: func(cmd *cobra.Command, args []string) {
-			bankInstNode.RegisterInstitution(args[0])
+		RunE: func(cmd *cobra.Command, args []string) error {
+			pub, err := hex.DecodeString(regPub)
+			if err != nil {
+				return err
+			}
+			sig, err := hex.DecodeString(regSig)
+			if err != nil {
+				return err
+			}
+			addr := regPub
+			if err := bankInstNode.RegisterInstitution(addr, args[0], sig, ed25519.PublicKey(pub)); err != nil {
+				return err
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "%d\n", synnergy.GasCost("BankNode_RegisterInstitution"))
+			return nil
 		},
 	}
+	regCmd.Flags().StringVar(&regPub, "pub", "", "hex-encoded public key")
+	regCmd.Flags().StringVar(&regSig, "sig", "", "hex-encoded signature")
+	regCmd.MarkFlagRequired("pub")
+	regCmd.MarkFlagRequired("sig")
 
-        var listJSON bool
-        listCmd := &cobra.Command{
-                Use:   "list",
-                Short: "List registered institutions",
-                Run: func(cmd *cobra.Command, args []string) {
-                        if listJSON {
-                                enc, _ := json.Marshal(bankInstNode.ListInstitutions())
-                                fmt.Println(string(enc))
-                                return
-                        }
-                        for name := range bankInstNode.Institutions {
-                                fmt.Println(name)
-                        }
-                },
-        }
-        listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
+	var remPub, remSig string
+	remCmd := &cobra.Command{
+		Use:   "remove [name]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Remove a participating institution",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			pub, err := hex.DecodeString(remPub)
+			if err != nil {
+				return err
+			}
+			sig, err := hex.DecodeString(remSig)
+			if err != nil {
+				return err
+			}
+			addr := remPub
+			if err := bankInstNode.RemoveInstitution(addr, args[0], sig, ed25519.PublicKey(pub)); err != nil {
+				return err
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "%d\n", synnergy.GasCost("BankNode_RemoveInstitution"))
+			return nil
+		},
+	}
+	remCmd.Flags().StringVar(&remPub, "pub", "", "hex-encoded public key")
+	remCmd.Flags().StringVar(&remSig, "sig", "", "hex-encoded signature")
+	remCmd.MarkFlagRequired("pub")
+	remCmd.MarkFlagRequired("sig")
+
+	var listJSON bool
+	listCmd := &cobra.Command{
+		Use:   "list",
+		Short: "List registered institutions",
+		Run: func(cmd *cobra.Command, args []string) {
+			if listJSON {
+				enc, _ := json.Marshal(bankInstNode.ListInstitutions())
+				fmt.Println(string(enc))
+				return
+			}
+			for name := range bankInstNode.Institutions {
+				fmt.Println(name)
+			}
+		},
+	}
+	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
 	isCmd := &cobra.Command{
 		Use:   "is [name]",
@@ -51,6 +99,6 @@ func init() {
 		},
 	}
 
-	bankCmd.AddCommand(regCmd, listCmd, isCmd)
+	bankCmd.AddCommand(regCmd, remCmd, listCmd, isCmd)
 	rootCmd.AddCommand(bankCmd)
 }
