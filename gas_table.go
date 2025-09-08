@@ -35,6 +35,9 @@ import (
 // queries and compliance management costs so wallets can surface the price of
 // reward, supply and KYC operations. Stage 46 prices ledger, light node,
 // liquidity pool and loan pool operations so their costs are exposed via the CLI.
+// Stage 59 registers content node management and content storage operations so
+// hosts and registries expose deterministic pricing for publish, retrieval and
+// discovery workflows used by the CLI and web interfaces.
 type GasTable map[string]uint64
 
 // DefaultGasCost is used when an opcode is missing from the guide.

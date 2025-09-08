@@ -16,4 +16,10 @@ func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	if GasCost("Marketplace_ListContract") != 80 {
 		t.Fatalf("unexpected cost for Marketplace_ListContract")
 	}
+	if !HasOpcode("RegisterContentNode") {
+		t.Fatalf("missing RegisterContentNode opcode")
+	}
+	if GasCost("RegisterContentNode") != 5 {
+		t.Fatalf("unexpected cost for RegisterContentNode")
+	}
 }

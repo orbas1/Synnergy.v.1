@@ -73,22 +73,38 @@ func (s *ComplianceService) ValidateKYC(address string, kycData []byte) (string,
 }
 
 // EraseKYC removes stored KYC data for an address.
-func (s *ComplianceService) EraseKYC(address string) {
+// It returns an error if the address is empty or no record exists.
+func (s *ComplianceService) EraseKYC(address string) error {
+	if address == "" {
+		return errors.New("address required")
+	}
 	s.mu.Lock()
+	defer s.mu.Unlock()
+	if _, ok := s.kycs[address]; !ok {
+		return errors.New("kyc not found")
+	}
 	delete(s.kycs, address)
 	s.appendAudit(address, "kyc_erased", nil)
-	s.mu.Unlock()
+	return nil
 }
 
 // RecordFraud records a fraud signal and updates the risk score.
-func (s *ComplianceService) RecordFraud(address string, severity int) {
+// An error is returned if the address is empty or severity is non-positive.
+func (s *ComplianceService) RecordFraud(address string, severity int) error {
+	if address == "" {
+		return errors.New("address required")
+	}
+	if severity <= 0 {
+		return errors.New("severity must be positive")
+	}
 	s.mu.Lock()
+	defer s.mu.Unlock()
 	sig := FraudSignal{Severity: severity, Timestamp: time.Now()}
 	s.frauds[address] = append(s.frauds[address], sig)
 	s.riskScores[address] += severity
 	meta := map[string]string{"severity": fmt.Sprintf("%d", severity)}
 	s.appendAudit(address, "fraud_signal", meta)
-	s.mu.Unlock()
+	return nil
 }
 
 // RiskScore returns the accumulated fraud risk score for an address.

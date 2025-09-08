@@ -11,8 +11,12 @@ func TestContentNetworkNode(t *testing.T) {
 	meta1 := NewContentMeta("cid1", "name1", 4, "hash1")
 	meta2 := NewContentMeta("cid2", "name2", 8, "hash2")
 
-	n.Register(meta1)
-	n.Register(meta2)
+	if err := n.Register(meta1); err != nil {
+		t.Fatalf("register meta1: %v", err)
+	}
+	if err := n.Register(meta2); err != nil {
+		t.Fatalf("register meta2: %v", err)
+	}
 
 	if got, ok := n.Content(meta1.ID); !ok || got.Name != "name1" {
 		t.Fatalf("content1 not registered: %v %v", got, ok)
@@ -25,12 +29,16 @@ func TestContentNetworkNode(t *testing.T) {
 	}
 
 	updated := NewContentMeta("cid2", "updated", 9, "hash3")
-	n.Register(updated)
-	if got, _ := n.Content("cid2"); got.Name != "updated" {
-		t.Fatalf("expected updated meta, got %v", got)
+	if err := n.Register(updated); err == nil {
+		t.Fatalf("expected error on duplicate register")
+	}
+	if got, _ := n.Content("cid2"); got.Name != "name2" {
+		t.Fatalf("duplicate register altered meta: %v", got)
 	}
 
-	n.Unregister("cid1")
+	if err := n.Unregister("cid1"); err != nil {
+		t.Fatalf("unregister: %v", err)
+	}
 	if _, ok := n.Content("cid1"); ok {
 		t.Fatalf("unregister failed")
 	}

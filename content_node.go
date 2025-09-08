@@ -1,6 +1,9 @@
 package synnergy
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
 
 // ContentNetworkNode mirrors basic information about a content node in the network.
 // It tracks which content items are hosted by this node so others can discover
@@ -23,17 +26,30 @@ func NewContentNetworkNode(id, addr string) *ContentNetworkNode {
 }
 
 // Register records the availability of a content item on this node.
-func (n *ContentNetworkNode) Register(meta ContentMeta) {
+// An error is returned if the metadata is missing an ID or already exists.
+func (n *ContentNetworkNode) Register(meta ContentMeta) error {
+	if meta.ID == "" {
+		return errors.New("missing content id")
+	}
 	n.mu.Lock()
+	defer n.mu.Unlock()
+	if _, exists := n.contents[meta.ID]; exists {
+		return errors.New("content already registered")
+	}
 	n.contents[meta.ID] = meta
-	n.mu.Unlock()
+	return nil
 }
 
 // Unregister removes a content item from this node's registry.
-func (n *ContentNetworkNode) Unregister(id string) {
+// An error is returned if the item is not present.
+func (n *ContentNetworkNode) Unregister(id string) error {
 	n.mu.Lock()
+	defer n.mu.Unlock()
+	if _, ok := n.contents[id]; !ok {
+		return errors.New("content not found")
+	}
 	delete(n.contents, id)
-	n.mu.Unlock()
+	return nil
 }
 
 // Content returns metadata for a hosted content item.

@@ -659,3 +659,15 @@ and warfare nodes as well as UI integrations.
 | `PlasmaResume` | `0xF1000C` |
 | `Liquidity_Pool` | `0x0F0007` |
 | `Liquidity_Pools` | `0x0F0008` |
+| `LockAndMint` | `0x090004` |
+| `BurnAndRelease` | `0x090005` |
+| `QueryOracle` | `0x0A0008` |
+| `MintToken` | `0x0E0014` |
+| `MultiSig_Submit` | `0x200001` |
+| `MultiSig_Confirm` | `0x200002` |
+| `MultiSig_Revoke` | `0x200003` |
+| `MultiSig_Execute` | `0x200004` |
+| `RegisterContentNode` | `0x0A0016` |
+| `UploadContent` | `0x0A0017` |
+| `RetrieveContent` | `0x0A0018` |
+| `ListContentNodes` | `0x0A0019` |

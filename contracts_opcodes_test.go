@@ -17,6 +17,15 @@ func TestContractOpcodesValues(t *testing.T) {
 		{"OpContractInfo", OpContractInfo, 0x080009},
 		{"OpDeployAIContract", OpDeployAIContract, 0x010001},
 		{"OpInvokeAIContract", OpInvokeAIContract, 0x010002},
+		{"OpLockAndMint", OpLockAndMint, 0x090004},
+		{"OpBurnAndRelease", OpBurnAndRelease, 0x090005},
+		{"OpLiquidityAdd", OpLiquidityAdd, 0x0F0004},
+		{"OpQueryOracle", OpQueryOracle, 0x0A0008},
+		{"OpMintToken", OpMintToken, 0x0E0014},
+		{"OpMultiSigSubmit", OpMultiSigSubmit, 0x200001},
+		{"OpMultiSigConfirm", OpMultiSigConfirm, 0x200002},
+		{"OpMultiSigRevoke", OpMultiSigRevoke, 0x200003},
+		{"OpMultiSigExecute", OpMultiSigExecute, 0x200004},
 	}
 	for _, tt := range tests {
 		if tt.op != tt.want {
@@ -38,6 +47,15 @@ func TestContractOpcodesUnique(t *testing.T) {
 		OpContractInfo,
 		OpDeployAIContract,
 		OpInvokeAIContract,
+		OpLockAndMint,
+		OpBurnAndRelease,
+		OpLiquidityAdd,
+		OpQueryOracle,
+		OpMintToken,
+		OpMultiSigSubmit,
+		OpMultiSigConfirm,
+		OpMultiSigRevoke,
+		OpMultiSigExecute,
 	}
 
 	seen := make(map[uint32]struct{}, len(ops))

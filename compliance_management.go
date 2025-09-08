@@ -28,31 +28,57 @@ func NewComplianceManager() *ComplianceManager {
 }
 
 // Suspend marks an address as suspended from transfers.
-func (m *ComplianceManager) Suspend(addr string) {
+// It returns an error if the address is empty or already suspended.
+func (m *ComplianceManager) Suspend(addr string) error {
+	if addr == "" {
+		return errors.New("address required")
+	}
 	m.mu.Lock()
+	defer m.mu.Unlock()
+	if m.suspended[addr] {
+		return errors.New("address already suspended")
+	}
 	m.suspended[addr] = true
-	m.mu.Unlock()
+	return nil
 }
 
 // Resume lifts a suspension for an address.
-func (m *ComplianceManager) Resume(addr string) {
+// It returns an error if the address is not currently suspended.
+func (m *ComplianceManager) Resume(addr string) error {
 	m.mu.Lock()
+	defer m.mu.Unlock()
+	if !m.suspended[addr] {
+		return errors.New("address not suspended")
+	}
 	delete(m.suspended, addr)
-	m.mu.Unlock()
+	return nil
 }
 
 // Whitelist adds an address to the whitelist.
-func (m *ComplianceManager) Whitelist(addr string) {
+// It returns an error if the address is empty or already whitelisted.
+func (m *ComplianceManager) Whitelist(addr string) error {
+	if addr == "" {
+		return errors.New("address required")
+	}
 	m.mu.Lock()
+	defer m.mu.Unlock()
+	if m.whitelist[addr] {
+		return errors.New("address already whitelisted")
+	}
 	m.whitelist[addr] = true
-	m.mu.Unlock()
+	return nil
 }
 
 // Unwhitelist removes an address from the whitelist.
-func (m *ComplianceManager) Unwhitelist(addr string) {
+// It returns an error if the address is not whitelisted.
+func (m *ComplianceManager) Unwhitelist(addr string) error {
 	m.mu.Lock()
+	defer m.mu.Unlock()
+	if !m.whitelist[addr] {
+		return errors.New("address not whitelisted")
+	}
 	delete(m.whitelist, addr)
-	m.mu.Unlock()
+	return nil
 }
 
 // Status returns suspension and whitelist status for an address.

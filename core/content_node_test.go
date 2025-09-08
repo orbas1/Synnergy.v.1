@@ -1,4 +1,4 @@
-package synnergy
+package core
 
 import "testing"
 
