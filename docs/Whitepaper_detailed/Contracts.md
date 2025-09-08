@@ -36,7 +36,7 @@ Administrative control is provided through `ContractManager`:
 - **Info** – returns metadata including owner, manifest, gas limit, and paused status.
 
 ## Supported Languages and Tooling
-`SupportedContractLanguages` and `IsLanguageSupported` provide a canonical whitelist that the VM recognises for compilation and execution. The CLI selects the appropriate toolchain based on file extension and rejects anything outside this list.
+`SupportedContractLanguages()` and `IsLanguageSupported` provide a canonical whitelist that the VM recognises for compilation and execution. The CLI selects the appropriate toolchain based on file extension and rejects anything outside this list.
 
 | Language | Toolchain | Notes | Repository Examples |
 | --- | --- | --- | --- |
@@ -54,7 +54,7 @@ Polyglot contract authoring removes linguistic barriers and lets teams choose th
 
 Standardising on WebAssembly and a 64‑character hex address ensures these diverse languages interoperate seamlessly. Regardless of source language, `CompileWASM` produces identical bytecode and the same deterministic address, allowing audit tools and registries to treat every contract uniformly. This uniformity reduces migration friction from other chains, protects existing developer investments, and invites a global contributor base, ultimately making the Synnergy Network more universally accessible and resilient.
 
-The command‑line interface enables lifecycle operations via `contracts compile|deploy|invoke|list|info` and surfaces syntax‑specific tips based on the selected language. Extending `SupportedContractLanguages` allows future addition of languages such as Move or Vyper following the same deterministic pipeline.
+The command‑line interface enables lifecycle operations via `contracts compile|deploy|invoke|list|info` and surfaces syntax‑specific tips based on the selected language. Extending the set via `AddSupportedLanguage` allows future addition of languages such as Move or Vyper following the same deterministic pipeline.
 
 ## Opcode Architecture and Gas
 - `ContractOpcodes` enumerates a stable opcode set spanning AI, governance, financial primitives, compliance, consensus, and bridging.
