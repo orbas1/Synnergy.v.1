@@ -813,3 +813,15 @@
 | `zero_trust_data_channels_OpenChannel` | `5` |
 | `zero_trust_data_channels_Send` | `10` |
 | `TransferContract` | `250` |
+| `LockAndMint` | `25` |
+| `BurnAndRelease` | `25` |
+| `QueryOracle` | `5` |
+| `MintToken` | `10` |
+| `MultiSig_Submit` | `5` |
+| `MultiSig_Confirm` | `3` |
+| `MultiSig_Revoke` | `3` |
+| `MultiSig_Execute` | `8` |
+| `RegisterContentNode` | `5` |
+| `UploadContent` | `15` |
+| `RetrieveContent` | `15` |
+| `ListContentNodes` | `3` |

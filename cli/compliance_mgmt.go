@@ -30,28 +30,40 @@ func init() {
 	mgmtCmd.PersistentFlags().BoolVar(&cmJSON, "json", false, "output results in JSON")
 
 	suspendCmd := &cobra.Command{Use: "suspend [addr]", Args: cobra.ExactArgs(1), Short: "Suspend an address", RunE: func(cmd *cobra.Command, args []string) error {
-		complianceMgr.Suspend(args[0])
+		if err := complianceMgr.Suspend(args[0]); err != nil {
+			ilog.Error("cli_suspend", "error", err)
+			return err
+		}
 		ilog.Info("cli_suspend", "address", args[0])
 		cmOutput(map[string]string{"status": "suspended"}, "suspended")
 		return nil
 	}}
 
 	resumeCmd := &cobra.Command{Use: "resume [addr]", Args: cobra.ExactArgs(1), Short: "Lift a suspension", RunE: func(cmd *cobra.Command, args []string) error {
-		complianceMgr.Resume(args[0])
+		if err := complianceMgr.Resume(args[0]); err != nil {
+			ilog.Error("cli_resume", "error", err)
+			return err
+		}
 		ilog.Info("cli_resume", "address", args[0])
 		cmOutput(map[string]string{"status": "resumed"}, "resumed")
 		return nil
 	}}
 
 	whitelistCmd := &cobra.Command{Use: "whitelist [addr]", Args: cobra.ExactArgs(1), Short: "Add an address to the whitelist", RunE: func(cmd *cobra.Command, args []string) error {
-		complianceMgr.Whitelist(args[0])
+		if err := complianceMgr.Whitelist(args[0]); err != nil {
+			ilog.Error("cli_whitelist", "error", err)
+			return err
+		}
 		ilog.Info("cli_whitelist", "address", args[0])
 		cmOutput(map[string]string{"status": "whitelisted"}, "whitelisted")
 		return nil
 	}}
 
 	unwhitelistCmd := &cobra.Command{Use: "unwhitelist [addr]", Args: cobra.ExactArgs(1), Short: "Remove an address from the whitelist", RunE: func(cmd *cobra.Command, args []string) error {
-		complianceMgr.Unwhitelist(args[0])
+		if err := complianceMgr.Unwhitelist(args[0]); err != nil {
+			ilog.Error("cli_unwhitelist", "error", err)
+			return err
+		}
 		ilog.Info("cli_unwhitelist", "address", args[0])
 		cmOutput(map[string]string{"status": "unwhitelisted"}, "unwhitelisted")
 		return nil

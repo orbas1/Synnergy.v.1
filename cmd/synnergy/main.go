@@ -12,6 +12,7 @@ import (
 	"synnergy/cli"
 	"synnergy/core"
 	"synnergy/internal/config"
+	security "synnergy/internal/security"
 	tokens "synnergy/internal/tokens"
 )
 
@@ -94,6 +95,11 @@ func main() {
 	synn.RegisterGasCost("NewWallet", synn.GasCost("NewWallet"))
 	synn.RegisterGasCost("Sign", synn.GasCost("Sign"))
 	synn.RegisterGasCost("VerifySignature", synn.GasCost("VerifySignature"))
+	// Stage 59 content node management
+	synn.RegisterGasCost("RegisterContentNode", synn.GasCost("RegisterContentNode"))
+	synn.RegisterGasCost("UploadContent", synn.GasCost("UploadContent"))
+	synn.RegisterGasCost("RetrieveContent", synn.GasCost("RetrieveContent"))
+	synn.RegisterGasCost("ListContentNodes", synn.GasCost("ListContentNodes"))
 	// Stage 40 monetary policy queries
 	synn.RegisterGasCost("BlockReward", synn.GasCost("BlockReward"))
 	synn.RegisterGasCost("CirculatingSupply", synn.GasCost("CirculatingSupply"))
@@ -135,6 +141,9 @@ func main() {
 	}
 	_ = core.NewWarfareNode(core.NewNode("cli-war", "cli-war", core.NewLedger()))
 	_ = core.NewWatchtowerNode("cli-watchtower", nil)
+	// Stage 59 modules for content registry and secrets management
+	_ = core.NewContentNetworkNode("cli-content", "cli")
+	_ = security.NewSecretsManager()
 
 	// Preload stage 13 modules for secure channels and compliance checks.
 	_ = core.NewZeroTrustEngine()

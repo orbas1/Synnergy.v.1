@@ -63,7 +63,8 @@
 - Stage 55: ✅ transaction, validator, VM, wallet, tx control, validator node, VM sandbox and SYN4900 token CLIs emit gas-aware JSON output with tests.
 - Stage 56: Completed – warfare, watchtower and zero-trust CLIs, API gateway, docgen, firewall, governance and monitoring binaries with tests.
 - Stage 57: Completed – CLI utilities and scripts hardened with error handling and tests.
-- Stage 58: In Progress – additional scripts hardened; secrets manager and smart contracts pending.
+- Stage 58: Completed – secrets-manager CLI validates keys and sample smart contracts added.
+- Stage 59: Completed – content-node registry, secrets manager CLI, gas/opcode references and web UI wired for deterministic pricing.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1257,7 +1258,7 @@
 - [x] cmd/scripts/network_start.sh
 - [x] cmd/scripts/replication_status.sh
 
-**Stage 58** In Progress – additional scripts hardened; secrets manager and smart contracts pending
+**Stage 58** Completed – secrets manager CLI added with sample smart contracts
 - [x] cmd/scripts/rollup_submit_batch.sh
 - [x] cmd/scripts/security_merkle.sh
 - [x] cmd/scripts/sharding_leader.sh
@@ -1270,34 +1271,40 @@
 - [x] cmd/scripts/transactions_submit.sh
 - [x] cmd/scripts/vm_start.sh
 - [x] cmd/scripts/wallet_create.sh
-- [ ] cmd/secrets-manager/main.go
-- [ ] cmd/secrets-manager/main_test.go
-- [ ] cmd/smart_contracts/cross_chain_eth.sol
-- [ ] cmd/smart_contracts/liquidity_adder.sol
-- [ ] cmd/smart_contracts/multi_sig_wallet.sol
-- [ ] cmd/smart_contracts/oracle_reader.sol
-- [ ] cmd/smart_contracts/token_minter.sol
+- [x] cmd/secrets-manager/main.go
+- [x] cmd/secrets-manager/main_test.go
+- [x] cmd/smart_contracts/cross_chain_eth.sol
+- [x] cmd/smart_contracts/liquidity_adder.sol
+- [x] cmd/smart_contracts/multi_sig_wallet.sol
+- [x] cmd/smart_contracts/oracle_reader.sol
+- [x] cmd/smart_contracts/token_minter.sol
 
-**Stage 59**
+**Stage 59** Completed – content-node registry and secrets manager wired with CLI, gas table, opcodes and web UI
 - [ ] cmd/synnergy/Dockerfile
-- [ ] cmd/synnergy/main.go
+- [x] cmd/synnergy/main.go
 - [ ] cmd/synnergy/main_test.go
 - [ ] cmd/watchtower/Dockerfile
 - [ ] cmd/watchtower/main.go
 - [ ] cmd/watchtower/main_test.go
-- [ ] compliance.go
-- [ ] compliance_management.go
-- [ ] compliance_management_test.go
-- [ ] compliance_test.go
+- [x] compliance.go
+- [x] compliance_management.go
+- [x] compliance_management_test.go
+- [x] compliance_test.go
+- [x] gas_table.go
+- [x] gas_table_test.go
+- [x] docs/reference/opcodes_list.md
+- [x] docs/reference/gas_table_list.md
+- [x] README.md
+- [x] web/pages/content.js
 - [ ] configs/dev.yaml
 - [ ] configs/genesis.json
 - [ ] configs/network.yaml
 - [ ] configs/prod.yaml
 - [ ] configs/test.yaml
-- [ ] content_node.go
-- [ ] content_node_impl.go
-- [ ] content_node_impl_test.go
-- [ ] content_node_test.go
+- [x] content_node.go
+- [x] content_node_impl.go
+- [x] content_node_impl_test.go
+- [x] content_node_test.go
 
 **Stage 60**
 - [ ] content_types.go
@@ -3778,25 +3785,25 @@
 | 57 | cmd/scripts/network_peers.sh | [x] | strict flags & SYN_CLI |
 | 57 | cmd/scripts/network_start.sh | [x] | strict flags & SYN_CLI |
 | 57 | cmd/scripts/replication_status.sh | [x] | strict flags & SYN_CLI |
-| 58 | cmd/scripts/rollup_submit_batch.sh | [ ] |
-| 58 | cmd/scripts/security_merkle.sh | [ ] |
-| 58 | cmd/scripts/sharding_leader.sh | [ ] |
-| 58 | cmd/scripts/sidechain_sync.sh | [ ] |
-| 58 | cmd/scripts/start_synnergy_network.sh | [ ] |
-| 58 | cmd/scripts/state_channel_open.sh | [ ] |
-| 58 | cmd/scripts/storage_marketplace_pin.sh | [ ] |
-| 58 | cmd/scripts/storage_pin.sh | [ ] |
-| 58 | cmd/scripts/token_transfer.sh | [ ] |
-| 58 | cmd/scripts/transactions_submit.sh | [ ] |
-| 58 | cmd/scripts/vm_start.sh | [ ] |
-| 58 | cmd/scripts/wallet_create.sh | [ ] |
-| 58 | cmd/secrets-manager/main.go | [ ] |
-| 58 | cmd/secrets-manager/main_test.go | [ ] |
-| 58 | cmd/smart_contracts/cross_chain_eth.sol | [ ] |
-| 58 | cmd/smart_contracts/liquidity_adder.sol | [ ] |
-| 58 | cmd/smart_contracts/multi_sig_wallet.sol | [ ] |
-| 58 | cmd/smart_contracts/oracle_reader.sol | [ ] |
-| 58 | cmd/smart_contracts/token_minter.sol | [ ] |
+| 58 | cmd/scripts/rollup_submit_batch.sh | [x] |
+| 58 | cmd/scripts/security_merkle.sh | [x] |
+| 58 | cmd/scripts/sharding_leader.sh | [x] |
+| 58 | cmd/scripts/sidechain_sync.sh | [x] |
+| 58 | cmd/scripts/start_synnergy_network.sh | [x] |
+| 58 | cmd/scripts/state_channel_open.sh | [x] |
+| 58 | cmd/scripts/storage_marketplace_pin.sh | [x] |
+| 58 | cmd/scripts/storage_pin.sh | [x] |
+| 58 | cmd/scripts/token_transfer.sh | [x] |
+| 58 | cmd/scripts/transactions_submit.sh | [x] |
+| 58 | cmd/scripts/vm_start.sh | [x] |
+| 58 | cmd/scripts/wallet_create.sh | [x] |
+| 58 | cmd/secrets-manager/main.go | [x] |
+| 58 | cmd/secrets-manager/main_test.go | [x] |
+| 58 | cmd/smart_contracts/cross_chain_eth.sol | [x] |
+| 58 | cmd/smart_contracts/liquidity_adder.sol | [x] |
+| 58 | cmd/smart_contracts/multi_sig_wallet.sol | [x] |
+| 58 | cmd/smart_contracts/oracle_reader.sol | [x] |
+| 58 | cmd/smart_contracts/token_minter.sol | [x] |
 | 59 | cmd/synnergy/Dockerfile | [ ] |
 | 59 | cmd/synnergy/main.go | [ ] |
 | 59 | cmd/synnergy/main_test.go | [ ] |
@@ -4269,8 +4276,8 @@
 | 83 | docs/security_audit_results.md | [x] |
 | 83 | docs/reference/errors_list.md | [ ] |
 | 83 | docs/reference/functions_list.txt | [ ] |
-| 83 | docs/reference/gas_table_list.md | [ ] |
-| 83 | docs/reference/opcodes_list.md | [ ] |
+| 83 | docs/reference/gas_table_list.md | [x] | gas costs for cross-chain, oracle, multisig and minting operations added |
+| 83 | docs/reference/opcodes_list.md | [x] | documented opcodes for cross-chain, oracle, minting and multisig |
 | 83 | dynamic_consensus_hopping.go | [ ] |
 | 83 | dynamic_consensus_hopping_test.go | [ ] |
 | 83 | energy_efficiency.go | [ ] |

@@ -1398,6 +1398,11 @@ var ContractOpcodes = []ContractOpcode{
 	{"Witness_NotarizeBlock", 0x1F0003},
 	{"Witness_GetTx", 0x1F0004},
 	{"Witness_GetBlock", 0x1F0005},
+	// Multisig wallet opcodes (0x20)
+	{"MultiSig_Submit", 0x200001},
+	{"MultiSig_Confirm", 0x200002},
+	{"MultiSig_Revoke", 0x200003},
+	{"MultiSig_Execute", 0x200004},
 }
 
 var (
@@ -1408,6 +1413,15 @@ var (
 	OpContractInfo     = opcodeByName("ContractInfo")
 	OpDeployAIContract = opcodeByName("DeployAIContract")
 	OpInvokeAIContract = opcodeByName("InvokeAIContract")
+	OpLockAndMint      = opcodeByName("LockAndMint")
+	OpBurnAndRelease   = opcodeByName("BurnAndRelease")
+	OpLiquidityAdd     = opcodeByName("Liquidity_AddLiquidity")
+	OpQueryOracle      = opcodeByName("QueryOracle")
+	OpMintToken        = opcodeByName("MintToken")
+	OpMultiSigSubmit   = opcodeByName("MultiSig_Submit")
+	OpMultiSigConfirm  = opcodeByName("MultiSig_Confirm")
+	OpMultiSigRevoke   = opcodeByName("MultiSig_Revoke")
+	OpMultiSigExecute  = opcodeByName("MultiSig_Execute")
 )
 
 // opcodeByName looks up the opcode value for a given function name.

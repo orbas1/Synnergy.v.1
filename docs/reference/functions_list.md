@@ -32,10 +32,11 @@
 | `energy_efficient_node.go` | `46` | `func (n *EnergyEfficientNode) Certify() SustainabilityCertificate {` |
 | `energy_efficient_node.go` | `61` | `func (n *EnergyEfficientNode) Certificate() SustainabilityCertificate {` |
 | `energy_efficient_node.go` | `68` | `func (n *EnergyEfficientNode) ShouldThrottle(threshold float64) bool {` |
-| `content_node.go` | `17` | `func NewContentNetworkNode(id, addr string) *ContentNetworkNode {` |
-| `content_node.go` | `26` | `func (n *ContentNetworkNode) Register(meta ContentMeta) {` |
-| `content_node.go` | `33` | `func (n *ContentNetworkNode) Content(id string) (ContentMeta, bool) {` |
-| `content_node.go` | `41` | `func (n *ContentNetworkNode) List() []ContentMeta {` |
+| `content_node.go` | `20` | `func NewContentNetworkNode(id, addr string) *ContentNetworkNode {` |
+| `content_node.go` | `30` | `func (n *ContentNetworkNode) Register(meta ContentMeta) error {` |
+| `content_node.go` | `45` | `func (n *ContentNetworkNode) Unregister(id string) error {` |
+| `content_node.go` | `56` | `func (n *ContentNetworkNode) Content(id string) (ContentMeta, bool) {` |
+| `content_node.go` | `64` | `func (n *ContentNetworkNode) List() []ContentMeta {` |
 | `nodesextra/holographic_node.go` | `17` | `func NewHolographicNode(id string) *HolographicNode {` |
 | `nodesextra/holographic_node.go` | `25` | `func (n *HolographicNode) ID() string { return n.id }` |
 | `nodesextra/holographic_node.go` | `29` | `func (n *HolographicNode) Start() error { return nil }` |
@@ -601,12 +602,12 @@
 | `core/syn3900.go` | `26` | `func (r *BenefitRegistry) RegisterBenefit(recipient, program string, amount uint64) uint64 {` |
 | `core/syn3900.go` | `34` | `func (r *BenefitRegistry) Claim(id uint64) error {` |
 | `core/syn3900.go` | `47` | `func (r *BenefitRegistry) GetBenefit(id uint64) (*BenefitRecord, bool) {` |
-| `core/compliance.go` | `44` | `func NewComplianceService() *ComplianceService {` |
-| `core/compliance.go` | `54` | `func (s *ComplianceService) ValidateKYC(address string, kycData []byte) (string, error) {` |
-| `core/compliance.go` | `68` | `func (s *ComplianceService) EraseKYC(address string) {` |
-| `core/compliance.go` | `76` | `func (s *ComplianceService) RecordFraud(address string, severity int) {` |
-| `core/compliance.go` | `87` | `func (s *ComplianceService) RiskScore(address string) int {` |
-| `core/compliance.go` | `95` | `func (s *ComplianceService) AuditTrail(address string) []AuditEntry {` |
+| `core/compliance.go` | `46` | `func NewComplianceService() *ComplianceService {` |
+| `core/compliance.go` | `56` | `func (s *ComplianceService) ValidateKYC(address string, kycData []byte) (string, error) {` |
+| `core/compliance.go` | `73` | `func (s *ComplianceService) EraseKYC(address string) error {` |
+| `core/compliance.go` | `92` | `func (s *ComplianceService) RecordFraud(address string, severity int) error {` |
+| `core/compliance.go` | `113` | `func (s *ComplianceService) RiskScore(address string) int {` |
+| `core/compliance.go` | `121` | `func (s *ComplianceService) AuditTrail(address string) []AuditEntry {` |
 | `core/compliance.go` | `107` | `func (s *ComplianceService) MonitorTransaction(tx ComplianceTransaction, threshold float64) bool {` |
 | `core/compliance.go` | `119` | `func (s *ComplianceService) VerifyZKP(blob []byte, commitmentHex, proofHex string) bool {` |
 | `core/compliance.go` | `124` | `func (s *ComplianceService) appendAudit(addr, event string, metadata map[string]string) {` |
@@ -724,13 +725,13 @@
 | `core/syn800_token.go` | `30` | `func (r *AssetRegistry) Register(id, desc string, valuation uint64, loc, typ, cert string) (*AssetMetadata, error) {` |
 | `core/syn800_token.go` | `40` | `func (r *AssetRegistry) UpdateValuation(id string, valuation uint64) error {` |
 | `core/syn800_token.go` | `51` | `func (r *AssetRegistry) Get(id string) (*AssetMetadata, bool) {` |
-| `core/compliance_management.go` | `16` | `func NewComplianceManager() *ComplianceManager {` |
-| `core/compliance_management.go` | `24` | `func (m *ComplianceManager) Suspend(addr string) {` |
-| `core/compliance_management.go` | `31` | `func (m *ComplianceManager) Resume(addr string) {` |
-| `core/compliance_management.go` | `38` | `func (m *ComplianceManager) Whitelist(addr string) {` |
-| `core/compliance_management.go` | `45` | `func (m *ComplianceManager) Unwhitelist(addr string) {` |
-| `core/compliance_management.go` | `52` | `func (m *ComplianceManager) Status(addr string) (suspended, whitelisted bool) {` |
-| `core/compliance_management.go` | `61` | `func (m *ComplianceManager) ReviewTransaction(tx Transaction) error {` |
+| `core/compliance_management.go` | `17` | `func NewComplianceManager() *ComplianceManager {` |
+| `core/compliance_management.go` | `27` | `func (m *ComplianceManager) Suspend(addr string) error {` |
+| `core/compliance_management.go` | `43` | `func (m *ComplianceManager) Resume(addr string) error {` |
+| `core/compliance_management.go` | `56` | `func (m *ComplianceManager) Whitelist(addr string) error {` |
+| `core/compliance_management.go` | `72` | `func (m *ComplianceManager) Unwhitelist(addr string) error {` |
+| `core/compliance_management.go` | `84` | `func (m *ComplianceManager) Status(addr string) (suspended, whitelisted bool) {` |
+| `core/compliance_management.go` | `94` | `func (m *ComplianceManager) ReviewTransaction(tx Transaction) error {` |
 | `core/cross_consensus_scaling_networks_test.go` | `5` | `func TestConsensusNetworkManager(t *testing.T) {` |
 | `core/historical_node.go` | `21` | `func NewHistoricalNode() *HistoricalNode {` |
 | `core/historical_node.go` | `29` | `func (h *HistoricalNode) ArchiveBlock(summary nodes.BlockSummary) error {` |
@@ -988,3 +989,6 @@
 | `core/blockchain_synchronization.go` | `28` | `func (s *SyncManager) Stop() {` |
 | `core/blockchain_synchronization.go` | `35` | `func (s *SyncManager) Status() (bool, int) {` |
 | `core/blockchain_synchronization.go` | `42` | `func (s *SyncManager) Once() error {` |
+| `internal/security/secrets_manager.go` | `11` | `func NewSecretsManager() *SecretsManager {` |
+| `internal/security/secrets_manager.go` | `17` | `func (s *SecretsManager) Store(key, value string) error {` |
+| `internal/security/secrets_manager.go` | `30` | `func (s *SecretsManager) Retrieve(key string) (string, error) {` |
