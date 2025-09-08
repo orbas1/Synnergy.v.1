@@ -30,8 +30,8 @@ func (b *BiometricSecurityNode) GetID() string {
 }
 
 // Enroll registers biometric data for the given address.
-func (b *BiometricSecurityNode) Enroll(addr string, biometric []byte, pub ed25519.PublicKey) {
-	b.Auth.Enroll(addr, biometric, pub)
+func (b *BiometricSecurityNode) Enroll(addr string, biometric []byte, pub ed25519.PublicKey) error {
+	return b.Auth.Enroll(addr, biometric, pub)
 }
 
 // Remove deletes biometric data associated with the address.

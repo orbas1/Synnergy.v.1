@@ -116,7 +116,49 @@ func TestRemoveInstitution(t *testing.T) {
 	if err := bn.RemoveInstitution(addr, "BankA", sigRem, pub); err != nil {
 		t.Fatalf("remove failed: %v", err)
 	}
-	if bn.IsRegistered("BankA") {
-		t.Fatalf("BankA should be removed")
-	}
+        if bn.IsRegistered("BankA") {
+                t.Fatalf("BankA should be removed")
+        }
+}
+
+// TestRegisterInstitutionInvalidAddr ensures mismatched address fails verification.
+func TestRegisterInstitutionInvalidAddr(t *testing.T) {
+        ledger := NewLedger()
+        pub, priv, _ := ed25519.GenerateKey(nil)
+        bn := NewBankInstitutionalNode("bank1", hex.EncodeToString(pub), ledger)
+        otherPub, _, _ := ed25519.GenerateKey(nil)
+        sig := ed25519.Sign(priv, []byte("register:BankA"))
+        if err := bn.RegisterInstitution(hex.EncodeToString(otherPub), "BankA", sig, pub); err == nil {
+                t.Fatalf("expected address mismatch error")
+        }
+}
+
+// TestRegisterInstitutionInvalidSignature ensures corrupted signature is rejected.
+func TestRegisterInstitutionInvalidSignature(t *testing.T) {
+        ledger := NewLedger()
+        pub, priv, _ := ed25519.GenerateKey(nil)
+        addr := hex.EncodeToString(pub)
+        bn := NewBankInstitutionalNode("bank1", addr, ledger)
+        sig := ed25519.Sign(priv, []byte("register:BankA"))
+        sig[0] ^= 0xFF
+        if err := bn.RegisterInstitution(addr, "BankA", sig, pub); err == nil {
+                t.Fatalf("expected invalid signature error")
+        }
+}
+
+// TestRemoveInstitutionInvalidSignature ensures removal with bad signature fails.
+func TestRemoveInstitutionInvalidSignature(t *testing.T) {
+        ledger := NewLedger()
+        pub, priv, _ := ed25519.GenerateKey(nil)
+        addr := hex.EncodeToString(pub)
+        bn := NewBankInstitutionalNode("bank1", addr, ledger)
+        sigReg := ed25519.Sign(priv, []byte("register:BankA"))
+        if err := bn.RegisterInstitution(addr, "BankA", sigReg, pub); err != nil {
+                t.Fatalf("register failed: %v", err)
+        }
+        sigRem := ed25519.Sign(priv, []byte("remove:BankA"))
+        sigRem[0] ^= 0xFF
+        if err := bn.RemoveInstitution(addr, "BankA", sigRem, pub); err == nil {
+                t.Fatalf("expected invalid signature error")
+        }
 }

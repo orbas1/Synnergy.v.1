@@ -169,7 +169,7 @@ Every file under `core/` is listed below with a short description derived from i
 - **Nodes/Nodes_Type_manual.md** – Documentation for Nodes Type manual.
 - **Nodes/authority_nodes/Authority_node_typr_manual.md** – Documentation for Authority node typr manual.
 - **Nodes/authority_nodes/index.go** – AuthorityNodeInterface extends NodeInterface with authority-specific actions.
-- **Nodes/bank_nodes/index.go** – BankInstitutionalNodeInterface extends NodeInterface with
+- **Nodes/bank_nodes/index.go** – BankInstitutionalNode interface extends NodeInterface with signature-verified institution management (register, remove, list).
 - **Nodes/consensus_specific.go** – ConsensusNodeInterface defines behaviour for nodes specialised for a specific consensus algorithm.
 - **Nodes/elected_authority_node.go** – ElectedAuthorityNode provides enhanced authority capabilities subject to
 - **Nodes/experimental_node.go** – ExperimentalNodeInterface extends NodeInterface with methods

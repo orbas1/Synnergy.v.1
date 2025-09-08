@@ -67,6 +67,7 @@
 - Stage 59: Completed – content-node registry, secrets manager CLI, gas/opcode references and web UI wired for deterministic pricing.
 - Stage 60: Completed – contract language compatibility, contract registry and access utilities refined with tests.
 - Stage 61: Completed – audit, authority, banking, base-node peering and biometric modules hardened with Ed25519 signatures.
+- Stage 62: ✅ biometric authentication and banking node interfaces hardened with signature-verified registration and tests; CLI bank node tests run without hanging.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1347,7 +1348,7 @@
  - [x] core/bank_nodes_test.go
 - [x] core/base_node.go
 - [x] core/base_node_test.go
-- [x] core/biometric.go
+- [x] core/biometric.go – added validation and lifecycle management
 - [x] core/biometric_security_node.go
 - [x] core/biometric_security_node_test.go
 - [x] cli/authority_nodes.go
@@ -1362,9 +1363,10 @@
 - [x] README.md
 
 **Stage 62**
-- [ ] core/biometric_test.go
-- [ ] core/biometrics_auth.go
-- [ ] core/biometrics_auth_test.go
+- [x] core/biometric_test.go – added validation and management tests
+- [x] core/biometrics_auth.go – input validation and error handling
+- [x] core/biometrics_auth_test.go – coverage for validation errors
+- [x] core/bank_institutional_node_test.go – rejects mismatched addresses and signatures
 - [ ] core/block.go
 - [ ] core/block_test.go
 - [ ] core/blockchain_compression.go

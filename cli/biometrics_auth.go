@@ -44,7 +44,9 @@ func init() {
 			if err != nil || len(pubBytes) != ed25519.PublicKeySize {
 				return fmt.Errorf("invalid public key: %w", err)
 			}
-			biomAuth.Enroll(args[0], []byte(args[1]), ed25519.PublicKey(pubBytes))
+			if err := biomAuth.Enroll(args[0], []byte(args[1]), ed25519.PublicKey(pubBytes)); err != nil {
+				return err
+			}
 			bioOutput(map[string]string{"status": "enrolled"}, "enrolled")
 			return nil
 		},

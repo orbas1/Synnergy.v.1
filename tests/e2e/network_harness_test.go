@@ -2,8 +2,7 @@ package tests
 
 import (
 	"bytes"
-	"crypto/ecdsa"
-	"crypto/elliptic"
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
@@ -111,16 +110,15 @@ func TestNetworkHarness(t *testing.T) {
 
 	// Enrol biometric data for the new wallet
 	bio := []byte("finger")
-	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	pub, priv, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		t.Fatalf("gen key: %v", err)
 	}
-	svc.Enroll(data.Address, bio, &key.PublicKey)
-	h := sha256.Sum256(bio)
-	sig, err := ecdsa.SignASN1(rand.Reader, key, h[:])
-	if err != nil {
-		t.Fatalf("sign: %v", err)
+	if err := svc.Enroll(data.Address, bio, pub); err != nil {
+		t.Fatalf("enroll: %v", err)
 	}
+	h := sha256.Sum256(bio)
+	sig := ed25519.Sign(priv, h[:])
 
 	// Broadcast a simple transaction through the network
 	tx := core.NewTransaction(data.Address, "recipient", 1, 1, 1)

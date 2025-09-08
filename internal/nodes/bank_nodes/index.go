@@ -1,13 +1,20 @@
 package banknodes
 
-import "synnergy/internal/nodes"
+import (
+	"crypto/ed25519"
+	"synnergy/internal/nodes"
+)
 
 // BankInstitutionalNode defines behaviour for institutional banking nodes.
 // It extends the generic NodeInterface with methods to manage participating institutions.
 type BankInstitutionalNode interface {
 	nodes.NodeInterface
-	// RegisterInstitution registers a new institution by name.
-	RegisterInstitution(name string)
+	// RegisterInstitution registers a new institution using signature verification.
+	RegisterInstitution(addr, name string, sig []byte, pubKey ed25519.PublicKey) error
+	// RemoveInstitution removes an institution via a signed request.
+	RemoveInstitution(addr, name string, sig []byte, pubKey ed25519.PublicKey) error
+	// ListInstitutions returns all currently registered institutions.
+	ListInstitutions() []string
 	// IsRegistered checks whether an institution is already registered.
 	IsRegistered(name string) bool
 }

@@ -192,8 +192,8 @@
 | `Tokens/syn70.go` | `36` | `func (t *SYN70Token) TransferAsset(assetID, from, to string) error {` |
 | `Tokens/syn70.go` | `53` | `func (t *SYN70Token) GetAsset(assetID string) (SYN70Asset, bool) {` |
 | `core/biometric.go` | `18` | `func NewBiometricService() *BiometricService {` |
-| `core/biometric.go` | `24` | `func (b *BiometricService) Enroll(userID string, biometric []byte) {` |
-| `core/biometric.go` | `33` | `func (b *BiometricService) Verify(userID string, biometric []byte) bool {` |
+| `core/biometric.go` | `39` | `func (b *BiometricService) Enroll(userID string, biometric []byte, pub ed25519.PublicKey) error {` |
+| `core/biometric.go` | `61` | `func (b *BiometricService) Verify(userID string, biometric []byte, sig []byte) bool {` |
 | `Tokens/syn20.go` | `13` | `func NewSYN20Token(id TokenID, name, symbol string, decimals uint8) *SYN20Token {` |
 | `Tokens/syn20.go` | `21` | `func (t *SYN20Token) Pause() { t.paused = true }` |
 | `Tokens/syn20.go` | `24` | `func (t *SYN20Token) Unpause() { t.paused = false }` |
@@ -521,8 +521,8 @@
 | `core/block_test.go` | `21` | `func TestBlockHeaderHash(t *testing.T) {` |
 | `core/zero_trust_data_channels_test.go` | `5` | `func TestZeroTrustEngine(t *testing.T) {` |
 | `core/biometrics_auth.go` | `15` | `func NewBiometricsAuth() *BiometricsAuth {` |
-| `core/biometrics_auth.go` | `20` | `func (b *BiometricsAuth) Enroll(addr string, biometric []byte) {` |
-| `core/biometrics_auth.go` | `27` | `func (b *BiometricsAuth) Verify(addr string, biometric []byte) bool {` |
+| `core/biometrics_auth.go` | `35` | `func (b *BiometricsAuth) Enroll(addr string, biometric []byte, pub ed25519.PublicKey) error {` |
+| `core/biometrics_auth.go` | `55` | `func (b *BiometricsAuth) Verify(addr string, biometric []byte, sig []byte) bool {` |
 | `core/biometrics_auth.go` | `38` | `func (b *BiometricsAuth) Remove(addr string) {` |
 | `core/mobile_mining_node.go` | `13` | `func NewMobileMiningNode(hashRate, powerLimit uint64) *MobileMiningNode {` |
 | `core/mobile_mining_node.go` | `18` | `func (mm *MobileMiningNode) Start() {` |
@@ -557,9 +557,12 @@
 | `core/network.go` | `40` | `func (n *Network) Broadcast(tx *Transaction, userID string, biometric []byte) error {` |
 | `core/network.go` | `51` | `func (n *Network) processQueue() {` |
 | `core/network.go` | `58` | `func (n *Network) broadcast(tx *Transaction) {` |
-| `core/bank_institutional_node.go` | `10` | `func NewBankInstitutionalNode(id, addr string, ledger *Ledger) *BankInstitutionalNode {` |
-| `core/bank_institutional_node.go` | `18` | `func (n *BankInstitutionalNode) RegisterInstitution(name string) {` |
-| `core/bank_institutional_node.go` | `23` | `func (n *BankInstitutionalNode) IsRegistered(name string) bool {` |
+| `core/bank_institutional_node.go` | `19` | `func NewBankInstitutionalNode(id, addr string, ledger *Ledger) *BankInstitutionalNode {` |
+| `core/bank_institutional_node.go` | `28` | `func (n *BankInstitutionalNode) RegisterInstitution(addr, name string, sig []byte, pubKey ed25519.PublicKey) error {` |
+| `core/bank_institutional_node.go` | `47` | `func (n *BankInstitutionalNode) RemoveInstitution(addr, name string, sig []byte, pubKey ed25519.PublicKey) error {` |
+| `core/bank_institutional_node.go` | `62` | `func (n *BankInstitutionalNode) ListInstitutions() []string {` |
+| `core/bank_institutional_node.go` | `73` | `func (n *BankInstitutionalNode) IsRegistered(name string) bool {` |
+| `core/bank_institutional_node.go` | `80` | `func (n *BankInstitutionalNode) MarshalJSON() ([]byte, error) {` |
 | `core/light_node.go` | `12` | `func NewLightNode(id nodes.Address) *LightNode {` |
 | `core/light_node.go` | `17` | `func (n *LightNode) AddHeader(h nodes.BlockHeader) { n.headers = append(n.headers, h) }` |
 | `core/light_node.go` | `20` | `func (n *LightNode) LatestHeader() (nodes.BlockHeader, bool) {` |
