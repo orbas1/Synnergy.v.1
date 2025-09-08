@@ -1,7 +1,7 @@
 package core
 
 import (
-	"crypto/ecdsa"
+	"crypto/ed25519"
 	"crypto/sha256"
 	"sync"
 )
@@ -17,7 +17,7 @@ type BiometricService struct {
 
 type biometricRecord struct {
 	hash [32]byte
-	pub  *ecdsa.PublicKey
+	pub  ed25519.PublicKey
 }
 
 // NewBiometricService creates a new biometric service instance.
@@ -27,7 +27,7 @@ func NewBiometricService() *BiometricService {
 
 // Enroll registers biometric data for a user. The biometric data is hashed and
 // stored so raw biometric information is never persisted.
-func (b *BiometricService) Enroll(userID string, biometric []byte, pub *ecdsa.PublicKey) {
+func (b *BiometricService) Enroll(userID string, biometric []byte, pub ed25519.PublicKey) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	h := sha256.Sum256(biometric)
@@ -44,8 +44,8 @@ func (b *BiometricService) Verify(userID string, biometric []byte, sig []byte) b
 		return false
 	}
 	h := sha256.Sum256(biometric)
-	if h != rec.hash || rec.pub == nil {
+	if h != rec.hash || len(rec.pub) != ed25519.PublicKeySize {
 		return false
 	}
-	return ecdsa.VerifyASN1(rec.pub, h[:], sig)
+	return ed25519.Verify(rec.pub, h[:], sig)
 }

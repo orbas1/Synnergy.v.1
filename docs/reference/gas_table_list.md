@@ -38,6 +38,8 @@
 | `ApproveTransaction` | `1` |
 | `ArchiveBlock` | `1` |
 | `AttachBiometric` | `1` |
+| `AuthorityApplyVote` | `5` |
+| `AuthorityVote` | `5` |
 | `Audit_Events` | `20` |
 | `Audit_Log` | `100` |
 | `Authenticate` | `1` |
@@ -125,6 +127,7 @@
 | `Deregister` | `1` |
 | `DexLiquidity` | `10` |
 | `DialSeed` | `1` |
+| `DialSeedSigned` | `1` |
 | `DifficultyAdjust` | `1` |
 | `Difficulty` | `1` |
 | `Disburse` | `1` |
@@ -365,6 +368,7 @@
 | `NewAuthorityNodeIndex` | `1` |
 | `NewAuthorityNodeRegistry` | `1` |
 | `NewBankInstitutionalNode` | `1` |
+| `NewBankNodeIndex` | `1` |
 | `NewBaseNode` | `1` |
 | `NewBaseToken` | `1` |
 | `NewBenefitRegistry` | `1` |

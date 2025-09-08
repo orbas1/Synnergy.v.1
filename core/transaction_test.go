@@ -1,8 +1,7 @@
 package core
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
 	"testing"
@@ -27,16 +26,13 @@ func TestAttachBiometric(t *testing.T) {
 	svc := NewBiometricService()
 	user := "u1"
 	bio := []byte("fingerprint")
-	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	pub, priv, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		t.Fatalf("gen key: %v", err)
 	}
-	svc.Enroll(user, bio, &key.PublicKey)
+	svc.Enroll(user, bio, pub)
 	hash := sha256.Sum256(bio)
-	sig, err := ecdsa.SignASN1(rand.Reader, key, hash[:])
-	if err != nil {
-		t.Fatalf("sign: %v", err)
-	}
+	sig := ed25519.Sign(priv, hash[:])
 
 	tx := NewTransaction("a", "b", 1, 0, 0)
 	origID := tx.ID
@@ -50,7 +46,7 @@ func TestAttachBiometric(t *testing.T) {
 		t.Fatalf("biometric hash not set")
 	}
 	wh := sha256.Sum256([]byte("wrong"))
-	wrongSig, _ := ecdsa.SignASN1(rand.Reader, key, wh[:])
+	wrongSig := ed25519.Sign(priv, wh[:])
 	if err := tx.AttachBiometric(user, []byte("wrong"), wrongSig, svc); err == nil {
 		t.Fatalf("expected verification failure")
 	}

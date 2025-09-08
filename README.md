@@ -31,7 +31,9 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **AI modules** – contract management, inference analysis, anomaly detection and secure storage (`core.NewAIEnhancedContract`, `core.NewAIDriftMonitor`).
 - **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()` and registered with `synnergy.RegisterGasCost()`.
 - **Opcode-aware contracts** – sample Solidity bridges, liquidity, multisig, oracle and token contracts invoke SNVM opcodes with deterministic gas costs.
-- **Role-based security** – biometric authentication and security node CLI (`core.NewBiometricService`, `synnergy bioauth`, `synnergy bsn`), zero‑trust data channels and PKI tooling.
+- **Role-based security** – biometric authentication and security node CLI (`core.NewBiometricService`, `synnergy bioauth`, `synnergy bsn`), zero‑trust data channels and PKI tooling. Authority node voting, base-node peering and biometric flows all require Ed25519 signatures for verifiable governance.
+- **Institutional banking** – bank nodes require Ed25519-signed requests to register or remove participating institutions.
+- **Bank node index** – track banking nodes via a thread-safe index exposed through `bank_index` CLI commands.
 - **Extensible CLI** – built with [Cobra](https://github.com/spf13/cobra) and backed by `cli.Execute()`.
 - **Resource-managed CLI** – connection pool commands can release individual peers and `contractopcodes` reports gas costs for contract operations.
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
@@ -143,7 +145,7 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `audit_node start|log|list` | Operate a bootstrap audit node for network-wide logs |
 | `authority register|vote|list` | Manage the authority node registry (`core.NewAuthorityNodeRegistry`) |
 | `authority_apply submit|vote|finalize|list` | Handle authority node applications (`core.NewAuthorityApplicationManager`) |
-| `bankinst register|list|is` | Manage institutional bank participants (`core.NewBankInstitutionalNode`) |
+| `bankinst register|remove|list|is --pub --sig` | Manage institutional bank participants with signed requests (`core.NewBankInstitutionalNode`) |
 | `banknodes types` | Display supported bank node categories |
 | `basenode start|stop|running|peers|dial` | Control a base network node (`core.NewBaseNode`) |
 | `basetoken init|mint|balance` | Interact with a basic token (`tokens.NewBaseToken`) |

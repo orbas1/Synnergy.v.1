@@ -578,7 +578,8 @@
 | `core/base_node.go` | `41` | `func (n *BaseNode) Stop() error {` |
 | `core/base_node.go` | `52` | `func (n *BaseNode) IsRunning() bool {` |
 | `core/base_node.go` | `59` | `func (n *BaseNode) Peers() []nodes.Address {` |
-| `core/base_node.go` | `70` | `func (n *BaseNode) DialSeed(addr nodes.Address) error {` |
+| `core/base_node.go` | `72` | `func (n *BaseNode) DialSeed(addr nodes.Address) error {` |
+| `core/base_node.go` | `84` | `func (n *BaseNode) DialSeedSigned(addr nodes.Address, sig []byte, pub ed25519.PublicKey) error {` |
 | `core/cross_chain_test.go` | `5` | `func TestBridgeRegistry(t *testing.T) {` |
 | `core/consensus_difficulty_test.go` | `5` | `func TestDifficultyManager(t *testing.T) {` |
 | `core/biometric_security_node.go` | `14` | `func NewBiometricSecurityNode(base *Node, auth *BiometricsAuth) *BiometricSecurityNode {` |

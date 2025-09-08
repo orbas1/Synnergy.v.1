@@ -1,8 +1,7 @@
 package core
 
 import (
-	"crypto/ecdsa"
-	"crypto/elliptic"
+	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
 	"testing"
@@ -12,21 +11,18 @@ func TestBiometricsAuth(t *testing.T) {
 	auth := NewBiometricsAuth()
 	addr := "user1"
 	data := []byte("fingerprint")
-	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	pub, priv, err := ed25519.GenerateKey(rand.Reader)
 	if err != nil {
 		t.Fatalf("gen key: %v", err)
 	}
 	hash := sha256.Sum256(data)
-	sig, err := ecdsa.SignASN1(rand.Reader, key, hash[:])
-	if err != nil {
-		t.Fatalf("sign: %v", err)
-	}
+	sig := ed25519.Sign(priv, hash[:])
 
 	if auth.Verify(addr, data, sig) {
 		t.Fatal("expected verification to fail before enrollment")
 	}
 
-	auth.Enroll(addr, data, &key.PublicKey)
+	auth.Enroll(addr, data, pub)
 	if !auth.Verify(addr, data, sig) {
 		t.Fatal("expected verification to succeed after enrollment")
 	}

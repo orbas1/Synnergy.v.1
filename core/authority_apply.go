@@ -1,11 +1,13 @@
 package core
 
 import (
-        "encoding/json"
-        "errors"
-        "fmt"
-        "sync"
-        "time"
+	"crypto/ed25519"
+	"encoding/hex"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"sync"
+	"time"
 )
 
 // AuthorityApplication represents a request to become an authority node.
@@ -41,28 +43,37 @@ func NewAuthorityApplicationManager(reg *AuthorityNodeRegistry, ttl time.Duratio
 
 // Submit creates a new application and returns its ID.
 func (m *AuthorityApplicationManager) Submit(candidate, role, desc string) string {
-        m.mu.Lock()
-        defer m.mu.Unlock()
-        if candidate == "" || role == "" {
-                return ""
-        }
-        id := m.nextID
-        m.nextID++
-        app := &AuthorityApplication{
-                ID:         fmt.Sprintf("%d", id),
-                Candidate:  candidate,
-                Role:       role,
-                Desc:       desc,
-                Approvals:  make(map[string]bool),
-                Rejections: make(map[string]bool),
-                ExpiresAt:  time.Now().Add(m.ttl),
-        }
-        m.apps[app.ID] = app
-        return app.ID
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if candidate == "" || role == "" {
+		return ""
+	}
+	id := m.nextID
+	m.nextID++
+	app := &AuthorityApplication{
+		ID:         fmt.Sprintf("%d", id),
+		Candidate:  candidate,
+		Role:       role,
+		Desc:       desc,
+		Approvals:  make(map[string]bool),
+		Rejections: make(map[string]bool),
+		ExpiresAt:  time.Now().Add(m.ttl),
+	}
+	m.apps[app.ID] = app
+	return app.ID
 }
 
-// Vote records a vote on an application.
-func (m *AuthorityApplicationManager) Vote(voter, id string, approve bool) error {
+// Vote records a signed vote on an application.
+// voterAddr must match pubKey and the signature must cover "id:approve".
+func (m *AuthorityApplicationManager) Vote(voterAddr, id string, approve bool, sig []byte, pubKey ed25519.PublicKey) error {
+	if hex.EncodeToString(pubKey) != voterAddr {
+		return errors.New("voter address mismatch")
+	}
+	msg := fmt.Sprintf("%s:%t", id, approve)
+	if !ed25519.Verify(pubKey, []byte(msg), sig) {
+		return errors.New("invalid signature")
+	}
+
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	app, ok := m.apps[id]
@@ -73,11 +84,11 @@ func (m *AuthorityApplicationManager) Vote(voter, id string, approve bool) error
 		return errors.New("application closed")
 	}
 	if approve {
-		app.Approvals[voter] = true
-		delete(app.Rejections, voter)
+		app.Approvals[voterAddr] = true
+		delete(app.Rejections, voterAddr)
 	} else {
-		app.Rejections[voter] = true
-		delete(app.Approvals, voter)
+		app.Rejections[voterAddr] = true
+		delete(app.Approvals, voterAddr)
 	}
 	return nil
 }
@@ -93,14 +104,14 @@ func (m *AuthorityApplicationManager) Finalize(id string) error {
 	if app.Finalized {
 		return errors.New("already finalised")
 	}
-        app.Finalized = true
-        approved := len(app.Approvals) > len(app.Rejections)
-        if approved {
-                if _, err := m.registry.Register(app.Candidate, app.Role); err != nil {
-                        return err
-                }
-        }
-        return nil
+	app.Finalized = true
+	approved := len(app.Approvals) > len(app.Rejections)
+	if approved {
+		if _, err := m.registry.Register(app.Candidate, app.Role); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // Tick removes expired applications.
@@ -138,14 +149,14 @@ func (m *AuthorityApplicationManager) List() []*AuthorityApplication {
 
 // MarshalJSON provides deterministic output for CLI and GUI integration.
 func (a *AuthorityApplication) MarshalJSON() ([]byte, error) {
-        type alias AuthorityApplication
-        return json.Marshal(&struct {
-                Approvals int `json:"approvals"`
-                Rejections int `json:"rejections"`
-                *alias
-        }{
-                Approvals:  len(a.Approvals),
-                Rejections: len(a.Rejections),
-                alias:      (*alias)(a),
-        })
+	type alias AuthorityApplication
+	return json.Marshal(&struct {
+		Approvals  int `json:"approvals"`
+		Rejections int `json:"rejections"`
+		*alias
+	}{
+		Approvals:  len(a.Approvals),
+		Rejections: len(a.Rejections),
+		alias:      (*alias)(a),
+	})
 }

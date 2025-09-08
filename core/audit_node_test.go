@@ -9,7 +9,7 @@ func (m *mockBootstrap) Start() error {
 	return nil
 }
 
-func TestAuditNode_StartAndLog(t *testing.T) {
+func TestAuditNode_StartLogAndVerify(t *testing.T) {
 	mgr := NewAuditManager()
 	bs := &mockBootstrap{}
 	node := NewAuditNode(bs, mgr)
@@ -28,5 +28,17 @@ func TestAuditNode_StartAndLog(t *testing.T) {
 	events := node.ListEvents("addr")
 	if len(events) != 1 || events[0].Event != "evt" {
 		t.Fatalf("event not recorded")
+	}
+	ok, err := node.VerifyEvent("addr", 0)
+	if err != nil || !ok {
+		t.Fatalf("verify failed: %v", err)
+	}
+	if _, err := node.VerifyEvent("addr", 1); err == nil {
+		t.Fatalf("expected index error")
+	}
+	// manager missing
+	badNode := NewAuditNode(bs, nil)
+	if _, err := badNode.VerifyEvent("addr", 0); err == nil {
+		t.Fatalf("expected manager error")
 	}
 }

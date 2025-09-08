@@ -1,13 +1,17 @@
 package core
 
 import (
+	"crypto/ed25519"
+	"crypto/rand"
+	"encoding/hex"
 	"testing"
 
 	"synnergy/internal/nodes"
 )
 
 func TestBaseNodeLifecycle(t *testing.T) {
-	bn := NewBaseNode(nodes.Address("node1"))
+	pub, _, _ := ed25519.GenerateKey(rand.Reader)
+	bn := NewBaseNode(nodes.Address(hex.EncodeToString(pub)))
 	if bn.IsRunning() {
 		t.Fatalf("expected node to be stopped initially")
 	}
@@ -17,7 +21,10 @@ func TestBaseNodeLifecycle(t *testing.T) {
 	if !bn.IsRunning() {
 		t.Fatalf("expected node to be running after start")
 	}
-	if err := bn.DialSeed(nodes.Address("peer1")); err != nil {
+	peerPub, peerPriv, _ := ed25519.GenerateKey(rand.Reader)
+	peerAddr := nodes.Address(hex.EncodeToString(peerPub))
+	sig := ed25519.Sign(peerPriv, []byte(peerAddr))
+	if err := bn.DialSeedSigned(peerAddr, sig, peerPub); err != nil {
 		t.Fatalf("dial: %v", err)
 	}
 	if len(bn.Peers()) != 1 {

@@ -66,6 +66,7 @@
 - Stage 58: Completed – secrets-manager CLI validates keys and sample smart contracts added.
 - Stage 59: Completed – content-node registry, secrets manager CLI, gas/opcode references and web UI wired for deterministic pricing.
 - Stage 60: Completed – contract language compatibility, contract registry and access utilities refined with tests.
+- Stage 61: Completed – audit, authority, banking, base-node peering and biometric modules hardened with Ed25519 signatures.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1329,25 +1330,36 @@
  - [x] core/audit_management.go - in-memory audit log manager
 
 **Stage 61**
-- [ ] core/audit_management_test.go
-- [ ] core/audit_node.go
-- [ ] core/audit_node_test.go
-- [ ] core/authority_apply.go
-- [ ] core/authority_apply_test.go
-- [ ] core/authority_node_index.go
-- [ ] core/authority_node_index_test.go
-- [ ] core/authority_nodes.go
-- [ ] core/authority_nodes_test.go
-- [ ] core/bank_institutional_node.go
-- [ ] core/bank_institutional_node_test.go
-- [ ] core/bank_nodes_index.go
-- [ ] core/bank_nodes_index_test.go
-- [ ] core/bank_nodes_test.go
-- [ ] core/base_node.go
-- [ ] core/base_node_test.go
-- [ ] core/biometric.go
-- [ ] core/biometric_security_node.go
-- [ ] core/biometric_security_node_test.go
+- [x] core/audit_management.go
+- [x] core/audit_management_test.go
+ - [x] core/audit_node.go
+ - [x] core/audit_node_test.go
+- [x] core/authority_apply.go
+- [x] core/authority_apply_test.go
+- [x] core/authority_node_index.go
+- [x] core/authority_node_index_test.go
+- [x] core/authority_nodes.go
+- [x] core/authority_nodes_test.go
+ - [x] core/bank_institutional_node.go
+ - [x] core/bank_institutional_node_test.go
+ - [x] core/bank_nodes_index.go
+ - [x] core/bank_nodes_index_test.go
+ - [x] core/bank_nodes_test.go
+- [x] core/base_node.go
+- [x] core/base_node_test.go
+- [x] core/biometric.go
+- [x] core/biometric_security_node.go
+- [x] core/biometric_security_node_test.go
+- [x] cli/authority_nodes.go
+- [x] cli/authority_nodes_test.go
+- [x] cli/authority_apply.go
+- [x] cli/authority_apply_test.go
+- [x] cli/bank_node_index.go
+- [x] cli/bank_node_index_test.go
+- [x] docs/reference/gas_table_list.md
+- [x] docs/reference/opcodes_list.md
+- [x] docs/guides/cli_quickstart.md
+- [x] README.md
 
 **Stage 62**
 - [ ] core/biometric_test.go
@@ -1796,7 +1808,7 @@
 - [ ] docs/api/README.md
 - [ ] docs/api/core.md
 - [ ] docs/financial_models.md
-- [ ] docs/guides/cli_quickstart.md
+ - [x] docs/guides/cli_quickstart.md
 - [ ] docs/guides/developer_guide.md
 - [ ] docs/guides/gui_quickstart.md
 - [ ] docs/guides/network_operations.md
@@ -1808,7 +1820,7 @@
 - [ ] docs/reference/errors_list.md
 - [ ] docs/reference/functions_list.txt
 - [ ] docs/reference/gas_table_list.md
-- [ ] docs/reference/opcodes_list.md
+ - [x] docs/reference/opcodes_list.md
 - [ ] dynamic_consensus_hopping.go
 - [ ] dynamic_consensus_hopping_test.go
 - [ ] energy_efficiency.go
@@ -3435,8 +3447,8 @@
 | 39 | cli/authority_node_index_test.go | [ ] |
 | 39 | cli/authority_nodes.go | [ ] |
 | 39 | cli/authority_nodes_test.go | [ ] |
-| 39 | cli/bank_institutional_node.go | [ ] |
-| 39 | cli/bank_institutional_node_test.go | [ ] |
+| 39 | cli/bank_institutional_node.go | [x] | signed institution management |
+| 39 | cli/bank_institutional_node_test.go | [x] |
 | 39 | cli/bank_nodes_index.go | [ ] |
 | 39 | cli/bank_nodes_index_test.go | [ ] |
 | 39 | cli/base_node.go | [ ] |
@@ -3852,11 +3864,11 @@
 | 61 | core/authority_node_index_test.go | [ ] |
 | 61 | core/authority_nodes.go | [ ] |
 | 61 | core/authority_nodes_test.go | [ ] |
-| 61 | core/bank_institutional_node.go | [ ] |
-| 61 | core/bank_institutional_node_test.go | [ ] |
+| 61 | core/bank_institutional_node.go | [x] | signature enforcement |
+| 61 | core/bank_institutional_node_test.go | [x] |
 | 61 | core/bank_nodes_index.go | [ ] |
 | 61 | core/bank_nodes_index_test.go | [ ] |
-| 61 | core/bank_nodes_test.go | [ ] |
+| 61 | core/bank_nodes_test.go | [x] |
 | 61 | core/base_node.go | [ ] |
 | 61 | core/base_node_test.go | [ ] |
 | 61 | core/biometric.go | [ ] |
@@ -4266,7 +4278,7 @@
 | 83 | docs/api/README.md | [ ] |
 | 83 | docs/api/core.md | [ ] |
 | 83 | docs/financial_models.md | [ ] |
-| 83 | docs/guides/cli_quickstart.md | [ ] |
+| 83 | docs/guides/cli_quickstart.md | [x] | bankinst signed usage |
 | 83 | docs/guides/developer_guide.md | [ ] |
 | 83 | docs/guides/gui_quickstart.md | [ ] |
 | 83 | docs/guides/network_operations.md | [ ] |

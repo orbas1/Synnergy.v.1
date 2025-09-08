@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"crypto/ed25519"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 
@@ -38,11 +40,11 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Enroll biometric data for an address",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			pub, err := parsePubKey(args[2])
-			if err != nil {
+			pubBytes, err := hex.DecodeString(args[2])
+			if err != nil || len(pubBytes) != ed25519.PublicKeySize {
 				return fmt.Errorf("invalid public key: %w", err)
 			}
-			biomAuth.Enroll(args[0], []byte(args[1]), pub)
+			biomAuth.Enroll(args[0], []byte(args[1]), ed25519.PublicKey(pubBytes))
 			bioOutput(map[string]string{"status": "enrolled"}, "enrolled")
 			return nil
 		},
@@ -53,7 +55,7 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Verify biometric data for an address",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			sig, err := decodeSig(args[2])
+			sig, err := hex.DecodeString(args[2])
 			if err != nil {
 				return fmt.Errorf("invalid signature: %w", err)
 			}

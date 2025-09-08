@@ -18,6 +18,12 @@ func TestAuditManager_LogAndList(t *testing.T) {
 	if events[0].Metadata["foo"] != "bar" {
 		t.Fatalf("metadata not stored")
 	}
+	if len(events[0].Signature) == 0 {
+		t.Fatalf("expected signature to be present")
+	}
+	if !m.Verify(events[0]) {
+		t.Fatalf("signature verification failed")
+	}
 }
 
 func TestAuditManager_Invalid(t *testing.T) {
