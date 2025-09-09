@@ -472,6 +472,7 @@ and warfare nodes as well as UI integrations.
 | `ReconstructHolographic` | `0x1001B1` |
 | `Record` | `0x1001B2` |
 | `RecordFraud` | `0x1001B3` |
+| `RecordMetrics` | `0x1001C4` |
 | `RecordNetworkTrace` | `0x1001B4` |
 | `RecordPayment` | `0x1001B5` |
 | `RecordReturn` | `0x1001B6` |

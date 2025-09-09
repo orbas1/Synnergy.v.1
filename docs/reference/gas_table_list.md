@@ -556,6 +556,7 @@
 | `Reached` | `1` |
 | `ReconstructHolographic` | `1` |
 | `RecordFraud` | `1` |
+| `RecordMetrics` | `1` |
 | `RecordNetworkTrace` | `1` |
 | `RecordPayment` | `1` |
 | `RecordReturn` | `1` |

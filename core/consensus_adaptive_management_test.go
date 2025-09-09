@@ -1,15 +1,32 @@
 package core
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
-func TestAdaptiveManagerAdjust(t *testing.T) {
+func TestAdaptiveManagerWindowAndReset(t *testing.T) {
 	sc := NewSynnergyConsensus()
-	am := NewAdaptiveManager(sc)
-	weights := am.Adjust(0.5, 0.5)
-	if weights.PoW == 0 && weights.PoS == 0 && weights.PoH == 0 {
-		t.Fatalf("expected weights to be adjusted")
+	am := NewAdaptiveManager(sc, 2)
+
+	if th := am.Threshold(1, 0); th <= 0 {
+		t.Fatalf("expected positive threshold, got %v", th)
 	}
-	if am.Threshold(0.3, 0.4) <= 0 {
-		t.Fatalf("expected positive threshold")
+	if th := am.Threshold(0, 1); math.Abs(th-0.5) > 0.01 {
+		t.Fatalf("expected avg threshold ~0.5, got %v", th)
+	}
+	if th := am.Threshold(0, 0); math.Abs(th-0.25) > 0.01 {
+		t.Fatalf("expected sliding threshold ~0.25, got %v", th)
+	}
+
+	am.Reset()
+	if th := am.Threshold(0, 0); th != 0 {
+		t.Fatalf("expected 0 after reset, got %v", th)
+	}
+
+	w1 := am.Adjust(1, 0)
+	w2 := am.Adjust(0, 1)
+	if w1 == w2 {
+		t.Fatalf("expected weights to change with new metrics")
 	}
 }

@@ -254,8 +254,8 @@ Every file under `core/` is listed below with a short description derived from i
 - **common_structs.go** – common_structs.go – centralised struct definitions referenced across modules.
 - **compliance.go** – compliance.go – Regulatory & Data‑Privacy utilities for Synnergy Network.
 - **compliance_management.go** – ComplianceManager coordinates account suspensions and whitelists.
-- **connection_pool.go** – Connection represents a pooled network connection.
-- **connection_pool_test.go** – startTestServer starts a TCP server that accepts connections and returns listener and slice of accepted conns.
+- **connection_pool.go** – manages pooled TCP connections with capacity limits and reuse.
+- **connection_pool_test.go** – verifies connection reuse, pool exhaustion and proper closure against a test server.
 - **consensus.go** – SynnergyConsensus – hybrid PoH + PoS sub‑blocks, aggregated under PoW main block.
 - **consensus_adaptive_management.go** – ConsensusAdaptiveManager monitors recent ledger activity and stake
 - **consensus_difficulty.go** – ConsensusStatus exposes high level consensus metrics such as the current

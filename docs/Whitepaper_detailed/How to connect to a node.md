@@ -67,7 +67,7 @@ Peer discovery is handled by the `peer` command set built on the `PeerManager` s
 ./synnergy peer discover <topic> --json    # list peers advertising the topic
 ```
 
-Connections are pooled and reused through `ConnectionPool`, which creates, dials, and releases link objects while enforcing capacity limits【F:core/connection_pool.go†L22-L75】.
+Connections are pooled and reused through `ConnectionPool`, which dials network endpoints, tracks capacity and releases connections back to the pool when finished【F:core/connection_pool.go†L33-L76】.
 
 ## Firewall and Access Controls
 Synnergy includes a built‑in `Firewall` to block malicious wallets, tokens, or IP addresses【F:firewall.go†L5-L44】. Maintain allow and deny lists that mirror corporate security policies, and export rules for compliance reviews.
@@ -91,7 +91,7 @@ When bridging to external ledgers, manage links with the `ConnectionManager`, wh
 
 ## Monitoring and Diagnostics
 - **Peer list**: `./synnergy network peers`
-- **Connection pool stats**: expose metrics by instrumenting `ConnectionPool.Stats()` for active vs. capacity numbers【F:core/connection_pool.go†L85-L97】.
+- **Connection pool stats**: expose metrics by instrumenting `ConnectionPool.Stats()` for active vs. capacity numbers【F:core/connection_pool.go†L112-L125】.
 - **System health**: `./synnergy system_health snapshot` captures runtime metrics via the `SystemHealthLogger` and can be automated through a `WatchtowerNode` for continuous monitoring【F:system_health_logging.go†L11-L40】【F:watchtower_node.go†L13-L68】.
 
 ## Troubleshooting
