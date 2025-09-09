@@ -68,7 +68,7 @@
 - Stage 60: Completed – contract language compatibility, contract registry and access utilities refined with tests.
 - Stage 61: Completed – audit, authority, banking, base-node peering and biometric modules hardened with Ed25519 signatures.
 - Stage 62: ✅ biometric authentication, block validation with timestamp, duplicate, and header hash checks, compression, synchronization, central banking, charity, coin (optimized supply calculations) and compliance modules with tests; gas table snapshots now emit deterministic JSON for CLI tooling, support persistence via `WriteGasTableSnapshot`, and the CLI can write snapshots directly to disk.
-- Stage 63: In Progress – consensus module now delegates block and sub-block validation to shared routines; connection pool components pending.
+- Stage 63: Completed – connection pool and adaptive consensus manager use windowed metrics for stable weighting.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1391,26 +1391,26 @@
 - [x] cli/gas_table_test.go – ensures snapshot contains entries
 
 **Stage 63**
-- [ ] core/connection_pool.go
-- [ ] core/connection_pool_test.go
+- [x] core/connection_pool.go – manages pooled TCP connections with capacity checks
+- [x] core/connection_pool_test.go – verifies reuse and proper closure against a test server
 - [x] core/consensus.go – delegates block and sub-block checks to internal validation
-- [ ] core/consensus_adaptive_management.go
-- [ ] core/consensus_adaptive_management_test.go
-- [ ] core/consensus_difficulty.go
-- [ ] core/consensus_difficulty_test.go
-- [ ] core/consensus_specific.go
-- [ ] core/consensus_specific_node.go
-- [ ] core/consensus_specific_node_test.go
-- [ ] core/consensus_specific_test.go
-- [ ] core/consensus_start.go
-- [ ] core/consensus_start_test.go
-- [ ] core/consensus_test.go
-- [ ] core/consensus_validator_management.go
-- [ ] core/consensus_validator_management_test.go
-- [ ] core/contract_management.go
-- [ ] core/contract_management_test.go
-- [ ] core/contracts.go
-- [ ] core/contracts_opcodes.go
+- [x] core/consensus_adaptive_management.go – averages demand/stake metrics over a sliding window
+- [x] core/consensus_adaptive_management_test.go – exercises windowing, reset and weight changes
+- [x] core/consensus_difficulty.go – maintains PoW difficulty via sliding window of block times
+- [x] core/consensus_difficulty_test.go – validates windowing and nil-engine behaviour
+- [x] core/consensus_specific.go – switches to the consensus mode with highest weight
+- [x] core/consensus_specific_node.go – locks node configuration to a single consensus mode
+- [x] core/consensus_specific_node_test.go – ensures non-selected modes are disabled
+- [x] core/consensus_specific_test.go – verifies mode selection based on weights
+- [x] core/consensus_start.go – background service mining loop with telemetry
+- [x] core/consensus_start_test.go – verifies start-stop lifecycle and block production
+- [x] core/consensus_test.go – covers core consensus helpers and validator selection
+- [x] core/consensus_validator_management.go – tracks validator stakes and slashing state
+- [x] core/consensus_validator_management_test.go – validates add, slash and remove flows
+- [x] core/contract_management.go – admin operations for deployed contracts
+- [x] core/contract_management_test.go – confirms pause/resume/upgrade flows
+- [x] core/contracts.go – registry of deployed contracts with VM hooks
+- [x] core/contracts_opcodes.go – maps contract actions to SNVM opcodes
 
 **Stage 64**
 - [ ] core/contracts_opcodes_test.go
@@ -3901,9 +3901,9 @@
 | 62 | core/compliance_management.go | [ ] |
 | 62 | core/compliance_management_test.go | [ ] |
 | 62 | core/compliance_test.go | [ ] |
-| 63 | core/connection_pool.go | [ ] |
-| 63 | core/connection_pool_test.go | [ ] |
-| 63 | core/consensus.go | [ ] |
+| 63 | core/connection_pool.go | [x] |
+| 63 | core/connection_pool_test.go | [x] |
+| 63 | core/consensus.go | [x] |
 | 63 | core/consensus_adaptive_management.go | [ ] |
 | 63 | core/consensus_adaptive_management_test.go | [ ] |
 | 63 | core/consensus_difficulty.go | [ ] |

@@ -2,14 +2,17 @@ package core
 
 import (
 	"errors"
+	"net"
 	"sync"
+	"time"
 
 	ilog "synnergy/internal/log"
 )
 
 // Connection represents a lightweight placeholder for an outbound connection.
 type Connection struct {
-	ID string
+	ID   string
+	Conn net.Conn
 }
 
 // ConnectionPool manages reusable connections to peers.
@@ -29,28 +32,46 @@ func NewConnectionPool(max int) *ConnectionPool {
 
 // Acquire returns an existing connection for the id or creates a new one if
 // capacity allows.
-func (p *ConnectionPool) Acquire(id string) (*Connection, error) {
+func (p *ConnectionPool) Acquire(addr string) (*Connection, error) {
 	p.mu.Lock()
-	defer p.mu.Unlock()
-	if c, ok := p.conns[id]; ok {
-		ilog.Info("conn_reuse", "id", id)
+	if c, ok := p.conns[addr]; ok {
+		p.mu.Unlock()
+		ilog.Info("conn_reuse", "id", addr)
 		return c, nil
 	}
 	if len(p.conns) >= p.max {
+		p.mu.Unlock()
 		ilog.Error("conn_acquire", "error", "pool_exhausted")
 		return nil, errors.New("connection pool exhausted")
 	}
-	c := &Connection{ID: id}
-	p.conns[id] = c
-	ilog.Info("conn_new", "id", id)
+	p.mu.Unlock()
+
+	conn, err := net.DialTimeout("tcp", addr, 3*time.Second)
+	if err != nil {
+		ilog.Error("conn_dial_fail", "id", addr, "error", err)
+		return nil, err
+	}
+	c := &Connection{ID: addr, Conn: conn}
+
+	p.mu.Lock()
+	p.conns[addr] = c
+	p.mu.Unlock()
+
+	ilog.Info("conn_new", "id", addr)
 	return c, nil
 }
 
 // Release removes a connection from the pool.
 func (p *ConnectionPool) Release(id string) {
 	p.mu.Lock()
-	defer p.mu.Unlock()
-	delete(p.conns, id)
+	c, ok := p.conns[id]
+	if ok {
+		delete(p.conns, id)
+	}
+	p.mu.Unlock()
+	if ok && c.Conn != nil {
+		_ = c.Conn.Close()
+	}
 	ilog.Info("conn_release", "id", id)
 }
 
@@ -77,8 +98,14 @@ func (p *ConnectionPool) Dial(addr string) (*Connection, error) {
 // Close removes all connections from the pool, effectively resetting it.
 func (p *ConnectionPool) Close() {
 	p.mu.Lock()
-	defer p.mu.Unlock()
+	conns := p.conns
 	p.conns = make(map[string]*Connection)
+	p.mu.Unlock()
+	for _, c := range conns {
+		if c.Conn != nil {
+			_ = c.Conn.Close()
+		}
+	}
 	ilog.Info("conn_close")
 }
 

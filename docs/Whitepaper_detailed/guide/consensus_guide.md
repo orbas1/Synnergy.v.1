@@ -37,6 +37,13 @@ strategies:
 - `TransitionThreshold(D, threat, S)` – combined threshold used to decide when
   to adjust weights.
 
+### Adaptive Management
+
+Stage 63 introduces the `AdaptiveManager` which keeps a sliding window of recent
+demand and stake metrics. Methods like `RecordMetrics` store observations while
+`Adjust` and `Threshold` operate on the averaged values, smoothing sudden swings
+in network behaviour.
+
 ### Difficulty Adjustment
 
 PoW difficulty adjusts according to the time it took to mine the previous window
