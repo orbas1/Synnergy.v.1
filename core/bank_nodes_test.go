@@ -23,7 +23,11 @@ func TestBankNodes(t *testing.T) {
 	}
 	s := NewCustodialNode("id3", "addr3", ledger)
 	s.Custody("user", 10)
-	if err := s.Release("user", 5); err != nil {
+	if err := s.Release("user", 5, "rel"); err == nil {
+		t.Fatal("expected unauthorized release to fail")
+	}
+	s.AuthorizeRelayer("rel")
+	if err := s.Release("user", 5, "rel"); err != nil {
 		t.Fatal("release failed")
 	}
 

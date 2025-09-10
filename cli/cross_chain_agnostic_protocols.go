@@ -13,6 +13,7 @@ import (
 var protocolRegistry = core.NewProtocolRegistry()
 
 func init() {
+	protocolRegistry.AuthorizeRelayer("cli_relayer")
 	cmd := &cobra.Command{
 		Use:   "cross_chain_agnostic_protocols",
 		Short: "Register cross-chain protocols",
@@ -30,7 +31,10 @@ func init() {
 			if args[0] == "" {
 				return fmt.Errorf("name required")
 			}
-			id := protocolRegistry.Register(args[0])
+			id, err := protocolRegistry.Register(args[0], "cli_relayer")
+			if err != nil {
+				return err
+			}
 			gas := synnergy.GasCost("RegisterProtocol")
 			if registerJSON {
 				enc, _ := json.Marshal(map[string]interface{}{"id": id, "gas": gas})

@@ -14,6 +14,10 @@ var custodialLedger = core.NewLedger()
 var custodialNode = core.NewCustodialNode("custodian", "custodian_addr", custodialLedger)
 
 func init() {
+	custodialNode.AuthorizeRelayer("cli_relayer")
+}
+
+func init() {
 	custCmd := &cobra.Command{
 		Use:   "custodial",
 		Short: "Operate a custodial node",
@@ -52,7 +56,7 @@ func init() {
 			if err != nil {
 				return fmt.Errorf("invalid amount")
 			}
-			if err := custodialNode.Release(args[0], amt); err != nil {
+			if err := custodialNode.Release(args[0], amt, "cli_relayer"); err != nil {
 				return err
 			}
 			gas := synnergy.GasCost("Release")

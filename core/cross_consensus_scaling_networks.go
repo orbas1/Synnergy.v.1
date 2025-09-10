@@ -17,28 +17,56 @@ type ConsensusNetworkManager struct {
 	mu       sync.RWMutex
 	networks map[int]ConsensusNetwork
 	nextID   int
+	relayers map[string]bool
 }
 
 // NewConsensusNetworkManager creates a new manager.
 func NewConsensusNetworkManager() *ConsensusNetworkManager {
-	return &ConsensusNetworkManager{networks: make(map[int]ConsensusNetwork)}
+	return &ConsensusNetworkManager{networks: make(map[int]ConsensusNetwork), relayers: make(map[string]bool)}
+}
+
+// AuthorizeRelayer whitelists an address for network modifications.
+func (m *ConsensusNetworkManager) AuthorizeRelayer(addr string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.relayers[addr] = true
+}
+
+// RevokeRelayer removes an address from the whitelist.
+func (m *ConsensusNetworkManager) RevokeRelayer(addr string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	delete(m.relayers, addr)
+}
+
+// IsRelayerAuthorized returns true if the address is authorized.
+func (m *ConsensusNetworkManager) IsRelayerAuthorized(addr string) bool {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.relayers[addr]
 }
 
 // RegisterNetwork registers a new cross-consensus network and returns its ID.
-func (m *ConsensusNetworkManager) RegisterNetwork(source, target string) int {
+// Only authorized relayers may register networks.
+func (m *ConsensusNetworkManager) RegisterNetwork(source, target, relayer string) (int, error) {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if !m.relayers[relayer] {
+		return 0, errors.New("unauthorized relayer")
+	}
 	m.nextID++
 	id := m.nextID
 	m.networks[id] = ConsensusNetwork{ID: id, SourceConsensus: source, TargetConsensus: target}
-	return id
+	return id, nil
 }
 
-// RemoveNetwork deletes a registered network by ID.
-// It returns an error if the network does not exist.
-func (m *ConsensusNetworkManager) RemoveNetwork(id int) error {
+// RemoveNetwork deletes a registered network by ID if the relayer is authorized.
+func (m *ConsensusNetworkManager) RemoveNetwork(id int, relayer string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
+	if !m.relayers[relayer] {
+		return errors.New("unauthorized relayer")
+	}
 	if _, ok := m.networks[id]; !ok {
 		return errors.New("network not found")
 	}

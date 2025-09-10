@@ -86,3 +86,27 @@ func (r *BridgeRegistry) RevokeRelayer(id, relayer string) error {
 	delete(b.Relayers, relayer)
 	return nil
 }
+
+// IsRelayerAuthorized checks if a relayer is authorized for a bridge.
+// It returns true if the bridge exists and the relayer is whitelisted.
+func (r *BridgeRegistry) IsRelayerAuthorized(id, relayer string) bool {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	b, ok := r.bridges[id]
+	if !ok {
+		return false
+	}
+	return b.Relayers[relayer]
+}
+
+// RemoveBridge deletes a bridge from the registry.
+// It returns an error if the bridge cannot be found.
+func (r *BridgeRegistry) RemoveBridge(id string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if _, ok := r.bridges[id]; !ok {
+		return fmt.Errorf("bridge %s not found", id)
+	}
+	delete(r.bridges, id)
+	return nil
+}

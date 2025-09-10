@@ -12,6 +12,7 @@ import (
 var crossContractRegistry = core.NewCrossChainRegistry()
 
 func init() {
+	crossContractRegistry.AuthorizeRelayer("cli_relayer")
 	cmd := &cobra.Command{
 		Use:   "xcontract",
 		Short: "Register cross-chain contract mappings",
@@ -27,7 +28,9 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Register a contract mapping",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			crossContractRegistry.RegisterMapping(args[0], args[1], args[2])
+			if err := crossContractRegistry.RegisterMapping("cli_relayer", args[0], args[1], args[2]); err != nil {
+				return err
+			}
 			gas := synnergy.GasCost("RegisterXContract")
 			if registerJSON {
 				enc, _ := json.Marshal(map[string]interface{}{"gas": gas})
@@ -82,7 +85,7 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Delete a mapping",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := crossContractRegistry.RemoveMapping(args[0]); err != nil {
+			if err := crossContractRegistry.RemoveMapping("cli_relayer", args[0]); err != nil {
 				return err
 			}
 			gas := synnergy.GasCost("RemoveXContract")

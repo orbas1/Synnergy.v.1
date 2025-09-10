@@ -69,6 +69,7 @@
 - Stage 61: Completed – audit, authority, banking, base-node peering and biometric modules hardened with Ed25519 signatures.
 - Stage 62: ✅ biometric authentication, block validation with timestamp, duplicate, and header hash checks, compression, synchronization, central banking, charity, coin (optimized supply calculations) and compliance modules with tests; gas table snapshots now emit deterministic JSON for CLI tooling, support persistence via `WriteGasTableSnapshot`, and the CLI can write snapshots directly to disk.
 - Stage 63: Completed – connection pool and adaptive consensus manager use windowed metrics for stable weighting.
+  - Stage 64: Completed – cross-chain registry, bridge manager, connection manager, protocol registry, contract registry, custodial nodes and DAO management enforce relayer authorization with safe deletion; cross-chain transactions and scaling networks now guarded by whitelisted relayers.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
@@ -1413,25 +1414,36 @@
 - [x] core/contracts_opcodes.go – maps contract actions to SNVM opcodes
 
 **Stage 64**
-- [ ] core/contracts_opcodes_test.go
-- [ ] core/contracts_test.go
-- [ ] core/cross_chain.go
-- [ ] core/cross_chain_agnostic_protocols.go
-- [ ] core/cross_chain_agnostic_protocols_test.go
-- [ ] core/cross_chain_bridge.go
-- [ ] core/cross_chain_bridge_test.go
-- [ ] core/cross_chain_connection.go
-- [ ] core/cross_chain_connection_test.go
-- [ ] core/cross_chain_contracts.go
-- [ ] core/cross_chain_contracts_test.go
-- [ ] core/cross_chain_test.go
-- [ ] core/cross_chain_transactions.go
-- [ ] core/cross_chain_transactions_test.go
-- [ ] core/cross_consensus_scaling_networks.go
-- [ ] core/cross_consensus_scaling_networks_test.go
-- [ ] core/custodial_node.go
-- [ ] core/custodial_node_test.go
-- [ ] core/dao.go
+- [x] core/contracts_opcodes_test.go – validates opcode names resolve uniquely
+- [x] core/contracts_test.go – covers duplicate deployment and lookups
+- [x] core/cross_chain.go – added relayer authorization checks and bridge removal
+ - [x] core/cross_chain_agnostic_protocols.go – relayer whitelist and safe protocol removal
+ - [x] core/cross_chain_agnostic_protocols_test.go – tests unauthorized relayers and removal
+- [x] core/cross_chain_bridge.go – enforced relayer checks and bridge removal
+- [x] core/cross_chain_bridge_test.go – tests unauthorized relayers and bridge removal
+  - [x] core/cross_chain_connection.go – enforced relayer checks and connection removal
+  - [x] core/cross_chain_connection_test.go – tests authorized closing and removal
+ - [x] core/cross_chain_contracts.go – relayer checks for contract mappings
+ - [x] core/cross_chain_contracts_test.go – verifies relayer enforcement and mapping removal
+- [x] core/cross_chain_test.go – tests added for relayer authorization and bridge removal
+- [x] core/cross_chain_transactions.go – relayer whitelist securing lock/mint and burn/release
+- [x] core/cross_chain_transactions_test.go – verifies relayer authorization on transfers
+- [x] core/cross_consensus_scaling_networks.go – whitelist-managed network registration and removal
+- [x] core/cross_consensus_scaling_networks_test.go – tests unauthorized and authorized network changes
+- [x] core/custodial_node.go – relayer whitelist securing asset releases
+- [x] core/custodial_node_test.go – verifies unauthorized relayers cannot release holdings
+- [x] core/dao.go – whitelisted relayers required for DAO creation and membership changes
+- [x] core/dao_test.go – tests relayer authorization on create, join and leave
+
+ - [x] cli/cross_chain_agnostic_protocols.go – relayer whitelist for protocol registration
+ - [x] cli/cross_chain_connection.go – authorized relayers required to close connections
+ - [x] cli/cross_chain_contracts.go – relayer checks for mapping operations
+ - [x] cli/cross_chain_transactions.go – transfers gated by whitelisted relayers
+ - [x] cli/cross_consensus_scaling_networks.go – whitelist-managed network registration and removal
+ - [x] cli/custodial_node.go – release operations require authorized relayers
+ - [x] cli/dao.go – auto-whitelist callers for DAO actions
+ - [x] cli/dao_access_control_test.go – CLI tests ensure unauthorized relayers are rejected
+ - [x] cli/dao_proposal_test.go – CLI tests validate authorized proposal flow
 
 **Stage 65**
 - [ ] core/dao_access_control.go
@@ -3923,16 +3935,16 @@
 | 63 | core/contracts_opcodes.go | [ ] |
 | 64 | core/contracts_opcodes_test.go | [ ] |
 | 64 | core/contracts_test.go | [ ] |
-| 64 | core/cross_chain.go | [ ] |
+| 64 | core/cross_chain.go | [x] | relayer authorization checks and bridge removal |
 | 64 | core/cross_chain_agnostic_protocols.go | [ ] |
 | 64 | core/cross_chain_agnostic_protocols_test.go | [ ] |
-| 64 | core/cross_chain_bridge.go | [ ] |
-| 64 | core/cross_chain_bridge_test.go | [ ] |
+| 64 | core/cross_chain_bridge.go | [x] |
+| 64 | core/cross_chain_bridge_test.go | [x] |
 | 64 | core/cross_chain_connection.go | [ ] |
 | 64 | core/cross_chain_connection_test.go | [ ] |
 | 64 | core/cross_chain_contracts.go | [ ] |
 | 64 | core/cross_chain_contracts_test.go | [ ] |
-| 64 | core/cross_chain_test.go | [ ] |
+| 64 | core/cross_chain_test.go | [x] | relayer authorization and removal tests |
 | 64 | core/cross_chain_transactions.go | [ ] |
 | 64 | core/cross_chain_transactions_test.go | [ ] |
 | 64 | core/cross_consensus_scaling_networks.go | [ ] |

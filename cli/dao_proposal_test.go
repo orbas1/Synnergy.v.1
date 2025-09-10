@@ -16,8 +16,12 @@ import (
 // TestDAOProposalCreateJSON verifies JSON output and signature check for proposal creation.
 func TestDAOProposalCreateJSON(t *testing.T) {
 	daoMgr = core.NewDAOManager()
+	daoMgr.AuthorizeRelayer("creator")
 	proposalMgr = core.NewProposalManager()
-	dao := daoMgr.Create("dao1", "creator")
+	dao, err := daoMgr.Create("dao1", "creator")
+	if err != nil {
+		t.Fatalf("create dao: %v", err)
+	}
 
 	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {

@@ -16,18 +16,47 @@ type ContractMapping struct {
 type CrossChainRegistry struct {
 	mu       sync.RWMutex
 	mappings map[string]*ContractMapping
+	relayers map[string]bool
 }
 
 // NewCrossChainRegistry creates an empty registry.
 func NewCrossChainRegistry() *CrossChainRegistry {
-	return &CrossChainRegistry{mappings: make(map[string]*ContractMapping)}
+	return &CrossChainRegistry{
+		mappings: make(map[string]*ContractMapping),
+		relayers: make(map[string]bool),
+	}
 }
 
-// RegisterMapping registers a new contract mapping.
-func (r *CrossChainRegistry) RegisterMapping(local, remoteChain, remoteAddr string) {
+// AuthorizeRelayer adds a relayer to the whitelist.
+func (r *CrossChainRegistry) AuthorizeRelayer(relayer string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	r.relayers[relayer] = true
+}
+
+// RevokeRelayer removes a relayer from the whitelist.
+func (r *CrossChainRegistry) RevokeRelayer(relayer string) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	delete(r.relayers, relayer)
+}
+
+// IsRelayerAuthorized checks if a relayer is authorized.
+func (r *CrossChainRegistry) IsRelayerAuthorized(relayer string) bool {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	return r.relayers[relayer]
+}
+
+// RegisterMapping registers a new contract mapping. Only authorized relayers may register.
+func (r *CrossChainRegistry) RegisterMapping(relayer, local, remoteChain, remoteAddr string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if !r.relayers[relayer] {
+		return errors.New("unauthorized relayer")
+	}
 	r.mappings[local] = &ContractMapping{LocalAddress: local, RemoteChain: remoteChain, RemoteAddress: remoteAddr}
+	return nil
 }
 
 // GetMapping retrieves a mapping by local address.
@@ -50,9 +79,12 @@ func (r *CrossChainRegistry) ListMappings() []*ContractMapping {
 }
 
 // RemoveMapping deletes a mapping by local address.
-func (r *CrossChainRegistry) RemoveMapping(local string) error {
+func (r *CrossChainRegistry) RemoveMapping(relayer, local string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	if !r.relayers[relayer] {
+		return errors.New("unauthorized relayer")
+	}
 	if _, ok := r.mappings[local]; !ok {
 		return errors.New("mapping not found")
 	}

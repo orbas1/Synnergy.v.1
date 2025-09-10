@@ -7,6 +7,10 @@ func TestCrossChainTxManager(t *testing.T) {
 	l.Credit("alice", 100)
 	l.Credit("bob", 100)
 	m := NewCrossChainTxManager(l)
+	if _, err := m.LockMint(1, "alice", "charlie", "asset1", 40, "proof"); err == nil {
+		t.Fatalf("expected unauthorized lockmint")
+	}
+	m.AuthorizeRelayer("alice")
 	id1, err := m.LockMint(1, "alice", "charlie", "asset1", 40, "proof")
 	if err != nil {
 		t.Fatalf("lockmint failed: %v", err)
@@ -14,6 +18,10 @@ func TestCrossChainTxManager(t *testing.T) {
 	if l.GetBalance("alice") != 60 || l.GetBalance("charlie") != 40 {
 		t.Fatalf("unexpected balances after lockmint")
 	}
+	if _, err := m.BurnRelease(1, "bob", "dave", "asset1", 30); err == nil {
+		t.Fatalf("expected unauthorized burnrelease")
+	}
+	m.AuthorizeRelayer("bob")
 	id2, err := m.BurnRelease(1, "bob", "dave", "asset1", 30)
 	if err != nil {
 		t.Fatalf("burnrelease failed: %v", err)
