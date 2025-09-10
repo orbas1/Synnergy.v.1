@@ -18,9 +18,10 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Create a new DAO",
 		Run: func(cmd *cobra.Command, args []string) {
-			dao := daoMgr.Create(args[0], args[1])
-			if dao == nil {
-				printOutput(map[string]any{"error": "invalid parameters"})
+			daoMgr.AuthorizeRelayer(args[1])
+			dao, err := daoMgr.Create(args[0], args[1])
+			if err != nil {
+				printOutput(map[string]any{"error": err.Error()})
 				return
 			}
 			gasPrint("CreateDAO")
@@ -33,6 +34,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Join a DAO",
 		Run: func(cmd *cobra.Command, args []string) {
+			daoMgr.AuthorizeRelayer(args[1])
 			if err := daoMgr.Join(args[0], args[1]); err != nil {
 				printOutput(map[string]any{"error": err.Error()})
 				return
@@ -47,6 +49,7 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Leave a DAO",
 		Run: func(cmd *cobra.Command, args []string) {
+			daoMgr.AuthorizeRelayer(args[1])
 			if err := daoMgr.Leave(args[0], args[1]); err != nil {
 				printOutput(map[string]any{"error": err.Error()})
 				return

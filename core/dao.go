@@ -18,20 +18,46 @@ type DAO struct {
 
 // DAOManager tracks all DAOs.
 type DAOManager struct {
-	mu     sync.RWMutex
-	daos   map[string]*DAO
-	nextID int
+	mu       sync.RWMutex
+	daos     map[string]*DAO
+	nextID   int
+	relayers map[string]struct{}
 }
 
 // NewDAOManager creates an empty DAO manager.
 func NewDAOManager() *DAOManager {
-	return &DAOManager{daos: make(map[string]*DAO), nextID: 1}
+	return &DAOManager{daos: make(map[string]*DAO), nextID: 1, relayers: make(map[string]struct{})}
 }
 
-// Create initialises a new DAO.
-func (m *DAOManager) Create(name, creator string) *DAO {
+// AuthorizeRelayer adds an address to the DAO manager whitelist.
+func (m *DAOManager) AuthorizeRelayer(addr string) {
+	m.mu.Lock()
+	m.relayers[addr] = struct{}{}
+	m.mu.Unlock()
+}
+
+// RevokeRelayer removes an address from the whitelist.
+func (m *DAOManager) RevokeRelayer(addr string) {
+	m.mu.Lock()
+	delete(m.relayers, addr)
+	m.mu.Unlock()
+}
+
+// IsRelayerAuthorized returns true if the address is whitelisted.
+func (m *DAOManager) IsRelayerAuthorized(addr string) bool {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	_, ok := m.relayers[addr]
+	return ok
+}
+
+// Create initialises a new DAO. The creator must be an authorised relayer.
+func (m *DAOManager) Create(name, creator string) (*DAO, error) {
 	if name == "" || creator == "" {
-		return nil
+		return nil, errors.New("invalid parameters")
+	}
+	if !m.IsRelayerAuthorized(creator) {
+		return nil, errors.New("unauthorized relayer")
 	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
@@ -39,11 +65,14 @@ func (m *DAOManager) Create(name, creator string) *DAO {
 	m.nextID++
 	dao := &DAO{ID: id, Name: name, Creator: creator, Members: map[string]string{creator: "admin"}}
 	m.daos[id] = dao
-	return dao
+	return dao, nil
 }
 
 // Join adds an address to the DAO with member role.
 func (m *DAOManager) Join(id, addr string) error {
+	if !m.IsRelayerAuthorized(addr) {
+		return errors.New("unauthorized relayer")
+	}
 	m.mu.RLock()
 	dao, ok := m.daos[id]
 	m.mu.RUnlock()
@@ -61,6 +90,9 @@ func (m *DAOManager) Join(id, addr string) error {
 
 // Leave removes an address from the DAO.
 func (m *DAOManager) Leave(id, addr string) error {
+	if !m.IsRelayerAuthorized(addr) {
+		return errors.New("unauthorized relayer")
+	}
 	m.mu.RLock()
 	dao, ok := m.daos[id]
 	m.mu.RUnlock()

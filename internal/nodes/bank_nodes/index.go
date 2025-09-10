@@ -34,5 +34,5 @@ type CustodialNode interface {
 	// Custody records assets held for a specific user.
 	Custody(user string, amount uint64)
 	// Release transfers assets back to the user if sufficient.
-	Release(user string, amount uint64) error
+	Release(user string, amount uint64, relayer string) error
 }

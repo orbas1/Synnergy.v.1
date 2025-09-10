@@ -13,6 +13,7 @@ import (
 var consensusNetMgr = core.NewConsensusNetworkManager()
 
 func init() {
+	consensusNetMgr.AuthorizeRelayer("cli_relayer")
 	ccsnCmd := &cobra.Command{
 		Use:   "cross-consensus",
 		Short: "Manage cross-consensus scaling networks",
@@ -24,7 +25,10 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Register a new network",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id := consensusNetMgr.RegisterNetwork(args[0], args[1])
+			id, err := consensusNetMgr.RegisterNetwork(args[0], args[1], "cli_relayer")
+			if err != nil {
+				return err
+			}
 			gas := synnergy.GasCost("RegisterConsensusNetwork")
 			if registerJSON {
 				enc, _ := json.Marshal(map[string]interface{}{"id": id, "gas": gas})
@@ -91,7 +95,7 @@ func init() {
 				fmt.Println("invalid id")
 				return
 			}
-			if err := consensusNetMgr.RemoveNetwork(id); err != nil {
+			if err := consensusNetMgr.RemoveNetwork(id, "cli_relayer"); err != nil {
 				fmt.Println(err)
 				return
 			}

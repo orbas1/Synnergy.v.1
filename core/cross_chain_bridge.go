@@ -104,6 +104,31 @@ func (m *BridgeManager) RevokeRelayer(id int, addr string) error {
 	return nil
 }
 
+// IsRelayerAuthorized checks if an address is authorized to relay for the bridge.
+// It returns false if the bridge does not exist or the relayer is not whitelisted.
+func (m *BridgeManager) IsRelayerAuthorized(id int, addr string) bool {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	b, ok := m.bridges[id]
+	if !ok {
+		return false
+	}
+	_, authorized := b.Relayers[addr]
+	return authorized
+}
+
+// RemoveBridge deletes a bridge definition from the manager.
+// It returns an error if the bridge cannot be found.
+func (m *BridgeManager) RemoveBridge(id int) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if _, ok := m.bridges[id]; !ok {
+		return errors.New("bridge not found")
+	}
+	delete(m.bridges, id)
+	return nil
+}
+
 // Deposit locks assets on the source chain creating a transfer record.
 func (m *BridgeManager) Deposit(bridgeID int, from, to string, amount uint64, tokenID string) (int, error) {
 	m.mu.Lock()
@@ -125,12 +150,20 @@ func (m *BridgeManager) Deposit(bridgeID int, from, to string, amount uint64, to
 }
 
 // Claim releases locked assets to the recipient using a proof placeholder.
-func (m *BridgeManager) Claim(transferID int, proof string) error {
+// The relayer must be authorized for the bridge that locked the funds.
+func (m *BridgeManager) Claim(transferID int, relayer, proof string) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 	t, ok := m.transfers[transferID]
 	if !ok {
 		return errors.New("transfer not found")
+	}
+	b, ok := m.bridges[t.BridgeID]
+	if !ok {
+		return errors.New("bridge not found")
+	}
+	if _, authorized := b.Relayers[relayer]; !authorized {
+		return errors.New("relayer not authorized")
 	}
 	if t.Claimed {
 		return errors.New("transfer already claimed")

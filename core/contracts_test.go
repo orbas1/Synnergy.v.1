@@ -23,4 +23,10 @@ func TestContractRegistry(t *testing.T) {
 	if string(out) != "hi" {
 		t.Fatalf("unexpected output: %q", out)
 	}
+	if _, err := reg.Deploy(wasm, "", 10, "owner"); err == nil {
+		t.Fatalf("expected duplicate deploy error")
+	}
+	if _, ok := reg.Get("missing"); ok {
+		t.Fatalf("expected missing contract")
+	}
 }

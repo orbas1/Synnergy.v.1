@@ -29,6 +29,7 @@ func init() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			from, _ := cmd.Flags().GetString("from")
 			to, _ := cmd.Flags().GetString("to")
+			crossTxManager.AuthorizeRelayer(from)
 			amount, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				return err
@@ -61,6 +62,7 @@ func init() {
 		Short: "Burn wrapped tokens and release native assets",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			from, _ := cmd.Flags().GetString("from")
+			crossTxManager.AuthorizeRelayer(from)
 			amount, err := strconv.ParseUint(args[3], 10, 64)
 			if err != nil {
 				return err

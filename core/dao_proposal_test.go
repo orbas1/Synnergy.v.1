@@ -4,7 +4,11 @@ import "testing"
 
 func TestDAOProposal(t *testing.T) {
 	mgr := NewDAOManager()
-	dao := mgr.Create("d", "c")
+	mgr.AuthorizeRelayer("c")
+	dao, err := mgr.Create("d", "c")
+	if err != nil {
+		t.Fatalf("create: %v", err)
+	}
 	pm := NewProposalManager()
 	prop := pm.CreateProposal(dao, "c", "desc")
 	if prop.DAOID != dao.ID {

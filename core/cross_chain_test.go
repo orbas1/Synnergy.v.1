@@ -17,7 +17,16 @@ func TestBridgeRegistry(t *testing.T) {
 	if err := reg.RevokeRelayer(b.ID, "relayer1"); err != nil {
 		t.Fatalf("revoke: %v", err)
 	}
-	if len(reg.ListBridges()) != 1 {
-		t.Fatalf("list: expected 1 bridge")
+	if !reg.IsRelayerAuthorized(b.ID, "relayer2") {
+		t.Fatalf("relayer2 should be authorized")
+	}
+	if reg.IsRelayerAuthorized(b.ID, "relayer1") {
+		t.Fatalf("relayer1 should not be authorized")
+	}
+	if err := reg.RemoveBridge(b.ID); err != nil {
+		t.Fatalf("remove: %v", err)
+	}
+	if len(reg.ListBridges()) != 0 {
+		t.Fatalf("list: expected 0 bridges after removal")
 	}
 }

@@ -29,15 +29,37 @@ type CrossChainTransfer struct {
 
 // CrossChainTxManager manages cross-chain transfers.
 type CrossChainTxManager struct {
-	mu     sync.RWMutex
-	txs    map[int]*CrossChainTransfer
-	nextID int
-	ledger *Ledger
+	mu       sync.RWMutex
+	txs      map[int]*CrossChainTransfer
+	nextID   int
+	ledger   *Ledger
+	relayers map[string]bool
 }
 
 // NewCrossChainTxManager creates a new manager bound to a ledger.
 func NewCrossChainTxManager(l *Ledger) *CrossChainTxManager {
-	return &CrossChainTxManager{txs: make(map[int]*CrossChainTransfer), ledger: l}
+	return &CrossChainTxManager{txs: make(map[int]*CrossChainTransfer), ledger: l, relayers: make(map[string]bool)}
+}
+
+// AuthorizeRelayer adds an address to the relayer whitelist.
+func (m *CrossChainTxManager) AuthorizeRelayer(addr string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	m.relayers[addr] = true
+}
+
+// RevokeRelayer removes an address from the whitelist.
+func (m *CrossChainTxManager) RevokeRelayer(addr string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	delete(m.relayers, addr)
+}
+
+// IsRelayerAuthorized returns true if the address is whitelisted.
+func (m *CrossChainTxManager) IsRelayerAuthorized(addr string) bool {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.relayers[addr]
 }
 
 // LockMint locks native assets from the sender and credits wrapped tokens to the recipient.
@@ -46,6 +68,9 @@ func (m *CrossChainTxManager) LockMint(bridgeID int, from, to, assetID string, a
 	defer m.mu.Unlock()
 	if m.ledger == nil {
 		return 0, errors.New("ledger not configured")
+	}
+	if !m.relayers[from] {
+		return 0, errors.New("unauthorized relayer")
 	}
 	tx := &Transaction{From: from, To: "lockmint_escrow", Amount: amount}
 	if err := m.ledger.ApplyTransaction(tx); err != nil {
@@ -64,6 +89,9 @@ func (m *CrossChainTxManager) BurnRelease(bridgeID int, from, to, assetID string
 	defer m.mu.Unlock()
 	if m.ledger == nil {
 		return 0, errors.New("ledger not configured")
+	}
+	if !m.relayers[from] {
+		return 0, errors.New("unauthorized relayer")
 	}
 	tx := &Transaction{From: from, To: "burn_vault", Amount: amount}
 	if err := m.ledger.ApplyTransaction(tx); err != nil {

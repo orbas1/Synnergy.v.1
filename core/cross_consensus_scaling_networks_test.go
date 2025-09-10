@@ -4,9 +4,13 @@ import "testing"
 
 func TestConsensusNetworkManager(t *testing.T) {
 	m := NewConsensusNetworkManager()
-	id := m.RegisterNetwork("pos", "pow")
-	if id == 0 {
-		t.Fatalf("expected id")
+	if _, err := m.RegisterNetwork("pos", "pow", "rel1"); err == nil {
+		t.Fatalf("expected unauthorized register")
+	}
+	m.AuthorizeRelayer("rel1")
+	id, err := m.RegisterNetwork("pos", "pow", "rel1")
+	if err != nil {
+		t.Fatalf("register failed: %v", err)
 	}
 	n, err := m.GetNetwork(id)
 	if err != nil || n.SourceConsensus != "pos" {
@@ -15,7 +19,10 @@ func TestConsensusNetworkManager(t *testing.T) {
 	if len(m.ListNetworks()) != 1 {
 		t.Fatalf("expected one network")
 	}
-	if err := m.RemoveNetwork(id); err != nil {
+	if err := m.RemoveNetwork(id, "bad"); err == nil {
+		t.Fatalf("expected unauthorized removal")
+	}
+	if err := m.RemoveNetwork(id, "rel1"); err != nil {
 		t.Fatalf("remove: %v", err)
 	}
 	if _, err := m.GetNetwork(id); err == nil {

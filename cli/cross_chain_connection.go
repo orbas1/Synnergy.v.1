@@ -28,7 +28,8 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Establish a new connection",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			id := connectionManager.Open(args[0], args[1])
+			id := connectionManager.Open(args[0], args[1], "cli_relayer")
+			connectionManager.AuthorizeRelayer(id, "cli_relayer")
 			gas := synnergy.GasCost("OpenConnection")
 			if openJSON {
 				enc, _ := json.Marshal(map[string]interface{}{"id": id, "gas": gas})
@@ -50,7 +51,7 @@ func init() {
 			if err != nil {
 				return err
 			}
-			if err := connectionManager.Close(id); err != nil {
+			if err := connectionManager.Close(id, "cli_relayer"); err != nil {
 				return err
 			}
 			gas := synnergy.GasCost("CloseConnection")

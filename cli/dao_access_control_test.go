@@ -16,9 +16,10 @@ import (
 // TestDAOMemberAddJSON verifies JSON output and signature verification for member addition.
 func TestDAOMemberAddJSON(t *testing.T) {
 	daoMgr = core.NewDAOManager()
-	dao := daoMgr.Create("testdao", "creator")
-	if dao == nil {
-		t.Fatalf("failed to create dao")
+	daoMgr.AuthorizeRelayer("creator")
+	dao, err := daoMgr.Create("testdao", "creator")
+	if err != nil {
+		t.Fatalf("failed to create dao: %v", err)
 	}
 
 	// generate key and signature over daoID+addr+role
