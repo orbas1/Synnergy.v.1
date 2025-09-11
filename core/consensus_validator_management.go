@@ -13,6 +13,7 @@ type ValidatorManager struct {
 	mu       sync.RWMutex
 	stakes   map[string]uint64
 	slashed  map[string]bool
+	evidence map[string]string
 	minStake uint64
 }
 
@@ -21,6 +22,7 @@ func NewValidatorManager(minStake uint64) *ValidatorManager {
 	return &ValidatorManager{
 		stakes:   make(map[string]uint64),
 		slashed:  make(map[string]bool),
+		evidence: make(map[string]string),
 		minStake: minStake,
 	}
 }
@@ -53,6 +55,22 @@ func (vm *ValidatorManager) Remove(ctx context.Context, addr string) {
 
 // Slash halves the stake of the validator and marks it as slashed.
 func (vm *ValidatorManager) Slash(ctx context.Context, addr string) {
+	vm.SlashWithEvidence(ctx, addr, "")
+}
+
+// Reward increases the stake of the validator by the provided amount.
+func (vm *ValidatorManager) Reward(ctx context.Context, addr string, amount uint64) {
+	ctx, span := telemetry.Tracer().Start(ctx, "ValidatorManager.Reward")
+	defer span.End()
+
+	vm.mu.Lock()
+	defer vm.mu.Unlock()
+	vm.stakes[addr] += amount
+}
+
+// SlashWithEvidence halves the stake of the validator, marks it as slashed and
+// records the provided evidence string for later auditing.
+func (vm *ValidatorManager) SlashWithEvidence(ctx context.Context, addr, evidence string) {
 	ctx, span := telemetry.Tracer().Start(ctx, "ValidatorManager.Slash")
 	defer span.End()
 
@@ -61,6 +79,7 @@ func (vm *ValidatorManager) Slash(ctx context.Context, addr string) {
 	if stake, ok := vm.stakes[addr]; ok {
 		vm.stakes[addr] = stake / 2
 		vm.slashed[addr] = true
+		vm.evidence[addr] = evidence
 	}
 }
 
@@ -82,4 +101,11 @@ func (vm *ValidatorManager) Stake(addr string) uint64 {
 	vm.mu.RLock()
 	defer vm.mu.RUnlock()
 	return vm.stakes[addr]
+}
+
+// Evidence returns the recorded misbehaviour proof for a validator, if any.
+func (vm *ValidatorManager) Evidence(addr string) string {
+	vm.mu.RLock()
+	defer vm.mu.RUnlock()
+	return vm.evidence[addr]
 }

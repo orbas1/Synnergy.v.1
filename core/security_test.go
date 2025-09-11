@@ -18,14 +18,14 @@ func TestSlashingAndRehabilitation(t *testing.T) {
 	node := NewNode("n1", "addr", ledger)
 	_ = node.SetStake("v1", MinStake*2)
 	node.ReportDoubleSign("v1")
-	if !node.Slashed["v1"] {
+	if _, ok := node.Validators.Eligible()["v1"]; ok {
 		t.Fatalf("validator should be slashed")
 	}
-	if node.Stakes["v1"] >= MinStake*2 {
+	if node.Validators.Stake("v1") >= MinStake*2 {
 		t.Fatalf("stake not reduced")
 	}
 	node.Rehabilitate("v1")
-	if node.Slashed["v1"] {
+	if _, ok := node.Validators.Eligible()["v1"]; !ok {
 		t.Fatalf("validator should be rehabilitated")
 	}
 }
