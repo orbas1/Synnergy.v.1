@@ -3,5 +3,9 @@ package benchmarks
 import "testing"
 
 func BenchmarkOpcodeBenchmarks(b *testing.B) {
-    b.Skip("TODO: implement Opcode benchmarks benchmark")
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		benchmarkSink += performComputation(1000)
+	}
 }
