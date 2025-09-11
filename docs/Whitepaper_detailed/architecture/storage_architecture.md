@@ -1,24 +1,25 @@
 # Storage and Data Architecture
 
-Storage-related modules handle data operations, secure storage, and sandboxed environments for smart contract execution.
+## Overview
+Storage components handle data persistence, distribution and secure retrieval for contracts and nodes. They support off-chain resources, encrypted storage and marketplace mechanisms for sharing datasets.
 
-**Key Modules**
-- data.go
-- data_distribution.go
-- data_operations.go
-- data_resource_management.go
-- ai_secure_storage.go
-- vm_sandbox_management.go
-- zero_trust_data_channels.go
-- storage_marketplace.go
+## Key Modules
+- `data_distribution.go` – replicates data across nodes for redundancy.
+- `data_resource_management.go` – tracks dataset metadata and ownership.
+- `data_operations.go` – provides read/write primitives with access checks.
+- `ai_secure_storage.go` – encrypts sensitive model artifacts.
+- Storage marketplace GUI and contracts for trading dataset access.
 
-**Related CLI Files**
-- cli/state_rw.go
-- cli/zero_trust_data_channels.go
-- cli/storage_marketplace.go
+## Workflow
+1. **Registration** – datasets are registered via `data_resource_management` with hashes and permissions.
+2. **Distribution** – `data_distribution` propagates chunks to approved nodes.
+3. **Access** – contracts call `data_operations` to read or mutate data; checks ensure caller permissions.
+4. **Marketplace** – optional marketplace contracts allow leasing or selling access to datasets.
 
-**Scripts**
-- scripts/backup_ledger.sh
+## Security Considerations
+- All data operations require permission checks and are logged.
+- Encryption keys are stored separately and rotated regularly.
+- Distribution routines verify integrity using content hashes.
 
-These modules provide robust data handling, ensuring integrity and isolation for contract and node storage requirements.
-Stage 35 adds a storage marketplace spanning the core, CLI and a reference GUI under `GUI/storage-marketplace` where users can list and lease capacity through gas-priced opcodes.
+## CLI Integration
+- `synnergy data` – manage resources, distribution and access policies.

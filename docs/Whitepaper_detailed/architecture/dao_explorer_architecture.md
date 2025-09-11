@@ -1,18 +1,28 @@
 # DAO Explorer Architecture
 
-The DAO explorer provides a thin coordination layer between the Synnergy CLI and
-its core DAO governance runtime. The GUI invokes `synnergy dao` commands to
-create organisations, manage membership and inspect governance details.
+## Overview
+The DAO Explorer gives stakeholders a streamlined view into decentralized governance activity. It wraps the `dao` CLI commands with a lightweight web interface so users can create organisations, stake tokens and vote on proposals without managing raw JSON outputs.
 
-* **Virtual machine integration** – DAO creation and membership updates execute
-  through the shared VM and sandbox mechanisms used by other contracts,
-  guaranteeing deterministic behaviour.
-* **Consensus and wallet integration** – operations consume gas via
-  `CreateDAO`, `JoinDAO`, `LeaveDAO` and `DAOInfo` opcodes so wallets and
-  consensus nodes can account for costs.
-* **Fault tolerance** – the explorer is stateless, delegating persistence and
-  concurrency control to the CLI and core modules. Higher level services can
-  wrap it for replication or sharding in enterprise deployments.
+## Key Modules
+- `cli/dao.go` – top-level command wiring together proposal, staking and token subcommands.
+- `cli/dao_proposal.go` – create, list and execute governance proposals.
+- `cli/dao_staking.go` – manage staking balances that grant voting power.
+- `cli/dao_quadratic_voting.go` – apply quadratic weighting to cast votes.
+- `core/dao_proposal.go` – in-memory store for proposals and results.
 
-The GUI inherits existing authentication, node and authority policies from the
-CLI, allowing it to slot into dashboards without bespoke plumbing.
+## Workflow
+1. **Organisation discovery** – the explorer lists DAOs by shelling out to `synnergy dao list`.
+2. **Proposal creation** – users draft proposals which `dao_proposal` submits to the core manager.
+3. **Staking** – `dao_staking` records token deposits and exposes balances.
+4. **Voting** – votes are cast through `dao_quadratic_voting` to mitigate whales.
+5. **Execution** – successful proposals trigger follow‑up actions such as parameter changes or fund dispersal.
+
+## Security Considerations
+- The explorer operates in read‑only mode for most queries, keeping private keys in the CLI layer.
+- Proposal and vote submissions require signatures from staking accounts.
+- All transactions are logged with proposal IDs to maintain an auditable trail.
+
+## CLI Integration
+- `synnergy dao` – entry point for DAO operations.
+- `synnergy dao-proposal` – manage proposals.
+- `synnergy dao-stake` – deposit or withdraw staking amounts.

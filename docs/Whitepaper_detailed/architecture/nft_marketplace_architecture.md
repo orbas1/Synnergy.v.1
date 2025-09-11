@@ -1,18 +1,24 @@
 # NFT Marketplace Architecture
 
-The NFT marketplace provides a thin coordination layer between the CLI, core
-runtime and the JavaScript GUI. It maintains an in-memory catalogue of NFTs and
-relies on the shared gas table for fee estimation.
+## Overview
+The NFT marketplace allows creators to mint and trade tokens representing unique assets. It reuses the core token and contract systems, exposing a browser interface that wraps the `nft_marketplace` CLI.
 
-* **Virtual machine integration** – NFT minting uses the same VM sandboxing
-  mechanisms as smart contracts ensuring deterministic execution.
-* **Consensus and wallet integration** – operations consume gas via
-  `MintNFT`, `ListNFT` and `BuyNFT` opcodes so wallets and consensus nodes can
-  account for costs.
-* **Fault tolerance** – the marketplace is concurrency-safe and can be wrapped
-  by higher level services for persistence or sharding in enterprise
-deployments.
+## Key Modules
+- `core/nft_marketplace.go` – in-memory catalogue and trade execution logic.
+- `cli/nft_marketplace.go` – create listings, buy and sell NFTs.
+- `smart-contracts/nft_minting.wasm` – sample contract template for minting.
+- GUI under `GUI/nft_marketplace` – React frontend for user interaction.
 
-The accompanying GUI invokes the CLI which in turn calls the core module,
-allowing existing authentication, node and authority policies to apply without
-additional plumbing.
+## Workflow
+1. **Minting** – creators deploy the `nft_minting.wasm` template via the contracts CLI.
+2. **Listing** – `nft_marketplace` registers the token with price and owner information.
+3. **Purchase** – buyers invoke the CLI or GUI to transfer ownership atomically.
+4. **Catalogue update** – the marketplace updates its in-memory index and broadcasts events.
+
+## Security Considerations
+- Listings reference on-chain token IDs to prevent spoofing.
+- Trades execute atomically to avoid partial transfers.
+- The marketplace can enforce whitelists or royalties via smart contract hooks.
+
+## CLI Integration
+- `synnergy nft-marketplace` – manage listings and execute trades.

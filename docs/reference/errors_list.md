@@ -1,33 +1,26 @@
-# Build Error Tracking
+# Error Catalogue
 
-All identified build errors have been resolved.
+Common error codes and messages returned by Synnergy components. Each error implements Go's `error` interface and may wrap lower‑level causes.
 
-### Stage 1
-`core/address.go` builds successfully.
+| Code | Message | Description | Retry |
+|------|---------|-------------|------|
+| `ERR_INVALID_TX` | invalid transaction | Transaction failed basic validation (nonce, signature, funds). | no |
+| `ERR_UNAUTHORIZED` | unauthorized | Caller lacks required permissions or role. | no |
+| `ERR_NOT_FOUND` | not found | Requested resource does not exist in the ledger or registry. | no |
+| `ERR_DUPLICATE` | duplicate entry | An item already exists with the same identifier. | yes |
+| `ERR_NETWORK` | network error | Temporary network failure; peers may be unreachable. | yes |
+| `ERR_TIMEOUT` | operation timed out | Operation exceeded its allotted time. | yes |
+| `ERR_INTERNAL` | internal error | Unexpected failure in a module; check logs for details. | no |
 
-### Stage 2
-`core/cross_chain_bridge.go` builds successfully.
+## Usage
 
-### Stage 3
-`core/cross_consensus_scaling_networks.go` builds successfully.
+Errors follow the pattern `errors.Wrap(code, fmt.Errorf("detail: %w", err))` so callers can match on the code while retaining context.
 
-### Stage 4
-Package `synnergy` builds successfully.
+```go
+if errors.Code(err) == errors.ERR_INVALID_TX {
+    // handle accordingly
+}
+```
 
-### Stage 5
-Package `synnergy/cli` builds successfully.
+See `pkg/errors` for helper utilities and additional codes.
 
-### Stage 6
-Package `synnergy/cmd/synnergy` builds successfully.
-
-### Stage 7
-Package `synnergy/Tokens` builds successfully.
-
-### Stage 8
-Packages under `synnergy/node_ext` build successfully.
-
-### Stage 9
-Packages under `synnergy/nodes` build successfully. Tests now compile after adding missing `IsRunning` methods in banking node adapters.
-
-### Stage 10
-Packages under `synnergy/nodesextra` build successfully.

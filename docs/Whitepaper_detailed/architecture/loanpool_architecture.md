@@ -1,18 +1,26 @@
 # Loanpool Architecture
 
-Loanpool modules manage on-chain lending pools, proposals, and applications. They coordinate borrower interactions and pool governance.
+## Overview
+Loanpool modules administer community lending pools that issue grants or loans to participants. Authority nodes review applications and the smart contract enforces repayment terms.
 
-**Key Modules**
-- core/loanpool.go
-- core/loanpool_apply.go
-- core/loanpool_management.go
-- core/loanpool_proposal.go
-- core/loanpool_views.go
+## Key Modules
+- `cli/loanpool.go` – high level operations for creating and funding pools.
+- `cli/loanpool_apply.go` – submit loan or grant applications.
+- `cmd/scripts/loanpool_apply.sh` – example script for automating submissions.
+- `core` loanpool routines integrated via opcodes for contract execution.
 
-**Related CLI Files**
-- cli/loanpool.go
-- cli/loanpool_apply.go
-- cli/loanpool_management.go
-- cli/loanpool_proposal.go
+## Workflow
+1. **Pool creation** – authority nodes initialize pools and set parameters.
+2. **Application** – users apply through `loanpool_apply` specifying amount and purpose.
+3. **Review** – authority nodes evaluate applications and approve or reject.
+4. **Disbursement** – approved loans are released through on-chain transactions.
+5. **Repayment tracking** – the contract monitors payments and can trigger penalties for defaults.
 
-Together these files implement lending pools, including application processing, proposal voting, and management tools.
+## Security Considerations
+- Authority node actions are logged and require multi-signature approval.
+- Applications are validated to prevent duplicate submissions.
+- Loan terms are immutable once the contract is deployed.
+
+## CLI Integration
+- `synnergy loanpool` – create pools and manage funding.
+- `synnergy loanpool-apply` – submit or review applications.

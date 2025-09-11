@@ -1,36 +1,28 @@
 # Cross-Chain Architecture
 
-Cross-chain modules enable interoperability with external networks through bridges, agnostic protocols, and transaction relays.
+## Overview
+Cross-chain components allow the Synnergy Network to interoperate with external blockchains. Bridges, connection managers and protocol adapters move assets and data while preserving deterministic execution.
 
-**Key Modules**
-- cross_chain.go
-- cross_chain_bridge.go
-- cross_chain_connection.go
-- cross_chain_contracts.go
-- cross_chain_transactions.go
-- cross_chain_agnostic_protocols.go
-- cross_consensus_scaling_networks.go
+## Key Modules
+- `cross_chain_bridge.go` – coordinates locked assets and releases across chains.
+- `cross_chain_connection.go` – maintains authenticated links to foreign networks.
+- `cross_chain_contracts.go` – wraps remote contract calls with verification steps.
+- `cross_chain_transactions.go` – queues and relays transactions between networks.
+- `cross_chain_agnostic_protocols.go` – standardizes message formats for different chains.
 
-**Related CLI Files**
-- cli/cross_chain.go
-- cli/cross_chain_bridge.go
-- cli/cross_chain_connection.go
-- cli/cross_chain_contracts.go
-- cli/cross_chain_transactions.go
-- cli/cross_chain_agnostic_protocols.go
-- cli/cross_consensus_scaling_networks.go
+## Workflow
+1. **Connection setup** – `cross_chain_connection` establishes authenticated channels to target networks.
+2. **Asset locking** – `cross_chain_bridge` escrows tokens and emits proofs of lock.
+3. **Relay** – authorized relayers submit proofs to the destination chain where assets are minted or released.
+4. **Contract execution** – `cross_chain_contracts` verify the proof and invoke remote logic.
+5. **Finalization** – `cross_chain_transactions` record the result and update local ledgers.
 
-These components coordinate communication and asset transfers across multiple blockchains.
+## Security Considerations
+- Relayers are whitelisted and their actions logged to prevent spoofed messages.
+- Bridges verify proofs using light-client techniques and reject malformed data.
+- Rate limits and size checks protect against flooding the relay queues.
 
-Stage 8 hardens these modules for production use.  Each manager is concurrency
-safe, exposes deterministic gas‑priced opcodes and is accessible through the
-`synnergy` CLI.  Registries and bridge transfers persist in memory but are
-designed to be swapped with database backends for fault‑tolerant deployments.
-Stage 24 layers enterprise CLI tooling on top. Cross-chain bridges, protocol
-registries and Plasma controls emit gas metrics and optional JSON output so
-dashboards and automation can coordinate transfers across networks.
-Stage 42 extends this layer with the `cross_tx` command, enabling lock‑mint and
-burn‑release flows to be executed with the same structured outputs. Transfer
-records are persisted by `CrossChainTxManager` for auditability and can be
-queried or listed from the CLI, allowing user interfaces to drive
-interoperability through the function web.
+## CLI Integration
+- `synnergy cross-chain` – manage bridge operations and relay status.
+- `synnergy cross-chain-connection` – configure endpoints and authorizations.
+- `synnergy cross-chain-bridge` – lock, release and verify assets.
