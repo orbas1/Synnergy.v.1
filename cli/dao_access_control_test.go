@@ -47,8 +47,13 @@ func TestDAOMemberAddJSON(t *testing.T) {
 		t.Fatalf("execute: %v", err)
 	}
 
+	// Extract the JSON object from any preceding log or gas output.
+	out := buf.Bytes()
+	if i := bytes.IndexByte(out, '{'); i >= 0 {
+		out = out[i:]
+	}
 	var resp map[string]string
-	if err := json.Unmarshal(buf.Bytes(), &resp); err != nil {
+	if err := json.Unmarshal(out, &resp); err != nil {
 		t.Fatalf("decode: %v", err)
 	}
 	if resp["status"] != "member added" {
@@ -96,8 +101,12 @@ func TestDAOMemberUpdateRole(t *testing.T) {
 		t.Fatalf("execute: %v", err)
 	}
 
+	out := buf.Bytes()
+	if i := bytes.IndexByte(out, '{'); i >= 0 {
+		out = out[i:]
+	}
 	var resp map[string]string
-	if err := json.Unmarshal(buf.Bytes(), &resp); err != nil {
+	if err := json.Unmarshal(out, &resp); err != nil {
 		t.Fatalf("decode: %v", err)
 	}
 	if resp["status"] != "role updated" {

@@ -129,10 +129,10 @@ func main() {
 	_ = core.NewSandboxManager()
 
 	// Preload stage 9 modules so DAO-related CLI commands are ready for use.
-	_ = core.NewDAOManager()
+	daoMgr := core.NewDAOManager()
 	_ = core.NewProposalManager()
-	_ = core.NewDAOStaking()
-	_ = core.NewDAOTokenLedger()
+	_ = core.NewDAOStaking(daoMgr)
+	_ = core.NewDAOTokenLedger(daoMgr)
 	_ = core.NewConsensusNetworkManager()
 	_ = core.NewCustodialNode("cli-custodian", "cli-custodian", core.NewLedger())
 
