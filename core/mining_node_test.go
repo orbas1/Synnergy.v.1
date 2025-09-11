@@ -1,6 +1,11 @@
 package core
 
-import "testing"
+import (
+	"context"
+	"strings"
+	"testing"
+	"time"
+)
 
 func TestMiningNode(t *testing.T) {
 	mn := NewMiningNode(100)
@@ -22,4 +27,19 @@ func TestMiningNode(t *testing.T) {
 	if _, err := mn.Mine([]byte("data")); err == nil {
 		t.Fatalf("expected error when mining is inactive")
 	}
+}
+
+func TestMiningNodeMineUntil(t *testing.T) {
+	mn := NewMiningNode(10)
+	mn.Start()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+	hash, _, err := mn.MineUntil(ctx, []byte("data"), "0")
+	if err != nil {
+		t.Fatalf("MineUntil failed: %v", err)
+	}
+	if !strings.HasPrefix(hash, "0") {
+		t.Fatalf("hash %s does not have expected prefix", hash)
+	}
+	mn.Stop()
 }

@@ -1,8 +1,10 @@
 package cli
 
 import (
+	"context"
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
@@ -73,6 +75,29 @@ func init() {
 		},
 	}
 
+	var timeout int
+	mineUntilCmd := &cobra.Command{
+		Use:   "mine-until [data] [prefix]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Mine until hash has prefix or timeout elapses",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("MineUntil")
+			ctx := context.Background()
+			if timeout > 0 {
+				var cancel context.CancelFunc
+				ctx, cancel = context.WithTimeout(ctx, time.Duration(timeout)*time.Second)
+				defer cancel()
+			}
+			hash, nonce, err := miningNode.MineUntil(ctx, []byte(args[0]), args[1])
+			if err != nil {
+				return err
+			}
+			printOutput(map[string]interface{}{"hash": hash, "nonce": nonce})
+			return nil
+		},
+	}
+	mineUntilCmd.Flags().IntVar(&timeout, "timeout", 0, "timeout in seconds")
+
 	// helper to show hex encoded data
 	hexCmd := &cobra.Command{
 		Use:   "hex [data]",
@@ -93,6 +118,6 @@ func init() {
 		},
 	}
 
-	mineCmd.AddCommand(startCmd, stopCmd, statusCmd, mineBlockCmd, rateCmd, hexCmd)
+	mineCmd.AddCommand(startCmd, stopCmd, statusCmd, mineBlockCmd, mineUntilCmd, rateCmd, hexCmd)
 	rootCmd.AddCommand(mineCmd)
 }

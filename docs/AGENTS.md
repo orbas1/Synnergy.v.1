@@ -5,6 +5,7 @@
 ### Progress
 - Stage 18: Complete – mining-staking-manager env, build and CI scaffolding finalized.
 - Stage 67: Complete – ledger, light node, and liquidity pool validation with Kademlia gas tracking and CLI distance tests, plus identity service and wallet registry checks finalized.
+- Stage 68: Complete – mining node context control, fee distribution, and CLI mine-until integration finalized with gas pricing and opcode docs extended.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
@@ -1429,25 +1430,34 @@
  - [x] docs/reference/errors_list.md | notes address-required identity error
 
 **Stage 68**
-- [ ] core/liquidity_views.go
-- [ ] core/liquidity_views_test.go
-- [ ] core/loanpool.go
-- [ ] core/loanpool_apply.go
-- [ ] core/loanpool_apply_test.go
-- [ ] core/loanpool_management.go
-- [ ] core/loanpool_management_test.go
-- [ ] core/loanpool_proposal.go
-- [ ] core/loanpool_proposal_test.go
-- [ ] core/loanpool_test.go
-- [ ] core/loanpool_views.go
-- [ ] core/loanpool_views_test.go
-- [ ] core/mining_node.go
-- [ ] core/mining_node_test.go
-- [ ] core/mobile_mining_node.go
-- [ ] core/mobile_mining_node_test.go
-- [ ] core/nat_traversal.go
-- [ ] core/nat_traversal_test.go
-- [ ] core/network.go
+- [x] core/liquidity_views.go - view snapshot helpers verified
+- [x] core/liquidity_views_test.go - snapshot and registry lookup tests
+- [x] core/loanpool.go - loan pool logic validated
+- [x] core/loanpool_apply.go - application flow confirmed
+- [x] core/loanpool_apply_test.go - tests cover application scenarios
+- [x] core/loanpool_management.go - management operations reviewed
+- [x] core/loanpool_management_test.go - unit tests for management paths
+- [x] core/loanpool_proposal.go - proposal lifecycle checked
+- [x] core/loanpool_proposal_test.go - proposal tests executed
+- [x] core/loanpool_test.go - integration tests for loan pools
+- [x] core/loanpool_views.go - view helpers audited
+- [x] core/loanpool_views_test.go - view tests executed
+- [x] core/mining_node.go - added context-aware MineUntil helper for controlled hashing
+- [x] core/mining_node_test.go - test coverage for MineUntil prefix search
+- [x] core/mobile_mining_node.go - mobile mining support reviewed
+- [x] core/mobile_mining_node_test.go - mobile mining node tests executed
+- [x] core/nat_traversal.go - NAT traversal utilities validated
+- [x] core/nat_traversal_test.go - NAT traversal tests executed
+- [x] core/network.go - network structure reviewed
+- [x] cli/mining_node.go - mine-until command with timeout exposed
+- [x] cli/mining_node_test.go - CLI mine-until command tested
+
+- [x] gas_table.go - added MustGasCost for strict opcode pricing
+- [x] gas_table_test.go - verifies MineUntil gas registration
+- [x] docs/reference/opcodes_list.md - MineUntil opcode documented
+- [x] docs/reference/gas_table_list.md - MineUntil gas cost recorded
+- [x] docs/guides/cli_quickstart.md - CLI usage documented for MineUntil
+- [x] README.md - key features mention controlled proof-of-work
 
 **Stage 69**
 - [ ] core/network_test.go

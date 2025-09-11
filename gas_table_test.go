@@ -3,10 +3,10 @@ package synnergy
 import "testing"
 
 func TestGasTableIncludesNewOpcodes(t *testing.T) {
-	ResetGasTable()
-	if !HasOpcode("Security_RaiseAlert") {
-		t.Fatalf("missing Security_RaiseAlert opcode")
-	}
+        ResetGasTable()
+        if !HasOpcode("Security_RaiseAlert") {
+                t.Fatalf("missing Security_RaiseAlert opcode")
+        }
 	if GasCost("Security_RaiseAlert") != 150 {
 		t.Fatalf("unexpected cost for Security_RaiseAlert")
 	}
@@ -22,16 +22,34 @@ func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	if GasCost("RegisterContentNode") != 5 {
 		t.Fatalf("unexpected cost for RegisterContentNode")
 	}
-	if !HasOpcode("KademliaDistance") {
-		t.Fatalf("missing KademliaDistance opcode")
-	}
+        if !HasOpcode("KademliaDistance") {
+                t.Fatalf("missing KademliaDistance opcode")
+        }
+        if !HasOpcode("MineUntil") {
+                t.Fatalf("missing MineUntil opcode")
+        }
+        if GasCost("MineUntil") != 50 {
+                t.Fatalf("unexpected cost for MineUntil")
+        }
+        if MustGasCost("MineUntil") != 50 {
+                t.Fatalf("MustGasCost returned wrong value")
+        }
 }
 
 func TestRegisterGasCostValidation(t *testing.T) {
-	if err := RegisterGasCost("", 1); err == nil {
-		t.Fatalf("expected error for empty name")
+        if err := RegisterGasCost("", 1); err == nil {
+                t.Fatalf("expected error for empty name")
 	}
 	if err := RegisterGasCost("Valid", 0); err == nil {
-		t.Fatalf("expected error for zero cost")
-	}
+                t.Fatalf("expected error for zero cost")
+        }
+}
+
+func TestMustGasCostPanics(t *testing.T) {
+        defer func() {
+                if r := recover(); r == nil {
+                        t.Fatalf("expected panic for missing opcode")
+                }
+        }()
+        MustGasCost("UnknownOpcode")
 }

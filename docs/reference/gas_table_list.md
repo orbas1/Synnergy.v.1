@@ -346,6 +346,7 @@
 | `Metrics` | `1` |
 | `MineBlock` | `50` |
 | `Mine` | `1` |
+| `MineUntil` | `50` |
 | `MinimumStake` | `1` |
 | `MintAsset` | `1` |
 | `MintDAOToken` | `3` |

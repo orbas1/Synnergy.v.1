@@ -179,17 +179,14 @@ func DistributeFeesWithPolicy(total uint64, p FeeSplitPolicy) (FeeDistribution, 
 // respects the creator distribution toggle by reallocating the creator share to
 // node hosts when disabled.
 func DistributeFees(total uint64) FeeDistribution {
-        p := DefaultFeeSplitPolicy
-        if !IsCreatorDistributionEnabled() {
-                p.NodeHosts += p.CreatorWallet
-                p.CreatorWallet = 0
-        }
-        dist, _ := DistributeFeesWithPolicy(total, p)
-        return dist
-	dist, _ := DistributeFeesWithPolicy(total, DefaultFeeSplitPolicy)
+	p := DefaultFeeSplitPolicy
 	if !IsCreatorDistributionEnabled() {
-		dist.NodeHosts += dist.CreatorWallet
-		dist.CreatorWallet = 0
+		p.NodeHosts += p.CreatorWallet
+		p.CreatorWallet = 0
+	}
+	dist, err := DistributeFeesWithPolicy(total, p)
+	if err != nil {
+		return FeeDistribution{}
 	}
 	return dist
 }
