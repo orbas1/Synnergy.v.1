@@ -3,5 +3,5 @@ package security
 import "testing"
 
 func TestConsensusSecurity(t *testing.T) {
-    t.Skip("TODO: implement Consensus security security assessment")
+	validateSecurityAssessment(t, "Consensus security.md")
 }
