@@ -24,9 +24,16 @@ func TestValidatorManagerLifecycle(t *testing.T) {
 	if _, ok := elig["v1"]; !ok {
 		t.Fatalf("validator not eligible")
 	}
-	vm.Slash(context.Background(), "v1")
-	if vm.Stake("v1") != 10 {
+	vm.Reward(context.Background(), "v1", 5)
+	if vm.Stake("v1") != 25 {
+		t.Fatalf("reward not applied")
+	}
+	vm.SlashWithEvidence(context.Background(), "v1", "double-sign")
+	if vm.Stake("v1") != 12 {
 		t.Fatalf("stake not halved after slash")
+	}
+	if vm.Evidence("v1") != "double-sign" {
+		t.Fatalf("evidence not recorded")
 	}
 	if _, ok := vm.Eligible()["v1"]; ok {
 		t.Fatalf("slashed validator should not be eligible")

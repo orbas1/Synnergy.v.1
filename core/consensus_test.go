@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"math"
 	"testing"
 )
@@ -44,11 +45,11 @@ func TestDifficultyAdjust(t *testing.T) {
 func TestSelectValidator(t *testing.T) {
 	sc := NewSynnergyConsensus()
 	stakes := map[string]uint64{"a": 1, "b": 1}
-	addr := sc.SelectValidator(stakes)
+	addr := sc.SelectValidator("seed", stakes)
 	if addr != "a" && addr != "b" {
 		t.Fatalf("unexpected validator: %s", addr)
 	}
-	if sc.SelectValidator(map[string]uint64{}) != "" {
+	if sc.SelectValidator("seed", map[string]uint64{}) != "" {
 		t.Fatalf("expected empty string when no stakes")
 	}
 }
@@ -56,8 +57,27 @@ func TestSelectValidator(t *testing.T) {
 func TestSelectValidatorMajorityStake(t *testing.T) {
 	sc := NewSynnergyConsensus()
 	stakes := map[string]uint64{"a": 60, "b": 40}
-	if sc.SelectValidator(stakes) != "" {
+	if sc.SelectValidator("seed", stakes) != "" {
 		t.Fatalf("expected no validator selected due to majority stake")
+	}
+}
+
+func TestFinalizeBlockRewards(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	tx := NewTransaction("a", "b", 1, 0, 0)
+	sb := NewSubBlock([]*Transaction{tx}, "v1")
+	b := NewBlock([]*SubBlock{sb}, "")
+	vm := NewValidatorManager(1)
+	_ = vm.Add(context.Background(), "v1", 5)
+	votes := map[string]bool{"v1": true, "v2": true, "v3": false}
+	if !sc.FinalizeBlock(b, votes, vm, 2) {
+		t.Fatalf("expected block to finalize")
+	}
+	if !b.Finalized {
+		t.Fatalf("block not marked finalized")
+	}
+	if vm.Stake("v1") != 7 {
+		t.Fatalf("reward not applied")
 	}
 }
 

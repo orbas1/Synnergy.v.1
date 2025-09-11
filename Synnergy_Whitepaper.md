@@ -46,6 +46,11 @@ Internal development and charity wallets are retained to support ongoing busines
 ### Overview
 ### Layered System Design
 #### Network and Consensus Layer
+The network employs a hybrid consensus engine combining PoW, PoS and PoH. Weights for each algorithm adjust independently based on live demand and stake distribution, allowing the chain to favour the most efficient mechanism without manual intervention.
+
+Validator selection uses a verifiable random function seeded by the previous block hash. Every node derives the same winner, removing nondeterminism and ensuring fair rotation.
+
+A lightweight BFT voting round finalizes blocks once two thirds of validators approve, after which PoW sealing prevents forks.
 #### Cross‑Chain Interoperability
 #### Virtual Machine and Smart Contracts
 #### Language Compatibility and Opcode Catalogue
@@ -65,6 +70,8 @@ Internal development and charity wallets are retained to support ongoing busines
 ### Mode Switching and Specialised Nodes
 ### Validator Governance, Stake Economics and Quorum
 ### Stake Penalties and Slashing
+Misbehaving validators are penalized through stake reduction with accompanying evidence logs. Recorded proofs of offences propagate across the network so slashes are enforced consistently and auditable by anyone.
+Conversely, validators that contribute sub-blocks to finalized blocks receive automatic stake rewards. The consensus engine credits these rewards immediately upon finality, reinforcing honest participation and long‑term network security.
 ### Difficulty Regulation and PoW Mining
 ### Cross-Consensus Network Scaling
 ### Operational Service Layer

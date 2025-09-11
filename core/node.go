@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"errors"
 	"fmt"
 )
@@ -14,8 +15,7 @@ type Node struct {
 	VM            *SNVM
 	Mempool       []*Transaction
 	Blockchain    []*Block
-	Stakes        map[string]uint64
-	Slashed       map[string]bool
+	Validators    *ValidatorManager
 	MaxTxPerBlock int
 }
 
@@ -29,8 +29,7 @@ func NewNode(id, addr string, ledger *Ledger) *Node {
 		VM:         NewSNVM(),
 		Mempool:    []*Transaction{},
 		Blockchain: []*Block{},
-		Stakes:     make(map[string]uint64),
-		Slashed:    make(map[string]bool),
+		Validators: NewValidatorManager(MinStake),
 	}
 }
 
@@ -60,7 +59,11 @@ func (n *Node) MineBlock() *Block {
 	if len(n.Mempool) == 0 {
 		return nil
 	}
-	validator := n.Consensus.SelectValidator(n.eligibleStakes())
+	prevHash := ""
+	if len(n.Blockchain) > 0 {
+		prevHash = n.Blockchain[len(n.Blockchain)-1].Hash
+	}
+	validator := n.Consensus.SelectValidator(prevHash, n.eligibleStakes())
 	if validator == "" {
 		return nil
 	}
@@ -69,12 +72,9 @@ func (n *Node) MineBlock() *Block {
 		return nil
 	}
 	n.Mempool = nil
-	prevHash := ""
-	if len(n.Blockchain) > 0 {
-		prevHash = n.Blockchain[len(n.Blockchain)-1].Hash
-	}
 	block := NewBlock([]*SubBlock{sb}, prevHash)
 	n.Consensus.MineBlock(block, 3)
+	n.Consensus.FinalizeBlock(block, map[string]bool{validator: true}, n.Validators, 1)
 	var totalFees uint64
 	for _, tx := range sb.Transactions {
 		totalFees += tx.Fee
@@ -84,12 +84,11 @@ func (n *Node) MineBlock() *Block {
 
 	dist := DistributeFees(totalFees)
 	pool := AdjustForBlockUtilization(dist.ValidatorsMiners, len(sb.Transactions), n.MaxTxPerBlock)
-	weights := map[string]uint64{validator: n.Stakes[validator]}
+	weights := map[string]uint64{validator: n.Validators.Stake(validator)}
 	weights[n.ID] = 1
 	shares := ShareProportional(pool, weights)
 	contract := NewFeeDistributionContract(n.Ledger)
 	contract.Distribute(shares)
-	n.Stakes[validator]++ // reward validator with additional stake
 	return block
 }
 
@@ -100,39 +99,27 @@ func (n *Node) SetStake(addr string, amount uint64) error {
 	if amount < MinStake {
 		return fmt.Errorf("stake below minimum: %d", amount)
 	}
-	n.Stakes[addr] = amount
-	return nil
+	return n.Validators.Add(context.Background(), addr, amount)
 }
 
 func (n *Node) eligibleStakes() map[string]uint64 {
-	eligible := make(map[string]uint64)
-	for addr, s := range n.Stakes {
-		if s >= MinStake && !n.Slashed[addr] {
-			eligible[addr] = s
-		}
-	}
-	return eligible
+	return n.Validators.Eligible()
 }
 
 // ReportDoubleSign slashes a validator for double signing.
 func (n *Node) ReportDoubleSign(addr string) {
-	n.slash(addr)
+	n.Validators.SlashWithEvidence(context.Background(), addr, "double-sign")
 }
 
 // ReportDowntime slashes a validator for downtime.
 func (n *Node) ReportDowntime(addr string) {
-	n.slash(addr)
+	n.Validators.SlashWithEvidence(context.Background(), addr, "downtime")
 }
 
-// Rehabilitate removes slashed status from a validator.
+// Rehabilitate removes slashed status from a validator by re-adding the existing stake.
 func (n *Node) Rehabilitate(addr string) {
-	delete(n.Slashed, addr)
-}
-
-func (n *Node) slash(addr string) {
-	if stake, ok := n.Stakes[addr]; ok {
-		penalty := stake / 2
-		n.Stakes[addr] = stake - penalty
-		n.Slashed[addr] = true
+	stake := n.Validators.Stake(addr)
+	if stake > 0 {
+		_ = n.Validators.Add(context.Background(), addr, stake)
 	}
 }

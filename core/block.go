@@ -87,6 +87,7 @@ type Block struct {
 	Nonce     uint64
 	Timestamp int64
 	Hash      string
+	Finalized bool
 }
 
 // NewBlock creates a block from sub-blocks and the hash of the previous block.

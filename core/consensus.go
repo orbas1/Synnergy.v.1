@@ -1,7 +1,8 @@
 package core
 
 import (
-	"crypto/rand"
+	"context"
+	"crypto/sha256"
 	"math/big"
 	"strings"
 
@@ -63,10 +64,16 @@ func (sc *SynnergyConsensus) Threshold(D, S float64) float64 {
 // normalized so that the weights always sum to one and never drop below 7.5%
 // unless network conditions force them lower.
 func (sc *SynnergyConsensus) AdjustWeights(D, S float64) {
-	adj := sc.Gamma * ((D / sc.Dmax) + (S / sc.Smax))
-	sc.Weights.PoW = clamp(sc.Weights.PoW+adj, 0.075, 1)
-	sc.Weights.PoS = clamp(sc.Weights.PoS+adj, 0.075, 1)
-	sc.Weights.PoH = clamp(sc.Weights.PoH+adj, 0.075, 1)
+	if sc.Dmax == 0 {
+		sc.Dmax = 1
+	}
+	if sc.Smax == 0 {
+		sc.Smax = 1
+	}
+	sc.Weights.PoW = clamp(sc.Weights.PoW+sc.Gamma*((D/sc.Dmax)-sc.Weights.PoW), 0.075, 1)
+	sc.Weights.PoS = clamp(sc.Weights.PoS+sc.Gamma*((S/sc.Smax)-sc.Weights.PoS), 0.075, 1)
+	loadInv := 1 - (D / sc.Dmax)
+	sc.Weights.PoH = clamp(sc.Weights.PoH+sc.Gamma*(loadInv-sc.Weights.PoH), 0.075, 1)
 
 	if !sc.PoWAvailable || !sc.PoWRewards {
 		sc.Weights.PoW = 0
@@ -141,9 +148,11 @@ func (sc *SynnergyConsensus) SetPoWRewards(enabled bool) {
 	ilog.Info("set_pow_rewards", "enabled", enabled)
 }
 
-// SelectValidator returns a validator address using a weighted random selection
-// based on the provided stake map.
-func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
+// SelectValidator deterministically selects a validator using a VRF-style
+// hash of the provided seed and validator address. The validator with the
+// smallest weighted hash value wins, ensuring all nodes arrive at the same
+// result.
+func (sc *SynnergyConsensus) SelectValidator(seed string, stakes map[string]uint64) string {
 	if len(stakes) == 0 {
 		ilog.Info("select_validator", "result", "")
 		return ""
@@ -159,22 +168,21 @@ func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {
 		ilog.Info("select_validator", "result", "")
 		return ""
 	}
-	limit := new(big.Int).SetUint64(total)
-	rBig, err := rand.Int(rand.Reader, limit)
-	if err != nil {
-		return ""
-	}
-	r := rBig.Uint64()
-	var cumulative uint64
-	for addr, s := range stakes {
-		cumulative += s
-		if r < cumulative {
-			ilog.Info("select_validator", "result", addr)
-			return addr
+	var bestAddr string
+	var bestScore *big.Int
+	for addr, stake := range stakes {
+		h := sha256.Sum256([]byte(seed + addr))
+		score := new(big.Int).SetBytes(h[:])
+		if stake > 0 {
+			score.Div(score, new(big.Int).SetUint64(stake))
+		}
+		if bestAddr == "" || score.Cmp(bestScore) < 0 {
+			bestAddr = addr
+			bestScore = score
 		}
 	}
-	ilog.Info("select_validator", "result", "")
-	return ""
+	ilog.Info("select_validator", "result", bestAddr)
+	return bestAddr
 }
 
 // ValidateSubBlock performs simple PoS and PoH validation on a sub-block.
@@ -204,6 +212,44 @@ func (sc *SynnergyConsensus) MineBlock(b *Block, difficulty uint8) {
 		nonce++
 
 	}
+}
+
+// FinalizeBlock applies a simple BFT-style vote on the block. If at least two
+// thirds of votes are affirmative the block is marked finalized and validators
+// contributing sub-blocks receive a stake reward via the provided manager.
+func (sc *SynnergyConsensus) FinalizeBlock(b *Block, votes map[string]bool, vm *ValidatorManager, reward uint64) bool {
+	yes := 0
+	for _, v := range votes {
+		if v {
+			yes++
+		}
+	}
+	if yes*3 >= len(votes)*2 {
+		b.Finalized = true
+		if vm != nil && reward > 0 {
+			for _, sb := range b.SubBlocks {
+				vm.Reward(context.Background(), sb.Validator, reward)
+			}
+		}
+		ilog.Info("finalize_block", "hash", b.Hash)
+		return true
+	}
+	return false
+}
+
+// ChooseChain selects the longest chain from the candidates. This placeholder
+// fork-choice rule enables nodes to converge on a canonical history.
+func (sc *SynnergyConsensus) ChooseChain(chains [][]*Block) []*Block {
+	var best []*Block
+	max := 0
+	for _, c := range chains {
+		if len(c) > max {
+			best = c
+			max = len(c)
+		}
+	}
+	ilog.Info("fork_choice", "length", max)
+	return best
 }
 
 func clamp(v, min, max float64) float64 {
