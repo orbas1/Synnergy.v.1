@@ -30,7 +30,18 @@ func TestNodeCLICommands(t *testing.T) {
 		t.Fatalf("stake failed: %v", err)
 	}
 	if currentNode.Validators.Stake("val1") != 5 {
+
+		t.Fatalf("stake not recorded: %d", currentNode.Validators.Stake("val1"))
+	}
+
+	// below-minimum stake should error and leave state unchanged
+	if _, err := execNodeCLI("node", "stake", "val2", "0"); err == nil {
+		t.Fatalf("expected error for below minimum stake")
+	}
+	if currentNode.Validators.Stake("val2") != 0 {
+		t.Fatalf("unexpected stake recorded: %d", currentNode.Validators.Stake("val2"))
 		t.Fatalf("stake not recorded: got %d", currentNode.Validators.Stake("val1"))
+
 	}
 
 	ledger.Mint("alice", 100)

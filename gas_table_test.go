@@ -22,4 +22,16 @@ func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	if GasCost("RegisterContentNode") != 5 {
 		t.Fatalf("unexpected cost for RegisterContentNode")
 	}
+	if !HasOpcode("KademliaDistance") {
+		t.Fatalf("missing KademliaDistance opcode")
+	}
+}
+
+func TestRegisterGasCostValidation(t *testing.T) {
+	if err := RegisterGasCost("", 1); err == nil {
+		t.Fatalf("expected error for empty name")
+	}
+	if err := RegisterGasCost("Valid", 0); err == nil {
+		t.Fatalf("expected error for zero cost")
+	}
 }

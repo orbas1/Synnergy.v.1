@@ -15,14 +15,21 @@ func NewImmutabilityEnforcer(genesis *Block) *ImmutabilityEnforcer {
 
 // ErrGenesisChanged is returned when the stored genesis block hash differs from
 // the ledger's genesis block.
-var ErrGenesisChanged = errors.New("genesis block hash mismatch")
+var (
+	ErrNilLedger      = errors.New("ledger is nil")
+	ErrGenesisMissing = errors.New("genesis block missing")
+	ErrGenesisChanged = errors.New("genesis block hash mismatch")
+)
 
 // CheckLedger verifies that the ledger's first block matches the expected
 // genesis hash.
 func (i *ImmutabilityEnforcer) CheckLedger(l *Ledger) error {
+	if l == nil {
+		return ErrNilLedger
+	}
 	b, ok := l.GetBlock(1)
 	if !ok {
-		return ErrGenesisChanged
+		return ErrGenesisMissing
 	}
 	if b.Hash != i.genesisHash {
 		return ErrGenesisChanged

@@ -11,6 +11,7 @@ Common error codes and messages returned by Synnergy components. Each error impl
 | `ERR_NETWORK` | network error | Temporary network failure; peers may be unreachable. | yes |
 | `ERR_TIMEOUT` | operation timed out | Operation exceeded its allotted time. | yes |
 | `ERR_INTERNAL` | internal error | Unexpected failure in a module; check logs for details. | no |
+| `ERR_ADDRESS_REQUIRED` | address required | Identity or wallet operations must supply a non-empty address. | no |
 
 ## Usage
 

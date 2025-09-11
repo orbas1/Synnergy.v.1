@@ -28,7 +28,10 @@ func init() {
 				return
 			}
 			header := nodes.BlockHeader{Hash: args[0], Height: h, ParentHash: args[2]}
-			lightNode.AddHeader(header)
+			if err := lightNode.AddHeader(header); err != nil {
+				printOutput(map[string]any{"error": err.Error()})
+				return
+			}
 			printOutput(header)
 		},
 	}

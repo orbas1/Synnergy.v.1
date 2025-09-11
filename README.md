@@ -29,7 +29,8 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Pluggable node roles** – mining, staking, authority, regulatory, watchtower, warfare and more via constructors such as `core.NewMiningNode` and `core.NewRegulatoryNode`.
 - **Cross-chain interoperability** – bridges, protocol registries, connection managers and transaction relays (`core.NewBridgeRegistry`, `core.NewProtocolRegistry`, `core.NewChainConnectionManager`, `core.NewCrossChainTxManager`). Stage 42 finalises these modules with JSON emitting CLIs for deposits, claims and contract mappings.
 - **AI modules** – contract management, inference analysis, anomaly detection and secure storage (`core.NewAIEnhancedContract`, `core.NewAIDriftMonitor`).
-- **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()`, tunable at runtime through the `SYN_GAS_OVERRIDES` environment variable and adjustable with `synnergy.RegisterGasCost()`.
+- **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()`, tunable at runtime through the `SYN_GAS_OVERRIDES` environment variable and adjustable with `synnergy.RegisterGasCost()`, which validates opcode names and costs.
+- **Kademlia DHT tools** – CLI support for storing, retrieving and computing XOR distance between keys with gas-aware execution.
 - **Opcode-aware contracts** – sample Solidity bridges, liquidity, multisig, oracle and token contracts invoke SNVM opcodes with deterministic gas costs.
 - **Role-based security** – biometric authentication and security node CLI (`core.NewBiometricService`, `synnergy bioauth`, `synnergy bsn`), zero‑trust data channels and PKI tooling. Authority node voting, base-node peering and biometric flows all require Ed25519 signatures for verifiable governance.
 - **Institutional banking** – bank nodes require Ed25519-signed requests to register or remove participating institutions.

@@ -5,7 +5,9 @@ import "testing"
 func TestReplicator(t *testing.T) {
 	l := NewLedger()
 	b := &Block{Hash: "b1"}
-	l.AddBlock(b)
+	if err := l.AddBlock(b); err != nil {
+		t.Fatalf("add block: %v", err)
+	}
 
 	r := NewReplicator(l)
 	r.Start()

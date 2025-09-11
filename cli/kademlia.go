@@ -26,7 +26,10 @@ func init() {
 			if err != nil {
 				val = []byte(args[1])
 			}
-			kademlia.Store(args[0], val)
+			if err := kademlia.Store(args[0], val); err != nil {
+				printOutput(map[string]any{"error": err.Error()})
+				return
+			}
 			printOutput(map[string]any{"key": args[0], "stored": true})
 		},
 	})
@@ -37,7 +40,12 @@ func init() {
 		Short: "Retrieve a value",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("KademliaGet")
-			if v, ok := kademlia.FindValue(args[0]); ok {
+			v, ok, err := kademlia.FindValue(args[0])
+			if err != nil {
+				printOutput(map[string]any{"error": err.Error()})
+				return
+			}
+			if ok {
 				printOutput(map[string]any{"value": string(v)})
 			} else {
 				printOutput(map[string]any{"error": "not found"})
@@ -52,8 +60,27 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("KademliaClosest")
 			n, _ := strconv.Atoi(args[1])
-			keys := kademlia.Closest(args[0], n)
+			keys, err := kademlia.Closest(args[0], n)
+			if err != nil {
+				printOutput(map[string]any{"error": err.Error()})
+				return
+			}
 			printOutput(keys)
+		},
+	})
+
+	cmd.AddCommand(&cobra.Command{
+		Use:   "distance [a] [b]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Calculate XOR distance between two keys",
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("KademliaDistance")
+			d, err := core.Distance(args[0], args[1])
+			if err != nil {
+				printOutput(map[string]any{"error": err.Error()})
+				return
+			}
+			printOutput(map[string]any{"distance": d.String()})
 		},
 	})
 

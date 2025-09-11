@@ -42,3 +42,16 @@ func TestLedgerUTXOAndPool(t *testing.T) {
 		t.Fatalf("unexpected bob utxo: %+v", utxos)
 	}
 }
+
+func TestLedgerValidation(t *testing.T) {
+	l := NewLedger()
+	if err := l.AddBlock(nil); err != ErrNilBlock {
+		t.Fatalf("expected ErrNilBlock got %v", err)
+	}
+	if err := l.Transfer("", "bob", 10, 0); err != ErrEmptyAddress {
+		t.Fatalf("expected ErrEmptyAddress got %v", err)
+	}
+	if err := l.ApplyTransaction(nil); err != ErrNilTransaction {
+		t.Fatalf("expected ErrNilTransaction got %v", err)
+	}
+}

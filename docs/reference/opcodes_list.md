@@ -683,3 +683,7 @@ and warfare nodes as well as UI integrations.
 | `UploadContent` | `0x0A0017` |
 | `RetrieveContent` | `0x0A0018` |
 | `ListContentNodes` | `0x0A0019` |
+| `KademliaStore` | `0x000277` |
+| `KademliaGet` | `0x000278` |
+| `KademliaDistance` | `0x000279` |
+| `KademliaClosest` | `0x00027A` |

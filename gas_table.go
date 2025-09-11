@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -51,6 +53,10 @@ var (
 	gasCache GasTable
 	gasMu    sync.RWMutex
 )
+
+// ErrInvalidGasRegistration is returned when registering an opcode with an empty
+// name or zero cost.
+var ErrInvalidGasRegistration = errors.New("invalid gas registration")
 
 // loadGasTable parses gas_table_list.md and caches the result.
 func loadGasTable() {
@@ -119,14 +125,22 @@ func HasOpcode(name string) bool {
 }
 
 // RegisterGasCost allows the CLI or tests to inject additional opcode pricing
-// at runtime. It is safe for concurrent use.
-func RegisterGasCost(name string, cost uint64) {
+// at runtime. It is safe for concurrent use and validates input to prevent
+// accidental misconfiguration.
+func RegisterGasCost(name string, cost uint64) error {
+	if name == "" {
+		return fmt.Errorf("%w: name", ErrInvalidGasRegistration)
+	}
+	if cost == 0 {
+		return fmt.Errorf("%w: cost", ErrInvalidGasRegistration)
+	}
 	gasMu.Lock()
 	defer gasMu.Unlock()
 	if gasCache == nil {
 		gasCache = make(GasTable)
 	}
 	gasCache[name] = cost
+	return nil
 }
 
 // ResetGasTable clears the cached table. Primarily used in tests to reload

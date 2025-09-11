@@ -33,3 +33,18 @@ func TestHistoricalNode_Duplicate(t *testing.T) {
 		t.Fatalf("expected duplicate error")
 	}
 }
+
+func TestHistoricalNode_PruneBelow(t *testing.T) {
+	hn := NewHistoricalNode()
+	s1 := nodes.BlockSummary{Height: 1, Hash: "a", Timestamp: time.Now()}
+	s2 := nodes.BlockSummary{Height: 2, Hash: "b", Timestamp: time.Now()}
+	hn.ArchiveBlock(s1)
+	hn.ArchiveBlock(s2)
+	hn.PruneBelow(2)
+	if hn.TotalBlocks() != 1 {
+		t.Fatalf("expected 1 block after prune")
+	}
+	if _, ok := hn.GetBlockByHash("a"); ok {
+		t.Fatalf("pruned block should be removed")
+	}
+}

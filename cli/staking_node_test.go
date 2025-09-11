@@ -3,10 +3,16 @@ package cli
 import (
 	"encoding/json"
 	"testing"
+
+	"synnergy/core"
 )
 
 // TestStakingNodeTotalZero ensures total staked tokens report as zero by default.
 func TestStakingNodeTotalZero(t *testing.T) {
+	orig := stakingNode
+	stakingNode = core.NewStakingNode()
+	t.Cleanup(func() { stakingNode = orig })
+
 	out, err := execCommand("--json", "staking_node", "total")
 	if err != nil {
 		t.Fatalf("total: %v", err)

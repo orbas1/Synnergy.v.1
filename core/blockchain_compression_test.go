@@ -7,7 +7,9 @@ func TestLedgerCompressionRoundTrip(t *testing.T) {
 	l.Credit("alice", 50)
 	b := NewBlock(nil, "")
 	b.Hash = "gen" // ensure deterministic
-	l.AddBlock(b)
+	if err := l.AddBlock(b); err != nil {
+		t.Fatalf("add block: %v", err)
+	}
 
 	tmp := t.TempDir() + "/snap.gz"
 	if err := SaveCompressedSnapshot(l, tmp); err != nil {

@@ -8,6 +8,13 @@ import (
 	"sync"
 )
 
+var (
+	// ErrNilBlock is returned when a nil block is added to the ledger.
+	ErrNilBlock = errors.New("nil block")
+	// ErrNilTransaction is returned when a nil transaction is supplied.
+	ErrNilTransaction = errors.New("nil transaction")
+)
+
 // Ledger maintains account balances and block history. It persists blocks to a
 // simple write-ahead log so that a node can recover on restart. The WAL path is
 // optional; if empty the ledger operates purely in memory.
@@ -105,11 +112,16 @@ func (l *Ledger) GetBlock(height int) (*Block, bool) {
 }
 
 // AddBlock appends a block to the chain and persists it to the WAL.
-func (l *Ledger) AddBlock(b *Block) {
+// A nil block returns an error and is ignored.
+func (l *Ledger) AddBlock(b *Block) error {
+	if b == nil {
+		return ErrNilBlock
+	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.blocks = append(l.blocks, b)
 	l.appendWAL(b)
+	return nil
 }
 
 // GetBalance returns the balance for a given address.
@@ -131,8 +143,12 @@ func (l *Ledger) GetUTXOs(addr string) []UTXO {
 	return res
 }
 
-// Credit adds funds to an address and updates the UTXO view.
+// Credit adds funds to an address and updates the UTXO view. Empty addresses
+// or zero amounts are ignored.
 func (l *Ledger) Credit(addr string, amount uint64) {
+	if addr == "" || amount == 0 {
+		return
+	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.balances[addr] += amount
@@ -146,8 +162,15 @@ func (l *Ledger) Mint(addr string, amount uint64) {
 }
 
 // Transfer moves funds from one address to another. A fee is deducted from the
-// sender. It returns an error if the sender lacks sufficient balance.
+// sender. It validates the addresses and amount before applying the
+// transaction.
 func (l *Ledger) Transfer(from, to string, amount, fee uint64) error {
+	if from == "" || to == "" {
+		return ErrEmptyAddress
+	}
+	if amount == 0 {
+		return errors.New("amount must be > 0")
+	}
 	tx := NewTransaction(from, to, amount, fee, 0)
 	return l.ApplyTransaction(tx)
 }
@@ -156,6 +179,12 @@ func (l *Ledger) Transfer(from, to string, amount, fee uint64) error {
 // and fee from the sender. It returns an error if the sender lacks sufficient
 // funds.
 func (l *Ledger) ApplyTransaction(tx *Transaction) error {
+	if tx == nil {
+		return ErrNilTransaction
+	}
+	if tx.From == "" || tx.To == "" {
+		return ErrEmptyAddress
+	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	total := uint64(tx.Amount + tx.Fee)
@@ -169,8 +198,12 @@ func (l *Ledger) ApplyTransaction(tx *Transaction) error {
 	return nil
 }
 
-// AddToPool appends a transaction to the mem-pool.
+// AddToPool appends a transaction to the mem-pool. Nil transactions are
+// ignored.
 func (l *Ledger) AddToPool(tx *Transaction) {
+	if tx == nil {
+		return
+	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
 	l.mempool = append(l.mempool, tx)
