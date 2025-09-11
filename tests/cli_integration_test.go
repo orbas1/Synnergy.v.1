@@ -59,17 +59,21 @@ func TestCLIIntegration(t *testing.T) {
 		}
 	})
 
-	t.Run("gas snapshot", func(t *testing.T) {
-		out, err := execCommand(t, "gas", "snapshot", "--json")
-		if err != nil {
-			t.Fatalf("gas snapshot failed: %v", err)
-		}
-		var m map[string]uint64
-		if err := json.Unmarshal([]byte(out), &m); err != nil {
-			t.Fatalf("invalid json: %v", err)
-		}
-		if len(m) == 0 {
-			t.Fatalf("expected non-empty gas snapshot")
-		}
-	})
+       t.Run("gas snapshot", func(t *testing.T) {
+               out, err := execCommand(t, "gas", "snapshot", "--json")
+               if err != nil {
+                       t.Fatalf("gas snapshot failed: %v", err)
+               }
+               // The snapshot command emits a gas cost line before the JSON output.
+               // Parse only the final line to avoid contaminating the JSON decode.
+               lines := strings.Split(out, "\n")
+               jsonOut := lines[len(lines)-1]
+               var m map[string]uint64
+               if err := json.Unmarshal([]byte(jsonOut), &m); err != nil {
+                       t.Fatalf("invalid json: %v", err)
+               }
+               if len(m) == 0 {
+                       t.Fatalf("expected non-empty gas snapshot")
+               }
+       })
 }

@@ -16,18 +16,26 @@ func TestVerifySignature(t *testing.T) {
 	if err != nil {
 		t.Fatalf("generate key: %v", err)
 	}
-	msg := []byte("hello dao")
-	r, s, err := ecdsa.Sign(rand.Reader, priv, msgHash(msg))
+        msg := []byte("hello dao")
+        r, s, err := ecdsa.Sign(rand.Reader, priv, msgHash(msg))
 	if err != nil {
 		t.Fatalf("sign: %v", err)
 	}
-	sig := append(r.Bytes(), s.Bytes()...)
+        rBytes := r.Bytes()
+        sBytes := s.Bytes()
+        rPad := append(make([]byte, 32-len(rBytes)), rBytes...)
+        sPad := append(make([]byte, 32-len(sBytes)), sBytes...)
+        sig := append(rPad, sPad...)
 
-	pubBytes := append([]byte{4}, priv.PublicKey.X.Bytes()...)
-	pubBytes = append(pubBytes, priv.PublicKey.Y.Bytes()...)
-	pubHex := hex.EncodeToString(pubBytes)
-	msgHex := hex.EncodeToString(msg)
-	sigHex := hex.EncodeToString(sig)
+        xBytes := priv.PublicKey.X.Bytes()
+        yBytes := priv.PublicKey.Y.Bytes()
+        xPad := append(make([]byte, 32-len(xBytes)), xBytes...)
+        yPad := append(make([]byte, 32-len(yBytes)), yBytes...)
+        pubBytes := append([]byte{4}, xPad...)
+        pubBytes = append(pubBytes, yPad...)
+        pubHex := hex.EncodeToString(pubBytes)
+        msgHex := hex.EncodeToString(msg)
+        sigHex := hex.EncodeToString(sig)
 
 	ok, err := VerifySignature(pubHex, msgHex, sigHex)
 	if err != nil || !ok {

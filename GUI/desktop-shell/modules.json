@@ -1,0 +1,5 @@
+[
+  { "name": "explorer", "url": "http://localhost:3001" },
+  { "name": "wallet", "url": "http://localhost:3002" },
+  { "name": "node-operations-dashboard", "url": "http://localhost:3003" }
+]

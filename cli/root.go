@@ -30,6 +30,7 @@ var rootCmd = &cobra.Command{
 func init() {
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "Path to configuration file")
 	rootCmd.PersistentFlags().StringVar(&logLevel, "log-level", "info", "Log verbosity: info or debug")
+	rootCmd.AddCommand(guiCmd)
 }
 
 // Execute runs the root command.
