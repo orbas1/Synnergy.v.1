@@ -60,6 +60,12 @@ chmod 600 "$KEYS_CSV"
 log "Creating genesis wallet"
 generate_keypair "genesis_wallet"
 
+log "Creating creator wallet"
+generate_keypair "creator_wallet"
+
+log "Creating internal charity wallet"
+generate_keypair "internal_charity_wallet"
+
 log "Creating treasuries"
 TREASURIES=(
   "loanpool_treasury"

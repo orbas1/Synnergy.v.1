@@ -25,6 +25,10 @@ export SYN_CONFIG="$ROOT_DIR/configs/network.yaml"
 # Display configured genesis wallets
 "$ROOT_DIR/synnergy" genesis show
 
+# To redirect the creator fee share to node hosts once the network is live,
+# run:
+# "$ROOT_DIR/synnergy" creator disable-distribution --wallet /path/to/creator.wallet --password <password>
+
 # Initialise genesis block once
 if ! "$ROOT_DIR/synnergy" genesis init 2>/dev/null; then
   echo "Genesis already initialised"

@@ -3,7 +3,29 @@ package core
 import (
 	"fmt"
 	"sort"
+	"sync"
 )
+
+var (
+	creatorDistMu      sync.RWMutex
+	creatorDistEnabled = true
+)
+
+// SetCreatorDistribution enables or disables the creator wallet fee share.
+// When disabled, the creator allocation is redirected to node hosts.
+func SetCreatorDistribution(enabled bool) {
+	creatorDistMu.Lock()
+	creatorDistEnabled = enabled
+	creatorDistMu.Unlock()
+}
+
+// IsCreatorDistributionEnabled reports whether the creator wallet currently
+// receives its fee allocation.
+func IsCreatorDistributionEnabled() bool {
+	creatorDistMu.RLock()
+	defer creatorDistMu.RUnlock()
+	return creatorDistEnabled
+}
 
 // TransactionType represents high level categories of transactions used for
 // fee calculations and policy decisions.
@@ -114,17 +136,24 @@ type FeeDistribution struct {
 
 // DistributeFees splits the total fees according to the network's policy.
 func DistributeFees(total uint64) FeeDistribution {
-        return FeeDistribution{
-                InternalDevelopment: total * 5 / 100,
-                InternalCharity:     total * 5 / 100,
-                ExternalCharity:     total * 5 / 100,
-                LoanPool:            total * 10 / 100,
-                PassiveIncome:       total * 5 / 100,
-                ValidatorsMiners:    total * 59 / 100,
-                AuthorityNodes:      total * 5 / 100,
-                NodeHosts:           total * 5 / 100,
-                CreatorWallet:       total * 1 / 100,
-        }
+	creatorShare := total * 1 / 100
+	nodeHostShare := total * 5 / 100
+	if !IsCreatorDistributionEnabled() {
+		nodeHostShare += creatorShare
+		creatorShare = 0
+	}
+
+	return FeeDistribution{
+		InternalDevelopment: total * 5 / 100,
+		InternalCharity:     total * 5 / 100,
+		ExternalCharity:     total * 5 / 100,
+		LoanPool:            total * 10 / 100,
+		PassiveIncome:       total * 5 / 100,
+		ValidatorsMiners:    total * 59 / 100,
+		AuthorityNodes:      total * 5 / 100,
+		NodeHosts:           nodeHostShare,
+		CreatorWallet:       creatorShare,
+	}
 }
 
 // ApplyFeeCapFloor constrains fees to the provided cap and floor values.
