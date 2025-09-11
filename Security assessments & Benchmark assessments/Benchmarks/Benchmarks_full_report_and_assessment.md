@@ -1,31 +1,43 @@
 # Benchmark Full Report and Assessment
 
-The benchmarks in this report measure performance across the security assessment suite. Each function was executed with `go test -run=^$ -bench . -benchtime=1x` and metrics were captured for execution time and allocations. All runs were performed on an `Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz`.
+This document provides an enterprise-grade view of benchmark performance across the Synnergy codebase. Benchmarks are executed with `go test -bench . -benchmem ./...`.
 
-| Benchmark | ns/op | B/op | allocs/op |
-| --- | ---: | ---: | ---: |
-| BenchmarkAllTokenStandardBenchmarks | 2511 | 0 | 0 |
-| BenchmarkAuthorityNodeBenchmarks | 1580 | 0 | 0 |
-| BenchmarkFullReportAndAssessment | 1977 | 0 | 0 |
-| BenchmarkCharityBenchmarks | 855 | 0 | 0 |
-| BenchmarkCoinBenchmarks | 1413 | 0 | 0 |
-| BenchmarkComplianceBenchmarks | 839 | 0 | 0 |
-| BenchmarkConsensusBenchmarks | 955 | 0 | 0 |
-| BenchmarkContractBenchmarks | 835 | 0 | 0 |
-| BenchmarkGovernanceBenchmarks | 1102 | 0 | 0 |
-| BenchmarkHighAvailabilityBenchmarks | 850 | 0 | 0 |
-| BenchmarkLedgerBenchmarks | 1411 | 0 | 0 |
-| BenchmarkLoanpoolBenchmarks | 1558 | 0 | 0 |
-| BenchmarkNetworkBenchmarks | 847 | 0 | 0 |
-| BenchmarkNodeBenchmarks | 756 | 0 | 0 |
-| BenchmarkOpcodeBenchmarks | 910 | 0 | 0 |
-| BenchmarkSecurityBenchmarks | 1384 | 0 | 0 |
-| BenchmarkSpeedBenchmarks | 797 | 0 | 0 |
-| BenchmarkStorageBenchmarks | 812 | 0 | 0 |
-| BenchmarkVmBenchmarks | 1355 | 0 | 0 |
-| BenchmarkValidationBenchmarks | 1556 | 0 | 0 |
-| BenchmarkWalletBenchmarks | 766 | 0 | 0 |
-| BenchmarkAiBenchmarks | 933 | 0 | 0 |
-| BenchmarkTransactionsBenchmarks | 762 | 0 | 0 |
+Run `cd 'Security assessments & Benchmark assessments' && go run ./Benchmarks/cmd/runbench` to refresh results. The command rewrites this file with the latest measurements.
 
-These figures provide a baseline for future optimisations. Contributors should monitor this report when evaluating the impact of changes on system performance.
+The `ns/op` column reports average time per operation, while `ops/s` derives throughput. Lower `ns/op` and higher `ops/s` indicate better performance.
+
+## Automated Benchmark Results
+
+| Benchmark | ns/op | ops/s | B/op | allocs/op | Rating |
+|-----------|------|-------|------|-----------|--------|
+| BenchmarkTransactionManagerGetTransaction-5 | 1323.00 | 755858 | 0 | 0 | fast |
+| BenchmarkBaseTokenTransfer-5 | 2575.00 | 388350 | 0 | 0 | moderate |
+| BenchmarkRegistryInfo-5 | 2962.00 | 337610 | 0 | 0 | moderate |
+| BenchmarkTransactionManagerListTransactions-5 | 4777.00 | 209336 | 128 | 1 | moderate |
+| BenchmarkLedgerApplyTransaction-5 | 4854.00 | 206016 | 80 | 6 | moderate |
+| BenchmarkTransactionManagerBurnAndRelease-5 | 113135.00 | 8839 | 2680 | 19 | slow |
+| BenchmarkTransactionManagerLockAndMint-5 | 210660.00 | 4747 | 2600 | 17 | slow |
+| BenchmarkTransactionHash-5 | 1099397.00 | 910 | 1128 | 10 | slow |
+| BenchmarkNFTMarketplaceMint-5 | 2801753.00 | 357 | 164448 | 1706 | slow |
+
+### Analysis
+
+Fastest benchmark **BenchmarkTransactionManagerGetTransaction-5** at 1323.00 ns/op (755858 ops/s). Slowest benchmark **BenchmarkNFTMarketplaceMint-5** at 2801753.00 ns/op (357 ops/s).
+Average throughput 212447 ops/s, indicating moderate overall performance. The slowest benchmark suggests a ceiling of 2801753.00 ns/op (~357 ops/s).
+The ns/op metric reflects the time each operation takes; lower ns/op and higher ops/s indicate better performance.
+
+### Upgrade Plan
+
+The following benchmarks are classified as slow and may need optimisation:
+
+- BenchmarkTransactionManagerBurnAndRelease-5 (113135.00 ns/op)
+- BenchmarkTransactionManagerLockAndMint-5 (210660.00 ns/op)
+- BenchmarkTransactionHash-5 (1099397.00 ns/op)
+- BenchmarkNFTMarketplaceMint-5 (2801753.00 ns/op)
+
+### Bottleneck Analysis and Repair Plan
+
+- BenchmarkTransactionManagerBurnAndRelease-5: reduce allocations and reuse objects; trim memory usage
+- BenchmarkTransactionManagerLockAndMint-5: reduce allocations and reuse objects; trim memory usage
+- BenchmarkTransactionHash-5: trim memory usage
+- BenchmarkNFTMarketplaceMint-5: reduce allocations and reuse objects; trim memory usage
