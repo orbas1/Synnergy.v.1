@@ -25,11 +25,16 @@ func TestSmartContractMarketplaceDeployAndTrade(t *testing.T) {
 		t.Fatal("expected contract address")
 	}
 
-	if err := m.TradeContract(context.Background(), addr, "bob"); err != nil {
+	tradeGas := synn.GasCost("TradeContract")
+	if err := m.TradeContract(context.Background(), addr, "bob", tradeGas); err != nil {
 		t.Fatalf("trade: %v", err)
 	}
 	c, ok := m.registry.Get(addr)
 	if !ok || c.Owner != "bob" {
 		t.Fatalf("expected owner bob, got %+v", c)
+	}
+	// insufficient gas
+	if err := m.TradeContract(context.Background(), addr, "carol", tradeGas-1); err == nil {
+		t.Fatalf("expected insufficient gas error")
 	}
 }

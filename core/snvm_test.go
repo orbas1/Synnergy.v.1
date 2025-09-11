@@ -29,3 +29,19 @@ func TestSNVMDivideByZero(t *testing.T) {
 		t.Fatalf("expected division by zero error")
 	}
 }
+
+func TestSNVMMod(t *testing.T) {
+	vm := NewSNVM()
+	tx := &Transaction{Program: []Instruction{
+		{Op: OpPush, Value: 7},
+		{Op: OpPush, Value: 3},
+		{Op: OpMod},
+	}}
+	res, err := vm.Execute(tx)
+	if err != nil {
+		t.Fatalf("execution error: %v", err)
+	}
+	if res != 1 {
+		t.Fatalf("expected 1, got %d", res)
+	}
+}

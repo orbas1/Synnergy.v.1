@@ -44,11 +44,17 @@ func (m *SmartContractMarketplace) DeployContract(ctx context.Context, wasm []by
 	return m.registry.Deploy(wasm, manifest, gasLimit, owner)
 }
 
-// TradeContract transfers ownership of an existing contract. It returns an
-// error if the contract cannot be found or the underlying manager rejects the
+// TradeContract transfers ownership of an existing contract. The caller must
+// supply sufficient gas or the transfer is rejected. An error is returned if
+// the contract cannot be found or the underlying manager rejects the
 // transfer.
-func (m *SmartContractMarketplace) TradeContract(ctx context.Context, addr, newOwner string) error {
+func (m *SmartContractMarketplace) TradeContract(ctx context.Context, addr, newOwner string, gasLimit uint64) error {
 	ctx, span := telemetry.Tracer().Start(ctx, "SmartContractMarketplace.TradeContract")
 	defer span.End()
+
+	required := synn.GasCost("TradeContract")
+	if gasLimit < required {
+		return fmt.Errorf("%w: need %d", ErrInsufficientGas, required)
+	}
 	return m.manager.Transfer(ctx, addr, newOwner)
 }
