@@ -1,6 +1,8 @@
 package core
 
 import (
+	"fmt"
+	"sync"
 	"testing"
 )
 
@@ -27,8 +29,8 @@ func TestSupplyChainRegistryDuplicate(t *testing.T) {
 	if _, err := reg.Register("asset1", "d", "a", "loc"); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
-	if _, err := reg.Register("asset1", "d", "a", "loc"); err == nil {
-		t.Fatalf("expected error for duplicate asset")
+	if _, err := reg.Register("asset1", "d", "a", "loc"); err != ErrAssetExists {
+		t.Fatalf("expected ErrAssetExists, got %v", err)
 	}
 }
 
@@ -55,7 +57,29 @@ func TestSupplyChainRegistryUpdate(t *testing.T) {
 
 func TestSupplyChainRegistryUpdateNonexistent(t *testing.T) {
 	reg := NewSupplyChainRegistry()
-	if err := reg.Update("missing", "loc", "status", "note"); err == nil {
-		t.Fatalf("expected error for missing asset")
+	if err := reg.Update("missing", "loc", "status", "note"); err != ErrAssetNotFound {
+		t.Fatalf("expected ErrAssetNotFound, got %v", err)
+	}
+}
+
+func TestSupplyChainRegistryConcurrentAccess(t *testing.T) {
+	reg := NewSupplyChainRegistry()
+	var wg sync.WaitGroup
+	for i := 0; i < 50; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			id := fmt.Sprintf("asset-%d", i)
+			if _, err := reg.Register(id, "d", "o", "loc"); err != nil {
+				t.Errorf("register %s: %v", id, err)
+			}
+		}(i)
+	}
+	wg.Wait()
+	// Ensure all assets were inserted without race conditions.
+	for i := 0; i < 50; i++ {
+		if _, ok := reg.Get(fmt.Sprintf("asset-%d", i)); !ok {
+			t.Fatalf("missing asset-%d", i)
+		}
 	}
 }

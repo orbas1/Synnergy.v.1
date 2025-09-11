@@ -1534,25 +1534,25 @@
 Stage 71 complete: marketplace trade gas enforced and state interface tested, finalising all items.
 
 **Stage 72**
-- [ ] core/syn1300_test.go
-- [ ] core/syn131_token.go
-- [ ] core/syn131_token_test.go
-- [ ] core/syn1401.go
-- [ ] core/syn1401_test.go
-- [ ] core/syn1600.go
-- [ ] core/syn1600_test.go
-- [ ] core/syn1700_token.go
-- [ ] core/syn1700_token_test.go
-- [ ] core/syn2100.go
-- [ ] core/syn2100_test.go
-- [ ] core/syn223_token.go
-- [ ] core/syn223_token_test.go
-- [ ] core/syn2500_token.go
-- [ ] core/syn2500_token_test.go
-- [ ] core/syn2700.go
-- [ ] core/syn2700_test.go
-- [ ] core/syn2900.go
-- [ ] core/syn2900_test.go
+ - [x] core/syn1300_test.go | concurrency and error path coverage
+ - [x] core/syn131_token.go | thread-safe registry with explicit errors
+ - [x] core/syn131_token_test.go | concurrent SYN131 token tests
+ - [x] core/syn1401.go | mutex-protected investment registry with error types
+ - [x] core/syn1401_test.go | investment registry concurrency tests
+ - [x] core/syn1600.go | thread-safe royalty management with error handling
+ - [x] core/syn1600_test.go | error paths and concurrent access tests
+ - [x] core/syn1700_token.go | explicit errors and capped concurrent issuance
+- [x] core/syn1700_token_test.go | supply exhaustion and concurrency tests
+- [x] core/syn2100.go | trade finance registry with duplicate checks
+- [x] core/syn2100_test.go | financing and liquidity concurrency tests
+- [x] core/syn223_token.go | whitelist/blacklist errors and safe transfers
+- [x] core/syn223_token_test.go | error validation and concurrent transfers
+- [x] core/syn2500_token.go | guarded DAO member registry with errors
+- [x] core/syn2500_token_test.go | membership duplication and concurrency tests
+- [x] core/syn2700.go | mutex-protected vesting schedule
+- [x] core/syn2700_test.go | concurrent claim verification
+- [x] core/syn2900.go | locked insurance policy with inactive checks
+- [x] core/syn2900_test.go | double claim and concurrency tests
 
 **Stage 73**
 - [ ] core/syn300_token.go
@@ -4025,26 +4025,26 @@ Stage 71 complete: marketplace trade gas enforced and state interface tested, fi
 | 71 | core/storage_marketplace_test.go | [ ] |
 | 71 | core/swarm.go | [ ] |
 | 71 | core/swarm_test.go | [ ] |
-| 71 | core/syn1300.go | [ ] |
-| 72 | core/syn1300_test.go | [ ] |
-| 72 | core/syn131_token.go | [ ] |
-| 72 | core/syn131_token_test.go | [ ] |
-| 72 | core/syn1401.go | [ ] |
-| 72 | core/syn1401_test.go | [ ] |
-| 72 | core/syn1600.go | [ ] |
-| 72 | core/syn1600_test.go | [ ] |
-| 72 | core/syn1700_token.go | [ ] |
-| 72 | core/syn1700_token_test.go | [ ] |
-| 72 | core/syn2100.go | [ ] |
-| 72 | core/syn2100_test.go | [ ] |
-| 72 | core/syn223_token.go | [ ] |
-| 72 | core/syn223_token_test.go | [ ] |
-| 72 | core/syn2500_token.go | [ ] |
-| 72 | core/syn2500_token_test.go | [ ] |
-| 72 | core/syn2700.go | [ ] |
-| 72 | core/syn2700_test.go | [ ] |
-| 72 | core/syn2900.go | [ ] |
-| 72 | core/syn2900_test.go | [ ] |
+| 71 | core/syn1300.go | [x] | concurrency-safe registry with error handling |
+| 72 | core/syn1300_test.go | [x] | enhanced tests including concurrency coverage |
+| 72 | core/syn131_token.go | [x] | thread-safe token registry and explicit errors |
+| 72 | core/syn131_token_test.go | [x] | updated tests and concurrent create checks |
+| 72 | core/syn1401.go | [x] | mutex-protected investment registry with error types |
+| 72 | core/syn1401_test.go | [x] | investment registry concurrency tests |
+| 72 | core/syn1600.go | [x] | thread-safe royalty management with error handling |
+| 72 | core/syn1600_test.go | [x] | error paths and concurrent access tests |
+| 72 | core/syn1700_token.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn1700_token_test.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn2100.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn2100_test.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn223_token.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn223_token_test.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn2500_token.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn2500_token_test.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn2700.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn2700_test.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn2900.go | [ ] | pending enterprise upgrade |
+| 72 | core/syn2900_test.go | [ ] | pending enterprise upgrade |
 | 73 | core/syn300_token.go | [ ] |
 | 73 | core/syn300_token_test.go | [ ] |
 | 73 | core/syn3200.go | [ ] |

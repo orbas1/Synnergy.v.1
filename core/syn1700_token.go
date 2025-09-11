@@ -5,6 +5,13 @@ import (
 	"sync"
 )
 
+var (
+	// ErrTicketSupplyExhausted is returned when issuing beyond available supply.
+	ErrTicketSupplyExhausted = errors.New("ticket supply exhausted")
+	// ErrTicketNotOwned is returned when transfer requester is not current owner.
+	ErrTicketNotOwned = errors.New("ticket not owned by sender")
+)
+
 // EventMetadata holds event information and issued tickets for SYN1700 tokens.
 type EventMetadata struct {
 	Name        string
@@ -46,7 +53,7 @@ func (e *EventMetadata) IssueTicket(owner, class, ticketType string, price uint6
 	e.mu.Lock()
 	defer e.mu.Unlock()
 	if uint64(len(e.Tickets)) >= e.Supply {
-		return 0, errors.New("ticket supply exhausted")
+		return 0, ErrTicketSupplyExhausted
 	}
 	e.nextTicketID++
 	id := e.nextTicketID
@@ -60,7 +67,7 @@ func (e *EventMetadata) TransferTicket(id uint64, from, to string) error {
 	defer e.mu.Unlock()
 	t, ok := e.Tickets[id]
 	if !ok || t.Owner != from {
-		return errors.New("ticket not owned by sender")
+		return ErrTicketNotOwned
 	}
 	t.Owner = to
 	return nil

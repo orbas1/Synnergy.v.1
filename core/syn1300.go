@@ -2,7 +2,15 @@ package core
 
 import (
 	"errors"
+	"sync"
 	"time"
+)
+
+var (
+	// ErrAssetExists is returned when attempting to register an asset twice.
+	ErrAssetExists = errors.New("asset already exists")
+	// ErrAssetNotFound is returned when an unknown asset id is referenced.
+	ErrAssetNotFound = errors.New("asset not found")
 )
 
 // SupplyChainEvent records a movement or status change for a supply chain asset.
@@ -25,6 +33,7 @@ type SupplyChainAsset struct {
 
 // SupplyChainRegistry manages supply chain assets and their events.
 type SupplyChainRegistry struct {
+	mu     sync.RWMutex
 	assets map[string]*SupplyChainAsset
 }
 
@@ -35,8 +44,10 @@ func NewSupplyChainRegistry() *SupplyChainRegistry {
 
 // Register inserts a new asset into the registry.
 func (r *SupplyChainRegistry) Register(id, desc, owner, location string) (*SupplyChainAsset, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	if _, exists := r.assets[id]; exists {
-		return nil, errors.New("asset already exists")
+		return nil, ErrAssetExists
 	}
 	asset := &SupplyChainAsset{ID: id, Description: desc, Owner: owner, Location: location, Status: "created"}
 	asset.History = append(asset.History, SupplyChainEvent{Timestamp: time.Now(), Location: location, Status: "created"})
@@ -46,9 +57,11 @@ func (r *SupplyChainRegistry) Register(id, desc, owner, location string) (*Suppl
 
 // Update records a new event for the given asset.
 func (r *SupplyChainRegistry) Update(id, location, status, note string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	asset, ok := r.assets[id]
 	if !ok {
-		return errors.New("asset not found")
+		return ErrAssetNotFound
 	}
 	asset.Location = location
 	asset.Status = status
@@ -58,6 +71,8 @@ func (r *SupplyChainRegistry) Update(id, location, status, note string) error {
 
 // Get returns the asset with the given id.
 func (r *SupplyChainRegistry) Get(id string) (*SupplyChainAsset, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	asset, ok := r.assets[id]
 	return asset, ok
 }

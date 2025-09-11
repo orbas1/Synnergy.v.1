@@ -1,6 +1,9 @@
 package core
 
-import "time"
+import (
+	"sync"
+	"time"
+)
 
 // VestingEntry defines a point in time when a portion becomes available.
 type VestingEntry struct {
@@ -11,6 +14,7 @@ type VestingEntry struct {
 
 // VestingSchedule represents a series of vesting entries.
 type VestingSchedule struct {
+	mu      sync.Mutex
 	Entries []VestingEntry
 }
 
@@ -21,6 +25,8 @@ func NewVestingSchedule(entries []VestingEntry) *VestingSchedule {
 
 // Claim releases all matured, unclaimed amounts up to now.
 func (v *VestingSchedule) Claim(now time.Time) uint64 {
+	v.mu.Lock()
+	defer v.mu.Unlock()
 	var total uint64
 	for i := range v.Entries {
 		e := &v.Entries[i]
@@ -34,6 +40,8 @@ func (v *VestingSchedule) Claim(now time.Time) uint64 {
 
 // Pending returns the amount still locked after the provided time.
 func (v *VestingSchedule) Pending(now time.Time) uint64 {
+	v.mu.Lock()
+	defer v.mu.Unlock()
 	var total uint64
 	for _, e := range v.Entries {
 		if !e.Claimed && now.Before(e.ReleaseTime) {

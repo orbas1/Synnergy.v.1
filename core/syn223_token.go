@@ -5,6 +5,15 @@ import (
 	"sync"
 )
 
+var (
+	// ErrAddressBlacklisted occurs when sender or receiver is blacklisted.
+	ErrAddressBlacklisted = errors.New("address blacklisted")
+	// ErrRecipientNotWhitelisted occurs when recipient is not whitelisted.
+	ErrRecipientNotWhitelisted = errors.New("recipient not whitelisted")
+	// ErrInsufficientBalance signals not enough balance for transfer.
+	ErrInsufficientBalance = errors.New("insufficient balance")
+)
+
 // SYN223Token implements a secure transfer token with whitelist and blacklist controls.
 type SYN223Token struct {
 	mu        sync.RWMutex
@@ -64,14 +73,14 @@ func (t *SYN223Token) Transfer(from, to string, amount uint64) error {
 	defer t.mu.Unlock()
 
 	if t.blacklist[from] || t.blacklist[to] {
-		return errors.New("address blacklisted")
+		return ErrAddressBlacklisted
 	}
 	if !t.whitelist[to] {
-		return errors.New("recipient not whitelisted")
+		return ErrRecipientNotWhitelisted
 	}
 	bal := t.balances[from]
 	if bal < amount {
-		return errors.New("insufficient balance")
+		return ErrInsufficientBalance
 	}
 	t.balances[from] = bal - amount
 	t.balances[to] += amount

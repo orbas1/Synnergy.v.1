@@ -6,6 +6,17 @@ import (
 	"time"
 )
 
+var (
+	// ErrDocumentExists signals a duplicate document registration.
+	ErrDocumentExists = errors.New("document exists")
+	// ErrDocumentNotFound indicates a missing document lookup.
+	ErrDocumentNotFound = errors.New("document not found")
+	// ErrDocumentAlreadyFinanced is returned when financing an already financed document.
+	ErrDocumentAlreadyFinanced = errors.New("document already financed")
+	// ErrInsufficientLiquidity is returned when removing more liquidity than available.
+	ErrInsufficientLiquidity = errors.New("insufficient liquidity")
+)
+
 // FinancialDocument captures metadata for a trade finance instrument.
 type FinancialDocument struct {
 	DocID       string
@@ -35,9 +46,12 @@ func NewTradeFinanceToken() *TradeFinanceToken {
 }
 
 // RegisterDocument registers a financing document.
-func (t *TradeFinanceToken) RegisterDocument(docID, issuer, recipient string, amount uint64, issue, due time.Time, desc string) {
+func (t *TradeFinanceToken) RegisterDocument(docID, issuer, recipient string, amount uint64, issue, due time.Time, desc string) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
+	if _, exists := t.Documents[docID]; exists {
+		return ErrDocumentExists
+	}
 	t.Documents[docID] = &FinancialDocument{
 		DocID:       docID,
 		Issuer:      issuer,
@@ -47,6 +61,7 @@ func (t *TradeFinanceToken) RegisterDocument(docID, issuer, recipient string, am
 		DueDate:     due,
 		Description: desc,
 	}
+	return nil
 }
 
 // FinanceDocument marks a document as financed by a financier.
@@ -55,10 +70,10 @@ func (t *TradeFinanceToken) FinanceDocument(docID, financier string) error {
 	defer t.mu.Unlock()
 	d, ok := t.Documents[docID]
 	if !ok {
-		return errors.New("document not found")
+		return ErrDocumentNotFound
 	}
 	if d.Financed {
-		return errors.New("document already financed")
+		return ErrDocumentAlreadyFinanced
 	}
 	d.Financed = true
 	d.Financier = financier
@@ -101,7 +116,7 @@ func (t *TradeFinanceToken) RemoveLiquidity(addr string, amt uint64) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if t.Liquidity[addr] < amt {
-		return errors.New("insufficient liquidity")
+		return ErrInsufficientLiquidity
 	}
 	t.Liquidity[addr] -= amt
 	return nil
