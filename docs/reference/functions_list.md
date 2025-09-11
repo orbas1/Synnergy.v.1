@@ -1,5 +1,7 @@
 # Function List
 
+This catalogue lists exported functions across the repository for quick navigation. Regenerate with `go list` and `rg` when APIs change.
+
 | File | Line | Signature |
 |---|---|---|
 | `biometrics_auth.go` | `15` | `func NewBiometricsAuth() *BiometricsAuth {` |

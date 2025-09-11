@@ -1,14 +1,23 @@
 # Monitoring and Logging Architecture
 
-Modules in this group provide observability through system health logging and watchtower services.
+## Overview
+Observability components provide operators with insight into node health and network conditions. Logging utilities stream structured events while watchtower nodes monitor peers for outages or malicious behaviour.
 
-**Key Modules**
-- system_health_logging.go
-- watchtower_node.go
+## Key Modules
+- `system_health_logging.go` – emits metrics and health events.
+- `watchtower_node.go` – monitors peer availability and reports anomalies.
+- `anomaly_detection.go` – analyses logs for suspicious patterns.
 
-**Related CLI Files**
-- cli/system_health_logging.go
-- cli/watchtower.go
-- cli/watchtower_node.go
+## Workflow
+1. **Event capture** – nodes call `system_health_logging` to record resource usage and errors.
+2. **Watchtower aggregation** – `watchtower_node` collects peer heartbeats and cross-checks logs.
+3. **Alerting** – anomalies trigger alerts or automated responses such as node isolation.
 
-These components collect metrics and monitor network integrity.
+## Security Considerations
+- Logs omit sensitive data and can be encrypted when transported.
+- Watchtower queries use authenticated channels to prevent spoofing.
+- Rate limiting ensures logging cannot be used to exhaust disk space.
+
+## CLI Integration
+- `synnergy watchtower` – manage watchtower nodes.
+- `synnergy logs` – stream or filter system logs (via `system_health_logging`).

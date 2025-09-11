@@ -1,18 +1,22 @@
 # Specialized Features Architecture
 
-Some modules deliver niche capabilities and experimental features outside the core categories.
+## Overview
+Certain modules provide niche or experimental capabilities that extend the core platform. These features target specialized industries or research use cases and are isolated from critical consensus paths.
 
-**Example Modules**
-- holographic.go
-- warfare_node.go
-- plasma.go
-- energy_efficiency.go
-- geospatial_node.go
+## Example Modules
+- `geospatial_node.go` – processes location-aware data for mapping or logistics applications.
+- `environmental_monitoring_node.go` – records sensor data for sustainability tracking.
+- `financial_prediction.go` – runs predictive models for market analysis.
+- `holographic.go` – explores holographic data visualisation techniques.
+- `energy_efficient_node.go` – optimizes mining for low-power hardware.
 
-**Related CLI Files**
-- cli/holographic_node.go
-- cli/warfare_node.go
-- cli/plasma.go
-- cli/geospatial.go
+## Workflow
+Specialized nodes register their capabilities and expose APIs relevant to their domain. Other services can query them for enriched data or analytics without impacting consensus throughput.
 
-These components illustrate extensibility for unique use cases and research-oriented modules.
+## Security Considerations
+- These modules are optional and can be disabled in high-security deployments.
+- Data produced by specialized nodes may require separate validation or calibration.
+- Resource usage is monitored to ensure experimental features do not exhaust network capacity.
+
+## CLI Integration
+Relevant features expose dedicated CLI commands such as `synnergy geospatial-node` or `synnergy energy-node` depending on the module.

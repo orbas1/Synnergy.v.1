@@ -23,6 +23,9 @@ The documentation is split into several key sections:
 Links to additional material in the repository root are provided throughout the
 guides where relevant.
 
+For a complete listing of every document in this tree, consult the
+[documentation index](contents/README.md).
+
 ## Building the Site
 
 Configuration for the site lives in [`mkdocs.yml`](../mkdocs.yml). Install

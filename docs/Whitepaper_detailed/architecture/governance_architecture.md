@@ -1,26 +1,27 @@
 # Governance and DAO Architecture
 
-Governance modules implement decentralized decision-making and staking mechanisms through DAOs.
+## Overview
+Governance modules enable token holders to shape network parameters through proposals and voting. They integrate closely with DAO tooling and staking mechanisms to ensure decisions reflect economic weight while remaining transparent.
 
-**Key Modules**
-- dao.go
-- dao_access_control.go
-- dao_proposal.go
-- dao_quadratic_voting.go
-- dao_staking.go
-- dao_token.go
-- cross_consensus_scaling_networks.go
-- custodial_node.go
+## Key Modules
+- `core/dao_proposal.go` – stores proposals and tracks execution state.
+- `internal/governance/replay_protection.go` – prevents duplicate submissions and replays.
+- `core/authority_nodes.go` – manages elected authority nodes responsible for executing decisions.
+- `cli/dao_token.go` – issues governance tokens such as `syn300`.
+- `cli/dao_access_control.go` – manages membership and permissions within DAOs.
 
-**Related CLI Files**
-- cli/dao.go
-- cli/dao_access_control.go
-- cli/dao_proposal.go
-- cli/dao_quadratic_voting.go
-- cli/dao_staking.go
-- cli/dao_token.go
-- cli/cross_consensus_scaling_networks.go
-- cli/custodial_node.go
+## Workflow
+1. **Token distribution** – governance tokens like `syn300` are minted and distributed.
+2. **Proposal creation** – stakeholders draft proposals via `synnergy dao-proposal`.
+3. **Staking and voting** – `dao-stake` records locked tokens and voting power.
+4. **Execution** – approved proposals trigger operations such as parameter changes or fund transfers managed by authority nodes.
 
-These components enable proposal submission, voting, staking, custodial asset management and cross-consensus network registration for scalable governance.
-Stage 43 enhances `cli/dao_access_control.go` with JSON-formatted outputs and ECDSA signature checks so membership mutations are both scriptable and authenticated.
+## Security Considerations
+- Replay protection ensures proposals cannot be submitted multiple times for the same block.
+- Authority nodes validate proposal authenticity before executing changes.
+- Governance actions are immutable and recorded on the ledger for accountability.
+
+## CLI Integration
+- `synnergy dao-token` – mint and manage governance tokens.
+- `synnergy dao-proposal` – create and review proposals.
+- `synnergy dao-stake` – manage staking balances.

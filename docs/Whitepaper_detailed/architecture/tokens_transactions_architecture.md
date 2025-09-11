@@ -1,36 +1,25 @@
 # Tokens and Transactions Architecture
 
-This group governs token standards, contract execution, and transaction processing.
+## Overview
+This architecture governs token standards, contract execution and the lifecycle of transactions on the Synnergy Network. It ensures interoperability among numerous SYN token variants and maintains deterministic gas accounting.
 
-**Key Modules**
-- contracts.go
-- contracts_opcodes.go
-- virtual_machine.go
-- gas_table.go
-- private_transactions.go
-- transaction.go
-- vm_sandbox_management.go
-- coin.go
-- blockchain_compression.go
-- blockchain_synchronization.go
-- charity.go
+## Key Modules
+- Token implementations under `internal/tokens/` such as `syn20`, `syn200`, `syn300` and others.
+- `contracts.go` and `contracts_opcodes.go` – manage contract deployment and invocation.
+- `cross_chain_transactions.go` – relays transactions across networks.
+- `gas_table.go` – records gas costs for operations.
 
-**Related CLI Files**
-- cli/contracts.go
-- cli/contracts_opcodes.go
-- cli/virtual_machine.go
-- cli/gas_table.go
-- cli/private_transactions.go
-- cli/transaction.go
-- cli/coin.go
-- cli/compression.go
-- cli/synchronization.go
-- cli/charity.go
+## Workflow
+1. **Token creation** – CLI commands like `synnergy syn20` mint standard tokens.
+2. **Transaction assembly** – clients construct transactions referencing token contracts and desired methods.
+3. **Execution** – the virtual machine runs opcodes from `contracts_opcodes.go` and charges gas from `gas_table`.
+4. **Cross-chain relay** – `cross_chain_transactions` forwards messages to other networks when required.
 
-These modules define how smart contracts run and how tokens and transactions are validated and executed.
+## Security Considerations
+- Token standards include allowance checks to prevent unauthorized transfers.
+- Gas accounting protects nodes from infinite loops or heavy computation.
+- Cross-chain operations require relayer authorization and proof verification.
 
-Stage 16 introduces a concurrency‑safe token registry and base token with
-benchmarks to measure transfer performance across the network.
-Stage 20 extends the library with dividend, convertible, governance, capped
- supply, vesting, loyalty and multi-chain token standards, all accessible via CLI
- and VM opcodes.
+## CLI Integration
+- `synnergy syn20`, `synnergy syn200`, etc. – manage specific token standards.
+- `synnergy tx` – build and broadcast transactions.

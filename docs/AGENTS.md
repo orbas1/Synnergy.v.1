@@ -1792,33 +1792,33 @@
 - [ ] docs/Whitepaper_detailed/Virtual Machine.md
 - [ ] docs/Whitepaper_detailed/Wallet.md
 - [ ] docs/Whitepaper_detailed/architecture/README.md
-- [ ] docs/Whitepaper_detailed/architecture/ai_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/ai_marketplace_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/compliance_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/ai_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/ai_marketplace_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/compliance_architecture.md
 
 **Stage 81**
-- [ ] docs/Whitepaper_detailed/architecture/consensus_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/consensus_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/cross_chain_architecture.md – cross_tx CLI integration described
-- [ ] docs/Whitepaper_detailed/architecture/dao_explorer_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/docker_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/explorer_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/governance_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/identity_access_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/kubernetes_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/loanpool_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/dao_explorer_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/docker_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/explorer_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/governance_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/identity_access_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/kubernetes_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/loanpool_architecture.md
 - [ ] docs/Whitepaper_detailed/architecture/module_cli_list.md
-- [ ] docs/Whitepaper_detailed/architecture/monitoring_logging_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/nft_marketplace_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/node_roles_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/security_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/smart_contract_marketplace_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/specialized_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/storage_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/tokens_transactions_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/virtual_machine_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/monitoring_logging_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/nft_marketplace_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/node_roles_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/security_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/smart_contract_marketplace_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/specialized_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/storage_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/tokens_transactions_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/virtual_machine_architecture.md
 
 **Stage 82**
-- [ ] docs/Whitepaper_detailed/architecture/wallet_architecture.md
+- [x] docs/Whitepaper_detailed/architecture/wallet_architecture.md
 - [ ] docs/Whitepaper_detailed/guide/charity_guide.md
 - [ ] docs/Whitepaper_detailed/guide/cli_guide.md
 - [ ] docs/Whitepaper_detailed/guide/config_guide.md
@@ -1839,22 +1839,22 @@
 - [x] docs/Whitepaper_detailed/whitepaper.md
 
 **Stage 83**
-- [ ] docs/adr/0001-adopt-mkdocs.md
-- [ ] docs/api/README.md
-- [ ] docs/api/core.md
-- [ ] docs/financial_models.md
+- [x] docs/adr/0001-adopt-mkdocs.md
+- [x] docs/api/README.md
+- [x] docs/api/core.md
+- [x] docs/financial_models.md
  - [x] docs/guides/cli_quickstart.md
-- [ ] docs/guides/developer_guide.md
-- [ ] docs/guides/gui_quickstart.md
-- [ ] docs/guides/network_operations.md
-- [ ] docs/guides/node_setup.md
-- [ ] docs/index.md
-- [ ] docs/performance_benchmarks.md
+- [x] docs/guides/developer_guide.md
+- [x] docs/guides/gui_quickstart.md
+- [x] docs/guides/network_operations.md
+- [x] docs/guides/node_setup.md
+- [x] docs/index.md
+- [x] docs/performance_benchmarks.md
 - [x] docs/benchmark_results.md – benchmark test details documented
 - [x] docs/security_audit_results.md – go vet and gosec findings summarised
-- [ ] docs/reference/errors_list.md
-- [ ] docs/reference/functions_list.txt
-- [ ] docs/reference/gas_table_list.md
+- [x] docs/reference/errors_list.md
+- [x] docs/reference/functions_list.md
+- [x] docs/reference/gas_table_list.md
  - [x] docs/reference/opcodes_list.md
 - [ ] dynamic_consensus_hopping.go
 - [ ] dynamic_consensus_hopping_test.go
@@ -4268,29 +4268,30 @@
 | 80 | docs/Whitepaper_detailed/Virtual Machine.md | [ ] |
 | 80 | docs/Whitepaper_detailed/Wallet.md | [ ] |
 | 80 | docs/Whitepaper_detailed/architecture/README.md | [ ] |
-| 80 | docs/Whitepaper_detailed/architecture/ai_architecture.md | [ ] |
-| 80 | docs/Whitepaper_detailed/architecture/ai_marketplace_architecture.md | [ ] |
-| 80 | docs/Whitepaper_detailed/architecture/compliance_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/consensus_architecture.md | [ ] |
+| 80 | docs/Whitepaper_detailed/architecture/ai_architecture.md | [x] |
+| 80 | docs/Whitepaper_detailed/architecture/ai_marketplace_architecture.md | [x] |
+| 80 | docs/Whitepaper_detailed/architecture/compliance_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/consensus_architecture.md | [x] |
 | 81 | docs/Whitepaper_detailed/architecture/cross_chain_architecture.md | [x] |
-| 81 | docs/Whitepaper_detailed/architecture/dao_explorer_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/docker_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/explorer_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/governance_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/identity_access_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/kubernetes_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/loanpool_architecture.md | [ ] |
+| 81 | docs/Whitepaper_detailed/architecture/dao_explorer_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/docker_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/explorer_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/governance_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/identity_access_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/kubernetes_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/loanpool_architecture.md | [x] |
 | 81 | docs/Whitepaper_detailed/architecture/module_cli_list.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/monitoring_logging_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/nft_marketplace_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/node_roles_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/security_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/smart_contract_marketplace_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/specialized_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/storage_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/tokens_transactions_architecture.md | [ ] |
-| 81 | docs/Whitepaper_detailed/architecture/virtual_machine_architecture.md | [ ] |
-| 82 | docs/Whitepaper_detailed/architecture/wallet_architecture.md | [ ] |
+| 81 | docs/Whitepaper_detailed/architecture/monitoring_logging_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/nft_marketplace_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/node_operations_dashboard_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/node_roles_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/security_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/smart_contract_marketplace_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/specialized_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/storage_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/tokens_transactions_architecture.md | [x] |
+| 81 | docs/Whitepaper_detailed/architecture/virtual_machine_architecture.md | [x] |
+| 82 | docs/Whitepaper_detailed/architecture/wallet_architecture.md | [x] |
 | 82 | docs/Whitepaper_detailed/guide/charity_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/cli_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/config_guide.md | [ ] |
@@ -4309,21 +4310,22 @@
 | 82 | docs/Whitepaper_detailed/guide/transaction_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/virtual_machine_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/whitepaper.md | [x] |
-| 83 | docs/adr/0001-adopt-mkdocs.md | [ ] |
-| 83 | docs/api/README.md | [ ] |
-| 83 | docs/api/core.md | [ ] |
-| 83 | docs/financial_models.md | [ ] |
+| 83 | docs/adr/0001-adopt-mkdocs.md | [x] |
+| 83 | docs/api/README.md | [x] |
+| 83 | docs/api/core.md | [x] |
+| 83 | docs/financial_models.md | [x] |
 | 83 | docs/guides/cli_quickstart.md | [x] | bankinst signed usage |
-| 83 | docs/guides/developer_guide.md | [ ] |
-| 83 | docs/guides/gui_quickstart.md | [ ] |
-| 83 | docs/guides/network_operations.md | [ ] |
-| 83 | docs/guides/node_setup.md | [ ] |
-| 83 | docs/index.md | [ ] |
-| 83 | docs/performance_benchmarks.md | [ ] |
+| 83 | docs/guides/developer_guide.md | [x] |
+| 83 | docs/guides/gui_quickstart.md | [x] |
+| 83 | docs/guides/network_operations.md | [x] |
+| 83 | docs/guides/node_setup.md | [x] |
+| 83 | docs/index.md | [x] |
+| 83 | docs/contents/README.md | [x] | comprehensive index of documentation |
+| 83 | docs/performance_benchmarks.md | [x] |
 | 83 | docs/benchmark_results.md | [x] |
 | 83 | docs/security_audit_results.md | [x] |
-| 83 | docs/reference/errors_list.md | [ ] |
-| 83 | docs/reference/functions_list.txt | [ ] |
+| 83 | docs/reference/errors_list.md | [x] |
+| 83 | docs/reference/functions_list.md | [x] |
 | 83 | docs/reference/gas_table_list.md | [x] | gas costs for cross-chain, oracle, multisig and minting operations added |
 | 83 | docs/reference/opcodes_list.md | [x] | documented opcodes for cross-chain, oracle, minting and multisig |
 | 83 | dynamic_consensus_hopping.go | [ ] |
@@ -5131,16 +5133,16 @@
 | 125 | web/pages/dao.js | [x] |
 | 125 | zero_trust_data_channels.go | [ ] |
 | 125 | zero_trust_data_channels_test.go | [ ] |
-| 126 | docs/ux/mobile_responsiveness.md | [ ] |
-| 127 | docs/ux/accessibility_aids.md | [ ] |
-| 128 | docs/ux/error_handling_validation.md | [ ] |
-| 129 | docs/ux/loading_feedback.md | [ ] |
-| 130 | docs/ux/theming_options.md | [ ] |
-| 131 | docs/ux/onboarding_help.md | [ ] |
-| 132 | docs/ux/localization_support.md | [ ] |
-| 133 | docs/ux/command_history.md | [ ] |
-| 134 | docs/ux/authentication_roles.md | [ ] |
-| 135 | docs/ux/status_indicators.md | [ ] |
+| 126 | docs/ux/mobile_responsiveness.md | [x] |
+| 127 | docs/ux/accessibility_aids.md | [x] |
+| 128 | docs/ux/error_handling_validation.md | [x] |
+| 129 | docs/ux/loading_feedback.md | [x] |
+| 130 | docs/ux/theming_options.md | [x] |
+| 131 | docs/ux/onboarding_help.md | [x] |
+| 132 | docs/ux/localization_support.md | [x] |
+| 133 | docs/ux/command_history.md | [x] |
+| 134 | docs/ux/authentication_roles.md | [x] |
+| 135 | docs/ux/status_indicators.md | [x] |
 | 136 | Security assessments & Benchmark assessments/Benchmarks/All Token standard Benchmarks.md | [ ] |
 | 136 | Security assessments & Benchmark assessments/Benchmarks/All Token standard Benchmarks_test.go | [ ] |
 | 136 | Security assessments & Benchmark assessments/Benchmarks/Authority node benchmarks.md | [ ] |

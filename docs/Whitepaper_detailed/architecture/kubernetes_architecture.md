@@ -1,16 +1,24 @@
 # Kubernetes Architecture
 
-The Synnergy network can be deployed on Kubernetes to provide automated
-scaling, self‑healing and declarative configuration.  The manifests in
-`deploy/k8s/` define two core components:
+## Overview
+Kubernetes manifests enable scalable deployments of Synnergy components in cluster environments. They describe desired state for nodes, dashboards and auxiliary services, allowing automated rollout and recovery.
 
-- **Node Deployment** – Runs replicated validator or full nodes. Each pod
-  exposes P2P and RPC ports and uses liveness/readiness probes so failed
-  instances are replaced automatically.
-- **Wallet Server Deployment** – Hosts the HTTP wallet API behind a
-  `ClusterIP` service. Probes and resource quotas ensure responsive
-  behaviour under load.
+## Components
+- **Deployment manifests** – under `deploy/k8s/` for authority nodes, explorers and dashboards.
+- **Services** – expose gRPC and HTTP endpoints within the cluster.
+- **ConfigMaps and Secrets** – inject node configuration and keys at runtime.
+- **Horizontal Pod Autoscalers** – optionally adjust validator or dashboard replicas based on metrics.
 
-Configuration is supplied via ConfigMaps and mounted into the containers.
-Operators can extend the manifests with ingress controllers, persistent
-storage or PodDisruptionBudgets to satisfy their reliability targets.
+## Workflow
+1. Apply manifests with `kubectl` or through CI pipelines.
+2. Kubernetes schedules pods and mounts ConfigMaps/Secrets containing network settings.
+3. Services route traffic to healthy pods; failed instances are restarted automatically.
+4. Autoscalers monitor CPU or custom metrics to add or remove replicas.
+
+## Security Considerations
+- Secrets are mounted as temporary volumes and not baked into images.
+- NetworkPolicies can restrict pod communication to required ports.
+- Role Based Access Control governs who may apply or modify manifests.
+
+## CLI Integration
+While Kubernetes handles orchestration, containers still invoke the `synnergy` CLI for node operations.

@@ -23,3 +23,7 @@ forecast, _ := model.Forecast(prices, 6) // 6‑month forecast
 
 To integrate forecasts on-chain, store historical price data in a smart contract or oracle. Nodes can run the forecasting models off-chain and submit results back to the blockchain for transparency and further processing.
 
+## Limitations
+
+Forecast accuracy depends on data quality and market behaviour; backtest models regularly and avoid relying on a single technique for critical decisions.
+
