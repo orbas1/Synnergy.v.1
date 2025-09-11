@@ -52,3 +52,12 @@ func TestNewNodeAdapter(t *testing.T) {
 		t.Fatalf("DialSeed should fail when adapter not running")
 	}
 }
+
+func TestNewNodeAdapterNilPanics(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Fatalf("expected panic for nil node")
+		}
+	}()
+	_ = NewNodeAdapter(nil)
+}

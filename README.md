@@ -42,6 +42,8 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
 - **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
 - **Resilient node primitives** – forensic nodes prune over-capacity logs, full node modes are mutex-protected, gateway endpoints require a running node, and failover managers can remove stale peers.
+- **Thread-safe mempools and plasma bridge safeguards** – node mempools are mutex-protected for concurrent submissions and Plasma bridge operations surface explicit paused errors.
+- **Peer management utilities** – `synnergy peer count` reports known peers with gas-aware output for network monitoring.
 - **Validated block utilities** – Stage 40 adds sub-block creation and block assembly commands with strict argument checking.
 - **Consensus tooling** – Stage 41 adds validated commands for adaptive weighting, difficulty control and service management.
 - **Adaptive consensus management** – Stage 63 averages recent demand and stake

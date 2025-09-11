@@ -4,6 +4,7 @@ import (
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
+	"fmt"
 	"io"
 	"sync"
 )
@@ -11,6 +12,9 @@ import (
 // Encrypt encrypts plaintext using AES-GCM with the provided key.
 // The returned slice contains nonce||ciphertext.
 func Encrypt(key, plaintext []byte) ([]byte, error) {
+	if len(key) != 32 {
+		return nil, fmt.Errorf("key length must be 32 bytes")
+	}
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err
@@ -29,6 +33,9 @@ func Encrypt(key, plaintext []byte) ([]byte, error) {
 
 // Decrypt decrypts data produced by Encrypt.
 func Decrypt(key, data []byte) ([]byte, error) {
+	if len(key) != 32 {
+		return nil, fmt.Errorf("key length must be 32 bytes")
+	}
 	block, err := aes.NewCipher(key)
 	if err != nil {
 		return nil, err

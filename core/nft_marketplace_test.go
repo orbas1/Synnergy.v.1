@@ -49,3 +49,17 @@ func BenchmarkNFTMarketplaceMint(b *testing.B) {
 		_, _ = m.Mint(context.Background(), id, "alice", "meta", 1, synn.GasCost("MintNFT"))
 	}
 }
+
+func TestNFTMarketplaceUpdatePrice(t *testing.T) {
+	m := NewNFTMarketplace()
+	if _, err := m.Mint(context.Background(), "id1", "alice", "meta", 100, synn.GasCost("MintNFT")); err != nil {
+		t.Fatalf("mint: %v", err)
+	}
+	if err := m.UpdatePrice("id1", 200); err != nil {
+		t.Fatalf("update: %v", err)
+	}
+	nft, err := m.List("id1")
+	if err != nil || nft.Price != 200 {
+		t.Fatalf("price not updated: %+v %v", nft, err)
+	}
+}

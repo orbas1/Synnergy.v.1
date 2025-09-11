@@ -51,6 +51,13 @@ func (pm *PeerManager) ListPeers() []string {
 	return ids
 }
 
+// Count returns the number of known peers.
+func (pm *PeerManager) Count() int {
+	pm.mu.RLock()
+	defer pm.mu.RUnlock()
+	return len(pm.peers)
+}
+
 // Connect records a peer by its network address and returns the derived
 // identifier. This is a helper for CLI commands where the address doubles as the
 // identifier.

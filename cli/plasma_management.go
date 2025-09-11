@@ -36,7 +36,7 @@ func init() {
 		Use:   "status",
 		Short: "Show whether Plasma bridge is paused",
 		Run: func(cmd *cobra.Command, args []string) {
-			status := plasmaBridge.Status()
+			status := plasmaBridge.IsPaused()
 			if plasmaJSON {
 				enc, _ := json.Marshal(map[string]bool{"paused": status})
 				fmt.Println(string(enc))

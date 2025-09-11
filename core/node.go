@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"sync"
 )
 
 // Node represents a participant in the network.
@@ -17,19 +18,21 @@ type Node struct {
 	Blockchain    []*Block
 	Validators    *ValidatorManager
 	MaxTxPerBlock int
+	mu            sync.Mutex
 }
 
 // NewNode creates a new node instance.
 func NewNode(id, addr string, ledger *Ledger) *Node {
 	return &Node{
-		ID:         id,
-		Addr:       addr,
-		Ledger:     ledger,
-		Consensus:  NewSynnergyConsensus(),
-		VM:         NewSNVM(),
-		Mempool:    []*Transaction{},
-		Blockchain: []*Block{},
-		Validators: NewValidatorManager(MinStake),
+		ID:            id,
+		Addr:          addr,
+		Ledger:        ledger,
+		Consensus:     NewSynnergyConsensus(),
+		VM:            NewSNVM(),
+		Mempool:       []*Transaction{},
+		Blockchain:    []*Block{},
+		Validators:    NewValidatorManager(MinStake),
+		MaxTxPerBlock: 100,
 	}
 }
 
@@ -38,7 +41,9 @@ func (n *Node) AddTransaction(tx *Transaction) error {
 	if err := n.ValidateTransaction(tx); err != nil {
 		return err
 	}
+	n.mu.Lock()
 	n.Mempool = append(n.Mempool, tx)
+	n.mu.Unlock()
 	return nil
 }
 
@@ -56,6 +61,8 @@ func (n *Node) ValidateTransaction(tx *Transaction) error {
 
 // MineBlock packages the current mempool into a sub-block and mines a block.
 func (n *Node) MineBlock() *Block {
+	n.mu.Lock()
+	defer n.mu.Unlock()
 	if len(n.Mempool) == 0 {
 		return nil
 	}
