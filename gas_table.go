@@ -110,11 +110,21 @@ func LoadGasTable() GasTable {
 // GasCost returns the gas price for a given opcode name. If the opcode is not
 // present in the table, DefaultGasCost is returned.
 func GasCost(opcode string) uint64 {
-	tbl := LoadGasTable()
-	if c, ok := tbl[opcode]; ok {
-		return c
-	}
-	return DefaultGasCost
+        tbl := LoadGasTable()
+        if c, ok := tbl[opcode]; ok {
+                return c
+        }
+        return DefaultGasCost
+}
+
+// MustGasCost returns the gas price for an opcode and panics if it is missing.
+// It is useful during initialization of critical modules where undefined
+// pricing would indicate a misconfigured build or documentation drift.
+func MustGasCost(opcode string) uint64 {
+        if c, ok := LoadGasTable()[opcode]; ok {
+                return c
+        }
+        panic(fmt.Sprintf("missing gas cost for opcode %s", opcode))
 }
 
 // HasOpcode reports whether a gas price is defined for the opcode.

@@ -29,6 +29,11 @@ func TestMiningNodeCLI(t *testing.T) {
 		t.Fatalf("mine: %v output %s", err, out)
 	}
 
+	out, err = execMiningCLI("--json", "mining", "mine-until", "data", "0", "--timeout", "1")
+	if err != nil || !strings.Contains(out, "hash") {
+		t.Fatalf("mine-until: %v output %s", err, out)
+	}
+
 	out, err = execMiningCLI("mining", "stop")
 	if err != nil || !strings.Contains(out, "stopped") {
 		t.Fatalf("stop: %v output %s", err, out)

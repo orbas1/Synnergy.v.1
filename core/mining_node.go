@@ -1,9 +1,11 @@
 package core
 
 import (
+	"context"
 	"crypto/sha256"
 	"encoding/hex"
 	"errors"
+	"strings"
 	"sync"
 )
 
@@ -61,4 +63,30 @@ func (mn *MiningNode) HashRateHint() uint64 {
 	mn.mu.Lock()
 	defer mn.mu.Unlock()
 	return mn.hashRate
+}
+
+// MineUntil keeps hashing the provided data until the resulting hash has the
+// given prefix or the context is cancelled. The resulting hash and the nonce
+// used to produce it are returned. A non-empty prefix must be supplied.
+func (mn *MiningNode) MineUntil(ctx context.Context, data []byte, prefix string) (string, uint64, error) {
+	if prefix == "" {
+		return "", 0, errors.New("prefix required")
+	}
+	for {
+		select {
+		case <-ctx.Done():
+			return "", 0, ctx.Err()
+		default:
+			hash, err := mn.Mine(data)
+			if err != nil {
+				return "", 0, err
+			}
+			if strings.HasPrefix(hash, prefix) {
+				mn.mu.Lock()
+				nonce := mn.nonce
+				mn.mu.Unlock()
+				return hash, nonce, nil
+			}
+		}
+	}
 }

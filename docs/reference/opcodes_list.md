@@ -254,6 +254,7 @@ and warfare nodes as well as UI integrations.
 | `Metrics` | `0x1000EC` |
 | `Mine` | `0x1000ED` |
 | `MineBlock` | `0x1000EE` |
+| `MineUntil` | `0x100700` |
 | `MinimumStake` | `0x1000EF` |
 | `Mint` | `0x1000F0` |
 | `MintAsset` | `0x1000F1` |
