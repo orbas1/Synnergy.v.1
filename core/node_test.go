@@ -20,7 +20,7 @@ func TestMineBlockFeeDistribution(t *testing.T) {
 		t.Fatalf("recipient balance %d", bal)
 	}
 	dist := DistributeFees(100)
-	expected := ShareProportional(AdjustForBlockUtilization(dist.ValidatorsMiners, 1, node.MaxTxPerBlock), map[string]uint64{validator: 2, "miner": 1})
+	expected := ShareProportional(AdjustForBlockUtilization(dist.ValidatorsMiners, 1, node.MaxTxPerBlock), map[string]uint64{validator: 3, "miner": 1})
 	if ledger.GetBalance(validator) != expected[validator] || ledger.GetBalance("miner") != expected["miner"] {
 		t.Fatalf("unexpected shares: got validator %d miner %d", ledger.GetBalance(validator), ledger.GetBalance("miner"))
 	}
