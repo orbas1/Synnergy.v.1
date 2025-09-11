@@ -1,0 +1,7 @@
+Total functions: 14
+Function counts by package:
+  security_assessments_benchmarks/Security assessments/cmd: 1
+  security_assessments_benchmarks/Benchmarks: 4
+  security_assessments_benchmarks/Benchmarks/cmd/benchreport: 6
+  security_assessments_benchmarks/Benchmarks/cmd/runbench: 1
+  security_assessments_benchmarks/Security assessments: 2

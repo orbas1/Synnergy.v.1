@@ -186,6 +186,12 @@ func DistributeFees(total uint64) FeeDistribution {
         }
         dist, _ := DistributeFeesWithPolicy(total, p)
         return dist
+	dist, _ := DistributeFeesWithPolicy(total, DefaultFeeSplitPolicy)
+	if !IsCreatorDistributionEnabled() {
+		dist.NodeHosts += dist.CreatorWallet
+		dist.CreatorWallet = 0
+	}
+	return dist
 }
 
 // ApplyFeeCapFloor constrains fees to the provided cap and floor values.

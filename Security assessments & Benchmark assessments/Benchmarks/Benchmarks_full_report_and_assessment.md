@@ -10,34 +10,34 @@ The `ns/op` column reports average time per operation, while `ops/s` derives thr
 
 | Benchmark | ns/op | ops/s | B/op | allocs/op | Rating |
 |-----------|------|-------|------|-----------|--------|
-| BenchmarkTransactionManagerGetTransaction-5 | 1611.00 | 620732 | 0 | 0 | fast |
-| BenchmarkBaseTokenTransfer-5 | 2588.00 | 386399 | 0 | 0 | moderate |
-| BenchmarkRegistryInfo-5 | 3154.00 | 317058 | 0 | 0 | moderate |
-| BenchmarkTransactionManagerListTransactions-5 | 4684.00 | 213493 | 128 | 1 | moderate |
-| BenchmarkLedgerApplyTransaction-5 | 6692.00 | 149432 | 80 | 6 | moderate |
-| BenchmarkTransactionManagerLockAndMint-5 | 212099.00 | 4715 | 2600 | 17 | slow |
-| BenchmarkTransactionHash-5 | 371829.00 | 2689 | 1128 | 10 | slow |
-| BenchmarkTransactionManagerBurnAndRelease-5 | 374925.00 | 2667 | 2680 | 19 | slow |
-| BenchmarkNFTMarketplaceMint-5 | 2803152.00 | 357 | 164920 | 1716 | slow |
+| BenchmarkTransactionManagerGetTransaction-5 | 1108.00 | 902527 | 0 | 0 | fast |
+| BenchmarkBaseTokenTransfer-5 | 2596.00 | 385208 | 0 | 0 | moderate |
+| BenchmarkRegistryInfo-5 | 3781.00 | 264480 | 0 | 0 | moderate |
+| BenchmarkTransactionManagerListTransactions-5 | 4619.00 | 216497 | 128 | 1 | moderate |
+| BenchmarkLedgerApplyTransaction-5 | 8049.00 | 124239 | 80 | 6 | moderate |
+| BenchmarkTransactionManagerBurnAndRelease-5 | 199231.00 | 5019 | 2360 | 14 | slow |
+| BenchmarkTransactionManagerLockAndMint-5 | 200195.00 | 4995 | 2600 | 17 | slow |
+| BenchmarkTransactionHash-5 | 1400781.00 | 714 | 1128 | 10 | slow |
+| BenchmarkNFTMarketplaceMint-5 | 2217720.00 | 451 | 164920 | 1716 | slow |
 
 ### Analysis
 
-Fastest benchmark **BenchmarkTransactionManagerGetTransaction-5** at 1611.00 ns/op (620732 ops/s). Slowest benchmark **BenchmarkNFTMarketplaceMint-5** at 2803152.00 ns/op (357 ops/s).
-Average throughput 188616 ops/s, indicating moderate overall performance. The slowest benchmark suggests a ceiling of 2803152.00 ns/op (~357 ops/s).
+Fastest benchmark **BenchmarkTransactionManagerGetTransaction-5** at 1108.00 ns/op (902527 ops/s). Slowest benchmark **BenchmarkNFTMarketplaceMint-5** at 2217720.00 ns/op (451 ops/s).
+Average throughput 211570 ops/s, indicating moderate overall performance. The slowest benchmark suggests a ceiling of 2217720.00 ns/op (~451 ops/s).
 The ns/op metric reflects the time each operation takes; lower ns/op and higher ops/s indicate better performance.
 
 ### Upgrade Plan
 
 The following benchmarks are classified as slow and may need optimisation:
 
-- BenchmarkTransactionManagerLockAndMint-5 (212099.00 ns/op)
-- BenchmarkTransactionHash-5 (371829.00 ns/op)
-- BenchmarkTransactionManagerBurnAndRelease-5 (374925.00 ns/op)
-- BenchmarkNFTMarketplaceMint-5 (2803152.00 ns/op)
+- BenchmarkTransactionManagerBurnAndRelease-5 (199231.00 ns/op)
+- BenchmarkTransactionManagerLockAndMint-5 (200195.00 ns/op)
+- BenchmarkTransactionHash-5 (1400781.00 ns/op)
+- BenchmarkNFTMarketplaceMint-5 (2217720.00 ns/op)
 
 ### Bottleneck Analysis and Repair Plan
 
+- BenchmarkTransactionManagerBurnAndRelease-5: reduce allocations and reuse objects; trim memory usage
 - BenchmarkTransactionManagerLockAndMint-5: reduce allocations and reuse objects; trim memory usage
 - BenchmarkTransactionHash-5: trim memory usage
-- BenchmarkTransactionManagerBurnAndRelease-5: reduce allocations and reuse objects; trim memory usage
 - BenchmarkNFTMarketplaceMint-5: reduce allocations and reuse objects; trim memory usage

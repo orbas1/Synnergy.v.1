@@ -30,6 +30,7 @@ func TestNodeCLICommands(t *testing.T) {
 		t.Fatalf("stake failed: %v", err)
 	}
 	if currentNode.Validators.Stake("val1") != 5 {
+
 		t.Fatalf("stake not recorded: %d", currentNode.Validators.Stake("val1"))
 	}
 
@@ -39,6 +40,8 @@ func TestNodeCLICommands(t *testing.T) {
 	}
 	if currentNode.Validators.Stake("val2") != 0 {
 		t.Fatalf("unexpected stake recorded: %d", currentNode.Validators.Stake("val2"))
+		t.Fatalf("stake not recorded: got %d", currentNode.Validators.Stake("val1"))
+
 	}
 
 	ledger.Mint("alice", 100)
