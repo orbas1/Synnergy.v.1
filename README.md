@@ -29,7 +29,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Pluggable node roles** – mining, staking, authority, regulatory, watchtower, warfare and more via constructors such as `core.NewMiningNode` and `core.NewRegulatoryNode`.
 - **Cross-chain interoperability** – bridges, protocol registries, connection managers and transaction relays (`core.NewBridgeRegistry`, `core.NewProtocolRegistry`, `core.NewChainConnectionManager`, `core.NewCrossChainTxManager`). Stage 42 finalises these modules with JSON emitting CLIs for deposits, claims and contract mappings.
 - **AI modules** – contract management, inference analysis, anomaly detection and secure storage (`core.NewAIEnhancedContract`, `core.NewAIDriftMonitor`).
-- **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()` and registered with `synnergy.RegisterGasCost()`.
+- **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()`, tunable at runtime through the `SYN_GAS_OVERRIDES` environment variable and adjustable with `synnergy.RegisterGasCost()`.
 - **Opcode-aware contracts** – sample Solidity bridges, liquidity, multisig, oracle and token contracts invoke SNVM opcodes with deterministic gas costs.
 - **Role-based security** – biometric authentication and security node CLI (`core.NewBiometricService`, `synnergy bioauth`, `synnergy bsn`), zero‑trust data channels and PKI tooling. Authority node voting, base-node peering and biometric flows all require Ed25519 signatures for verifiable governance.
 - **Institutional banking** – bank nodes require Ed25519-signed requests to register or remove participating institutions.
@@ -39,6 +39,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
 - **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
+- **Resilient node primitives** – forensic nodes prune over-capacity logs, full node modes are mutex-protected, gateway endpoints require a running node, and failover managers can remove stale peers.
 - **Validated block utilities** – Stage 40 adds sub-block creation and block assembly commands with strict argument checking.
 - **Consensus tooling** – Stage 41 adds validated commands for adaptive weighting, difficulty control and service management.
 - **Adaptive consensus management** – Stage 63 averages recent demand and stake

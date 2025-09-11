@@ -64,3 +64,11 @@ func (f *Firewall) Rules() (allowed []string, blocked []string) {
 	}
 	return
 }
+
+// Reset clears all allow and block rules.
+func (f *Firewall) Reset() {
+	f.mu.Lock()
+	defer f.mu.Unlock()
+	f.allowed = make(map[string]struct{})
+	f.blocked = make(map[string]struct{})
+}

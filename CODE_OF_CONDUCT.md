@@ -26,7 +26,7 @@ Examples of unacceptable behavior include:
 
 ## Enforcement
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the project maintainers at [INSERT CONTACT EMAIL]. All complaints
+reported to the project maintainers at [community@synnergy.example.com](mailto:community@synnergy.example.com). All complaints
 will be reviewed and investigated promptly and fairly.
 
 Maintainers who do not follow or enforce the Code of Conduct in good faith may

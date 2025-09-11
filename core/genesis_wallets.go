@@ -3,6 +3,7 @@ package core
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 )
 
 // GenesisWallets holds addresses for initial ecosystem allocations.
@@ -39,6 +40,14 @@ func DefaultGenesisWallets() GenesisWallets {
 		NodeHosts:           hashAddress("node_hosts"),
 		CreatorWallet:       hashAddress("creator_wallet"),
 	}
+}
+
+// Validate ensures none of the wallet addresses are empty.
+func (w GenesisWallets) Validate() error {
+	if w.Genesis == "" || w.InternalDevelopment == "" || w.InternalCharity == "" || w.ExternalCharity == "" || w.LoanPool == "" || w.PassiveIncome == "" || w.ValidatorsMiners == "" || w.AuthorityNodes == "" || w.NodeHosts == "" || w.CreatorWallet == "" {
+		return errors.New("genesis wallets contain empty address")
+	}
+	return nil
 }
 
 // AllocateToGenesisWallets splits total fees across the genesis wallet

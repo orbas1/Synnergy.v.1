@@ -29,6 +29,7 @@ func DefaultGasTable() GasTable {
 			tbl[entry.op] = DefaultGasCost
 		}
 	}
+	applyEnvOverrides(tbl)
 	return tbl
 }
 
@@ -65,6 +66,30 @@ func parseGasGuide() map[string]uint64 {
 		}
 	}
 	return m
+}
+
+// applyEnvOverrides allows operators to supply a comma-separated list of
+// `Name=Cost` pairs via the SYN_GAS_OVERRIDES environment variable. Missing or
+// malformed entries are ignored. Names are resolved through the opcode
+// catalogue so overrides only apply to recognised operations.
+func applyEnvOverrides(tbl GasTable) {
+	overrides := os.Getenv("SYN_GAS_OVERRIDES")
+	if overrides == "" {
+		return
+	}
+	for _, p := range strings.Split(overrides, ",") {
+		kv := strings.SplitN(strings.TrimSpace(p), "=", 2)
+		if len(kv) != 2 {
+			continue
+		}
+		cost, err := strconv.ParseUint(kv[1], 10, 64)
+		if err != nil {
+			continue
+		}
+		if op, ok := nameToOp[kv[0]]; ok {
+			tbl[op] = cost
+		}
+	}
 }
 
 // SetGasCost updates the gas cost for a specific opcode at runtime. This allows

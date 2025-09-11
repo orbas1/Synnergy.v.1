@@ -5,6 +5,10 @@ on:
     branches: ["main", "master"]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -30,15 +34,24 @@ jobs:
       - name: Download dependencies
         run: go mod download
 
+      - name: Check formatting
+        run: |
+          gofmt -l . | tee fmt.log
+          test ! -s fmt.log
+
       - name: Lint
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
 
+      - name: Vet
+        run: go vet ./...
+
       - name: Run tests
-        run: go test ./...
+        run: go test ./... -race -cover
 
       - name: Benchmark Transaction Manager
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           go test -bench=TransactionManager -benchmem -run ^$ . | tee benchmarks/current.txt
           go install golang.org/x/perf/cmd/benchstat@latest
@@ -51,6 +64,7 @@ jobs:
           fi
 
       - name: Build binaries
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
           mkdir -p dist
           for dir in ./cmd/*; do
@@ -66,6 +80,7 @@ jobs:
           done
 
       - name: Upload artifacts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v3
         with:
           name: synnergy-binaries

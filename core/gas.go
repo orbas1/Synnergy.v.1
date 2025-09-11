@@ -11,12 +11,16 @@ var (
 )
 
 // GasCost returns the gas cost for the given opcode. If an opcode is missing
-// from the table it returns zero, allowing callers to treat unpriced opcodes
-// as free but still present in the catalogue.
+// from the table it falls back to DefaultGasCost so callers receive a
+// deterministic price even when the guide lacks an entry.
 func GasCost(op Opcode) uint64 {
 	gasMu.RLock()
-	defer gasMu.RUnlock()
-	return gasTable[op]
+	cost, ok := gasTable[op]
+	gasMu.RUnlock()
+	if !ok {
+		return DefaultGasCost
+	}
+	return cost
 }
 
 // initGasTable resets the global gas table to defaults. It is invoked during

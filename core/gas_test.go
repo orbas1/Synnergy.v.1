@@ -4,8 +4,8 @@ import "testing"
 
 func TestDefaultGasTable(t *testing.T) {
 	initGasTable()
-	if GasCost(OpAdd) != 0 {
-		t.Fatalf("expected zero gas cost for unpriced opcode")
+	if GasCost(OpAdd) != DefaultGasCost {
+		t.Fatalf("expected default gas cost %d for OpAdd, got %d", DefaultGasCost, GasCost(OpAdd))
 	}
 	SetGasCost(OpAdd, 5)
 	if GasCost(OpAdd) != 5 {

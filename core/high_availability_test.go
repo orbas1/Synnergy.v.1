@@ -83,3 +83,25 @@ func TestFailoverManagerHeartbeatAndRegister(t *testing.T) {
 		t.Fatalf("backup node not registered")
 	}
 }
+
+// TestFailoverManagerRemoveNode ensures nodes can be removed and primaries are
+// re-elected if necessary.
+func TestFailoverManagerRemoveNode(t *testing.T) {
+	timeout := 10 * time.Millisecond
+	fm := NewFailoverManager("p1", timeout)
+	fm.RegisterBackup("b1")
+	fm.RegisterBackup("b2")
+	fm.Heartbeat("b1")
+	fm.Heartbeat("b2")
+
+	fm.RemoveNode("p1")
+	if active := fm.Active(); active == "p1" || active == "" {
+		t.Fatalf("expected backup to be promoted after removal, got %s", active)
+	}
+
+	fm.RemoveNode("b1")
+	fm.RemoveNode("b2")
+	if active := fm.Active(); active != "" {
+		t.Fatalf("expected no active node after removing all, got %s", active)
+	}
+}
