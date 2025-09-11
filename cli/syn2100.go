@@ -42,7 +42,9 @@ func init() {
 			issueStr, _ := cmd.Flags().GetString("issue")
 			dueStr, _ := cmd.Flags().GetString("due")
 			desc, _ := cmd.Flags().GetString("desc")
-			syn2100.RegisterDocument(id, issuer, recipient, amount, parseTime(issueStr), parseTime(dueStr), desc)
+			if err := syn2100.RegisterDocument(id, issuer, recipient, amount, parseTime(issueStr), parseTime(dueStr), desc); err != nil {
+				return err
+			}
 			fmt.Println("document registered")
 			return nil
 		},

@@ -1,8 +1,16 @@
 package core
 
 import (
+	"errors"
 	"sync"
 	"time"
+)
+
+var (
+	// ErrMemberExists indicates a member with the ID already exists.
+	ErrMemberExists = errors.New("member exists")
+	// ErrMemberNotFound indicates the member was not found in registry.
+	ErrMemberNotFound = errors.New("member not found")
 )
 
 // Syn2500Member stores metadata about DAO membership.
@@ -45,11 +53,15 @@ func NewSyn2500Registry() *Syn2500Registry {
 	return &Syn2500Registry{members: make(map[string]*Syn2500Member)}
 }
 
-// AddMember inserts or replaces a member entry.
-func (r *Syn2500Registry) AddMember(m *Syn2500Member) {
+// AddMember inserts a member entry, failing if ID already present.
+func (r *Syn2500Registry) AddMember(m *Syn2500Member) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	if _, exists := r.members[m.ID]; exists {
+		return ErrMemberExists
+	}
 	r.members[m.ID] = m
+	return nil
 }
 
 // GetMember retrieves a member by ID.
@@ -61,10 +73,14 @@ func (r *Syn2500Registry) GetMember(id string) (*Syn2500Member, bool) {
 }
 
 // RemoveMember deletes a member from the registry.
-func (r *Syn2500Registry) RemoveMember(id string) {
+func (r *Syn2500Registry) RemoveMember(id string) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	if _, ok := r.members[id]; !ok {
+		return ErrMemberNotFound
+	}
 	delete(r.members, id)
+	return nil
 }
 
 // ListMembers returns all members of the registry.
