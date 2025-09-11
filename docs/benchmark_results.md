@@ -68,3 +68,25 @@ go test ./...
 
 Benchmarks executed on `Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz`.
 
+## Slowest Benchmarks
+
+The `Security assessments & Benchmark assessments/Benchmarks/cmd/benchreport` utility enumerates all functions and runs benchmarks package by package:
+
+```
+go run "Security assessments & Benchmark assessments/Benchmarks/cmd/benchreport"
+```
+
+The slowest benchmarks from the latest run are:
+
+| Package | Benchmark | ns/op | B/op | allocs/op |
+| --- | --- | --- | --- | --- |
+| synnergy | BenchmarkTransactionManagerListTransactions | 611597 | 1286156 | 1 |
+| synnergy | BenchmarkTransactionManagerLockAndMint | 2824 | 585 | 7 |
+| synnergy | BenchmarkTransactionManagerBurnAndRelease | 2763 | 822 | 9 |
+| synnergy/core | BenchmarkNFTMarketplaceMint | 1869 | 431 | 6 |
+| synnergy/core | BenchmarkTransactionHash | 677 | 176 | 5 |
+| synnergy | BenchmarkTransactionManagerGetTransaction | 538 | 0 | 0 |
+| synnergy/core | BenchmarkLedgerApplyTransaction | 534 | 96 | 8 |
+| synnergy/internal/tokens | BenchmarkRegistryInfo | 107 | 0 | 0 |
+| synnergy/internal/tokens | BenchmarkBaseTokenTransfer | 39 | 0 | 0 |
+
