@@ -20,6 +20,7 @@ func TestDistributeFees(t *testing.T) {
 	}
 }
 
+
 func TestDistributeFeesWithPolicy(t *testing.T) {
 	p := FeeSplitPolicy{InternalDevelopment: 60, InternalCharity: 50}
 	if _, err := DistributeFeesWithPolicy(100, p); err == nil {
@@ -31,6 +32,16 @@ func TestDistributeFeesWithPolicy(t *testing.T) {
 	}
 	if dist.InternalDevelopment != 5 || dist.CreatorWallet != 1 {
 		t.Fatalf("unexpected distribution: %+v", dist)
+func TestDistributeFeesCreatorDisabled(t *testing.T) {
+	SetCreatorDistribution(false)
+	dist := DistributeFees(100)
+	if dist.CreatorWallet != 0 || dist.NodeHosts != 6 {
+		t.Fatalf("unexpected distribution when disabled: %+v", dist)
+	}
+	if !IsCreatorDistributionEnabled() {
+		// reset for other tests
+		SetCreatorDistribution(true)
+
 	}
 }
 

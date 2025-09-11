@@ -1,15 +1,28 @@
 package cli
 
 import (
-	"strings"
-	"testing"
+        "net"
+        "strings"
+        "testing"
 )
 
 // TestConnPoolLifecycle ensures the pool can dial, release and close connections.
 func TestConnPoolLifecycle(t *testing.T) {
-	if _, err := execCommand("connpool", "dial", "peer1"); err != nil {
-		t.Fatalf("dial failed: %v", err)
-	}
+        ln, err := net.Listen("tcp", "127.0.0.1:0")
+        if err != nil {
+                t.Fatalf("listen: %v", err)
+        }
+        defer ln.Close()
+        go func() {
+                conn, err := ln.Accept()
+                if err == nil {
+                        conn.Close()
+                }
+        }()
+        addr := ln.Addr().String()
+        if _, err := execCommand("connpool", "dial", addr); err != nil {
+                t.Fatalf("dial failed: %v", err)
+        }
 	out, err := execCommand("connpool", "stats")
 	if err != nil {
 		t.Fatalf("stats failed: %v", err)
@@ -17,9 +30,9 @@ func TestConnPoolLifecycle(t *testing.T) {
 	if !strings.Contains(out, "active: 1") {
 		t.Fatalf("expected active 1, got %q", out)
 	}
-	if _, err := execCommand("connpool", "release", "peer1"); err != nil {
-		t.Fatalf("release failed: %v", err)
-	}
+        if _, err := execCommand("connpool", "release", addr); err != nil {
+                t.Fatalf("release failed: %v", err)
+        }
 	out, err = execCommand("connpool", "stats")
 	if err != nil {
 		t.Fatalf("stats failed: %v", err)
