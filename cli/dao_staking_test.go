@@ -15,7 +15,13 @@ import (
 
 // TestDAOStakingStakeJSON verifies staking with JSON output and signature verification.
 func TestDAOStakingStakeJSON(t *testing.T) {
-	daoStaking = core.NewDAOStaking()
+	daoMgr = core.NewDAOManager()
+	daoStaking = core.NewDAOStaking(daoMgr)
+	daoMgr.AuthorizeRelayer("addr1")
+	dao, err := daoMgr.Create("dao", "addr1")
+	if err != nil {
+		t.Fatalf("create: %v", err)
+	}
 
 	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
@@ -23,7 +29,7 @@ func TestDAOStakingStakeJSON(t *testing.T) {
 	}
 	addr := "addr1"
 	amt := "10"
-	msg := []byte(addr + amt)
+	msg := []byte(dao.ID + addr + amt)
 	h := sha256.Sum256(msg)
 	r, s, err := ecdsa.Sign(rand.Reader, priv, h[:])
 	if err != nil {
@@ -38,7 +44,7 @@ func TestDAOStakingStakeJSON(t *testing.T) {
 
 	buf := new(bytes.Buffer)
 	rootCmd.SetOut(buf)
-	rootCmd.SetArgs([]string{"dao-stake", "stake", addr, amt, "--pub", pubHex, "--msg", msgHex, "--sig", sigHex, "--json"})
+	rootCmd.SetArgs([]string{"dao-stake", "stake", dao.ID, addr, amt, "--pub", pubHex, "--msg", msgHex, "--sig", sigHex, "--json"})
 	if err := rootCmd.Execute(); err != nil {
 		t.Fatalf("execute: %v", err)
 	}
@@ -50,7 +56,7 @@ func TestDAOStakingStakeJSON(t *testing.T) {
 	if resp["status"] != "staked" {
 		t.Fatalf("unexpected status: %v", resp)
 	}
-	if daoStaking.Balance(addr) != 10 {
+	if daoStaking.Balance(dao.ID, addr) != 10 {
 		t.Fatalf("stake not recorded")
 	}
 }

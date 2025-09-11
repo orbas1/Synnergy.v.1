@@ -37,7 +37,9 @@ import (
 // liquidity pool and loan pool operations so their costs are exposed via the CLI.
 // Stage 59 registers content node management and content storage operations so
 // hosts and registries expose deterministic pricing for publish, retrieval and
-// discovery workflows used by the CLI and web interfaces.
+// discovery workflows used by the CLI and web interfaces. Stage 65 records DAO
+// role update operations so governance tooling prices admin-managed role
+// changes and authority term renewals.
 type GasTable map[string]uint64
 
 // DefaultGasCost is used when an opcode is missing from the guide.

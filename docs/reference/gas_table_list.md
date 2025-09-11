@@ -104,6 +104,7 @@
 | `DAO_Staked` | `1` |
 | `DAO_TotalStaked` | `1` |
 | `DAO_Unstake` | `5` |
+| `DAOTokenBalance` | `1` |
 | `DataDistributionMonitor_Status` | `1` |
 | `DataMonitorStatus` | `5` |
 | `DebugDump` | `1` |
@@ -346,6 +347,7 @@
 | `Mine` | `1` |
 | `MinimumStake` | `1` |
 | `MintAsset` | `1` |
+| `MintDAOToken` | `3` |
 | `MintNFT` | `1200` |
 | `Mint` | `10` |
 | `Mode` | `1` |
@@ -710,6 +712,7 @@
 | `TradeContract` | `100` |
 | `Transactions` | `1` |
 | `TransferAsset` | `1` |
+| `TransferDAOToken` | `3` |
 | `TransferItem` | `1` |
 | `TransferTicket` | `1` |
 | `Transfer` | `1` |
@@ -724,6 +727,8 @@
 | `UpdateAttributes` | `1` |
 | `UpdateBaseline` | `1` |
 | `UpdateConfig` | `1` |
+| `UpdateMemberRole` | `5` |
+| `RenewAuthorityTerm` | `7` |
 | `UpdatePolicy` | `2` |
 | `UpdateRate` | `1` |
 | `UpdateStatus` | `1` |

@@ -23,6 +23,12 @@ func TestDAOManager(t *testing.T) {
 	if err := mgr.Join(dao.ID, "user1"); err != nil {
 		t.Fatalf("join: %v", err)
 	}
+	if info, err := mgr.Info(dao.ID); err != nil || len(info.Members) != 2 {
+		t.Fatalf("info: %v members=%d", err, len(info.Members))
+	}
+	if daos := mgr.List(); len(daos) != 1 {
+		t.Fatalf("expected one dao, got %d", len(daos))
+	}
 
 	mgr.RevokeRelayer("user1")
 	if err := mgr.Leave(dao.ID, "user1"); err == nil {

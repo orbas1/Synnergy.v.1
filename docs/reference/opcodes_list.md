@@ -321,6 +321,8 @@ and warfare nodes as well as UI integrations.
 | `RemoveDAOMember` | `0x0C0109` |
 | `RoleOfMember` | `0x0C010A` |
 | `ListDAOMembers` | `0x0C010B` |
+| `UpdateMemberRole` | `0x0C010C` |
+| `RenewAuthorityTerm` | `0x0C010D` |
 | `SubmitProposal` | `0x0C0005` |
 | `CastVote` | `0x0C0007` |
 | `ExecuteProposal` | `0x0C0008` |
@@ -331,6 +333,9 @@ and warfare nodes as well as UI integrations.
 | `DAO_Staked` | `0x0C0102` |
 | `DAO_TotalStaked` | `0x0C0103` |
 | `BurnDAOToken` | `0x0C0112` |
+| `DAOTokenBalance` | `0x0C0113` |
+| `MintDAOToken` | `0x0C0114` |
+| `TransferDAOToken` | `0x0C0115` |
 | `RemoveConsensusNetwork` | `0x0C0111` |
 | `NewDataDistribution` | `0x100128` |
 | `NewDataFeed` | `0x100129` |

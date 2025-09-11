@@ -38,7 +38,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Resource-managed CLI** – connection pool commands can release individual peers and `contractopcodes` reports gas costs for contract operations.
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
-- **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output and ECDSA signature verification helpers.
+- **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
 - **Validated block utilities** – Stage 40 adds sub-block creation and block assembly commands with strict argument checking.
 - **Consensus tooling** – Stage 41 adds validated commands for adaptive weighting, difficulty control and service management.
 - **Adaptive consensus management** – Stage 63 averages recent demand and stake

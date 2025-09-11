@@ -81,6 +81,40 @@ func init() {
 	removeCmd.Flags().StringVar(&removeMsg, "msg", "", "hex encoded message")
 	removeCmd.Flags().StringVar(&removeSig, "sig", "", "hex encoded signature")
 
+	var updateJSON bool
+	var updatePub, updateMsg, updateSig string
+	updateCmd := &cobra.Command{
+		Use:   "update <daoID> <admin> <addr> <role>",
+		Args:  cobra.ExactArgs(4),
+		Short: "Update member role",
+		Run: func(cmd *cobra.Command, args []string) {
+			gasPrint("UpdateMemberRole")
+			ok, err := VerifySignature(updatePub, updateMsg, updateSig)
+			if err != nil || !ok {
+				fmt.Fprintln(cmd.OutOrStdout(), "signature verification failed")
+				return
+			}
+			dao, err := daoMgr.Info(args[0])
+			if err != nil {
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
+			}
+			if err := dao.UpdateMemberRole(args[1], args[2], args[3]); err != nil {
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
+			}
+			if updateJSON {
+				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(map[string]string{"status": "role updated"})
+				return
+			}
+			fmt.Fprintln(cmd.OutOrStdout(), "role updated")
+		},
+	}
+	updateCmd.Flags().BoolVar(&updateJSON, "json", false, "output as JSON")
+	updateCmd.Flags().StringVar(&updatePub, "pub", "", "hex encoded public key")
+	updateCmd.Flags().StringVar(&updateMsg, "msg", "", "hex encoded message")
+	updateCmd.Flags().StringVar(&updateSig, "sig", "", "hex encoded signature")
+
 	var roleJSON bool
 	roleCmd := &cobra.Command{
 		Use:   "role <daoID> <addr>",
@@ -134,6 +168,6 @@ func init() {
 	}
 	listCmd.Flags().BoolVar(&listJSON, "json", false, "output as JSON")
 
-	memberCmd.AddCommand(addCmd, removeCmd, roleCmd, listCmd)
+	memberCmd.AddCommand(addCmd, updateCmd, removeCmd, roleCmd, listCmd)
 	rootCmd.AddCommand(memberCmd)
 }

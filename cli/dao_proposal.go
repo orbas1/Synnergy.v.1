@@ -37,7 +37,11 @@ func init() {
 				return
 			}
 			desc := strings.Join(args[2:], " ")
-			p := proposalMgr.CreateProposal(dao, args[1], desc)
+			p, err := proposalMgr.CreateProposal(dao, args[1], desc)
+			if err != nil {
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
+			}
 			if createJSON {
 				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(map[string]string{"id": p.ID})
 				return
@@ -69,7 +73,17 @@ func init() {
 				return
 			}
 			support := strings.ToLower(args[3]) == "yes"
-			if err := proposalMgr.Vote(args[0], args[1], w, support); err != nil {
+			p, err := proposalMgr.Get(args[0])
+			if err != nil {
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
+			}
+			dao, err := daoMgr.Info(p.DAOID)
+			if err != nil {
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
+			}
+			if err := proposalMgr.Vote(dao, p.ID, args[1], w, support); err != nil {
 				fmt.Fprintln(cmd.OutOrStdout(), err)
 				return
 			}
@@ -109,8 +123,8 @@ func init() {
 	var execJSON bool
 	var execPub, execMsg, execSig string
 	executeCmd := &cobra.Command{
-		Use:   "execute <id>",
-		Args:  cobra.ExactArgs(1),
+		Use:   "execute <id> <requester>",
+		Args:  cobra.ExactArgs(2),
 		Short: "Mark proposal executed",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("ExecuteProposal")
@@ -119,7 +133,17 @@ func init() {
 				fmt.Fprintln(cmd.OutOrStdout(), "signature verification failed")
 				return
 			}
-			if err := proposalMgr.Execute(args[0]); err != nil {
+			p, err := proposalMgr.Get(args[0])
+			if err != nil {
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
+			}
+			dao, err := daoMgr.Info(p.DAOID)
+			if err != nil {
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
+			}
+			if err := proposalMgr.Execute(dao, p.ID, args[1]); err != nil {
 				fmt.Fprintln(cmd.OutOrStdout(), err)
 				return
 			}

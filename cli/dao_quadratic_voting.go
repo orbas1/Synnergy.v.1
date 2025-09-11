@@ -57,7 +57,17 @@ func init() {
 				return
 			}
 			support := strings.ToLower(args[3]) == "yes"
-			if err := proposalMgr.CastQuadraticVote(args[0], args[1], tokens, support); err != nil {
+			p, err := proposalMgr.Get(args[0])
+			if err != nil {
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
+			}
+			dao, err := daoMgr.Info(p.DAOID)
+			if err != nil {
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
+			}
+			if err := proposalMgr.CastQuadraticVote(dao, p.ID, args[1], tokens, support); err != nil {
 				fmt.Fprintln(cmd.OutOrStdout(), err)
 				return
 			}
