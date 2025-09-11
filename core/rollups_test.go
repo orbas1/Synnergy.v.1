@@ -23,4 +23,12 @@ func TestRollupAggregator(t *testing.T) {
 	if agg.Status() {
 		t.Fatalf("expected resumed")
 	}
+
+	if err := agg.FinalizeBatch(id, true); err != nil {
+		t.Fatalf("finalize: %v", err)
+	}
+	finalized := agg.ListBatchesByStatus("finalized")
+	if len(finalized) != 1 || finalized[0].ID != id {
+		t.Fatalf("expected finalized batch in list")
+	}
 }

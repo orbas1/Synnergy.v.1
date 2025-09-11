@@ -20,4 +20,8 @@ func TestSidechainOps(t *testing.T) {
 	if bal != 40 {
 		t.Fatalf("unexpected balance %d", bal)
 	}
+	deps, err := ops.ListDeposits("chain1")
+	if err != nil || deps["alice"] != 40 {
+		t.Fatalf("list deposits: %v", err)
+	}
 }

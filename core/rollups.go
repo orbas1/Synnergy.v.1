@@ -124,3 +124,16 @@ func (a *RollupAggregator) Status() bool {
 	defer a.mu.RUnlock()
 	return a.paused
 }
+
+// ListBatchesByStatus filters batches by status.
+func (a *RollupAggregator) ListBatchesByStatus(status string) []RollupBatch {
+	a.mu.RLock()
+	defer a.mu.RUnlock()
+	var res []RollupBatch
+	for _, b := range a.batches {
+		if b.Status == status {
+			res = append(res, *b)
+		}
+	}
+	return res
+}

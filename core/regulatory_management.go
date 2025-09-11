@@ -2,15 +2,16 @@ package core
 
 import (
 	"errors"
+	"strings"
 	"sync"
 )
 
 // Regulation defines a basic rule for transaction oversight.
 type Regulation struct {
-        ID           string
-        Jurisdiction string
-        Description  string
-        MaxAmount    uint64
+	ID           string
+	Jurisdiction string
+	Description  string
+	MaxAmount    uint64
 }
 
 // RegulatoryManager stores and evaluates regulations.
@@ -72,4 +73,28 @@ func (m *RegulatoryManager) EvaluateTransaction(tx Transaction) []string {
 		}
 	}
 	return violations
+}
+
+// ValidateTransaction returns an error describing violated regulations, or nil
+// if the transaction complies with all registered rules.
+func (m *RegulatoryManager) ValidateTransaction(tx Transaction) error {
+	viol := m.EvaluateTransaction(tx)
+	if len(viol) == 0 {
+		return nil
+	}
+	return errors.New("violations: " + strings.Join(viol, ", "))
+}
+
+// UpdateRegulation replaces an existing regulation. Returns error if not found.
+func (m *RegulatoryManager) UpdateRegulation(reg Regulation) error {
+	if reg.ID == "" {
+		return errors.New("id required")
+	}
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	if _, ok := m.regulations[reg.ID]; !ok {
+		return errors.New("regulation not found")
+	}
+	m.regulations[reg.ID] = reg
+	return nil
 }

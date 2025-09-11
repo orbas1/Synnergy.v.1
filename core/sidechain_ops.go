@@ -53,3 +53,18 @@ func (o *SidechainOps) EscrowBalance(chainID, addr string) (uint64, error) {
 	}
 	return sc.Deposits[addr], nil
 }
+
+// ListDeposits returns a copy of all deposits for a side-chain.
+func (o *SidechainOps) ListDeposits(chainID string) (map[string]uint64, error) {
+	o.registry.mu.RLock()
+	defer o.registry.mu.RUnlock()
+	sc, ok := o.registry.chains[chainID]
+	if !ok {
+		return nil, fmt.Errorf("sidechain %s not found", chainID)
+	}
+	out := make(map[string]uint64, len(sc.Deposits))
+	for a, v := range sc.Deposits {
+		out[a] = v
+	}
+	return out, nil
+}

@@ -23,4 +23,12 @@ func TestShardManager(t *testing.T) {
 	if len(heavy) == 0 {
 		t.Fatalf("expected heavy shard")
 	}
+
+	if load := m.ShardLoad(2); load != 1 {
+		t.Fatalf("unexpected shard load: %d", load)
+	}
+	loads := m.LoadMap()
+	if loads[2] != 1 {
+		t.Fatalf("load map mismatch")
+	}
 }

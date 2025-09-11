@@ -18,6 +18,9 @@ func TestReplicator(t *testing.T) {
 	if !r.ReplicateBlock("b1") {
 		t.Fatalf("replication failed")
 	}
+	if !r.Replicated("b1") {
+		t.Fatalf("expected block marked replicated")
+	}
 
 	r.Stop()
 	if r.Status() {

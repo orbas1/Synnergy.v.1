@@ -19,15 +19,15 @@ func NewReplicator(l *Ledger) *Replicator {
 // Start begins replication processes.
 func (r *Replicator) Start() {
 	r.mu.Lock()
-	defer r.mu.Unlock()
 	r.running = true
+	r.mu.Unlock()
 }
 
 // Stop halts replication.
 func (r *Replicator) Stop() {
 	r.mu.Lock()
-	defer r.mu.Unlock()
 	r.running = false
+	r.mu.Unlock()
 }
 
 // Status reports whether the replicator is active.
@@ -47,4 +47,11 @@ func (r *Replicator) ReplicateBlock(hash string) bool {
 	}
 	r.replicated[hash] = true
 	return true
+}
+
+// Replicated reports whether a block has been replicated.
+func (r *Replicator) Replicated(hash string) bool {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	return r.replicated[hash]
 }
