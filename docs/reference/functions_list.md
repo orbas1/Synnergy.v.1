@@ -104,10 +104,11 @@
 | `core/syn2900.go` | `43` | `func (p *TokenInsurancePolicy) Claim(now time.Time) (uint64, error) {` |
 | `core/authority_node_index_test.go` | `5` | `func TestAuthorityNodeIndex(t *testing.T) {` |
 | `core/regulatory_management_test.go` | `5` | `func TestRegulatoryManager(t *testing.T) {` |
-| `core/dao_token.go` | `11` | `func NewDAOTokenLedger() *DAOTokenLedger {` |
-| `core/dao_token.go` | `16` | `func (l *DAOTokenLedger) Mint(addr string, amount uint64) {` |
-| `core/dao_token.go` | `21` | `func (l *DAOTokenLedger) Transfer(from, to string, amount uint64) error {` |
-| `core/dao_token.go` | `31` | `func (l *DAOTokenLedger) Balance(addr string) uint64 {` |
+| `core/dao_token.go` | `18` | `func NewDAOTokenLedger(mgr *DAOManager) *DAOTokenLedger {` |
+| `core/dao_token.go` | `23` | `func (l *DAOTokenLedger) Mint(daoID, admin, addr string, amount uint64) error {` |
+| `core/dao_token.go` | `44` | `func (l *DAOTokenLedger) Transfer(daoID, from, to string, amount uint64) error {` |
+| `core/dao_token.go` | `63` | `func (l *DAOTokenLedger) Balance(daoID, addr string) uint64 {` |
+| `core/dao_token.go` | `74` | `func (l *DAOTokenLedger) Burn(daoID, admin, addr string, amount uint64) error {` |
 | `core/syn5000.go` | `27` | `func NewSYN5000Token(name, symbol string, decimals uint8) *SYN5000Token {` |
 | `core/syn5000.go` | `32` | `func (t *SYN5000Token) PlaceBet(bettor string, amount uint64, odds float64, game string) uint64 {` |
 | `core/syn5000.go` | `40` | `func (t *SYN5000Token) ResolveBet(betID uint64, win bool) (uint64, error) {` |
@@ -393,10 +394,13 @@
 | `Tokens/syn2900.go` | `69` | `func (r *InsuranceRegistry) FileClaim(policyID, desc string, amount uint64) (*ClaimRecord, error) {` |
 | `Tokens/syn2900.go` | `84` | `func (r *InsuranceRegistry) GetPolicy(policyID string) (*InsurancePolicy, bool) {` |
 | `Tokens/syn2900.go` | `97` | `func (r *InsuranceRegistry) ListPolicies() []*InsurancePolicy {` |
-| `core/dao_access_control.go` | `6` | `func (d *DAO) AddMember(addr, role string) error {` |
-| `core/dao_access_control.go` | `18` | `func (d *DAO) RemoveMember(addr string) {` |
-| `core/dao_access_control.go` | `23` | `func (d *DAO) MemberRole(addr string) (string, bool) {` |
-| `core/dao_access_control.go` | `29` | `func (d *DAO) MembersList() map[string]string {` |
+| `core/dao_access_control.go` | `23` | `func (d *DAO) AddMember(addr, role string) error {` |
+| `core/dao_access_control.go` | `40` | `func (d *DAO) UpdateMemberRole(requester, addr, role string) error {` |
+| `core/dao_access_control.go` | `57` | `func (d *DAO) RemoveMember(addr string) error {` |
+| `core/dao_access_control.go` | `68` | `func (d *DAO) MemberRole(addr string) (string, bool) {` |
+| `core/dao_access_control.go` | `76` | `func (d *DAO) IsMember(addr string) bool {` |
+| `core/dao_access_control.go` | `84` | `func (d *DAO) IsAdmin(addr string) bool {` |
+| `core/dao_access_control.go` | `91` | `func (d *DAO) MembersList() map[string]string {` |
 | `core/audit_node_test.go` | `7` | `func (m *mockBootstrap) Start() error {` |
 | `core/audit_node_test.go` | `12` | `func TestAuditNode_StartAndLog(t *testing.T) {` |
 | `core/gateway_node.go` | `22` | `func NewGatewayNode(id nodes.Address, cfg GatewayConfig) *GatewayNode {` |
@@ -627,13 +631,14 @@
 | `core/dao.go` | `51` | `func (m *DAOManager) Leave(id, addr string) error {` |
 | `core/dao.go` | `61` | `func (m *DAOManager) Info(id string) (*DAO, error) {` |
 | `core/dao.go` | `70` | `func (m *DAOManager) List() []*DAO {` |
-| `core/dao_staking.go` | `11` | `func NewDAOStaking() *DAOStaking {` |
-| `core/dao_staking.go` | `16` | `func (s *DAOStaking) Stake(addr string, amount uint64) {` |
-| `core/dao_staking.go` | `21` | `func (s *DAOStaking) Unstake(addr string, amount uint64) error {` |
-| `core/dao_staking.go` | `31` | `func (s *DAOStaking) Balance(addr string) uint64 {` |
-| `core/dao_staking_test.go` | `5` | `func TestDAOStaking(t *testing.T) {` |
-| `core/dao_quadratic_voting.go` | `6` | `func QuadraticWeight(tokens uint64) uint64 {` |
-| `core/dao_quadratic_voting.go` | `11` | `func (pm *ProposalManager) CastQuadraticVote(id, voter string, tokens uint64, support bool) error {` |
+| `core/dao_staking.go` | `21` | `func NewDAOStaking(mgr *DAOManager) *DAOStaking {` |
+| `core/dao_staking.go` | `26` | `func (s *DAOStaking) Stake(daoID, addr string, amount uint64) error {` |
+| `core/dao_staking.go` | `44` | `func (s *DAOStaking) Unstake(daoID, addr string, amount uint64) error {` |
+| `core/dao_staking.go` | `63` | `func (s *DAOStaking) Balance(daoID, addr string) uint64 {` |
+| `core/dao_staking.go` | `70` | `func (s *DAOStaking) TotalStaked(daoID string) uint64 {` |
+| `core/dao_staking_test.go` | `7` | `func TestDAOStaking(t *testing.T) {` |
+| `core/dao_quadratic_voting.go` | `9` | `func QuadraticWeight(tokens uint64) uint64 {` |
+| `core/dao_quadratic_voting.go` | `15` | `func (pm *ProposalManager) CastQuadraticVote(dao *DAO, id, voter string, tokens uint64, support bool) error {` |
 | `core/wallet.go` | `19` | `func NewWallet() (*Wallet, error) {` |
 | `core/wallet.go` | `29` | `func (w *Wallet) Sign(tx *Transaction) ([]byte, error) {` |
 | `core/wallet.go` | `45` | `func VerifySignature(tx *Transaction, sig []byte, pub *ecdsa.PublicKey) bool {` |
@@ -848,6 +853,9 @@
 | `core/access_control.go` | `51` | `func (a *AccessController) List(addr string) []string {` |
 | `core/dao_token_test.go` | `5` | `func TestDAOTokenLedger(t *testing.T) {` |
 | `core/dao_quadratic_voting_test.go` | `5` | `func TestQuadraticWeight(t *testing.T) {` |
+| `core/dao_quadratic_voting_test.go` | `11` | `func TestCastQuadraticVoteZeroTokens(t *testing.T) {` |
+| `core/dao_quadratic_voting_test.go` | `28` | `func TestCastQuadraticVoteRequiresMembership(t *testing.T) {` |
+| `core/dao_quadratic_voting_test.go` | `45` | `func TestCastQuadraticVoteSuccess(t *testing.T) {` |
 | `core/loanpool.go` | `18` | `func NewLoanPool(treasury uint64) *LoanPool {` |
 | `core/loanpool.go` | `27` | `func (lp *LoanPool) SubmitProposal(creator, recipient, typ string, amount uint64, desc string) (uint64, error) {` |
 | `core/loanpool.go` | `38` | `func (lp *LoanPool) VoteProposal(voter string, id uint64) error {` |
@@ -872,8 +880,9 @@
 | `core/initialization_replication.go` | `14` | `func NewInitService(r *Replicator) *InitService {` |
 | `core/initialization_replication.go` | `19` | `func (i *InitService) Start() {` |
 | `core/initialization_replication.go` | `30` | `func (i *InitService) Stop() {` |
-| `core/elected_authority_node.go` | `12` | `func NewElectedAuthorityNode(addr, role string, term time.Duration) *ElectedAuthorityNode {` |
-| `core/elected_authority_node.go` | `18` | `func (n *ElectedAuthorityNode) IsActive(now time.Time) bool {` |
+| `core/elected_authority_node.go` | `19` | `func NewElectedAuthorityNode(addr, role string, term time.Duration) *ElectedAuthorityNode {` |
+| `core/elected_authority_node.go` | `25` | `func (n *ElectedAuthorityNode) IsActive(now time.Time) bool {` |
+| `core/elected_authority_node.go` | `34` | `func (n *ElectedAuthorityNode) RenewTerm(requester string, dao *DAO, add time.Duration) error {` |
 | `core/government_authority_node.go` | `10` | `func NewGovernmentAuthorityNode(addr, role, department string) *GovernmentAuthorityNode {` |
 | `core/cross_chain_connection.go` | `24` | `func NewChainConnectionManager() *ChainConnectionManager {` |
 | `core/cross_chain_connection.go` | `29` | `func (m *ChainConnectionManager) Open(local, remote string) int {` |
@@ -947,11 +956,13 @@
 | `core/liquidity_views.go` | `26` | `func (r *LiquidityPoolRegistry) PoolInfo(id string) (LiquidityPoolView, bool) {` |
 | `core/liquidity_views.go` | `35` | `func (r *LiquidityPoolRegistry) PoolViews() []LiquidityPoolView {` |
 | `core/immutability_enforcement_test.go` | `5` | `func TestImmutabilityEnforcer(t *testing.T) {` |
-| `core/dao_proposal.go` | `25` | `func NewProposalManager() *ProposalManager {` |
-| `core/dao_proposal.go` | `30` | `func (pm *ProposalManager) CreateProposal(dao *DAO, creator, desc string) *DAOProposal {` |
-| `core/dao_proposal.go` | `41` | `func (pm *ProposalManager) Vote(id, voter string, weight uint64, support bool) error {` |
-| `core/dao_proposal.go` | `57` | `func (pm *ProposalManager) Get(id string) (*DAOProposal, error) {` |
-| `core/dao_proposal.go` | `66` | `func (pm *ProposalManager) List() []*DAOProposal {` |
+| `core/dao_proposal.go` | `29` | `func NewProposalManager() *ProposalManager {` |
+| `core/dao_proposal.go` | `41` | `func (pm *ProposalManager) CreateProposal(dao *DAO, creator, desc string) (*DAOProposal, error) {` |
+| `core/dao_proposal.go` | `59` | `func (pm *ProposalManager) Vote(dao *DAO, id, voter string, weight uint64, support bool) error {` |
+| `core/dao_proposal.go` | `85` | `func (pm *ProposalManager) Results(id string) (yes, no uint64, err error) {` |
+| `core/dao_proposal.go` | `104` | `func (pm *ProposalManager) Execute(dao *DAO, id, requester string) error {` |
+| `core/dao_proposal.go` | `124` | `func (pm *ProposalManager) Get(id string) (*DAOProposal, error) {` |
+| `core/dao_proposal.go` | `135` | `func (pm *ProposalManager) List() []*DAOProposal {` |
 | `core/virtual_machine.go` | `18` | `func NewSimpleVM() *SimpleVM { return &SimpleVM{} }` |
 | `core/virtual_machine.go` | `21` | `func (vm *SimpleVM) Start() error {` |
 | `core/virtual_machine.go` | `32` | `func (vm *SimpleVM) Stop() error {` |

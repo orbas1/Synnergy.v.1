@@ -11,8 +11,9 @@ robust block management with strict argument validation and accompanying test
 coverage.
 Stage 43 introduces DAO governance commands with optional JSON output and
 signature verification utilities for secure organisational workflows. Membership
-updates through `dao-members` now require valid ECDSA signatures before roles
-change, ensuring authenticated governance actions.
+actions through `dao-members`—including adding, updating and removing
+participants—require valid ECDSA signatures before roles change, ensuring
+authenticated governance actions.
 
 ### Options
 
@@ -5443,7 +5444,8 @@ Manage DAO membership roles
 * [synnergy dao-members add](#synnergy-dao-members-add)	 - Add member with role
 * [synnergy dao-members list](#synnergy-dao-members-list)	 - List members
 * [synnergy dao-members remove](#synnergy-dao-members-remove)	 - Remove a member
-* [synnergy dao-members role](#synnergy-dao-members-role)	 - Get member role
+* [synnergy dao-members role](#synnergy-dao-members-role)        - Get member role
+* [synnergy dao-members update](#synnergy-dao-members-update)    - Update member role
 
 
 ## synnergy dao-members add
@@ -5544,6 +5546,30 @@ synnergy dao-members role <daoID> <addr> [flags]
 ### SEE ALSO
 
 * [synnergy dao-members](#synnergy-dao-members)	 - Manage DAO membership roles
+
+## synnergy dao-members update
+
+Update member role
+
+```
+synnergy dao-members update <daoID> <admin> <addr> <role> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for update
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output results in JSON
+```
+
+### SEE ALSO
+
+* [synnergy dao-members](#synnergy-dao-members)  - Manage DAO membership roles
 
 
 ## synnergy dao-proposal
@@ -5826,7 +5852,7 @@ DAO staking operations
 Show staked balance
 
 ```
-synnergy dao-stake balance <addr> [flags]
+synnergy dao-stake balance <daoID> <addr> [flags]
 ```
 
 ### Options
@@ -5851,7 +5877,7 @@ synnergy dao-stake balance <addr> [flags]
 Stake tokens
 
 ```
-synnergy dao-stake stake <addr> <amount> [flags]
+synnergy dao-stake stake <daoID> <addr> <amount> [flags]
 ```
 
 ### Options
@@ -5876,7 +5902,7 @@ synnergy dao-stake stake <addr> <amount> [flags]
 Show total staked tokens
 
 ```
-synnergy dao-stake total [flags]
+synnergy dao-stake total <daoID> [flags]
 ```
 
 ### Options
@@ -5901,7 +5927,7 @@ synnergy dao-stake total [flags]
 Unstake tokens
 
 ```
-synnergy dao-stake unstake <addr> <amount> [flags]
+synnergy dao-stake unstake <daoID> <addr> <amount> [flags]
 ```
 
 ### Options
@@ -5940,10 +5966,10 @@ DAO token ledger operations
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
-* [synnergy dao-token balance](#synnergy-dao-token-balance)	 - Get token balance
-* [synnergy dao-token burn](#synnergy-dao-token-burn)	 - Burn tokens from an address
-* [synnergy dao-token mint](#synnergy-dao-token-mint)	 - Mint tokens to an address
-* [synnergy dao-token transfer](#synnergy-dao-token-transfer)	 - Transfer tokens
+* [synnergy dao-token balance](#synnergy-dao-token-balance)      - Get DAO token balance
+* [synnergy dao-token burn](#synnergy-dao-token-burn)    - Burn DAO tokens from a member
+* [synnergy dao-token mint](#synnergy-dao-token-mint)    - Mint DAO tokens to a member
+* [synnergy dao-token transfer](#synnergy-dao-token-transfer)    - Transfer DAO tokens between members
 
 
 ## synnergy dao-token balance
@@ -5951,7 +5977,7 @@ DAO token ledger operations
 Get token balance
 
 ```
-synnergy dao-token balance <addr> [flags]
+synnergy dao-token balance <daoID> <addr> [flags]
 ```
 
 ### Options
@@ -5976,7 +6002,7 @@ synnergy dao-token balance <addr> [flags]
 Burn tokens from an address
 
 ```
-synnergy dao-token burn <addr> <amount> [flags]
+synnergy dao-token burn <daoID> <admin> <addr> <amount> [flags]
 ```
 
 ### Options
@@ -6001,7 +6027,7 @@ synnergy dao-token burn <addr> <amount> [flags]
 Mint tokens to an address
 
 ```
-synnergy dao-token mint <addr> <amount> [flags]
+synnergy dao-token mint <daoID> <admin> <addr> <amount> [flags]
 ```
 
 ### Options
@@ -6026,7 +6052,7 @@ synnergy dao-token mint <addr> <amount> [flags]
 Transfer tokens
 
 ```
-synnergy dao-token transfer <from> <to> <amount> [flags]
+synnergy dao-token transfer <daoID> <from> <to> <amount> [flags]
 ```
 
 ### Options

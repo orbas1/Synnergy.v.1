@@ -70,7 +70,8 @@
 - Stage 62: ✅ biometric authentication, block validation with timestamp, duplicate, and header hash checks, compression, synchronization, central banking, charity, coin (optimized supply calculations) and compliance modules with tests; gas table snapshots now emit deterministic JSON for CLI tooling, support persistence via `WriteGasTableSnapshot`, and the CLI can write snapshots directly to disk.
 - Stage 63: Completed – connection pool and adaptive consensus manager use windowed metrics for stable weighting.
   - Stage 64: Completed – cross-chain registry, bridge manager, connection manager, protocol registry, contract registry, custodial nodes and DAO management enforce relayer authorization with safe deletion; cross-chain transactions and scaling networks now guarded by whitelisted relayers.
-- Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
+- Stage 65: Completed – DAO access control, proposal system, quadratic voting, staking, token ledger, member role management and elected authority node term renewals documented with gas/opcode updates.
+ - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 1**
 - [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
@@ -1444,21 +1445,35 @@
  - [x] cli/dao.go – auto-whitelist callers for DAO actions
  - [x] cli/dao_access_control_test.go – CLI tests ensure unauthorized relayers are rejected
  - [x] cli/dao_proposal_test.go – CLI tests validate authorized proposal flow
+ - [x] cli/dao_token.go – DAO ID aware token ledger commands with admin-gated mint/burn
+ - [x] cli/dao_token_test.go – ensures signed minting records balances
 
 **Stage 65**
-- [ ] core/dao_access_control.go
-- [ ] core/dao_access_control_test.go
-- [ ] core/dao_proposal.go
-- [ ] core/dao_proposal_test.go
-- [ ] core/dao_quadratic_voting.go
-- [ ] core/dao_quadratic_voting_test.go
-- [ ] core/dao_staking.go
-- [ ] core/dao_staking_test.go
-- [ ] core/dao_test.go
-- [ ] core/dao_token.go
-- [ ] core/dao_token_test.go
-- [ ] core/elected_authority_node.go
-- [ ] core/elected_authority_node_test.go
+- [x] core/dao_access_control.go – role constants and admin role enforcement
+- [x] core/dao_access_control_test.go – covers unauthorized role updates
+- [x] core/dao_proposal.go – membership-gated creation, voting, and admin execution
+- [x] core/dao_proposal_test.go – verifies membership and admin constraints
+ - [x] core/dao_quadratic_voting.go – enforces DAO membership before quadratic vote weight
+ - [x] core/dao_quadratic_voting_test.go – covers membership requirements and success path
+ - [x] core/dao_staking.go – membership-gated staking with DAO manager
+ - [x] core/dao_staking_test.go – verifies member-only staking and balances
+ - [x] core/dao_test.go – verifies DAO info/list and relayer enforcement
+ - [x] core/dao_token.go – membership-gated token ledger bound to DAO manager
+ - [x] core/dao_token_test.go – covers admin minting, transfers and burns
+- [x] cli/dao_access_control.go – member role update command requiring admin signature
+- [x] cli/dao_access_control_test.go – tests admin-only role updates and rejections
+ - [x] core/opcode.go – opcode assigned for UpdateMemberRole and RenewAuthorityTerm
+ - [x] gas_table.go – notes DAO role update and term renewal gas entries
+ - [x] cmd/synnergy/main.go – registers UpdateMemberRole and RenewAuthorityTerm gas costs
+ - [x] docs/reference/opcodes_list.md – documents UpdateMemberRole and RenewAuthorityTerm opcodes
+- [x] docs/reference/gas_table_list.md – prices UpdateMemberRole and RenewAuthorityTerm
+ - [x] docs/reference/functions_list.md – lists DAO role and authority term helpers
+- [x] docs/Whitepaper_detailed/guide/cli_guide.md – documents dao-members update command
+- [x] docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md – notes DAO token operations and authority term renewals
+- [x] web/pages/dao.js – web UI exposes DAO listing and role updates
+ - [x] README.md – highlights admin-controlled DAO role changes and term renewals
+- [x] core/elected_authority_node.go – term renewals gated by DAO admins
+- [x] core/elected_authority_node_test.go – covers admin and non-admin renewal paths
 - [ ] core/faucet.go
 - [ ] core/faucet_test.go
 - [ ] core/fees.go
@@ -3952,14 +3967,14 @@
 | 64 | core/custodial_node.go | [ ] |
 | 64 | core/custodial_node_test.go | [ ] |
 | 64 | core/dao.go | [ ] |
-| 65 | core/dao_access_control.go | [ ] |
-| 65 | core/dao_access_control_test.go | [ ] |
+| 65 | core/dao_access_control.go | [x] | role constants, admin-only updates |
+| 65 | core/dao_access_control_test.go | [x] | tests for role management |
 | 65 | core/dao_proposal.go | [ ] |
 | 65 | core/dao_proposal_test.go | [ ] |
 | 65 | core/dao_quadratic_voting.go | [ ] |
 | 65 | core/dao_quadratic_voting_test.go | [ ] |
-| 65 | core/dao_staking.go | [ ] |
-| 65 | core/dao_staking_test.go | [ ] |
+| 65 | core/dao_staking.go | [x] |
+| 65 | core/dao_staking_test.go | [x] |
 | 65 | core/dao_test.go | [ ] |
 | 65 | core/dao_token.go | [ ] |
 | 65 | core/dao_token_test.go | [ ] |

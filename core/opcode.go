@@ -504,6 +504,8 @@ var catalogue = []struct {
 	{"RemoveDAOMember", 0x0C0109},
 	{"RoleOfMember", 0x0C010A},
 	{"ListDAOMembers", 0x0C010B},
+	{"UpdateMemberRole", 0x0C010C},
+	{"RenewAuthorityTerm", 0x0C010D},
 	{"NewQuorumTracker", 0x0C000B},
 	{"QuorumAddVote", 0x0C000C},
 	{"QuorumHasQuorum", 0x0C000D},

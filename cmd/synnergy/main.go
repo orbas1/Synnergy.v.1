@@ -44,6 +44,8 @@ func main() {
 	synn.LoadGasTable()
 	synn.RegisterGasCost("MineBlock", synn.GasCost("MineBlock"))
 	synn.RegisterGasCost("CreateDAO", synn.GasCost("CreateDAO"))
+	synn.RegisterGasCost("UpdateMemberRole", synn.GasCost("UpdateMemberRole"))
+	synn.RegisterGasCost("RenewAuthorityTerm", synn.GasCost("RenewAuthorityTerm"))
 	// Stage 24 cross-chain operations
 	synn.RegisterGasCost("RegisterBridge", synn.GasCost("RegisterBridge"))
 	synn.RegisterGasCost("BridgeDeposit", synn.GasCost("BridgeDeposit"))

@@ -87,7 +87,8 @@ Protocol upgrades, on‑chain voting and regulatory hooks.
   creation, voting strategies and enactment of approved changes.
 - **dao.go**, **dao_proposal.go**, **dao_quadratic_voting.go**,
   **dao_staking.go** and **dao_token.go** – Building blocks for DAOs that use
-  Synnergy as their execution layer.
+  Synnergy as their execution layer. `dao_staking.go` restricts staking to
+  registered members for secure governance.
 - **compliance.go**, **audit_management.go**, **audit_node.go** and
   **regulatory_management.go** – Optional KYC/AML checks, audit logging and
   jurisdiction specific rules.
@@ -282,7 +283,7 @@ Every file under `core/` is listed below with a short description derived from i
 - **dao_access_control.go** – DAORole represents a simple role within the DAO access list.
 - **dao_proposal.go** – DAOProposal represents an on-chain proposal within a DAO.
 - **dao_quadratic_voting.go** – QuadraticVoteRecord stores an individual quadratic vote.
-- **dao_staking.go** – DAOStaking manages token staking for governance participation.
+- **dao_staking.go** – DAOStaking manages member-only token staking for governance participation.
 - **dao_token.go** – DAO2500Membership is persisted in the ledger for SYN2500 tokens.
 - **data.go** – Opcode identifiers for CDN module
 - **data_distribution.go** – DataSet represents a piece of content offered through the

@@ -9,7 +9,7 @@ import (
 	"synnergy/core"
 )
 
-var daoStaking = core.NewDAOStaking()
+var daoStaking = core.NewDAOStaking(daoMgr)
 
 func init() {
 	stakingCmd := &cobra.Command{
@@ -20,8 +20,8 @@ func init() {
 	var stakeJSON bool
 	var stakePub, stakeMsg, stakeSig string
 	stakeCmd := &cobra.Command{
-		Use:   "stake <addr> <amount>",
-		Args:  cobra.ExactArgs(2),
+		Use:   "stake <daoID> <addr> <amount>",
+		Args:  cobra.ExactArgs(3),
 		Short: "Stake tokens",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("DAO_Stake")
@@ -30,12 +30,15 @@ func init() {
 				fmt.Fprintln(cmd.OutOrStdout(), "signature verification failed")
 				return
 			}
-			amt, err := strconv.ParseUint(args[1], 10, 64)
+			amt, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				fmt.Fprintln(cmd.OutOrStdout(), "invalid amount")
 				return
 			}
-			daoStaking.Stake(args[0], amt)
+			if err := daoStaking.Stake(args[0], args[1], amt); err != nil {
+				fmt.Fprintln(cmd.OutOrStdout(), err)
+				return
+			}
 			if stakeJSON {
 				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(map[string]string{"status": "staked"})
 				return
@@ -51,8 +54,8 @@ func init() {
 	var unstakeJSON bool
 	var unstakePub, unstakeMsg, unstakeSig string
 	unstakeCmd := &cobra.Command{
-		Use:   "unstake <addr> <amount>",
-		Args:  cobra.ExactArgs(2),
+		Use:   "unstake <daoID> <addr> <amount>",
+		Args:  cobra.ExactArgs(3),
 		Short: "Unstake tokens",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("DAO_Unstake")
@@ -61,12 +64,12 @@ func init() {
 				fmt.Fprintln(cmd.OutOrStdout(), "signature verification failed")
 				return
 			}
-			amt, err := strconv.ParseUint(args[1], 10, 64)
+			amt, err := strconv.ParseUint(args[2], 10, 64)
 			if err != nil {
 				fmt.Fprintln(cmd.OutOrStdout(), "invalid amount")
 				return
 			}
-			if err := daoStaking.Unstake(args[0], amt); err != nil {
+			if err := daoStaking.Unstake(args[0], args[1], amt); err != nil {
 				fmt.Fprintln(cmd.OutOrStdout(), err)
 				return
 			}
@@ -84,12 +87,12 @@ func init() {
 
 	var balanceJSON bool
 	balanceCmd := &cobra.Command{
-		Use:   "balance <addr>",
-		Args:  cobra.ExactArgs(1),
+		Use:   "balance <daoID> <addr>",
+		Args:  cobra.ExactArgs(2),
 		Short: "Show staked balance",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("DAO_Staked")
-			bal := daoStaking.Balance(args[0])
+			bal := daoStaking.Balance(args[0], args[1])
 			if balanceJSON {
 				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(map[string]uint64{"balance": bal})
 				return
@@ -101,11 +104,12 @@ func init() {
 
 	var totalJSON bool
 	totalCmd := &cobra.Command{
-		Use:   "total",
+		Use:   "total <daoID>",
+		Args:  cobra.ExactArgs(1),
 		Short: "Show total staked tokens",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("DAO_TotalStaked")
-			t := daoStaking.TotalStaked()
+			t := daoStaking.TotalStaked(args[0])
 			if totalJSON {
 				_ = json.NewEncoder(cmd.OutOrStdout()).Encode(map[string]uint64{"total": t})
 				return

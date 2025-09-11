@@ -30,8 +30,18 @@ func NewProposalManager() *ProposalManager {
 	return &ProposalManager{proposals: make(map[string]*DAOProposal), nextID: 1}
 }
 
-// CreateProposal adds a new proposal to a DAO.
-func (pm *ProposalManager) CreateProposal(dao *DAO, creator, desc string) *DAOProposal {
+var (
+	errProposalNotFound = errors.New("proposal not found")
+	errProposalExecuted = errors.New("proposal executed")
+	errNotMember        = errors.New("not a dao member")
+	errNotAdmin         = errors.New("not a dao admin")
+)
+
+// CreateProposal adds a new proposal to a DAO. Only DAO members may create proposals.
+func (pm *ProposalManager) CreateProposal(dao *DAO, creator, desc string) (*DAOProposal, error) {
+	if !dao.IsMember(creator) {
+		return nil, errNotMember
+	}
 	pm.mu.Lock()
 	defer pm.mu.Unlock()
 	id := fmt.Sprintf("%d", pm.nextID)
@@ -42,21 +52,24 @@ func (pm *ProposalManager) CreateProposal(dao *DAO, creator, desc string) *DAOPr
 	dao.mu.Lock()
 	dao.Proposals = append(dao.Proposals, p)
 	dao.mu.Unlock()
-	return p
+	return p, nil
 }
 
-// Vote casts a vote on a proposal with given weight.
-func (pm *ProposalManager) Vote(id, voter string, weight uint64, support bool) error {
+// Vote casts a vote on a proposal with given weight. Only DAO members may vote.
+func (pm *ProposalManager) Vote(dao *DAO, id, voter string, weight uint64, support bool) error {
+	if !dao.IsMember(voter) {
+		return errNotMember
+	}
 	pm.mu.RLock()
 	p, ok := pm.proposals[id]
 	pm.mu.RUnlock()
 	if !ok {
-		return errors.New("proposal not found")
+		return errProposalNotFound
 	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if p.Executed {
-		return errors.New("proposal executed")
+		return errProposalExecuted
 	}
 	if support {
 		p.YesVotes[voter] = weight
@@ -74,7 +87,7 @@ func (pm *ProposalManager) Results(id string) (yes, no uint64, err error) {
 	p, ok := pm.proposals[id]
 	pm.mu.RUnlock()
 	if !ok {
-		return 0, 0, errors.New("proposal not found")
+		return 0, 0, errProposalNotFound
 	}
 	p.mu.RLock()
 	defer p.mu.RUnlock()
@@ -87,18 +100,21 @@ func (pm *ProposalManager) Results(id string) (yes, no uint64, err error) {
 	return yes, no, nil
 }
 
-// Execute marks a proposal as executed.
-func (pm *ProposalManager) Execute(id string) error {
+// Execute marks a proposal as executed. Only DAO admins may execute proposals.
+func (pm *ProposalManager) Execute(dao *DAO, id, requester string) error {
+	if !dao.IsAdmin(requester) {
+		return errNotAdmin
+	}
 	pm.mu.RLock()
 	p, ok := pm.proposals[id]
 	pm.mu.RUnlock()
 	if !ok {
-		return errors.New("proposal not found")
+		return errProposalNotFound
 	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if p.Executed {
-		return errors.New("proposal executed")
+		return errProposalExecuted
 	}
 	p.Executed = true
 	return nil
@@ -110,7 +126,7 @@ func (pm *ProposalManager) Get(id string) (*DAOProposal, error) {
 	defer pm.mu.RUnlock()
 	p, ok := pm.proposals[id]
 	if !ok {
-		return nil, errors.New("proposal not found")
+		return nil, errProposalNotFound
 	}
 	return p, nil
 }
