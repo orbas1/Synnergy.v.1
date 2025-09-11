@@ -3,5 +3,5 @@ package security
 import "testing"
 
 func TestContractSecurity(t *testing.T) {
-    t.Skip("TODO: implement Contract security security assessment")
+	validateSecurityAssessment(t, "Contract security.md")
 }
