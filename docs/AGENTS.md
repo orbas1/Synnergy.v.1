@@ -4,6 +4,7 @@
 
 ### Progress
 - Stage 18: Complete – mining-staking-manager env, build and CI scaffolding finalized.
+- Stage 67: Complete – ledger, light node, and liquidity pool validation with Kademlia gas tracking and CLI distance tests, plus identity service and wallet registry checks finalized.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
@@ -1389,30 +1390,43 @@
 - [x] core/faucet.go – per-address daily limits with reset and error sentinel
 - [x] core/faucet_test.go – covers daily limit enforcement and reset
 - [x] core/fees.go – configurable fee split policy with validation
-- [x] core/fees_test.go – tests custom split validation
+- [x] core/fees_test.go – tests custom split validation with clarified assertions
 - [x] core/firewall.go – added rule reset helper
 - [x] core/firewall_test.go – exercises allow/block/reset paths
 
 **Stage 67**
-- [ ] core/historical_node_test.go
-- [ ] core/identity_verification.go
-- [ ] core/identity_verification_test.go
-- [ ] core/idwallet_registration.go
-- [ ] core/idwallet_registration_test.go
-- [ ] core/immutability_enforcement.go
-- [ ] core/immutability_enforcement_test.go
-- [ ] core/initialization_replication.go
-- [ ] core/initialization_replication_test.go
-- [ ] core/instruction.go
-- [ ] core/instruction_test.go
-- [ ] core/kademlia.go
-- [ ] core/kademlia_test.go
-- [ ] core/ledger.go
-- [ ] core/ledger_test.go
-- [ ] core/light_node.go
-- [ ] core/light_node_test.go
-- [ ] core/liquidity_pools.go
-- [ ] core/liquidity_pools_test.go
+- [x] core/historical_node_test.go | added prune coverage
+ - [x] core/identity_verification.go | added error constants plus method and address validation
+ - [x] core/identity_verification_test.go | covers duplicate, empty method, and address cases
+- [x] core/idwallet_registration.go | validation for empty addresses and unregister support
+- [x] core/idwallet_registration_test.go | tests unregister and validation errors
+- [x] core/immutability_enforcement.go | handles nil ledger and missing genesis
+- [x] core/immutability_enforcement_test.go | tests nil ledger and missing genesis
+- [x] core/initialization_replication.go | start/stop errors and status
+- [x] core/initialization_replication_test.go | covers error paths and nil replicator
+- [x] core/instruction.go | added Validate helper enforcing OpPush value usage
+- [x] core/instruction_test.go | new tests for Validate behavior
+- [x] core/kademlia.go | input validation and error-aware lookups
+- [x] core/kademlia_test.go | covers validation and hex errors
+ - [x] core/ledger.go | added address/transaction validation and nil block check
+ - [x] core/ledger_test.go | tests validation paths and nil block handling
+ - [x] core/light_node.go | concurrency protection and header validation
+ - [x] core/light_node_test.go | covers header validation errors
+ - [x] core/liquidity_pools.go | parameter checks for liquidity actions
+- [x] core/liquidity_pools_test.go | exercises validation and registry listing
+
+- [x] cli/kademlia.go | distance command with gas tracking
+- [x] cli/kademlia_test.go | covers distance command
+- [x] cli/node_test.go | validates stake setting and below-minimum rejection
+- [x] cli/staking_node_test.go | resets staking state for isolated total checks
+- [x] gas_table.go | validates registration and Kademlia costs
+- [x] gas_table_test.go | tests registration validation
+- [x] cmd/synnergy/main.go | registers gas with error handling and Kademlia ops
+- [x] docs/reference/gas_table_list.md | documents KademliaDistance cost
+- [x] docs/reference/opcodes_list.md | documents Kademlia opcodes
+- [x] docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md | notes Kademlia gas pricing
+- [x] README.md | highlights gas validation and Kademlia distance CLI
+ - [x] docs/reference/errors_list.md | notes address-required identity error
 
 **Stage 68**
 - [ ] core/liquidity_views.go
@@ -3528,12 +3542,12 @@
 | 47 | cli/network_test.go | [x] |
 | 47 | cli/nft_marketplace.go | [x] |
 | 47 | cli/nft_marketplace_test.go | [x] |
-| 47 | cli/node.go | [ ] |
-| 47 | cli/node_adapter.go | [ ] |
-| 47 | cli/node_adapter_test.go | [ ] |
-| 47 | cli/node_commands_test.go | [ ] |
-| 47 | cli/node_test.go | [ ] |
-| 47 | cli/node_types.go | [ ] |
+| 47 | cli/node.go | [x] |
+| 47 | cli/node_adapter.go | [x] |
+| 47 | cli/node_adapter_test.go | [x] |
+| 47 | cli/node_commands_test.go | [x] |
+| 47 | cli/node_test.go | [x] |
+| 47 | cli/node_types.go | [x] |
 | 48 | cli/node_types_test.go | [ ] |
 | 48 | cli/opcodes.go | [ ] |
 | 48 | cli/opcodes_test.go | [ ] |
@@ -3874,7 +3888,7 @@
 | 65 | core/faucet.go | [ ] |
 | 65 | core/faucet_test.go | [ ] |
 | 65 | core/fees.go | [ ] |
-| 65 | core/fees_test.go | [ ] |
+| 65 | core/fees_test.go | [x] |
 | 65 | core/firewall.go | [ ] |
 | 65 | core/firewall_test.go | [ ] |
 | 66 | core/forensic_node.go | [ ] |
@@ -3896,25 +3910,25 @@
 | 66 | core/high_availability.go | [ ] |
 | 66 | core/high_availability_test.go | [ ] |
 | 66 | core/historical_node.go | [ ] |
-| 67 | core/historical_node_test.go | [ ] |
-| 67 | core/identity_verification.go | [ ] |
-| 67 | core/identity_verification_test.go | [ ] |
-| 67 | core/idwallet_registration.go | [ ] |
-| 67 | core/idwallet_registration_test.go | [ ] |
-| 67 | core/immutability_enforcement.go | [ ] |
-| 67 | core/immutability_enforcement_test.go | [ ] |
-| 67 | core/initialization_replication.go | [ ] |
-| 67 | core/initialization_replication_test.go | [ ] |
-| 67 | core/instruction.go | [ ] |
-| 67 | core/instruction_test.go | [ ] |
-| 67 | core/kademlia.go | [ ] |
-| 67 | core/kademlia_test.go | [ ] |
-| 67 | core/ledger.go | [ ] |
-| 67 | core/ledger_test.go | [ ] |
-| 67 | core/light_node.go | [ ] |
-| 67 | core/light_node_test.go | [ ] |
-| 67 | core/liquidity_pools.go | [ ] |
-| 67 | core/liquidity_pools_test.go | [ ] |
+| 67 | core/historical_node_test.go | [x] |
+| 67 | core/identity_verification.go | [x] |
+| 67 | core/identity_verification_test.go | [x] |
+| 67 | core/idwallet_registration.go | [x] |
+| 67 | core/idwallet_registration_test.go | [x] |
+| 67 | core/immutability_enforcement.go | [x] |
+| 67 | core/immutability_enforcement_test.go | [x] |
+| 67 | core/initialization_replication.go | [x] |
+| 67 | core/initialization_replication_test.go | [x] |
+| 67 | core/instruction.go | [x] |
+| 67 | core/instruction_test.go | [x] |
+| 67 | core/kademlia.go | [x] |
+| 67 | core/kademlia_test.go | [x] |
+| 67 | core/ledger.go | [x] |
+| 67 | core/ledger_test.go | [x] |
+| 67 | core/light_node.go | [x] |
+| 67 | core/light_node_test.go | [x] |
+| 67 | core/liquidity_pools.go | [x] |
+| 67 | core/liquidity_pools_test.go | [x] |
 | 68 | core/liquidity_views.go | [ ] |
 | 68 | core/liquidity_views_test.go | [ ] |
 | 68 | core/loanpool.go | [ ] |

@@ -19,7 +19,10 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			gen := core.NewBlock(nil, "")
 			gen.Hash = gen.HeaderHash(0)
-			ledger.AddBlock(gen)
+			if err := ledger.AddBlock(gen); err != nil {
+				printOutput(map[string]any{"error": err.Error()})
+				return
+			}
 			enforcer = core.NewImmutabilityEnforcer(gen)
 			gasPrint("ImmutabilityInit")
 			printOutput(map[string]any{"genesis": gen.Hash})

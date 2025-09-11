@@ -260,6 +260,7 @@
 | `KademliaClosest` | `1` |
 | `KademliaGet` | `1` |
 | `KademliaStore` | `1` |
+| `KademliaDistance` | `1` |
 | `Keys` | `1` |
 | `LastUpdated` | `1` |
 | `LatestHeader` | `1` |

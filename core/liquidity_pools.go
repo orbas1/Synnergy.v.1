@@ -32,6 +32,9 @@ func NewLiquidityPool(id, tokenA, tokenB string, feeBps uint16) *LiquidityPool {
 
 // AddLiquidity adds tokens to the pool and mints LP tokens.
 func (p *LiquidityPool) AddLiquidity(provider string, amtA, amtB uint64) (uint64, error) {
+	if provider == "" || amtA == 0 || amtB == 0 {
+		return 0, errors.New("invalid liquidity parameters")
+	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	if p.totalLP == 0 {
@@ -59,6 +62,9 @@ func (p *LiquidityPool) AddLiquidity(provider string, amtA, amtB uint64) (uint64
 
 // RemoveLiquidity burns LP tokens and returns underlying assets.
 func (p *LiquidityPool) RemoveLiquidity(provider string, lpTokens uint64) (uint64, uint64, error) {
+	if provider == "" || lpTokens == 0 {
+		return 0, 0, errors.New("invalid liquidity parameters")
+	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
 	bal := p.LPBalances[provider]
@@ -76,11 +82,11 @@ func (p *LiquidityPool) RemoveLiquidity(provider string, lpTokens uint64) (uint6
 
 // Swap executes a token swap within the pool.
 func (p *LiquidityPool) Swap(tokenIn string, amtIn, minOut uint64) (uint64, error) {
+	if amtIn == 0 || minOut == 0 {
+		return 0, errors.New("amounts must be > 0")
+	}
 	p.mu.Lock()
 	defer p.mu.Unlock()
-	if amtIn == 0 {
-		return 0, errors.New("amount must be > 0")
-	}
 	var reserveIn, reserveOut *uint64
 	switch tokenIn {
 	case p.TokenA:
@@ -131,6 +137,9 @@ func NewLiquidityPoolRegistry() *LiquidityPoolRegistry {
 func (r *LiquidityPoolRegistry) Create(id, tokenA, tokenB string, feeBps uint16) (*LiquidityPool, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
+	if id == "" || tokenA == "" || tokenB == "" || tokenA == tokenB {
+		return nil, errors.New("invalid pool parameters")
+	}
 	if _, exists := r.pools[id]; exists {
 		return nil, fmt.Errorf("pool %s exists", id)
 	}

@@ -26,6 +26,17 @@ type IdentityService struct {
 	logs       map[string][]VerificationLog
 }
 
+var (
+	// ErrIdentityExists is returned when attempting to register an
+	// already-registered address.
+	ErrIdentityExists = errors.New("identity already registered")
+	// ErrIdentityNotFound indicates the requested identity does not exist.
+	ErrIdentityNotFound = errors.New("identity not registered")
+	// ErrMethodRequired is returned when Verify is called with an empty
+	// verification method.
+	ErrMethodRequired = errors.New("verification method required")
+)
+
 // NewIdentityService creates a new IdentityService instance.
 func NewIdentityService() *IdentityService {
 	return &IdentityService{
@@ -38,8 +49,11 @@ func NewIdentityService() *IdentityService {
 func (s *IdentityService) Register(addr, name, dob, nationality string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if addr == "" {
+		return ErrAddressRequired
+	}
 	if _, exists := s.identities[addr]; exists {
-		return errors.New("identity already registered")
+		return ErrIdentityExists
 	}
 	s.identities[addr] = IdentityInfo{Name: name, DateOfBirth: dob, Nationality: nationality}
 	return nil
@@ -49,8 +63,14 @@ func (s *IdentityService) Register(addr, name, dob, nationality string) error {
 func (s *IdentityService) Verify(addr, method string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
+	if addr == "" {
+		return ErrAddressRequired
+	}
+	if method == "" {
+		return ErrMethodRequired
+	}
 	if _, exists := s.identities[addr]; !exists {
-		return errors.New("identity not registered")
+		return ErrIdentityNotFound
 	}
 	log := VerificationLog{Method: method, Timestamp: time.Now()}
 	s.logs[addr] = append(s.logs[addr], log)

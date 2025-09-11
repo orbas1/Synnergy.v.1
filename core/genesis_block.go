@@ -31,7 +31,9 @@ func (n *Node) InitGenesis(wallets GenesisWallets) (GenesisStats, *Block, error)
 	block := NewBlock([]*SubBlock{sb}, "")
 	n.Consensus.MineBlock(block, 1)
 	n.Blockchain = append(n.Blockchain, block)
-	n.Ledger.AddBlock(block)
+	if err := n.Ledger.AddBlock(block); err != nil {
+		return GenesisStats{}, nil, err
+	}
 	stats := GenesisStats{
 		Height:      1,
 		Hash:        block.Hash,

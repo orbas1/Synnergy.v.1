@@ -17,7 +17,9 @@ func TestSyncManagerLifecycle(t *testing.T) {
 		t.Fatalf("expected running")
 	}
 
-	l.AddBlock(&Block{Hash: "b1"})
+	if err := l.AddBlock(&Block{Hash: "b1"}); err != nil {
+		t.Fatalf("add block: %v", err)
+	}
 	if err := sm.Once(); err != nil {
 		t.Fatalf("once: %v", err)
 	}

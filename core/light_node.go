@@ -1,10 +1,16 @@
 package core
 
-import "synnergy/internal/nodes"
+import (
+	"errors"
+	"sync"
+
+	"synnergy/internal/nodes"
+)
 
 // LightNode maintains a minimal view of the chain using block headers only.
 type LightNode struct {
 	*BaseNode
+	mu      sync.RWMutex
 	headers []nodes.BlockHeader
 }
 
@@ -14,10 +20,20 @@ func NewLightNode(id nodes.Address) *LightNode {
 }
 
 // AddHeader appends a header to the local view.
-func (n *LightNode) AddHeader(h nodes.BlockHeader) { n.headers = append(n.headers, h) }
+func (n *LightNode) AddHeader(h nodes.BlockHeader) error {
+	if h.Hash == "" {
+		return errors.New("empty header hash")
+	}
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	n.headers = append(n.headers, h)
+	return nil
+}
 
 // LatestHeader returns the most recently added header.
 func (n *LightNode) LatestHeader() (nodes.BlockHeader, bool) {
+	n.mu.RLock()
+	defer n.mu.RUnlock()
 	if len(n.headers) == 0 {
 		return nodes.BlockHeader{}, false
 	}
@@ -26,6 +42,8 @@ func (n *LightNode) LatestHeader() (nodes.BlockHeader, bool) {
 
 // Headers returns a copy of all stored block headers.
 func (n *LightNode) Headers() []nodes.BlockHeader {
+	n.mu.RLock()
+	defer n.mu.RUnlock()
 	out := make([]nodes.BlockHeader, len(n.headers))
 	copy(out, n.headers)
 	return out

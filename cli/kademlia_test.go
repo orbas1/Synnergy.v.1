@@ -67,3 +67,24 @@ func TestKademliaClosest(t *testing.T) {
 		t.Fatalf("expected two keys, got %v", arr)
 	}
 }
+
+// TestKademliaDistance verifies the distance command returns numeric output.
+func TestKademliaDistance(t *testing.T) {
+	out, err := execCommand("kademlia", "distance", "aa", "bb", "--json")
+	if err != nil {
+		t.Fatalf("distance: %v", err)
+	}
+	if err := rootCmd.PersistentFlags().Set("json", "false"); err != nil {
+		t.Fatalf("reset json flag: %v", err)
+	}
+	if idx := strings.Index(out, "\n"); idx != -1 {
+		out = out[idx+1:]
+	}
+	var res map[string]any
+	if err := json.Unmarshal([]byte(out), &res); err != nil {
+		t.Fatalf("unmarshal: %v", err)
+	}
+	if res["distance"] != "17" {
+		t.Fatalf("unexpected distance: %v", res)
+	}
+}
