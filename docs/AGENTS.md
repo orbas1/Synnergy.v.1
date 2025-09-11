@@ -1489,25 +1489,25 @@
 - [x] cli/plasma_management.go – status command aligned
 
 **Stage 70**
-- [ ] core/quorum_tracker.go
-- [ ] core/quorum_tracker_test.go
-- [ ] core/regulatory_management.go
-- [ ] core/regulatory_management_test.go
-- [ ] core/regulatory_node.go
-- [ ] core/regulatory_node_test.go
-- [ ] core/replication.go
-- [ ] core/replication_test.go
-- [ ] core/rollup_management.go
-- [ ] core/rollup_management_test.go
-- [ ] core/rollups.go
-- [ ] core/rollups_test.go
-- [ ] core/rpc_webrtc.go
-- [ ] core/rpc_webrtc_test.go
-- [ ] core/security_test.go
-- [ ] core/sharding.go
-- [ ] core/sharding_test.go
-- [ ] core/sidechain_ops.go
-- [ ] core/sidechain_ops_test.go
+- [x] core/quorum_tracker.go – reset and configurable quorum
+- [x] core/quorum_tracker_test.go – coverage for reset and requirement update
+- [x] core/regulatory_management.go – regulation update and validation helpers
+- [x] core/regulatory_management_test.go – tests for validation and update
+- [x] core/regulatory_node.go – error-based approvals and log clearing
+- [x] core/regulatory_node_test.go – checks new error paths and log reset
+- [x] core/replication.go – replication status query added
+- [x] core/replication_test.go – replicated block assertion
+- [x] core/rollup_management.go – safety checks and submit helper
+- [x] core/rollup_management_test.go – submit and nil aggregator tests
+- [x] core/rollups.go – filter batches by status
+- [x] core/rollups_test.go – finalized batch listing
+- [x] core/rpc_webrtc.go – broadcast and peer listing
+- [x] core/rpc_webrtc_test.go – broadcast/peer tests
+- [x] core/security_test.go – rehabilitation eligibility check
+- [x] core/sharding.go – shard load queries
+- [x] core/sharding_test.go – load map coverage
+- [x] core/sidechain_ops.go – deposit listing helper
+- [x] core/sidechain_ops_test.go – deposit list test
 
 **Stage 71**
 - [ ] core/sidechains.go

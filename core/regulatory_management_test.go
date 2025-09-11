@@ -8,9 +8,18 @@ func TestRegulatoryManager(t *testing.T) {
 	if err := m.AddRegulation(reg); err != nil {
 		t.Fatalf("add regulation: %v", err)
 	}
+
 	tx := Transaction{Amount: 150}
-	v := m.EvaluateTransaction(tx)
-	if len(v) != 1 || v[0] != "r1" {
-		t.Fatalf("expected violation r1")
+	if err := m.ValidateTransaction(tx); err == nil {
+		t.Fatalf("expected validation error")
+	}
+
+	if err := m.UpdateRegulation(Regulation{ID: "r1", MaxAmount: 200}); err != nil {
+		t.Fatalf("update: %v", err)
+	}
+
+	tx.Amount = 150
+	if err := m.ValidateTransaction(tx); err != nil {
+		t.Fatalf("unexpected violation after update: %v", err)
 	}
 }

@@ -45,3 +45,27 @@ func (qt *QuorumTracker) Reached() bool {
 	defer qt.mu.RUnlock()
 	return len(qt.present) >= qt.required
 }
+
+// Reset clears the tracker of all present validators.
+func (qt *QuorumTracker) Reset() {
+	qt.mu.Lock()
+	qt.present = make(map[string]struct{})
+	qt.mu.Unlock()
+}
+
+// SetRequired updates the quorum threshold.
+func (qt *QuorumTracker) SetRequired(required int) {
+	if required < 0 {
+		required = 0
+	}
+	qt.mu.Lock()
+	qt.required = required
+	qt.mu.Unlock()
+}
+
+// Required returns the current quorum threshold.
+func (qt *QuorumTracker) Required() int {
+	qt.mu.RLock()
+	defer qt.mu.RUnlock()
+	return qt.required
+}

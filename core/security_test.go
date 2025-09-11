@@ -43,6 +43,12 @@ func TestEligibleStakesExcludesSlashed(t *testing.T) {
 	if _, ok := elig["v2"]; !ok {
 		t.Fatalf("validator v2 should be eligible")
 	}
+	node.Rehabilitate("v1")
+	_ = node.SetStake("v1", MinStake)
+	elig = node.eligibleStakes()
+	if _, ok := elig["v1"]; !ok {
+		t.Fatalf("validator v1 should be eligible after rehab")
+	}
 }
 
 func TestSubBlockSignature(t *testing.T) {

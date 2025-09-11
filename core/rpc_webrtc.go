@@ -40,6 +40,22 @@ func (r *WebRTCRPC) Send(id string, msg []byte) bool {
 	}
 }
 
+// Broadcast sends a message to all connected peers. Returns count of peers
+// successfully receiving the message.
+func (r *WebRTCRPC) Broadcast(msg []byte) int {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	count := 0
+	for _, ch := range r.peers {
+		select {
+		case ch <- append([]byte(nil), msg...):
+			count++
+		default:
+		}
+	}
+	return count
+}
+
 // Disconnect removes a peer from the RPC network.
 func (r *WebRTCRPC) Disconnect(id string) {
 	r.mu.Lock()
@@ -48,4 +64,15 @@ func (r *WebRTCRPC) Disconnect(id string) {
 		close(ch)
 		delete(r.peers, id)
 	}
+}
+
+// Peers returns the list of connected peer IDs.
+func (r *WebRTCRPC) Peers() []string {
+	r.mu.RLock()
+	ids := make([]string, 0, len(r.peers))
+	for id := range r.peers {
+		ids = append(ids, id)
+	}
+	r.mu.RUnlock()
+	return ids
 }

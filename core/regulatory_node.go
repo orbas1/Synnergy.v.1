@@ -1,9 +1,6 @@
 package core
 
-import (
-	"strings"
-	"sync"
-)
+import "sync"
 
 // RegulatoryNode represents a regulator-operated node overseeing transactions.
 type RegulatoryNode struct {
@@ -22,14 +19,14 @@ func NewRegulatoryNode(id string, mgr *RegulatoryManager) *RegulatoryNode {
 	}
 }
 
-// ApproveTransaction checks a transaction against registered regulations.
-func (n *RegulatoryNode) ApproveTransaction(tx Transaction) bool {
-	violations := n.Manager.EvaluateTransaction(tx)
-	if len(violations) > 0 {
-		n.FlagEntity(tx.From, strings.Join(violations, ", "))
-		return false
+// ApproveTransaction checks a transaction against registered regulations and
+// returns an error if any rules are violated.
+func (n *RegulatoryNode) ApproveTransaction(tx Transaction) error {
+	if err := n.Manager.ValidateTransaction(tx); err != nil {
+		n.FlagEntity(tx.From, err.Error())
+		return err
 	}
-	return true
+	return nil
 }
 
 // FlagEntity records a regulatory flag for an address.
@@ -47,4 +44,11 @@ func (n *RegulatoryNode) Logs(addr string) []string {
 	copy(out, entries)
 	n.mu.RUnlock()
 	return out
+}
+
+// ClearLogs removes all flags recorded for an address.
+func (n *RegulatoryNode) ClearLogs(addr string) {
+	n.mu.Lock()
+	delete(n.logs, addr)
+	n.mu.Unlock()
 }

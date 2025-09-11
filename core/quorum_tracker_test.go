@@ -16,4 +16,15 @@ func TestQuorumTracker(t *testing.T) {
 	if qt.Reached() {
 		t.Fatalf("quorum should no longer be reached after leave")
 	}
+
+	qt.Reset()
+	if qt.Count() != 0 {
+		t.Fatalf("expected empty quorum after reset")
+	}
+
+	qt.SetRequired(1)
+	qt.Join("c")
+	if qt.Required() != 1 || !qt.Reached() {
+		t.Fatalf("failed to update quorum requirement")
+	}
 }

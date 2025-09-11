@@ -93,3 +93,21 @@ func (m *ShardManager) ShardCount() int {
 	defer m.mu.RUnlock()
 	return 1 << m.shardBits
 }
+
+// ShardLoad returns the queued transaction count for a shard.
+func (m *ShardManager) ShardLoad(id int) int {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.shardLoads[id]
+}
+
+// LoadMap copies the current load mapping.
+func (m *ShardManager) LoadMap() map[int]int {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	out := make(map[int]int, len(m.shardLoads))
+	for id, load := range m.shardLoads {
+		out[id] = load
+	}
+	return out
+}
