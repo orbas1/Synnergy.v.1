@@ -42,7 +42,8 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Transfer ownership of a deployed contract",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := marketplace.TradeContract(context.Background(), args[0], args[1]); err != nil {
+			gas := synn.GasCost("TradeContract")
+			if err := marketplace.TradeContract(context.Background(), args[0], args[1], gas); err != nil {
 				return err
 			}
 			printOutput(map[string]string{"status": "traded"})

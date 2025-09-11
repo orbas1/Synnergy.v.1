@@ -129,3 +129,60 @@ func (r *SidechainRegistry) Remove(id string) error {
 	delete(r.chains, id)
 	return nil
 }
+
+// Deposit credits tokens to an address escrow on a side-chain.
+// Deposits fail if the side-chain is paused or does not exist.
+func (r *SidechainRegistry) Deposit(id, addr string, amount uint64) error {
+	if amount == 0 {
+		return fmt.Errorf("deposit amount must be > 0")
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	sc, ok := r.chains[id]
+	if !ok {
+		return fmt.Errorf("sidechain %s not found", id)
+	}
+	if sc.Paused {
+		return fmt.Errorf("sidechain %s paused", id)
+	}
+	if newBal := sc.Deposits[addr] + amount; newBal < sc.Deposits[addr] {
+		return fmt.Errorf("balance overflow")
+	} else {
+		sc.Deposits[addr] = newBal
+	}
+	return nil
+}
+
+// Withdraw debits tokens from an address escrow on a side-chain.
+// Withdrawal fails if balance is insufficient or the chain is paused.
+func (r *SidechainRegistry) Withdraw(id, addr string, amount uint64) error {
+	if amount == 0 {
+		return fmt.Errorf("withdraw amount must be > 0")
+	}
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	sc, ok := r.chains[id]
+	if !ok {
+		return fmt.Errorf("sidechain %s not found", id)
+	}
+	if sc.Paused {
+		return fmt.Errorf("sidechain %s paused", id)
+	}
+	bal, ok := sc.Deposits[addr]
+	if !ok || bal < amount {
+		return fmt.Errorf("insufficient balance")
+	}
+	sc.Deposits[addr] = bal - amount
+	return nil
+}
+
+// Balance returns the escrow balance for an address on a side-chain.
+func (r *SidechainRegistry) Balance(id, addr string) (uint64, error) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	sc, ok := r.chains[id]
+	if !ok {
+		return 0, fmt.Errorf("sidechain %s not found", id)
+	}
+	return sc.Deposits[addr], nil
+}

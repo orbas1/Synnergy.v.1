@@ -1510,25 +1510,28 @@
 - [x] core/sidechain_ops_test.go – deposit list test
 
 **Stage 71**
-- [ ] core/sidechains.go
-- [ ] core/sidechains_test.go
-- [ ] core/smart_contract_marketplace.go
-- [ ] core/smart_contract_marketplace_test.go
-- [ ] core/snvm.go
-- [ ] core/snvm_opcodes.go
-- [ ] core/snvm_opcodes_test.go
-- [ ] core/snvm_test.go
-- [ ] core/stake_penalty.go
-- [ ] core/stake_penalty_test.go
-- [ ] core/staking_node.go
-- [ ] core/staking_node_test.go
-- [ ] core/state_rw.go
-- [ ] core/state_rw_test.go
-- [ ] core/storage_marketplace.go
-- [ ] core/storage_marketplace_test.go
-- [ ] core/swarm.go
-- [ ] core/swarm_test.go
-- [ ] core/syn1300.go
+- [x] core/sidechains.go - Added escrow deposit/withdraw with pause checks
+- [x] core/sidechains_test.go - Covered escrow flows and concurrent deposits
+- [x] core/smart_contract_marketplace.go - Trade requires gas; ownership transfer validated
+- [x] core/smart_contract_marketplace_test.go - Trade gas and failure paths covered
+- [x] core/snvm.go - Added OpMod execution path
+- [x] core/snvm_opcodes.go - Introduced OpMod constant
+- [x] core/snvm_opcodes_test.go - Checked opcode values
+- [x] core/snvm_test.go - Covered modulus operation
+- [x] core/stake_penalty.go
+- [x] core/stake_penalty_test.go
+- [x] core/staking_node.go
+- [x] core/staking_node_test.go
+- [x] core/state_rw.go
+- [x] core/state_rw_test.go - Verified StateRW behaviours
+- [x] core/storage_marketplace.go
+- [x] core/storage_marketplace_test.go
+
+- [x] core/swarm.go
+- [x] core/swarm_test.go
+- [x] core/syn1300.go
+
+Stage 71 complete: marketplace trade gas enforced and state interface tested, finalising all items.
 
 **Stage 72**
 - [ ] core/syn1300_test.go

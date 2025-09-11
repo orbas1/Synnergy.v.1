@@ -8,4 +8,6 @@ const (
 	OpSub
 	OpMul
 	OpDiv
+	// OpMod returns the remainder of the division of the top two stack values.
+	OpMod
 )

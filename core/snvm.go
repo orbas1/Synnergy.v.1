@@ -24,7 +24,7 @@ func (vm *SNVM) Execute(tx *Transaction) (int64, error) {
 			// do nothing
 		case OpPush:
 			stack = append(stack, ins.Value)
-		case OpAdd, OpSub, OpMul, OpDiv:
+		case OpAdd, OpSub, OpMul, OpDiv, OpMod:
 			if len(stack) < 2 {
 				return 0, fmt.Errorf("stack underflow")
 			}
@@ -44,6 +44,11 @@ func (vm *SNVM) Execute(tx *Transaction) (int64, error) {
 					return 0, fmt.Errorf("division by zero")
 				}
 				res = a / b
+			case OpMod:
+				if b == 0 {
+					return 0, fmt.Errorf("modulus by zero")
+				}
+				res = a % b
 			}
 			stack = append(stack, res)
 		default:
