@@ -9,3 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial semantic versioning and release management configuration.
 
+## [0.1.1] - 2024-05-27
+### Added
+- Hardened CI, release and security workflows.
+- Enabled Dependabot updates for Go modules, GitHub Actions and web dependencies.
+- Added Homebrew tap support via GoReleaser.
+### Changed
+- Updated issue templates, contributing and code of conduct guidelines.
+

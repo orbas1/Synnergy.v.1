@@ -16,16 +16,20 @@ func init() {
 		Short: "Gateway node endpoint management",
 	}
 
+	_ = gateway.Start()
+
 	registerCmd := &cobra.Command{
 		Use:   "register [name]",
 		Args:  cobra.ExactArgs(1),
 		Short: "Register an endpoint",
 		Run: func(cmd *cobra.Command, args []string) {
 			name := args[0]
-			gateway.RegisterEndpoint(name, func(b []byte) error {
+			if err := gateway.RegisterEndpoint(name, func(b []byte) error {
 				fmt.Printf("%s received: %s\n", name, string(b))
 				return nil
-			})
+			}); err != nil {
+				fmt.Println("error:", err)
+			}
 		},
 	}
 

@@ -3,96 +3,8 @@
 ## Stages 1-136 – File Upgrade Checklist
 
 ### Progress
-- Stage 1: In Progress – issue templates, PR template, README and root `.gitignore` upgraded; remaining files pending.
-- Stage 2: Completed – ai-marketplace scaffold enhanced with CI, config and tests.
-- Stage 3: Completed – GUI state management, styles, tests, and authority-node-index tooling upgraded.
-- Stage 4: Completed – authority-node-index docs, configuration, tests and Kubernetes deployment enhanced.
-- Stage 5: Completed – authority-node-index tsconfig and compliance-dashboard configuration hardened.
-- Stage 6: Completed – compliance-dashboard backend and bridge-monitor configs upgraded.
-- Stage 7: Completed – cross-chain-bridge-monitor docs, config, and CI pipeline solidified.
-- Stage 8: Completed – cross-chain-bridge-monitor services and cross-chain-management configuration scaffolds added.
-- Stage 9: Completed – cross-chain-management CLI, deployment and tests strengthened.
-- Stage 10: Completed – cross-chain-management unit tests and DAO explorer tooling enhanced.
-- Stage 11: Completed – DAO explorer CLI and data distribution monitor configs established.
-- Stage 12: Completed – data-distribution-monitor module hardened with CLI, configs, tests, and CI.
-- Stage 13: Completed – data-distribution-monitor pages/services/state and dex-screener configs, CI and tests implemented.
-- Stage 14: Completed – dex-screener module scaffold finalized with docs, config, tests and deployment scripts.
-- Stage 16: Completed – explorer CLI and identity-management-console configs established.
-- Stage 17: Completed – identity-management-console pipeline, docs, and deployment scaffolds added.
-
-- Stage 18: In Progress – identity-management-console CLI gains user registration with tests; mining-staking-manager pending.
-
-- Stage 19: Completed – mining-staking-manager scaffold enhanced with config, services, tests and deployment.
-- Stage 20: Completed – mining-staking-manager TS config finalized; NFT marketplace configs added.
-- Stage 21: Completed – NFT marketplace frontend scaffold expanded with sample components, services, tests and hardened dashboard configuration.
-- Stage 22: Completed – node-operations-dashboard scaffold established with CI, docs and tests.
-
-- Stage 23: Completed – node-operations-dashboard status service and security-operations-center configuration hardened.
-- Stage 24: Completed – security-operations-center runtime, documentation and deployment scaffolds finalised.
-- Stage 25: Completed – security tests and smart-contract-marketplace config hardened.
-- Stage 26: Completed – smart-contract-marketplace API server, docs and tests added.
-- Stage 27: Completed – storage-marketplace GUI scaffold with configs, Docker and CI.
-- Stage 28: Completed – storage marketplace module finalized and system analytics dashboard scaffold created.
-- Stage 29: Completed – system analytics dashboard CI pipeline, configuration and tests established.
-- Stage 30: Completed – system analytics dashboard tests and token creation tool configs hardened.
-- Stage 31: Completed – token-creation-tool package, tests and deployment finalized.
-- Stage 32: Completed – validator-governance-portal configuration, docs and deployment scaffolds added.
-- Stage 33: Completed – validator-governance-portal source/tests and wallet-admin-interface base configs established.
-- Stage 35: Completed – wallet admin interface tests and wallet module production scaffolds hardened.
-- Stage 36: Completed – wallet GUI configuration, documentation and tests enhanced.
-- Stage 37: Completed – core security and AI modules upgraded with tests and encryption.
-- Stage 38: Completed – biometric security node and CLI components finalised with tests.
-- Stage 39: Completed – authority and bank CLI modules validated with unit tests.
-- Stage 40: Completed – biometric security, compliance and compression CLIs now emit validated JSON responses with unit tests; block, central bank and coin utilities fully validated.
-- Stage 41: ✅ consensus and contract management CLIs emit JSON responses with gas tracking and validation tests.
-- Stage 42: ✅ cross-chain bridge, protocol, connection, contract and custodial CLIs now emit structured JSON with accompanying tests.
-- Stage 43: ✅ DAO CLI covers proposals, quadratic voting, staking, token and elected-node commands with JSON output and signature verification.
-- Stage 44: ✅ faucet, fees, firewall, forensic, full node and gas CLIs emit JSON with gas tracking and tests.
-- Stage 45: ✅ genesis, geospatial, government, high availability, historical, holographic node, identity, idwallet, immutability and initrep CLIs emit JSON output with gas tracking.
-- Stage 46: Completed – instruction, Kademlia, ledger, light node, liquidity pool, liquidity view and loan pool CLIs emit JSON with gas tracking.
-- Stage 47: Completed – NAT, network, NFT marketplace, node and mining CLIs output JSON with gas metrics and tests including node adapter and mobile mining commands.
-- Stage 48: Completed – opcode and peer management CLIs emit JSON with gas; additional CLI enhancements deferred to later stages.
-
-- Stage 49: ✅ root config flags added; regulatory, replication, rollup and sharding CLIs emit JSON with gas metrics and tests.
-- Stage 50: Completed – sidechain, staking node, state, storage marketplace, swarm, smart contract marketplace, SNVM and stake penalty CLIs emit JSON with tests.
-
-- Stage 51: Completed – syn200, syn20, syn1100, syn12, syn1300, syn131, syn1401, syn1600 and syn1700 token CLIs validated with required flags and tests.
-
-- Stage 53: Complete – bill registry, forex pair, SYN3500 token, futures contract, index token, grant registry, government benefit, charity token, legal token and SYN500 utility token CLIs validated with tests; Stage 54 addressed SYN5000+ commands.
-- Stage 54: Completed – SYN5000, SYN70, SYN700, SYN800 and SYN845 token CLIs validated with tests.
-- Stage 55: ✅ transaction, validator, VM, wallet, tx control, validator node, VM sandbox and SYN4900 token CLIs emit gas-aware JSON output with tests.
-- Stage 56: Completed – warfare, watchtower and zero-trust CLIs, API gateway, docgen, firewall, governance and monitoring binaries with tests.
-- Stage 57: Completed – CLI utilities and scripts hardened with error handling and tests.
-- Stage 58: Completed – secrets-manager CLI validates keys and sample smart contracts added.
-- Stage 59: Completed – content-node registry, secrets manager CLI, gas/opcode references and web UI wired for deterministic pricing.
-- Stage 60: Completed – contract language compatibility, contract registry and access utilities refined with tests.
-- Stage 61: Completed – audit, authority, banking, base-node peering and biometric modules hardened with Ed25519 signatures.
-- Stage 62: ✅ biometric authentication, block validation with timestamp, duplicate, and header hash checks, compression, synchronization, central banking, charity, coin (optimized supply calculations) and compliance modules with tests; gas table snapshots now emit deterministic JSON for CLI tooling, support persistence via `WriteGasTableSnapshot`, and the CLI can write snapshots directly to disk.
-- Stage 63: Completed – connection pool and adaptive consensus manager use windowed metrics for stable weighting.
-  - Stage 64: Completed – cross-chain registry, bridge manager, connection manager, protocol registry, contract registry, custodial nodes and DAO management enforce relayer authorization with safe deletion; cross-chain transactions and scaling networks now guarded by whitelisted relayers.
-- Stage 65: Completed – DAO access control, proposal system, quadratic voting, staking, token ledger, member role management and elected authority node term renewals documented with gas/opcode updates.
- - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
-
-**Stage 1**
-- [x] .github/ISSUE_TEMPLATE/bug_report.md – expanded fields and severity levels
-- [ ] .github/ISSUE_TEMPLATE/config.yml
-- [x] .github/ISSUE_TEMPLATE/feature_request.md – user stories and acceptance criteria
-- [x] .github/PULL_REQUEST_TEMPLATE.md – testing and security checklist added
-- [ ] .github/dependabot.yml
-- [ ] .github/workflows/ci.yml
-- [ ] .github/workflows/release.yml
-- [ ] .github/workflows/security.yml
-- [x] .gitignore – broadened to ignore builds, logs and secrets
-- [ ] .goreleaser.yml
-- [ ] CHANGELOG.md
-- [ ] CODE_OF_CONDUCT.md
-- [ ] CONTRIBUTING.md
-- [ ] GUI/ai-marketplace/.env.example
-- [ ] GUI/ai-marketplace/.eslintrc.json
-- [ ] GUI/ai-marketplace/.gitignore
-- [ ] GUI/ai-marketplace/.prettierrc
-- [ ] GUI/ai-marketplace/Dockerfile
-- [ ] GUI/ai-marketplace/Makefile
+- Stage 18: Complete – mining-staking-manager env, build and CI scaffolding finalized.
+- Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
 - [x] GUI/ai-marketplace/README.md
@@ -435,15 +347,15 @@
 - [x] GUI/identity-management-console/tests/e2e/cli.e2e.test.ts
 - [x] GUI/identity-management-console/tests/unit/identityService.test.ts
 - [x] GUI/identity-management-console/tsconfig.json
-- [ ] GUI/mining-staking-manager/.env.example
-- [ ] GUI/mining-staking-manager/.eslintrc.json
-- [ ] GUI/mining-staking-manager/.gitignore
-- [ ] GUI/mining-staking-manager/.prettierrc
-- [ ] GUI/mining-staking-manager/Dockerfile
-- [ ] GUI/mining-staking-manager/Makefile
-- [ ] GUI/mining-staking-manager/README.md
-- [ ] GUI/mining-staking-manager/ci/.gitkeep
-- [ ] GUI/mining-staking-manager/ci/pipeline.yml
+- [x] GUI/mining-staking-manager/.env.example – added port and log level samples
+- [x] GUI/mining-staking-manager/.eslintrc.json – TypeScript rules enabled
+- [x] GUI/mining-staking-manager/.gitignore – ignores logs and env files
+- [x] GUI/mining-staking-manager/.prettierrc – style options defined
+- [x] GUI/mining-staking-manager/Dockerfile – multi-stage build
+- [x] GUI/mining-staking-manager/Makefile – install, lint and format targets
+- [x] GUI/mining-staking-manager/README.md – setup, scripts and Docker usage
+- [x] GUI/mining-staking-manager/ci/.gitkeep – replaced by pipeline
+- [x] GUI/mining-staking-manager/ci/pipeline.yml – CI runs install and tests
 - [x] GUI/mining-staking-manager/config/.gitkeep – replaced by production config
 
 **Stage 19**
@@ -1474,33 +1386,12 @@
  - [x] README.md – highlights admin-controlled DAO role changes and term renewals
 - [x] core/elected_authority_node.go – term renewals gated by DAO admins
 - [x] core/elected_authority_node_test.go – covers admin and non-admin renewal paths
-- [ ] core/faucet.go
-- [ ] core/faucet_test.go
-- [ ] core/fees.go
-- [ ] core/fees_test.go
-- [ ] core/firewall.go
-- [ ] core/firewall_test.go
-
-**Stage 66**
-- [ ] core/forensic_node.go
-- [ ] core/forensic_node_test.go
-- [ ] core/full_node.go
-- [ ] core/full_node_test.go
-- [ ] core/gas.go
-- [ ] core/gas_table.go
-- [ ] core/gas_table_test.go
-- [ ] core/gas_test.go
-- [ ] core/gateway_node.go
-- [ ] core/gateway_node_test.go
-- [ ] core/genesis_block.go
-- [ ] core/genesis_block_test.go
-- [ ] core/genesis_wallets.go
-- [ ] core/genesis_wallets_test.go
-- [ ] core/government_authority_node.go
-- [ ] core/government_authority_node_test.go
-- [ ] core/high_availability.go
-- [ ] core/high_availability_test.go
-- [ ] core/historical_node.go
+- [x] core/faucet.go – per-address daily limits with reset and error sentinel
+- [x] core/faucet_test.go – covers daily limit enforcement and reset
+- [x] core/fees.go – configurable fee split policy with validation
+- [x] core/fees_test.go – tests custom split validation
+- [x] core/firewall.go – added rule reset helper
+- [x] core/firewall_test.go – exercises allow/block/reset paths
 
 **Stage 67**
 - [ ] core/historical_node_test.go

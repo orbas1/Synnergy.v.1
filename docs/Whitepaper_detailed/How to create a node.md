@@ -11,7 +11,7 @@ Synnergy provides a broad catalog of node implementations so operators can tailo
 - **Full Node** – stores the complete chain in archive or pruned modes and validates blocks accordingly【F:core/full_node.go†L5-L38】.
 - **Light Node** – maintains only block headers for resource‑constrained devices while still verifying chain continuity【F:core/light_node.go†L5-L31】.
 - **Validator Node** – couples a ledger with validator and quorum management to orchestrate staking‑based consensus【F:core/validator_node.go†L5-L48】.
-- **Gateway Node** – bridges external data sources through custom endpoints configurable at runtime【F:core/gateway_node.go†L9-L55】.
+- **Gateway Node** – bridges external data sources through custom endpoints configurable at runtime. Endpoint registration is thread-safe and gated on the node's running state【F:core/gateway_node.go†L9-L68】.
 - **Consensus‑Specific Node** – locks the consensus engine to Proof‑of‑Work, Proof‑of‑Stake, or Proof‑of‑History modes as required【F:core/consensus_specific_node.go†L1-L30】.
 - **Elected Authority Node** – grants authority privileges for a fixed term, automatically expiring at the configured end date【F:core/elected_authority_node.go†L5-L19】.
 
@@ -34,7 +34,7 @@ Synnergy provides a broad catalog of node implementations so operators can tailo
 - **Bank Institutional Node** – registers participating institutions and exposes their presence to the ledger【F:core/bank_institutional_node.go†L1-L43】.
 - **Biometric Security Node** – gates privileged operations behind biometric verification routines【F:biometric_security_node.go†L8-L46】.
 - **Audit Node** – couples bootstrap services with an audit manager to capture on‑chain events for compliance reports【F:core/audit_node.go†L8-L37】.
-- **Forensic Node** – retains lightweight transaction and network traces for later investigation【F:core/forensic_node.go†L5-L40】.
+- **Forensic Node** – retains lightweight transaction and network traces for later investigation with capped buffers that prune old records to protect memory【F:core/forensic_node.go†L5-L56】.
 - **Historical Node** – archives block summaries by height and hash to service long‑term retrieval requests【F:core/historical_node.go†L1-L55】.
 - **Warfare Node** – tracks logistics and tactical updates for military assets, safeguarding command execution【F:warfare_node.go†L11-L48】.
 - **Holographic Node** – distributes holographic frames for redundancy, enabling advanced data resilience experiments【F:internal/nodes/holographic_node.go†L9-L33】.

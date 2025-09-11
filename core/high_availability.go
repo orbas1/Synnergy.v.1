@@ -39,6 +39,17 @@ func (m *FailoverManager) Heartbeat(id string) {
 	m.nodes[id] = time.Now()
 }
 
+// RemoveNode removes a node from consideration. If the primary is removed the
+// next call to Active will promote the freshest backup.
+func (m *FailoverManager) RemoveNode(id string) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	delete(m.nodes, id)
+	if id == m.primary {
+		m.primary = ""
+	}
+}
+
 // Active returns the identifier of the node currently acting as primary.  If the
 // existing primary has not sent a heartbeat within the timeout, the most recent
 // backup node is promoted.

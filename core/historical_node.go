@@ -62,3 +62,16 @@ func (h *HistoricalNode) TotalBlocks() int {
 	defer h.mu.RUnlock()
 	return len(h.byHeight)
 }
+
+// PruneBelow drops all archived blocks with a height lower than the provided
+// threshold. Both height and hash indexes are updated accordingly.
+func (h *HistoricalNode) PruneBelow(height uint64) {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	for hgt, summary := range h.byHeight {
+		if hgt < height {
+			delete(h.byHeight, hgt)
+			delete(h.byHash, summary.Hash)
+		}
+	}
+}

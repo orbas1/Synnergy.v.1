@@ -13,6 +13,17 @@ func TestDefaultGenesisWalletsDeterministic(t *testing.T) {
 	}
 }
 
+func TestGenesisWalletsValidate(t *testing.T) {
+	w := DefaultGenesisWallets()
+	if err := w.Validate(); err != nil {
+		t.Fatalf("unexpected validation error: %v", err)
+	}
+	w.CreatorWallet = ""
+	if err := w.Validate(); err == nil {
+		t.Fatalf("expected error for empty creator wallet")
+	}
+}
+
 func TestAllocateToGenesisWallets(t *testing.T) {
 	wallets := DefaultGenesisWallets()
 	total := uint64(100)

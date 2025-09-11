@@ -134,8 +134,53 @@ type FeeDistribution struct {
 	CreatorWallet       uint64
 }
 
-// DistributeFees splits the total fees according to the network's policy.
+type FeeSplitPolicy struct {
+	InternalDevelopment uint64
+	InternalCharity     uint64
+	ExternalCharity     uint64
+	LoanPool            uint64
+	PassiveIncome       uint64
+	ValidatorsMiners    uint64
+	AuthorityNodes      uint64
+	NodeHosts           uint64
+	CreatorWallet       uint64
+}
+
+// Validate ensures the fee split policy sums to 100 percent.
+func (p FeeSplitPolicy) Validate() error {
+	sum := p.InternalDevelopment + p.InternalCharity + p.ExternalCharity + p.LoanPool + p.PassiveIncome + p.ValidatorsMiners + p.AuthorityNodes + p.NodeHosts + p.CreatorWallet
+	if sum != 100 {
+		return fmt.Errorf("fee split must sum to 100, got %d", sum)
+	}
+	return nil
+}
+
+var DefaultFeeSplitPolicy = FeeSplitPolicy{5, 5, 5, 10, 5, 59, 5, 5, 1}
+
+// DistributeFeesWithPolicy splits total fees according to the provided policy.
+func DistributeFeesWithPolicy(total uint64, p FeeSplitPolicy) (FeeDistribution, error) {
+	if err := p.Validate(); err != nil {
+		return FeeDistribution{}, err
+	}
+	return FeeDistribution{
+		InternalDevelopment: total * p.InternalDevelopment / 100,
+		InternalCharity:     total * p.InternalCharity / 100,
+		ExternalCharity:     total * p.ExternalCharity / 100,
+		LoanPool:            total * p.LoanPool / 100,
+		PassiveIncome:       total * p.PassiveIncome / 100,
+		ValidatorsMiners:    total * p.ValidatorsMiners / 100,
+		AuthorityNodes:      total * p.AuthorityNodes / 100,
+		NodeHosts:           total * p.NodeHosts / 100,
+		CreatorWallet:       total * p.CreatorWallet / 100,
+	}, nil
+}
+
+// DistributeFees splits the total fees using the default network policy.
 func DistributeFees(total uint64) FeeDistribution {
+
+	dist, _ := DistributeFeesWithPolicy(total, DefaultFeeSplitPolicy)
+	return dist
+
 	creatorShare := total * 1 / 100
 	nodeHostShare := total * 5 / 100
 	if !IsCreatorDistributionEnabled() {
@@ -154,6 +199,7 @@ func DistributeFees(total uint64) FeeDistribution {
 		NodeHosts:           nodeHostShare,
 		CreatorWallet:       creatorShare,
 	}
+
 }
 
 // ApplyFeeCapFloor constrains fees to the provided cap and floor values.

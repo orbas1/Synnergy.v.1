@@ -97,7 +97,8 @@ hooks for sharing tactical information across secure channels.
 ### Forensic Nodes
 Forensic nodes capture minimal `TransactionLite` records and granular network
 traces so operators can reconstruct events during incident response and satisfy
-evidentiary requirements.
+evidentiary requirements. Buffers are capped and prune oldest entries in FIFO
+order to prevent memory exhaustion from malicious peers.
 
 ### Historical Nodes
 Historical nodes archive concise `BlockSummary` metadata and offer lookup

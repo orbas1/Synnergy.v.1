@@ -170,3 +170,15 @@ func TestWriteGasTableSnapshot(t *testing.T) {
 		t.Fatalf("snapshot file mismatch: %q vs %q", data, expected)
 	}
 }
+
+func TestEnvOverrides(t *testing.T) {
+	t.Setenv("SYN_GAS_OVERRIDES", "Add=77")
+	tbl := DefaultGasTable()
+	op, ok := nameToOp["Add"]
+	if !ok {
+		t.Fatalf("Add opcode not found")
+	}
+	if tbl[op] != 77 {
+		t.Fatalf("expected override cost 77 for Add, got %d", tbl[op])
+	}
+}

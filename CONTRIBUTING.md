@@ -9,10 +9,11 @@ help maintain a consistent workflow across the project.
 - Run `go test ./...` to ensure the test suite passes before making changes.
 
 ## Development Workflow
-1. Create small, focused commits.
+1. Create small, focused commits with clear messages.
 2. Include tests and documentation for any code changes.
 3. Ensure `go fmt` has been run on Go files.
-4. Open a pull request with a clear description of your changes.
+4. Sign commits using `git commit -s` to certify the [DCO](https://developercertificate.org/).
+5. Open a pull request using the provided template and fill out the checklist.
 
 ## Issue Reporting
 - Use the issue templates when filing bugs or feature requests.
