@@ -10,6 +10,9 @@ type NodeAdapter struct {
 
 // NewNodeAdapter wraps the provided Node with a BaseNode implementing nodes.NodeInterface.
 func NewNodeAdapter(n *Node) *NodeAdapter {
+	if n == nil {
+		panic("nil node")
+	}
 	return &NodeAdapter{
 		node:     n,
 		BaseNode: NewBaseNode(nodes.Address(n.ID)),

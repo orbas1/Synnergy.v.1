@@ -23,6 +23,9 @@ func TestPeerManagerBasicOperations(t *testing.T) {
 	if len(peers) != 2 {
 		t.Fatalf("expected 2 peers, got %d", len(peers))
 	}
+	if pm.Count() != 2 {
+		t.Fatalf("expected count 2, got %d", pm.Count())
+	}
 
 	pm.RemovePeer("p1")
 	if _, ok := pm.GetPeer("p1"); ok {

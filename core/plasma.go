@@ -1,6 +1,9 @@
 package core
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
 
 // PlasmaExit represents a pending withdrawal from a Plasma bridge.
 type PlasmaExit struct {
@@ -23,3 +26,7 @@ type PlasmaBridge struct {
 func NewPlasmaBridge() *PlasmaBridge {
 	return &PlasmaBridge{exits: make(map[uint64]*PlasmaExit)}
 }
+
+// ErrBridgePaused is returned when operations are attempted while the bridge is
+// paused.
+var ErrBridgePaused = errors.New("plasma bridge paused")

@@ -21,4 +21,9 @@ func TestPlasmaBridgeOperations(t *testing.T) {
 	if len(b.ListExits("alice")) != 1 {
 		t.Fatalf("list exits failed")
 	}
+
+	b.Pause()
+	if _, err := b.StartExit("alice", "token", 1); err != ErrBridgePaused {
+		t.Fatalf("expected pause error, got %v", err)
+	}
 }

@@ -6,6 +6,7 @@
 - Stage 18: Complete – mining-staking-manager env, build and CI scaffolding finalized.
 - Stage 67: Complete – ledger, light node, and liquidity pool validation with Kademlia gas tracking and CLI distance tests, plus identity service and wallet registry checks finalized.
 - Stage 68: Complete – mining node context control, fee distribution, and CLI mine-until integration finalized with gas pricing and opcode docs extended.
+- Stage 69: Complete – node and plasma modules hardened with concurrency-safe mempools, pause checks, opcode lookup tests and peer count CLI.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
@@ -1460,25 +1461,32 @@
 - [x] README.md - key features mention controlled proof-of-work
 
 **Stage 69**
-- [ ] core/network_test.go
-- [ ] core/nft_marketplace.go
-- [ ] core/nft_marketplace_test.go
-- [ ] core/node.go
-- [ ] core/node_adapter.go
-- [ ] core/node_adapter_test.go
-- [ ] core/node_test.go
-- [ ] core/opcode.go
-- [ ] core/opcode_test.go
-- [ ] core/peer_management.go
-- [ ] core/peer_management_test.go
-- [ ] core/plasma.go
-- [ ] core/plasma_management.go
-- [ ] core/plasma_management_test.go
-- [ ] core/plasma_operations.go
-- [ ] core/plasma_operations_test.go
-- [ ] core/plasma_test.go
-- [ ] core/private_transactions.go
-- [ ] core/private_transactions_test.go
+- [x] core/network_test.go – pub/sub coverage added
+- [x] core/nft_marketplace.go – price update method
+- [x] core/nft_marketplace_test.go – price update test
+- [x] core/node.go – synchronized mempool and default capacity
+- [x] core/node_adapter.go – nil protection
+- [x] core/node_adapter_test.go – nil adapter panic test
+- [x] core/node_test.go – concurrent add transaction test
+- [x] core/opcode.go – lookup helper
+- [x] core/opcode_test.go – dispatch and lookup test
+- [x] core/peer_management.go – peer count helper
+- [x] core/peer_management_test.go – count verified
+- [x] core/plasma.go – pause error defined
+- [x] core/plasma_management.go – renamed IsPaused
+- [x] core/plasma_management_test.go – uses IsPaused
+- [x] core/plasma_operations.go – pause checks unified
+- [x] core/plasma_operations_test.go – pause path tested
+- [x] core/plasma_test.go – pause guards
+- [x] core/private_transactions.go – key length validation
+- [x] core/private_transactions_test.go – invalid key test
+- [x] cli/peer_management.go – peer count command
+- [x] cli/peer_management_test.go – peer count gas test
+- [x] docs/reference/gas_table_list.md – PeerCount gas cost recorded
+- [x] docs/reference/opcodes_list.md – peer operations documented
+- [x] docs/guides/cli_quickstart.md – peer count usage noted
+- [x] README.md – key features mention peer count
+- [x] cli/plasma_management.go – status command aligned
 
 **Stage 70**
 - [ ] core/quorum_tracker.go

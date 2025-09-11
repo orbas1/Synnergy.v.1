@@ -81,6 +81,18 @@ func (m *NFTMarketplace) Buy(ctx context.Context, id, newOwner string, gasLimit 
 	return nil
 }
 
+// UpdatePrice adjusts the listed price of an existing NFT.
+func (m *NFTMarketplace) UpdatePrice(id string, price uint64) error {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	nft, ok := m.nfts[id]
+	if !ok {
+		return fmt.Errorf("nft not found")
+	}
+	nft.Price = price
+	return nil
+}
+
 // ListAll returns a snapshot of all NFTs.
 func (m *NFTMarketplace) ListAll() []*NFT {
 	m.mu.RLock()

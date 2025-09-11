@@ -21,6 +21,12 @@ func TestEncryptDecrypt(t *testing.T) {
 	}
 }
 
+func TestEncryptInvalidKey(t *testing.T) {
+	if _, err := Encrypt(make([]byte, 16), []byte("data")); err == nil {
+		t.Fatalf("expected error for short key")
+	}
+}
+
 func TestPrivateTxManager(t *testing.T) {
 	m := NewPrivateTxManager()
 	tx := PrivateTransaction{Payload: []byte("data")}

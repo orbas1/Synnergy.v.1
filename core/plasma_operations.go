@@ -5,8 +5,8 @@ import "fmt"
 // Deposit records a deposit into the Plasma bridge. For this simplified
 // implementation deposits are acknowledged without additional state.
 func (b *PlasmaBridge) Deposit(owner, token string, amount uint64) error {
-	if b.Status() {
-		return fmt.Errorf("plasma bridge paused")
+	if b.IsPaused() {
+		return ErrBridgePaused
 	}
 	// Deposits would normally update on-chain state; here we just accept them.
 	return nil
@@ -17,7 +17,7 @@ func (b *PlasmaBridge) StartExit(owner, token string, amount uint64) (uint64, er
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	if b.paused {
-		return 0, fmt.Errorf("plasma bridge paused")
+		return 0, ErrBridgePaused
 	}
 	b.seq++
 	nonce := b.seq

@@ -460,6 +460,10 @@ and warfare nodes as well as UI integrations.
 | `Pay` | `0x10019F` |
 | `PayPremium` | `0x1001A0` |
 | `Peers` | `0x1001A1` |
+| `PeerAdvertise` | `0x200000` |
+| `PeerConnect` | `0x200001` |
+| `PeerCount` | `0x200002` |
+| `PeerDiscover` | `0x200003` |
 | `Pending` | `0x1001A2` |
 | `PlaceBet` | `0x1001A3` |
 | `PoolInfo` | `0x1001A4` |

@@ -54,6 +54,16 @@ func init() {
 		},
 	}
 
-	cmd.AddCommand(discoverCmd, connectCmd, advertiseCmd)
+	countCmd := &cobra.Command{
+		Use:   "count",
+		Short: "Show number of known peers",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			gasPrint("PeerCount")
+			printOutput(map[string]int{"count": peerMgr.Count()})
+			return nil
+		},
+	}
+
+	cmd.AddCommand(discoverCmd, connectCmd, advertiseCmd, countCmd)
 	rootCmd.AddCommand(cmd)
 }

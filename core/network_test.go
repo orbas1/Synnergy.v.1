@@ -50,3 +50,20 @@ func TestNetworkBroadcast(t *testing.T) {
 		t.Fatalf("expected transaction to be broadcast to all nodes and relay")
 	}
 }
+
+// TestNetworkPubSub ensures the lightweight publish/subscribe system delivers
+// messages to all subscribed listeners.
+func TestNetworkPubSub(t *testing.T) {
+	net := NewNetwork(NewBiometricService())
+	sub := net.Subscribe("demo")
+	msg := []byte("ping")
+	net.Publish("demo", msg)
+	select {
+	case got := <-sub:
+		if string(got) != string(msg) {
+			t.Fatalf("expected %s, got %s", msg, got)
+		}
+	case <-time.After(100 * time.Millisecond):
+		t.Fatalf("did not receive published message")
+	}
+}

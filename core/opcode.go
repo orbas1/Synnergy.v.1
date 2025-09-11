@@ -92,6 +92,15 @@ func Opcodes() map[Opcode]string {
 	return out
 }
 
+// Lookup returns the opcode for a human readable name. It enables CLI tooling
+// to resolve opcodes without scanning the entire catalogue.
+func Lookup(name string) (Opcode, bool) {
+	mu.RLock()
+	defer mu.RUnlock()
+	op, ok := nameToOp[name]
+	return op, ok
+}
+
 // Register binds an opcode to its function handler.
 // It panics on duplicates – this should never happen in CI-tested builds.
 func Register(op Opcode, fn OpcodeFunc) {

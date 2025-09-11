@@ -538,6 +538,7 @@
 | `Pay` | `1` |
 | `PeerAdvertise` | `1` |
 | `PeerConnect` | `1` |
+| `PeerCount` | `1` |
 | `PeerDiscover` | `1` |
 | `Peers` | `1` |
 | `Pending` | `1` |

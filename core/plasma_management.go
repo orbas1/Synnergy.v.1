@@ -14,8 +14,8 @@ func (b *PlasmaBridge) Resume() {
 	b.mu.Unlock()
 }
 
-// Status reports whether the Plasma bridge is paused.
-func (b *PlasmaBridge) Status() bool {
+// IsPaused reports whether the Plasma bridge is paused.
+func (b *PlasmaBridge) IsPaused() bool {
 	b.mu.RLock()
 	defer b.mu.RUnlock()
 	return b.paused
