@@ -1,0 +1,2 @@
+ok      synnergy/core   1.735s
+FAIL    synnergy/cli    189.311s (interrupted)

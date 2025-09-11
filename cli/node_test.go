@@ -29,8 +29,8 @@ func TestNodeCLICommands(t *testing.T) {
 	if _, err := execNodeCLI("node", "stake", "val1", "5"); err != nil {
 		t.Fatalf("stake failed: %v", err)
 	}
-	if currentNode.Stakes["val1"] != 5 {
-		t.Fatalf("stake not recorded: %+v", currentNode.Stakes)
+	if currentNode.Validators.Stake("val1") != 5 {
+		t.Fatalf("stake not recorded: got %d", currentNode.Validators.Stake("val1"))
 	}
 
 	ledger.Mint("alice", 100)

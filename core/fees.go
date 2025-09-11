@@ -177,29 +177,12 @@ func DistributeFeesWithPolicy(total uint64, p FeeSplitPolicy) (FeeDistribution, 
 
 // DistributeFees splits the total fees using the default network policy.
 func DistributeFees(total uint64) FeeDistribution {
-
 	dist, _ := DistributeFeesWithPolicy(total, DefaultFeeSplitPolicy)
-	return dist
-
-	creatorShare := total * 1 / 100
-	nodeHostShare := total * 5 / 100
 	if !IsCreatorDistributionEnabled() {
-		nodeHostShare += creatorShare
-		creatorShare = 0
+		dist.NodeHosts += dist.CreatorWallet
+		dist.CreatorWallet = 0
 	}
-
-	return FeeDistribution{
-		InternalDevelopment: total * 5 / 100,
-		InternalCharity:     total * 5 / 100,
-		ExternalCharity:     total * 5 / 100,
-		LoanPool:            total * 10 / 100,
-		PassiveIncome:       total * 5 / 100,
-		ValidatorsMiners:    total * 59 / 100,
-		AuthorityNodes:      total * 5 / 100,
-		NodeHosts:           nodeHostShare,
-		CreatorWallet:       creatorShare,
-	}
-
+	return dist
 }
 
 // ApplyFeeCapFloor constrains fees to the provided cap and floor values.
