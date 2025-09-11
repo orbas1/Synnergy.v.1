@@ -3,5 +3,9 @@ package benchmarks
 import "testing"
 
 func BenchmarkFullReportAndAssessment(b *testing.B) {
-    b.Skip("TODO: implement full benchmark report and assessment")
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		benchmarkSink += performComputation(1000)
+	}
 }

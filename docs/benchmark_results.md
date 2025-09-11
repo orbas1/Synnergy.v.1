@@ -27,7 +27,9 @@ go test ./...
 
 | Benchmark | Iterations | ns/op |
 | --- | --- | --- |
-| BenchmarkNFTMarketplaceMint | 1000000 | 1564 |
+| BenchmarkTransactionHash | 1906989 | 627.8 |
+| BenchmarkLedgerApplyTransaction | 2172804 | 518.6 |
+| BenchmarkNFTMarketplaceMint | 1000000 | 2074 |
 
 ## synnergy/internal/tokens package
 
@@ -35,6 +37,34 @@ go test ./...
 | --- | --- | --- |
 | BenchmarkBaseTokenTransfer | 30524721 | 39.35 |
 | BenchmarkRegistryInfo | 11217840 | 107.9 |
+
+## security_assessments_benchmarks/Benchmarks package
+
+| Benchmark | Iterations | ns/op |
+| --- | --- | --- |
+| BenchmarkAllTokenStandardBenchmarks | 1 | 1661 |
+| BenchmarkAuthorityNodeBenchmarks | 1 | 826 |
+| BenchmarkFullReportAndAssessment | 1 | 783 |
+| BenchmarkCharityBenchmarks | 1 | 973 |
+| BenchmarkCoinBenchmarks | 1 | 782 |
+| BenchmarkComplianceBenchmarks | 1 | 838 |
+| BenchmarkConsensusBenchmarks | 1 | 820 |
+| BenchmarkContractBenchmarks | 1 | 812 |
+| BenchmarkGovernanceBenchmarks | 1 | 767 |
+| BenchmarkHighAvailabilityBenchmarks | 1 | 819 |
+| BenchmarkLedgerBenchmarks | 1 | 10378 |
+| BenchmarkLoanpoolBenchmarks | 1 | 831 |
+| BenchmarkNetworkBenchmarks | 1 | 832 |
+| BenchmarkNodeBenchmarks | 1 | 759 |
+| BenchmarkOpcodeBenchmarks | 1 | 1234 |
+| BenchmarkSecurityBenchmarks | 1 | 1465 |
+| BenchmarkSpeedBenchmarks | 1 | 1346 |
+| BenchmarkStorageBenchmarks | 1 | 795 |
+| BenchmarkVmBenchmarks | 1 | 1320 |
+| BenchmarkValidationBenchmarks | 1 | 881 |
+| BenchmarkWalletBenchmarks | 1 | 792 |
+| BenchmarkAiBenchmarks | 1 | 801 |
+| BenchmarkTransactionsBenchmarks | 1 | 736 |
 
 Benchmarks executed on `Intel(R) Xeon(R) Platinum 8370C CPU @ 2.80GHz`.
 

@@ -3,5 +3,9 @@ package benchmarks
 import "testing"
 
 func BenchmarkGovernanceBenchmarks(b *testing.B) {
-    b.Skip("TODO: implement Governance benchmarks benchmark")
+	b.ReportAllocs()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		benchmarkSink += performComputation(1000)
+	}
 }
