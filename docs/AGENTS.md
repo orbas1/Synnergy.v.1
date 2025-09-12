@@ -7,6 +7,7 @@
 - Stage 67: Complete – ledger, light node, and liquidity pool validation with Kademlia gas tracking and CLI distance tests, plus identity service and wallet registry checks finalized.
 - Stage 68: Complete – mining node context control, fee distribution, and CLI mine-until integration finalized with gas pricing and opcode docs extended.
 - Stage 69: Complete – node and plasma modules hardened with concurrency-safe mempools, pause checks, opcode lookup tests and peer count CLI.
+- Stage 73: Complete – SYN300 governance token validated with wallet-signed regulatory approvals, regulatory node console and CLI alignment, gas/opcode entries and consensus integration for regulatory checks. Consensus now skips regulatory validation when no node is configured.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
@@ -1554,9 +1555,16 @@ Stage 71 complete: marketplace trade gas enforced and state interface tested, fi
 - [x] core/syn2900.go | locked insurance policy with inactive checks
 - [x] core/syn2900_test.go | double claim and concurrency tests
 
+Stage 72 complete: concurrency-safe financial token suite with comprehensive tests.
+
 **Stage 73**
-- [ ] core/syn300_token.go
-- [ ] core/syn300_token_test.go
+- [x] core/syn300_token.go | governance token with validation and delegation error checks
+- [x] core/syn300_token_test.go | lifecycle and validation test coverage
+- [x] gas_table.go | regulatory node pricing annotated
+- [x] core/consensus.go | bypasses regulatory checks when no node present
+- [x] core/consensus_test.go | verifies behaviour with and without regulatory node
+- [x] core/regulatory_node.go | approval succeeds when manager absent
+- [x] core/regulatory_node_test.go | manager-less approval test
 - [ ] core/syn3200.go
 - [ ] core/syn3200_test.go
 - [ ] core/syn3500_token.go
@@ -1673,7 +1681,7 @@ Stage 71 complete: marketplace trade gas enforced and state interface tested, fi
 - [ ] docs/Whitepaper_detailed/Faucet.md
 - [ ] docs/Whitepaper_detailed/Fault tolerance.md
 - [ ] docs/Whitepaper_detailed/GUIs.md
-- [ ] docs/Whitepaper_detailed/Governance.md
+ - [x] docs/Whitepaper_detailed/Governance.md
 - [ ] docs/Whitepaper_detailed/High availability.md
 - [ ] docs/Whitepaper_detailed/How apply for a grant or loan from loanpool.md
 - [ ] docs/Whitepaper_detailed/How to apply to charity pool.md
@@ -2670,7 +2678,8 @@ Stage 71 complete: marketplace trade gas enforced and state interface tested, fi
 - [ ] web/pages/api/run.js
 - [ ] web/pages/authority.js
 - [ ] web/pages/index.js
- - [x] web/pages/dao.js
+- [x] web/pages/dao.js
+- [x] web/pages/regnode.js – regulatory node browser console
 - [ ] zero_trust_data_channels.go
 - [ ] zero_trust_data_channels_test.go
 
@@ -4045,8 +4054,8 @@ Stage 71 complete: marketplace trade gas enforced and state interface tested, fi
 | 72 | core/syn2700_test.go | [ ] | pending enterprise upgrade |
 | 72 | core/syn2900.go | [ ] | pending enterprise upgrade |
 | 72 | core/syn2900_test.go | [ ] | pending enterprise upgrade |
-| 73 | core/syn300_token.go | [ ] |
-| 73 | core/syn300_token_test.go | [ ] |
+| 73 | core/syn300_token.go | [x] | added error checks, gas/opcode docs, CLI alignment |
+| 73 | core/syn300_token_test.go | [x] | proposal lifecycle and validation tests |
 | 73 | core/syn3200.go | [ ] |
 | 73 | core/syn3200_test.go | [ ] |
 | 73 | core/syn3500_token.go | [ ] |
@@ -4153,7 +4162,7 @@ Stage 71 complete: marketplace trade gas enforced and state interface tested, fi
 | 78 | docs/Whitepaper_detailed/Faucet.md | [ ] |
 | 78 | docs/Whitepaper_detailed/Fault tolerance.md | [ ] |
 | 78 | docs/Whitepaper_detailed/GUIs.md | [ ] |
-| 78 | docs/Whitepaper_detailed/Governance.md | [ ] |
+| 78 | docs/Whitepaper_detailed/Governance.md | [x] | SYN300 section expanded with validation details |
 | 78 | docs/Whitepaper_detailed/High availability.md | [ ] |
 | 78 | docs/Whitepaper_detailed/How apply for a grant or loan from loanpool.md | [ ] |
 | 78 | docs/Whitepaper_detailed/How to apply to charity pool.md | [ ] |
@@ -4219,7 +4228,7 @@ Stage 71 complete: marketplace trade gas enforced and state interface tested, fi
 | 81 | docs/Whitepaper_detailed/architecture/virtual_machine_architecture.md | [x] |
 | 82 | docs/Whitepaper_detailed/architecture/wallet_architecture.md | [x] |
 | 82 | docs/Whitepaper_detailed/guide/charity_guide.md | [ ] |
-| 82 | docs/Whitepaper_detailed/guide/cli_guide.md | [ ] |
+| 82 | docs/Whitepaper_detailed/guide/cli_guide.md | [x] | flag command requires non-empty reason; wallet-signed approvals documented |
 | 82 | docs/Whitepaper_detailed/guide/config_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/consensus_guide.md | [ ] |
 | 82 | docs/Whitepaper_detailed/guide/developer_guide.md | [ ] |
@@ -4240,7 +4249,7 @@ Stage 71 complete: marketplace trade gas enforced and state interface tested, fi
 | 83 | docs/api/README.md | [x] |
 | 83 | docs/api/core.md | [x] |
 | 83 | docs/financial_models.md | [x] |
-| 83 | docs/guides/cli_quickstart.md | [x] | bankinst signed usage |
+| 83 | docs/guides/cli_quickstart.md | [x] | bankinst signed usage, regulatory logs example; wallet-signed regulatory approvals |
 | 83 | docs/guides/developer_guide.md | [x] |
 | 83 | docs/guides/gui_quickstart.md | [x] |
 | 83 | docs/guides/network_operations.md | [x] |
@@ -4251,9 +4260,9 @@ Stage 71 complete: marketplace trade gas enforced and state interface tested, fi
 | 83 | docs/benchmark_results.md | [x] |
 | 83 | docs/security_audit_results.md | [x] |
 | 83 | docs/reference/errors_list.md | [x] |
-| 83 | docs/reference/functions_list.md | [x] |
-| 83 | docs/reference/gas_table_list.md | [x] | gas costs for cross-chain, oracle, multisig and minting operations added |
-| 83 | docs/reference/opcodes_list.md | [x] | documented opcodes for cross-chain, oracle, minting and multisig |
+| 83 | docs/reference/functions_list.md | [x] | updated for SYN300 governance validations and regulatory node helpers |
+| 83 | docs/reference/gas_table_list.md | [x] | gas costs for cross-chain, oracle, multisig, minting, SYN300 governance and regulatory operations |
+| 83 | docs/reference/opcodes_list.md | [x] | documented opcodes for cross-chain, oracle, minting, multisig, SYN300 governance and regulatory operations |
 | 83 | dynamic_consensus_hopping.go | [ ] |
 | 83 | dynamic_consensus_hopping_test.go | [ ] |
 | 83 | energy_efficiency.go | [ ] |
@@ -5057,6 +5066,7 @@ Stage 71 complete: marketplace trade gas enforced and state interface tested, fi
 | 125 | web/pages/authority.js | [ ] |
 | 125 | web/pages/index.js | [ ] |
 | 125 | web/pages/dao.js | [x] |
+| 125 | web/pages/regnode.js | [x] | regulatory node browser console |
 | 125 | zero_trust_data_channels.go | [ ] |
 | 125 | zero_trust_data_channels_test.go | [ ] |
 | 126 | docs/ux/mobile_responsiveness.md | [x] |

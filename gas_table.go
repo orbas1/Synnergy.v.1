@@ -41,7 +41,9 @@ import (
 // hosts and registries expose deterministic pricing for publish, retrieval and
 // discovery workflows used by the CLI and web interfaces. Stage 65 records DAO
 // role update operations so governance tooling prices admin-managed role
-// changes and authority term renewals.
+// changes and authority term renewals. Stage 73 adds regulatory node approval,
+// flagging and log query operations so compliance tooling surfaces predictable
+// gas costs.
 type GasTable map[string]uint64
 
 // DefaultGasCost is used when an opcode is missing from the guide.

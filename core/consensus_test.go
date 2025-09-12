@@ -108,3 +108,52 @@ func TestValidateBlock(t *testing.T) {
 		t.Fatalf("expected invalid block")
 	}
 }
+
+func TestValidateSubBlockRegulatory(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	mgr := NewRegulatoryManager()
+	mgr.AddRegulation(Regulation{ID: "r1", MaxAmount: 10})
+	rn := NewRegulatoryNode("rn", mgr)
+	sc.SetRegulatoryNode(rn)
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	rn.RegisterWallet(w)
+
+	tx := NewTransaction(w.Address, "bob", 5, 0, 0)
+	if _, err := w.Sign(tx); err != nil {
+		t.Fatalf("sign: %v", err)
+	}
+	sb := NewSubBlock([]*Transaction{tx}, "val")
+	if !sc.ValidateSubBlock(sb) {
+		t.Fatalf("expected valid sub-block")
+	}
+
+	tx2 := NewTransaction(w.Address, "bob", 20, 0, 0)
+	if _, err := w.Sign(tx2); err != nil {
+		t.Fatalf("sign2: %v", err)
+	}
+	sb2 := NewSubBlock([]*Transaction{tx2}, "val")
+	if sc.ValidateSubBlock(sb2) {
+		t.Fatalf("expected regulatory rejection")
+	}
+}
+
+func TestValidateSubBlockWithoutRegNode(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	mgr := NewRegulatoryManager()
+	mgr.AddRegulation(Regulation{ID: "r1", MaxAmount: 10})
+	rn := NewRegulatoryNode("rn", mgr)
+	sc.SetRegulatoryNode(rn)
+
+	tx := NewTransaction("alice", "bob", 20, 0, 0)
+	sb := NewSubBlock([]*Transaction{tx}, "val")
+	if sc.ValidateSubBlock(sb) {
+		t.Fatalf("expected rejection with regulatory node")
+	}
+	sc.SetRegulatoryNode(nil)
+	if !sc.ValidateSubBlock(sb) {
+		t.Fatalf("expected approval without regulatory node")
+	}
+}

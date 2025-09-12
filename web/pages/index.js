@@ -1,24 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 export default function Home() {
   const [commands, setCommands] = useState([]);
-  const [selected, setSelected] = useState('');
+  const [selected, setSelected] = useState("");
   const [flags, setFlags] = useState([]);
   const [inputs, setInputs] = useState({});
-  const [extra, setExtra] = useState('');
-  const [output, setOutput] = useState('');
+  const [extra, setExtra] = useState("");
+  const [output, setOutput] = useState("");
 
   useEffect(() => {
-    fetch('/api/commands')
-      .then(res => res.json())
-      .then(data => setCommands(data.commands || []));
+    fetch("/api/commands")
+      .then((res) => res.json())
+      .then((data) => setCommands(data.commands || []));
   }, []);
 
   useEffect(() => {
     if (selected) {
       fetch(`/api/help?cmd=${selected}`)
-        .then(res => res.json())
-        .then(data => {
+        .then((res) => res.json())
+        .then((data) => {
           setFlags(data.flags || []);
           setInputs({});
         });
@@ -28,7 +28,7 @@ export default function Home() {
   }, [selected]);
 
   const handleInput = (name, value) => {
-    setInputs(prev => ({ ...prev, [name]: value }));
+    setInputs((prev) => ({ ...prev, [name]: value }));
   };
 
   const run = async () => {
@@ -37,7 +37,7 @@ export default function Home() {
       const val = inputs[f.name];
       if (val && val.length) {
         args.push(`--${f.name}`);
-        if (val !== 'true' && val !== 'false') {
+        if (val !== "true" && val !== "false") {
           args.push(val);
         }
       }
@@ -45,10 +45,10 @@ export default function Home() {
     if (extra.trim()) {
       args.push(...extra.trim().split(/\s+/));
     }
-    const res = await fetch('/api/run', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ command: selected, args })
+    const res = await fetch("/api/run", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ command: selected, args }),
     });
     const data = await res.json();
     setOutput(data.output || data.error);
@@ -58,21 +58,26 @@ export default function Home() {
     <main style={{ padding: 20 }}>
       <h1>Synnergy Control Panel</h1>
       <p>Select a command, fill in optional flags, and run.</p>
-      <select value={selected} onChange={e => setSelected(e.target.value)}>
+      <p>
+        <a href="/regnode">Regulatory node console</a>
+      </p>
+      <select value={selected} onChange={(e) => setSelected(e.target.value)}>
         <option value="">-- select command --</option>
-        {commands.map(c => (
-          <option key={c.name} value={c.name}>{c.name} - {c.desc}</option>
+        {commands.map((c) => (
+          <option key={c.name} value={c.name}>
+            {c.name} - {c.desc}
+          </option>
         ))}
       </select>
-      {flags.map(f => (
+      {flags.map((f) => (
         <div key={f.name} style={{ marginTop: 10 }}>
           <label>
             --{f.name}: {f.desc}
             <input
               style={{ marginLeft: 10 }}
               type="text"
-              value={inputs[f.name] || ''}
-              onChange={e => handleInput(f.name, e.target.value)}
+              value={inputs[f.name] || ""}
+              onChange={(e) => handleInput(f.name, e.target.value)}
             />
           </label>
         </div>
@@ -85,12 +90,16 @@ export default function Home() {
               style={{ marginLeft: 10 }}
               type="text"
               value={extra}
-              onChange={e => setExtra(e.target.value)}
+              onChange={(e) => setExtra(e.target.value)}
             />
           </label>
         </div>
       )}
-      {selected && <button style={{ marginTop: 20 }} onClick={run}>Run</button>}
+      {selected && (
+        <button style={{ marginTop: 20 }} onClick={run}>
+          Run
+        </button>
+      )}
       <pre>{output}</pre>
     </main>
   );

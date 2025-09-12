@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"strings"
 	"sync"
 	"time"
 )
@@ -26,6 +27,19 @@ type SYN300Token struct {
 	nextPropID  uint64
 }
 
+var (
+	// ErrSelfDelegation is returned when an owner delegates to themselves.
+	ErrSelfDelegation = errors.New("cannot delegate to self")
+	// ErrNoDelegation is returned when revoking a missing delegation.
+	ErrNoDelegation = errors.New("delegation not found")
+	// ErrEmptyDescription is returned when creating a proposal without a description.
+	ErrEmptyDescription = errors.New("proposal description required")
+	// ErrNoVotingPower indicates the caller lacks voting power for the action.
+	ErrNoVotingPower = errors.New("insufficient voting power")
+	// ErrAlreadyVoted indicates the voter has already cast the same vote.
+	ErrAlreadyVoted = errors.New("already cast this vote")
+)
+
 // NewSYN300Token initialises a SYN300 token with an optional map of starting balances.
 func NewSYN300Token(initial map[string]uint64) *SYN300Token {
 	cpy := make(map[string]uint64, len(initial))
@@ -40,22 +54,32 @@ func NewSYN300Token(initial map[string]uint64) *SYN300Token {
 	}
 }
 
-// Delegate assigns the owner's voting power to another address.
-func (t *SYN300Token) Delegate(owner, delegate string) {
+// Delegate assigns the owner's voting power to another address. Returns an error
+// if the delegation is invalid (such as delegating to self).
+func (t *SYN300Token) Delegate(owner, delegate string) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
+	if owner == delegate {
+		return ErrSelfDelegation
+	}
 	if delegate == "" {
 		delete(t.delegations, owner)
 	} else {
 		t.delegations[owner] = delegate
 	}
+	return nil
 }
 
-// RevokeDelegation removes an existing delegation for the owner.
-func (t *SYN300Token) RevokeDelegation(owner string) {
+// RevokeDelegation removes an existing delegation for the owner. Returns an
+// error if no delegation exists.
+func (t *SYN300Token) RevokeDelegation(owner string) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
+	if _, ok := t.delegations[owner]; !ok {
+		return ErrNoDelegation
+	}
 	delete(t.delegations, owner)
+	return nil
 }
 
 // VotingPower returns the voting power of the specified address including delegated tokens.
@@ -76,9 +100,16 @@ func (t *SYN300Token) votingPowerLocked(addr string) uint64 {
 }
 
 // CreateProposal registers a new governance proposal and returns its ID.
-func (t *SYN300Token) CreateProposal(creator, description string) uint64 {
+// The creator must have voting power and the description must be non-empty.
+func (t *SYN300Token) CreateProposal(creator, description string) (uint64, error) {
 	t.mu.Lock()
 	defer t.mu.Unlock()
+	if strings.TrimSpace(description) == "" {
+		return 0, ErrEmptyDescription
+	}
+	if t.votingPowerLocked(creator) == 0 {
+		return 0, ErrNoVotingPower
+	}
 	id := t.nextPropID
 	t.nextPropID++
 	t.proposals[id] = &GovernanceProposal{
@@ -89,7 +120,7 @@ func (t *SYN300Token) CreateProposal(creator, description string) uint64 {
 		Rejections:  make(map[string]bool),
 		CreatedAt:   time.Now(),
 	}
-	return id
+	return id, nil
 }
 
 // Vote records a vote on a proposal from a given address.
@@ -103,10 +134,19 @@ func (t *SYN300Token) Vote(id uint64, voter string, approve bool) error {
 	if p.Executed {
 		return errors.New("proposal already executed")
 	}
+	if t.votingPowerLocked(voter) == 0 {
+		return ErrNoVotingPower
+	}
 	if approve {
+		if p.Approvals[voter] {
+			return ErrAlreadyVoted
+		}
 		p.Approvals[voter] = true
 		delete(p.Rejections, voter)
 	} else {
+		if p.Rejections[voter] {
+			return ErrAlreadyVoted
+		}
 		p.Rejections[voter] = true
 		delete(p.Approvals, voter)
 	}

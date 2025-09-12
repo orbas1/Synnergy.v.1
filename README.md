@@ -33,6 +33,12 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Kademlia DHT tools** – CLI support for storing, retrieving and computing XOR distance between keys with gas-aware execution.
 - **Controlled proof-of-work** – mining nodes expose a `MineUntil` helper and `synnergy mining mine-until` command so hashing stops when a context is cancelled, a prefix target is reached, or a timeout fires.
 - **Opcode-aware contracts** – sample Solidity bridges, liquidity, multisig, oracle and token contracts invoke SNVM opcodes with deterministic gas costs.
+- **On-chain governance token** – the SYN300 module supports delegated voting, proposal lifecycle management and CLI tooling with documented gas and opcode mappings.
+- **Regulatory node logging** – `synnergy regnode approve` surfaces rejection reasons and address logs for auditability.
+- **Wallet-signed approvals** – regulatory nodes verify transactions against registered wallet public keys, and the CLI can load and sign with a wallet file before submitting for approval.
+- **Web regulatory console** – the `web/pages/regnode.js` interface exposes approval, flagging and log retrieval through a browser UI.
+- **Strict flagging** – regulatory flags require explicit non-empty reasons for improved audit integrity.
+- **Regulator-optional consensus** – if no regulatory node is configured, sub-block validation bypasses compliance checks so transactions continue to flow.
 - **Role-based security** – biometric authentication and security node CLI (`core.NewBiometricService`, `synnergy bioauth`, `synnergy bsn`), zero‑trust data channels and PKI tooling. Authority node voting, base-node peering and biometric flows all require Ed25519 signatures for verifiable governance.
 - **Institutional banking** – bank nodes require Ed25519-signed requests to register or remove participating institutions.
 - **Bank node index** – track banking nodes via a thread-safe index exposed through `bank_index` CLI commands.

@@ -55,7 +55,9 @@ func init() {
 			if syn300 == nil {
 				return errors.New("token not initialised")
 			}
-			syn300.Delegate(args[0], args[1])
+			if err := syn300.Delegate(args[0], args[1]); err != nil {
+				return err
+			}
 			fmt.Println("delegated")
 			return nil
 		},
@@ -70,7 +72,9 @@ func init() {
 			if syn300 == nil {
 				return errors.New("token not initialised")
 			}
-			syn300.RevokeDelegation(args[0])
+			if err := syn300.RevokeDelegation(args[0]); err != nil {
+				return err
+			}
 			fmt.Println("revoked")
 			return nil
 		},
@@ -99,7 +103,10 @@ func init() {
 			if syn300 == nil {
 				return errors.New("token not initialised")
 			}
-			id := syn300.CreateProposal(args[0], args[1])
+			id, err := syn300.CreateProposal(args[0], args[1])
+			if err != nil {
+				return err
+			}
 			fmt.Printf("proposal %d created\n", id)
 			return nil
 		},
