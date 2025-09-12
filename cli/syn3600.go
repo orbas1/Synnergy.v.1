@@ -75,7 +75,10 @@ func init() {
 			if err != nil {
 				return fmt.Errorf("invalid price")
 			}
-			pnl := contract.Settle(price)
+			pnl, err := contract.Settle(price)
+			if err != nil {
+				return err
+			}
 			cmd.Printf("pnl %d\n", pnl)
 			return nil
 		},

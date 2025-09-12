@@ -61,3 +61,20 @@ func (a *AccessController) List(addr string) []string {
 	}
 	return out
 }
+
+// Audit snapshots all address-role assignments for inspection without
+// mutating internal state. The returned map is a copy and safe for
+// concurrent use by callers.
+func (a *AccessController) Audit() map[string][]string {
+        a.mu.RLock()
+        defer a.mu.RUnlock()
+        snapshot := make(map[string][]string, len(a.roles))
+        for addr, roles := range a.roles {
+                list := make([]string, 0, len(roles))
+                for r := range roles {
+                        list = append(list, r)
+                }
+                snapshot[addr] = list
+        }
+        return snapshot
+}

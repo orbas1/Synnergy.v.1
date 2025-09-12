@@ -2,6 +2,7 @@
 | Function | Gas Cost |
 |---|---|
 | `Accrue` | `1` |
+| `Access_Audit` | `2` |
 | `Acquire` | `1` |
 | `Active` | `1` |
 | `AddBlock` | `1` |
@@ -851,6 +852,7 @@
 | `RegulatorRemove` | `1` |
 | `RegulatorList` | `1` |
 | `RegulatorEvaluate` | `2` |
+| `RegNodeAudit` | `3` |
 | `RegNodeApprove` | `2` |
 | `RegNodeFlag` | `1` |
 | `RegNodeLogs` | `1` |

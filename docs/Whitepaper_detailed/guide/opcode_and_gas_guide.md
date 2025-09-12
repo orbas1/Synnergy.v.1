@@ -14,6 +14,8 @@ Stage 28 validates that storage marketplace and analytics dashboard operations l
 Stage 43 adds pricing for DAO membership operations so governance tooling can anticipate the cost of adding or removing members via the `dao-members` CLI.
 Stage 65 introduces gas costs and opcodes for DAO token ledger operations so member-gated minting, burning and transfers remain predictable, and records authority term renewals.
 Stage 67 registers Kademlia distance and lookup operations so DHT queries surface deterministic fees across the CLI and VM.
+Stage 73 introduces an audit opcode for regulatory nodes, enabling deterministic gas charges when verifying flagged addresses via CLI or web consoles.
+Stage 74 extends auditing to access control with an `Access_Audit` opcode that snapshots role assignments for administrative tooling.
 
 ## Opcode Structure
 

@@ -67,17 +67,33 @@ func init() {
 		},
 	}
 
-	logsCmd := &cobra.Command{
-		Use:   "logs [addr]",
-		Args:  cobra.ExactArgs(1),
-		Short: "Show logs for an address",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			gasPrint("RegNodeLogs")
-			printOutput(regNode.Logs(args[0]))
-			return nil
-		},
-	}
+        logsCmd := &cobra.Command{
+                Use:   "logs [addr]",
+                Args:  cobra.ExactArgs(1),
+                Short: "Show logs for an address",
+                RunE: func(cmd *cobra.Command, args []string) error {
+                        gasPrint("RegNodeLogs")
+                        printOutput(regNode.Logs(args[0]))
+                        return nil
+                },
+        }
 
-	cmd.AddCommand(approveCmd, flagCmd, logsCmd)
+        auditCmd := &cobra.Command{
+                Use:   "audit [addr]",
+                Args:  cobra.ExactArgs(1),
+                Short: "Audit an address for regulatory flags",
+                RunE: func(cmd *cobra.Command, args []string) error {
+                        gasPrint("RegNodeAudit")
+                        logs, flagged := regNode.Audit(args[0])
+                        if !flagged {
+                                printOutput(map[string]string{"status": "clean"})
+                                return nil
+                        }
+                        printOutput(map[string]any{"status": "flagged", "logs": logs})
+                        return nil
+                },
+        }
+
+        cmd.AddCommand(approveCmd, flagCmd, logsCmd, auditCmd)
 	rootCmd.AddCommand(cmd)
 }

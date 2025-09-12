@@ -9,6 +9,7 @@ and warfare nodes as well as UI integrations.
 | Function | Opcode |
 |---|---|
 | `Accrue` | `0x100001` |
+| `Access_Audit` | `0x0002A5` |
 | `Acquire` | `0x100002` |
 | `Active` | `0x100003` |
 | `Add` | `0x100004` |
@@ -709,3 +710,4 @@ and warfare nodes as well as UI integrations.
 | `RegulatorRemove` | `0x0002A1` |
 | `RegulatorList` | `0x0002A2` |
 | `RegulatorEvaluate` | `0x0002A3` |
+| `RegNodeAudit` | `0x0002A4` |

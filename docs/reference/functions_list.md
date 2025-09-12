@@ -333,7 +333,12 @@ This catalogue lists exported functions across the repository for quick navigati
 | `cli/transaction.go` | `23` | `func init() {` |
 | `core/syn3600.go` | `15` | `func NewFuturesContract(underlying string, quantity, price uint64, expiration time.Time) *FuturesContract {` |
 | `core/syn3600.go` | `20` | `func (f *FuturesContract) IsExpired(now time.Time) bool {` |
-| `core/syn3600.go` | `25` | `func (f *FuturesContract) Settle(marketPrice uint64) int64 {` |
+| `core/syn3600.go` | `37` | `func (f *FuturesContract) Settle(marketPrice uint64) (int64, error) {` |
+| `core/syn3700_token.go` | `23` | `func NewSYN3700Token(name, symbol string) *SYN3700Token {` |
+| `core/syn3700_token.go` | `32` | `func (t *SYN3700Token) AddComponent(token string, weight float64) {` |
+| `core/syn3700_token.go` | `39` | `func (t *SYN3700Token) RemoveComponent(token string) error {` |
+| `core/syn3700_token.go` | `50` | `func (t *SYN3700Token) ListComponents() []Component {` |
+| `core/syn3700_token.go` | `61` | `func (t *SYN3700Token) Value(prices map[string]float64) float64 {` |
 | `ai_model_management.go` | `27` | `func NewModelMarketplace() *ModelMarketplace {` |
 | `ai_model_management.go` | `32` | `func (m *ModelMarketplace) AddListing(hash, cid, seller string, price uint64) string {` |
 | `ai_model_management.go` | `49` | `func (m *ModelMarketplace) Get(id string) (ModelListing, bool) {` |
@@ -854,6 +859,7 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/access_control.go` | `27` | `func (a *AccessController) Revoke(role, addr string) {` |
 | `core/access_control.go` | `39` | `func (a *AccessController) HasRole(role, addr string) bool {` |
 | `core/access_control.go` | `51` | `func (a *AccessController) List(addr string) []string {` |
+| `core/access_control.go` | `68` | `func (a *AccessController) Audit() map[string][]string {` |
 | `core/dao_token_test.go` | `5` | `func TestDAOTokenLedger(t *testing.T) {` |
 | `core/dao_quadratic_voting_test.go` | `5` | `func TestQuadraticWeight(t *testing.T) {` |
 | `core/dao_quadratic_voting_test.go` | `11` | `func TestCastQuadraticVoteZeroTokens(t *testing.T) {` |
