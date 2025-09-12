@@ -34,6 +34,10 @@ type SynnergyConsensus struct {
 	PoSAvailable bool
 	PoHAvailable bool
 	PoWRewards   bool
+
+	// RegNode performs regulatory checks on transactions during
+	// consensus validation. When nil, regulatory checks are bypassed.
+	RegNode *RegulatoryNode
 }
 
 // NewSynnergyConsensus returns a new consensus engine with default parameters
@@ -51,6 +55,12 @@ func NewSynnergyConsensus() *SynnergyConsensus {
 		PoHAvailable: true,
 		PoWRewards:   true,
 	}
+}
+
+// SetRegulatoryNode attaches a regulatory node so that sub-block validation
+// includes regulatory transaction checks.
+func (sc *SynnergyConsensus) SetRegulatoryNode(rn *RegulatoryNode) {
+	sc.RegNode = rn
 }
 
 // Threshold computes the switching threshold based on network demand (D) and
@@ -192,7 +202,20 @@ func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {
 	if sb == nil {
 		return false
 	}
-	return sb.Validate() == nil
+	if err := sb.Validate(); err != nil {
+		return false
+	}
+	if sc.RegNode == nil {
+		// No regulatory node configured; bypass compliance checks.
+		return true
+	}
+	for _, tx := range sb.Transactions {
+		if err := sc.RegNode.ApproveTransaction(*tx); err != nil {
+			ilog.Info("regulatory_reject", "tx", tx.ID, "err", err)
+			return false
+		}
+	}
+	return true
 }
 
 // MineBlock performs a simple SHA-256 proof-of-work using the provided

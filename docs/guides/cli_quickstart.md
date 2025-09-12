@@ -36,7 +36,9 @@ The root command provides options that apply to every sub-command:
 
 ## Regulatory Operations
 - `synnergy regulator add <id> <jurisdiction> <description> <max>` – register a transaction rule
-- `synnergy regnode approve <from> <amount>` – validate a transaction against regulations
+- `synnergy regnode approve <from> <amount> --wallet <file> --password <pw>` – sign with a wallet and validate a transaction against regulations
+- `synnergy regnode logs <addr>` – view recorded flags for an address
+- `synnergy regnode flag <addr> <reason>` – manually flag an address for review (reason required)
 
 ## Replication
 - `synnergy replication start --json` – launch the replication subsystem

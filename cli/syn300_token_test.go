@@ -30,3 +30,16 @@ func TestSyn300InitMissingBalances(t *testing.T) {
 		t.Fatalf("expected error for missing balances")
 	}
 }
+
+func TestSyn300ProposeValidation(t *testing.T) {
+	syn300 = nil
+	if err := run300("syn300", "init", "--balances", "alice=100"); err != nil {
+		t.Fatalf("init failed: %v", err)
+	}
+	if err := run300("syn300", "propose", "bob", "change"); err == nil {
+		t.Fatalf("expected error for proposer without voting power")
+	}
+	if err := run300("syn300", "propose", "alice", ""); err == nil {
+		t.Fatalf("expected error for empty description")
+	}
+}

@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -26,14 +27,31 @@ func init() {
 				return err
 			}
 			tx := core.Transaction{From: args[0], Amount: amt}
-			if regNode.ApproveTransaction(tx) {
-				printOutput(map[string]string{"status": "approved"})
-			} else {
-				printOutput(map[string]any{"status": "rejected", "logs": regNode.Logs(args[0])})
+			walletPath, _ := cmd.Flags().GetString("wallet")
+			password, _ := cmd.Flags().GetString("password")
+			if walletPath != "" {
+				w, err := core.LoadWallet(walletPath, password)
+				if err != nil {
+					return err
+				}
+				if w.Address != args[0] {
+					return errors.New("wallet address mismatch")
+				}
+				regNode.RegisterWallet(w)
+				if _, err := w.Sign(&tx); err != nil {
+					return err
+				}
 			}
+			if err := regNode.ApproveTransaction(tx); err != nil {
+				printOutput(map[string]any{"status": "rejected", "reason": err.Error(), "logs": regNode.Logs(args[0])})
+				return nil
+			}
+			printOutput(map[string]string{"status": "approved"})
 			return nil
 		},
 	}
+	approveCmd.Flags().String("wallet", "", "wallet file for signing")
+	approveCmd.Flags().String("password", "", "wallet password")
 
 	flagCmd := &cobra.Command{
 		Use:   "flag [addr] [reason]",
@@ -41,7 +59,9 @@ func init() {
 		Short: "Flag an address for a reason",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("RegNodeFlag")
-			regNode.FlagEntity(args[0], args[1])
+			if err := regNode.FlagEntity(args[0], args[1]); err != nil {
+				return err
+			}
 			printOutput(map[string]any{"status": "flagged", "address": args[0]})
 			return nil
 		},

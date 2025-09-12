@@ -232,16 +232,16 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/cross_chain_contracts.go` | `42` | `func (r *CrossChainRegistry) ListMappings() []*ContractMapping {` |
 | `core/cross_chain_contracts.go` | `53` | `func (r *CrossChainRegistry) RemoveMapping(local string) error {` |
 | `cli/fees.go` | `11` | `func init() {` |
-| `core/syn300_token.go` | `30` | `func NewSYN300Token(initial map[string]uint64) *SYN300Token {` |
-| `core/syn300_token.go` | `44` | `func (t *SYN300Token) Delegate(owner, delegate string) {` |
-| `core/syn300_token.go` | `55` | `func (t *SYN300Token) RevokeDelegation(owner string) {` |
-| `core/syn300_token.go` | `62` | `func (t *SYN300Token) VotingPower(addr string) uint64 {` |
-| `core/syn300_token.go` | `68` | `func (t *SYN300Token) votingPowerLocked(addr string) uint64 {` |
-| `core/syn300_token.go` | `79` | `func (t *SYN300Token) CreateProposal(creator, description string) uint64 {` |
-| `core/syn300_token.go` | `96` | `func (t *SYN300Token) Vote(id uint64, voter string, approve bool) error {` |
-| `core/syn300_token.go` | `117` | `func (t *SYN300Token) Execute(id uint64, quorum uint64) error {` |
-| `core/syn300_token.go` | `139` | `func (t *SYN300Token) ProposalStatus(id uint64) (*GovernanceProposal, error) {` |
-| `core/syn300_token.go` | `160` | `func (t *SYN300Token) ListProposals() []*GovernanceProposal {` |
+| `core/syn300_token.go` | `44` | `func NewSYN300Token(initial map[string]uint64) *SYN300Token {` |
+| `core/syn300_token.go` | `59` | `func (t *SYN300Token) Delegate(owner, delegate string) error {` |
+| `core/syn300_token.go` | `75` | `func (t *SYN300Token) RevokeDelegation(owner string) error {` |
+| `core/syn300_token.go` | `86` | `func (t *SYN300Token) VotingPower(addr string) uint64 {` |
+| `core/syn300_token.go` | `92` | `func (t *SYN300Token) votingPowerLocked(addr string) uint64 {` |
+| `core/syn300_token.go` | `104` | `func (t *SYN300Token) CreateProposal(creator, description string) (uint64, error) {` |
+| `core/syn300_token.go` | `127` | `func (t *SYN300Token) Vote(id uint64, voter string, approve bool) error {` |
+| `core/syn300_token.go` | `157` | `func (t *SYN300Token) Execute(id uint64, quorum uint64) error {` |
+| `core/syn300_token.go` | `179` | `func (t *SYN300Token) ProposalStatus(id uint64) (*GovernanceProposal, error) {` |
+| `core/syn300_token.go` | `200` | `func (t *SYN300Token) ListProposals() []*GovernanceProposal {` |
 | `cli/snvm.go` | `13` | `func init() {` |
 | `Tokens/syn200.go` | `39` | `func NewCarbonRegistry() *CarbonRegistry {` |
 | `Tokens/syn200.go` | `44` | `func (r *CarbonRegistry) Register(owner, name string, total uint64) *CarbonProject {` |
@@ -674,20 +674,21 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/peer_management.go` | `25` | `func (pm *PeerManager) RemovePeer(id string) {` |
 | `core/peer_management.go` | `32` | `func (pm *PeerManager) GetPeer(id string) (string, bool) {` |
 | `core/peer_management.go` | `40` | `func (pm *PeerManager) ListPeers() []string {` |
-| `core/consensus.go` | `38` | `func NewSynnergyConsensus() *SynnergyConsensus {` |
-| `core/consensus.go` | `55` | `func (sc *SynnergyConsensus) Threshold(D, S float64) float64 {` |
-| `core/consensus.go` | `63` | `func (sc *SynnergyConsensus) AdjustWeights(D, S float64) {` |
-| `core/consensus.go` | `89` | `func (sc *SynnergyConsensus) Tload(D float64) float64 {` |
-| `core/consensus.go` | `97` | `func (sc *SynnergyConsensus) Tsecurity(threat float64) float64 {` |
-| `core/consensus.go` | `105` | `func (sc *SynnergyConsensus) Tstake(S float64) float64 {` |
-| `core/consensus.go` | `114` | `func (sc *SynnergyConsensus) TransitionThreshold(D, threat, S float64) float64 {` |
-| `core/consensus.go` | `120` | `func (sc *SynnergyConsensus) DifficultyAdjust(oldDifficulty, actualTime, expectedTime float64) float64 {` |
-| `core/consensus.go` | `128` | `func (sc *SynnergyConsensus) SetAvailability(pow, pos, poh bool) {` |
-| `core/consensus.go` | `135` | `func (sc *SynnergyConsensus) SetPoWRewards(enabled bool) {` |
-| `core/consensus.go` | `141` | `func (sc *SynnergyConsensus) SelectValidator(stakes map[string]uint64) string {` |
-| `core/consensus.go` | `162` | `func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {` |
-| `core/consensus.go` | `169` | `func (sc *SynnergyConsensus) MineBlock(b *Block, difficulty uint8) {` |
-| `core/consensus.go` | `184` | `func clamp(v, min, max float64) float64 {` |
+| `core/consensus.go` | `45` | `func NewSynnergyConsensus() *SynnergyConsensus {` |
+| `core/consensus.go` | `62` | `func (sc *SynnergyConsensus) SetRegulatoryNode(rn *RegulatoryNode) {` |
+| `core/consensus.go` | `68` | `func (sc *SynnergyConsensus) Threshold(D, S float64) float64 {` |
+| `core/consensus.go` | `76` | `func (sc *SynnergyConsensus) AdjustWeights(D, S float64) {` |
+| `core/consensus.go` | `109` | `func (sc *SynnergyConsensus) Tload(D float64) float64 {` |
+| `core/consensus.go` | `117` | `func (sc *SynnergyConsensus) Tsecurity(threat float64) float64 {` |
+| `core/consensus.go` | `125` | `func (sc *SynnergyConsensus) Tstake(S float64) float64 {` |
+| `core/consensus.go` | `134` | `func (sc *SynnergyConsensus) TransitionThreshold(D, threat, S float64) float64 {` |
+| `core/consensus.go` | `140` | `func (sc *SynnergyConsensus) DifficultyAdjust(oldDifficulty, actualTime, expectedTime float64) float64 {` |
+| `core/consensus.go` | `148` | `func (sc *SynnergyConsensus) SetAvailability(pow, pos, poh bool) {` |
+| `core/consensus.go` | `156` | `func (sc *SynnergyConsensus) SetPoWRewards(enabled bool) {` |
+| `core/consensus.go` | `165` | `func (sc *SynnergyConsensus) SelectValidator(seed string, stakes map[string]uint64) string {` |
+| `core/consensus.go` | `201` | `func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {` |
+| `core/consensus.go` | `222` | `func (sc *SynnergyConsensus) MineBlock(b *Block, difficulty uint8) {` |
+| `core/consensus.go` | `276` | `func clamp(v, min, max float64) float64 {` |
 | `core/contracts_test.go` | `5` | `func TestContractRegistry(t *testing.T) {` |
 | `core/warfare_node_test.go` | `8` | `func TestWarfareNode(t *testing.T) {` |
 | `core/gas_table.go` | `20` | `func DefaultGasTable() GasTable {` |
@@ -995,9 +996,10 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/syn2100.go` | `78` | `func (t *TradeFinanceToken) AddLiquidity(addr string, amt uint64) {` |
 | `core/syn2100.go` | `83` | `func (t *TradeFinanceToken) RemoveLiquidity(addr string, amt uint64) error {` |
 | `core/regulatory_node.go` | `14` | `func NewRegulatoryNode(id string, mgr *RegulatoryManager) *RegulatoryNode {` |
-| `core/regulatory_node.go` | `23` | `func (n *RegulatoryNode) ApproveTransaction(tx Transaction) bool {` |
-| `core/regulatory_node.go` | `29` | `func (n *RegulatoryNode) FlagEntity(addr, reason string) {` |
-| `core/regulatory_node.go` | `36` | `func (n *RegulatoryNode) Logs(addr string) []string {` |
+| `core/regulatory_node.go` | `30` | `func (n *RegulatoryNode) ApproveTransaction(tx Transaction) error {` |
+| `core/regulatory_node.go` | `51` | `func (n *RegulatoryNode) FlagEntity(addr, reason string) error {` |
+| `core/regulatory_node.go` | `62` | `func (n *RegulatoryNode) Logs(addr string) []string {` |
+| `core/regulatory_node.go` | `72` | `func (n *RegulatoryNode) ClearLogs(addr string) {` |
 | `core/genesis_wallets.go` | `22` | `func hashAddress(label string) string {` |
 | `core/genesis_wallets.go` | `28` | `func DefaultGenesisWallets() GenesisWallets {` |
 | `core/genesis_wallets.go` | `44` | `func AllocateToGenesisWallets(total uint64, wallets GenesisWallets) map[string]uint64 {` |

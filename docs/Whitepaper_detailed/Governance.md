@@ -11,7 +11,7 @@ Blackridge Group Ltd. designs Synnergy Network governance as a layered system th
 
 ## Governance Tokens
 ### SYN300 – Proposal and Voting Engine
-The SYN300 governance token exposes delegation, proposal management and quorum‑based execution. Holders may delegate or revoke voting rights, query effective voting power, register proposals and cast approvals or rejections. Proposals can be inspected or listed for external review, and finalisation is gated behind explicit quorum checks that aggregate delegated balances, ensuring accountable decision making【F:core/syn300_token.go†L43-L134】.
+The SYN300 governance token exposes delegation, proposal management and quorum‑based execution. Holders may delegate or revoke voting rights, query effective voting power, register proposals and cast approvals or rejections. Proposals can be inspected or listed for external review, and finalisation is gated behind explicit quorum checks that aggregate delegated balances, ensuring accountable decision making. The module rejects empty descriptions, self‑delegation and duplicate votes to keep governance auditable【F:core/syn300_token.go†L43-L176】.
 
 ### SYN3600 – Weight Ledger
 SYN3600 maintains a lightweight ledger of voting weights. Administrators assign and query address weights, enabling bespoke governance models such as council memberships or tiered franchises and providing a primitive for off‑chain registries to synchronise with on‑chain voting weight【F:internal/tokens/syn3600.go†L5-L27】.

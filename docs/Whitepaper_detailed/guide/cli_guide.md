@@ -11211,7 +11211,8 @@ Regulatory node operations
 
 ## synnergy regnode approve
 
-Approve or reject a transaction
+Approve or reject a transaction. If a wallet file is provided the transaction is
+signed before verification.
 
 ```
 synnergy regnode approve [from] [amount] [flags]
@@ -11220,7 +11221,9 @@ synnergy regnode approve [from] [amount] [flags]
 ### Options
 
 ```
-  -h, --help   help for approve
+      --wallet string     wallet file for signing
+      --password string   wallet password
+  -h, --help              help for approve
 ```
 
 ### Options inherited from parent commands
@@ -11236,7 +11239,7 @@ synnergy regnode approve [from] [amount] [flags]
 
 ## synnergy regnode flag
 
-Flag an address for a reason
+Flag an address for a reason; the reason must be non-empty
 
 ```
 synnergy regnode flag [addr] [reason] [flags]
