@@ -1,6 +1,6 @@
 # Banking Integration on the Synnergy Network
 
-The Synnergy Network, engineered and maintained by **Blackridge Group Ltd.**, is designed to meet the rigorous demands of modern financial institutions. This section outlines how banks can leverage Synnergy’s infrastructure to deliver secure digital asset services, comply with global regulations, and interoperate with both legacy and emerging financial systems.
+The Synnergy Network, engineered and maintained by **Neto Solaris**, is designed to meet the rigorous demands of modern financial institutions. This section outlines how banks can leverage Synnergy’s infrastructure to deliver secure digital asset services, comply with global regulations, and interoperate with both legacy and emerging financial systems.
 
 ## Strategic Value Proposition
 
@@ -66,7 +66,7 @@ The network’s contract management capabilities empower banks to digitise compl
 
 ## AI‑Driven Risk and Analytics
 
-Blackridge Group Ltd. integrates advanced machine‑learning modules to enhance risk management:
+Neto Solaris integrates advanced machine‑learning modules to enhance risk management:
 
 - **Anomaly Detection** – The `anomaly_detection` service flags unusual transaction patterns, supporting fraud prevention and AML efforts.
 - **Financial Prediction** – Predictive models assist treasury desks in liquidity planning and hedging strategies.
@@ -108,5 +108,5 @@ Synnergy’s architecture supports enterprise-grade resilience and throughput:
 
 ## Conclusion
 
-By adopting the Synnergy Network, banks gain a secure, compliant, and future‑proof foundation for digital finance. Blackridge Group Ltd. provides the tooling, governance frameworks, and ongoing support necessary for institutions to embrace blockchain technology with confidence.
+By adopting the Synnergy Network, banks gain a secure, compliant, and future‑proof foundation for digital finance. Neto Solaris provides the tooling, governance frameworks, and ongoing support necessary for institutions to embrace blockchain technology with confidence.
 

@@ -1,6 +1,6 @@
 # How to Use the CLI
 
-The Synnergy command-line interface (CLI) is the primary gateway for interacting with the Synnergy blockchain. Developed and maintained by **Blackridge Group Ltd.**, the `synnergy` binary enables administrators, validators, institutions, and developers to operate nodes, manage on-chain assets, and integrate with external systems. This guide provides an end‑to‑end overview of installation, command structure, and the most common operational workflows.
+The Synnergy command-line interface (CLI) is the primary gateway for interacting with the Synnergy blockchain. Developed and maintained by **Neto Solaris**, the `synnergy` binary enables administrators, validators, institutions, and developers to operate nodes, manage on-chain assets, and integrate with external systems. This guide provides an end‑to‑end overview of installation, command structure, and the most common operational workflows.
 
 ## 1. Installation
 ### 1.1 Build from Source
@@ -392,4 +392,4 @@ For enterprise deployments, pair CLI workflows with observability and policy con
 - **Disaster recovery** – export wallet files and configuration snapshots regularly to support node restoration.
 
 ---
-Blackridge Group Ltd. maintains the Synnergy CLI as an enterprise‑grade interface for blockchain administration. Continual testing and automation ensure the tool remains reliable for both manual operators and scripted workflows.
+Neto Solaris maintains the Synnergy CLI as an enterprise‑grade interface for blockchain administration. Continual testing and automation ensure the tool remains reliable for both manual operators and scripted workflows.

@@ -1,7 +1,7 @@
 # Connecting to Other Blockchains
 
 ## Overview
-Blackridge Group Ltd positions Synnergy as a network that can participate in the wider blockchain ecosystem.  Interoperability is achieved through modular components that register bridges, manage active connections, standardize protocol definitions and coordinate asset movements across chains.  These mechanisms allow Synnergy deployments to exchange value and state with external networks without sacrificing determinism or auditability.
+Neto Solaris positions Synnergy as a network that can participate in the wider blockchain ecosystem.  Interoperability is achieved through modular components that register bridges, manage active connections, standardize protocol definitions and coordinate asset movements across chains.  These mechanisms allow Synnergy deployments to exchange value and state with external networks without sacrificing determinism or auditability.
 
 ## Bridge Configuration and Relayer Governance
 At the heart of cross‑network connectivity is the bridge registry.  Each bridge entry records the source and target chains along with a whitelist of relayer addresses authorized to move messages or assets【F:cross_chain.go†L10-L16】【F:cross_chain.go†L18-L48】.  Relayer permissions are managed through explicit authorization and revocation calls so operators can enforce governance policies and rotate credentials as required【F:cross_chain.go†L70-L82】.
@@ -13,7 +13,7 @@ The `CrossChainManager` employs a read/write mutex to guarantee thread‑safe up
 ## Establishing and Managing Connections
 Bridges rely on durable connections between participating chains.  The connection manager issues a unique SHA‑256 based identifier for every link and tracks its lifecycle from open to close, including timestamps for auditing【F:cross_chain_connection.go†L10-L42】【F:cross_chain_connection.go†L45-L58】.  Administrators can query individual connections or enumerate all active links to monitor network topology【F:cross_chain_connection.go†L61-L77】.
 
-Each `ChainConnection` persists open and close times alongside a closure flag, enabling forensic reconstruction of link history【F:cross_chain_connection.go†L10-L18】.  Safeguards reject double‑close attempts, ensuring operators cannot inadvertently sever a connection twice【F:cross_chain_connection.go†L45-L58】【F:cross_chain_stage18_test.go†L63-L74】.  These controls allow Blackridge Group Ltd deployments to maintain deterministic state across multiple chains without orphaned sessions.
+Each `ChainConnection` persists open and close times alongside a closure flag, enabling forensic reconstruction of link history【F:cross_chain_connection.go†L10-L18】.  Safeguards reject double‑close attempts, ensuring operators cannot inadvertently sever a connection twice【F:cross_chain_connection.go†L45-L58】【F:cross_chain_stage18_test.go†L63-L74】.  These controls allow Neto Solaris deployments to maintain deterministic state across multiple chains without orphaned sessions.
 
 ## Protocol and Contract Interoperability
 To maintain compatibility with diverse ecosystems, Synnergy maintains registries for protocol standards and contract mappings:
@@ -35,7 +35,7 @@ In the core ledger‑aware implementation, deposits debit the sender's balance a
 To meet enterprise throughput requirements, benchmark suites stress‑test the transaction manager across lock‑and‑mint, burn‑and‑release and query operations【F:cross_chain_transactions_benchmark_test.go†L5-L40】.  These measurements guide capacity planning and ensure Synnergy bridges can sustain high volumes without degrading consistency.
 
 ## Security and Auditability
-Every connection and transfer is accompanied by immutable metadata.  Hash‑derived identifiers prevent collisions, relayer whitelists restrict message flow to vetted parties and proof‑based claims protect asset release.  Double‑spend and double‑close checks further harden the environment against operational mistakes or malicious retries【F:cross_chain_bridge.go†L53-L66】【F:cross_chain_connection.go†L45-L58】.  Together, these controls provide the transparent audit trail and governance model expected from a Blackridge Group Ltd platform.
+Every connection and transfer is accompanied by immutable metadata.  Hash‑derived identifiers prevent collisions, relayer whitelists restrict message flow to vetted parties and proof‑based claims protect asset release.  Double‑spend and double‑close checks further harden the environment against operational mistakes or malicious retries【F:cross_chain_bridge.go†L53-L66】【F:cross_chain_connection.go†L45-L58】.  Together, these controls provide the transparent audit trail and governance model expected from a Neto Solaris platform.
 
 ## Developer Interfaces
 Synnergy ships with a suite of Cobra‑based CLI modules to automate these operations:
@@ -48,5 +48,5 @@ Synnergy ships with a suite of Cobra‑based CLI modules to automate these opera
 All commands expose a `--json` flag for machine‑readable output and compute gas via the shared cost table, enabling integration with dashboards and automation pipelines.
 
 ## Conclusion
-By combining bridge management, protocol registries, contract mappings and transaction tracking, Synnergy delivers a comprehensive framework for connecting to other blockchains.  Blackridge Group Ltd continues to refine these components so enterprises can confidently extend their operations across heterogeneous networks while retaining the security and consistency that define the Synnergy platform.
+By combining bridge management, protocol registries, contract mappings and transaction tracking, Synnergy delivers a comprehensive framework for connecting to other blockchains.  Neto Solaris continues to refine these components so enterprises can confidently extend their operations across heterogeneous networks while retaining the security and consistency that define the Synnergy platform.
 

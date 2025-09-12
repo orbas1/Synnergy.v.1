@@ -1,7 +1,7 @@
 # Opcodes and Gas
 
 ## Overview
-At Blackridge Group Ltd., the Synnergy network executes every function through a deterministic opcode. Each opcode is a 24‑bit identifier that maps directly to a smart‑contract or system routine, allowing wallets and dashboards to reason about behaviour and cost before execution. Gas fees are priced centrally so that network actors share a consistent view of execution costs across releases.
+At Neto Solaris, the Synnergy network executes every function through a deterministic opcode. Each opcode is a 24‑bit identifier that maps directly to a smart‑contract or system routine, allowing wallets and dashboards to reason about behaviour and cost before execution. Gas fees are priced centrally so that network actors share a consistent view of execution costs across releases.
 
 ## Opcode Encoding
 Every instruction occupies three bytes. The high byte denotes the protocol category and the remaining two bytes form a sequential ordinal, yielding the canonical layout `0xCCNNNN`【F:core/opcode.go†L6-L8】. The dispatcher exposes helpers for converting these values to hexadecimal or raw bytecode and for validating inbound byte streams, ensuring tooling can safely serialise or parse opcodes【F:core/opcode.go†L1660-L1676】.
@@ -51,4 +51,4 @@ Extensive tests confirm that gas overrides and snapshots behave deterministicall
 For comprehensive listings of every opcode and its baseline cost, the repository maintains Markdown references under `docs/reference`. `opcodes_list.md` maps human‑readable function names to their canonical hex codes, while `gas_table_list.md` enumerates the default pricing schedule【F:docs/reference/opcodes_list.md†L1-L8】【F:docs/reference/gas_table_list.md†L1-L8】. A more narrative explanation of operational categories and pricing rationales lives in `docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md`, providing deep context for auditors and integrators【F:docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md†L1-L5】.
 
 ## Summary
-Through disciplined opcode cataloguing and transparent gas accounting, Blackridge Group Ltd. delivers predictable execution semantics across the Synnergy ecosystem. Deterministic pricing, runtime configurability and comprehensive tooling allow developers, operators and regulators to validate costs with confidence.
+Through disciplined opcode cataloguing and transparent gas accounting, Neto Solaris delivers predictable execution semantics across the Synnergy ecosystem. Deterministic pricing, runtime configurability and comprehensive tooling allow developers, operators and regulators to validate costs with confidence.

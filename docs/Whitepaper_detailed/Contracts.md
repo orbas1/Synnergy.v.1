@@ -1,7 +1,7 @@
 # Contracts
 
 ## Introduction
-Blackridge Group Ltd. designs the Synnergy Network to provide a deterministic and enterprise‑grade smart contract platform. This document details the contract framework, from compilation and deployment to management, security, and cross‑chain interoperability.
+Neto Solaris designs the Synnergy Network to provide a deterministic and enterprise‑grade smart contract platform. This document details the contract framework, from compilation and deployment to management, security, and cross‑chain interoperability.
 
 ## Contract Lifecycle
 ### Compilation
@@ -75,7 +75,7 @@ The command‑line interface enables lifecycle operations via `contracts compile
 
 ## Security and Governance
 - Deterministic addressing, per‑contract gas limits, and the ability to pause or upgrade contracts provide strong operational controls.
-- Opcode segregation and language whitelisting assist regulators and auditors in verifying contract behavior within Blackridge Group Ltd.’s compliance framework.
+- Opcode segregation and language whitelisting assist regulators and auditors in verifying contract behavior within Neto Solaris’s compliance framework.
 
 ## Conclusion
-Through a modular registry, rich opcode vocabulary, AI integrations, and cross‑chain mapping, the Synnergy Network delivers a comprehensive contract ecosystem aligned with Blackridge Group Ltd.’s mission to power secure, interoperable, and intelligent blockchain solutions.
+Through a modular registry, rich opcode vocabulary, AI integrations, and cross‑chain mapping, the Synnergy Network delivers a comprehensive contract ecosystem aligned with Neto Solaris’s mission to power secure, interoperable, and intelligent blockchain solutions.

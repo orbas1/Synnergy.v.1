@@ -1,6 +1,6 @@
 # Block and Sub-Blocks
 
-> *Blackridge Group Ltd – Synnergy Network Technical Whitepaper*
+> *Neto Solaris – Synnergy Network Technical Whitepaper*
 
 ## Overview
 Our blockchain architecture organizes activity into **sub-blocks** that are validated through Proof of Stake (PoS) and timestamped via Proof of History (PoH). These sub-blocks are then aggregated into full **blocks**, which are sealed using Proof of Work (PoW) to finalize state across the network.
@@ -36,8 +36,8 @@ The ledger maintains account balances, a UTXO view, and block history. `AddBlock
 A dedicated `SyncManager` coordinates block downloads and maintains synchronization status, allowing nodes to track whether they are up-to-date with the network【F:core/blockchain_synchronization.go†L1-L54】. The repository also includes a placeholder `block_integrity_check.sh` script, signalling ongoing efforts toward automated verification of stored block data【F:scripts/block_integrity_check.sh†L1-L17】.
 
 ## Security Considerations
-Sub-block signatures tie proposed data to validator identities, while slashing functions deter misbehavior and can rehabilitate validators after penalties have been served【F:core/node.go†L117-L138】. PoW sealing safeguards against retroactive manipulation, and persistent ledger plus synchronization tools provide a robust audit trail for Blackridge Group Ltd stakeholders.
+Sub-block signatures tie proposed data to validator identities, while slashing functions deter misbehavior and can rehabilitate validators after penalties have been served【F:core/node.go†L117-L138】. PoW sealing safeguards against retroactive manipulation, and persistent ledger plus synchronization tools provide a robust audit trail for Neto Solaris stakeholders.
 
 ## Conclusion
-By modularizing validation into sub-blocks and finalizing state through PoW, Blackridge Group Ltd's Synnergy Network delivers a layered security model that balances performance, auditability, and decentralization across its blockchain infrastructure.
+By modularizing validation into sub-blocks and finalizing state through PoW, Neto Solaris's Synnergy Network delivers a layered security model that balances performance, auditability, and decentralization across its blockchain infrastructure.
 

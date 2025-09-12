@@ -1,7 +1,7 @@
-# Blackridge Group Ltd. Strategic Roadmap
+# Neto Solaris Strategic Roadmap
 
 ## Overview
-The Synnergy Network is the flagship blockchain framework developed by **Blackridge Group Ltd.** to deliver modular, enterprise-grade distributed ledgers. This roadmap synthesizes functionality across the entire codebase—from Go runtime packages and specialized node utilities to TypeScript front-ends and infrastructure scripts—to chart a phased path toward global adoption.
+The Synnergy Network is the flagship blockchain framework developed by **Neto Solaris** to deliver modular, enterprise-grade distributed ledgers. This roadmap synthesizes functionality across the entire codebase—from Go runtime packages and specialized node utilities to TypeScript front-ends and infrastructure scripts—to chart a phased path toward global adoption.
 
 ## Phase 1 – Core Platform Maturation
 ### Objectives
@@ -158,7 +158,7 @@ The Synnergy Network is the flagship blockchain framework developed by **Blackri
 - Global rollout playbooks, multilingual documentation under `docs/Whitepaper_detailed` and `docs/ux/*`, and partner enablement programs.
 
 ## Future Outlook
-Beyond these phases, Blackridge Group Ltd. will focus on:
+Beyond these phases, Neto Solaris will focus on:
 - Advanced privacy features including zk-proofs, confidential transactions and secure multiparty computation.
 - Formal verification of smart contracts and consensus algorithms, with CI hooks for model checking.
 - Quantum-resistant cryptography and post-quantum signature schemes.
@@ -167,5 +167,5 @@ Beyond these phases, Blackridge Group Ltd. will focus on:
 - Expanded edge and mobile deployments with international certification and zero-downtime operations.
 
 ## Conclusion
-This roadmap reflects the commitment of **Blackridge Group Ltd.** to deliver a production-ready Synnergy Network. Each phase builds upon the last, ensuring that scalability, security and usability evolve in tandem. Stakeholders are encouraged to follow repository updates and participate in governance discussions as the project progresses.
+This roadmap reflects the commitment of **Neto Solaris** to deliver a production-ready Synnergy Network. Each phase builds upon the last, ensuring that scalability, security and usability evolve in tandem. Stakeholders are encouraged to follow repository updates and participate in governance discussions as the project progresses.
 

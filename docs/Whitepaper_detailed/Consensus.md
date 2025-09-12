@@ -1,7 +1,7 @@
 # Consensus
 
 ## Overview
-Blackridge Group Ltd. integrates a multi-algorithm consensus engine within the Synnergy Network to balance security, scalability, and decentralization. The platform combines Proof-of-Work (PoW), Proof-of-Stake (PoS), and Proof-of-History (PoH) to dynamically adapt to real‑time network conditions while retaining deterministic settlement and auditability.
+Neto Solaris integrates a multi-algorithm consensus engine within the Synnergy Network to balance security, scalability, and decentralization. The platform combines Proof-of-Work (PoW), Proof-of-Stake (PoS), and Proof-of-History (PoH) to dynamically adapt to real‑time network conditions while retaining deterministic settlement and auditability.
 
 ## Hybrid Consensus Engine
 SynnergyConsensus assigns proportional weights to PoW, PoS, and PoH. These weights are normalized and never drop below a minimum floor unless a mechanism is unavailable, allowing the chain to emphasize the most effective algorithm under varying demand and stake distributions【F:core/consensus.go†L11-L88】.
@@ -52,5 +52,5 @@ Availability flags let operators disable algorithms or pause PoW rewards to miti
 The sequential combination of signed sub-blocks and PoW finalization means an attacker must both forge a validator signature and outpace network hash power to rewrite history, significantly raising the cost of compromise【F:core/block.go†L19-L41】【F:core/consensus.go†L197-L214】.
 
 ## Conclusion
-By fusing three consensus algorithms with adaptive weighting, validator governance, and extensive tooling, Blackridge Group Ltd. delivers a resilient and configurable foundation for the Synnergy Network. The architecture accommodates evolving network dynamics while preserving auditable security guarantees.
+By fusing three consensus algorithms with adaptive weighting, validator governance, and extensive tooling, Neto Solaris delivers a resilient and configurable foundation for the Synnergy Network. The architecture accommodates evolving network dynamics while preserving auditable security guarantees.
 

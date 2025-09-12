@@ -1,7 +1,7 @@
 # Mathematical Algorithms
 
 ## Introduction
-As part of the Synnergy Network developed by **Blackridge Group Ltd.**, mathematical algorithms form the backbone of our secure, scalable, and intelligent blockchain ecosystem. This document details the core algorithms implemented throughout the codebase, highlighting how they underpin cryptographic security, consensus, analytics, and data privacy across the platform.
+As part of the Synnergy Network developed by **Neto Solaris**, mathematical algorithms form the backbone of our secure, scalable, and intelligent blockchain ecosystem. This document details the core algorithms implemented throughout the codebase, highlighting how they underpin cryptographic security, consensus, analytics, and data privacy across the platform.
 
 ## Cryptographic Foundations
 Robust cryptography ensures that every transaction and message on the Synnergy Network is verifiable and tamper resistant.
@@ -104,7 +104,7 @@ For bytecode of length \(L\), the VM calculates
 Execution halts if \(\text{gasUsed} > \text{gasLimit}\). Each opcode is extracted as \(b_0 \ll 16 \mid b_1 \ll 8 \mid b_2\) and dispatched to its registered handler, while a concurrency limiter bounds parallel executions according to the VM profile【F:virtual_machine.go†L121-L178】.
 
 ## Data Integrity and Privacy
-Ensuring confidentiality and authenticity of data flows is central to Blackridge's zero-trust philosophy.
+Ensuring confidentiality and authenticity of data flows is central to Neto Solaris's zero-trust philosophy.
 
 ### Zero-Trust Data Channels
 The `ZeroTrustEngine` orchestrates encrypted channels that pair symmetric AES encryption with Ed25519 signatures. Each message is sealed and signed, and verification occurs before decryption, providing defense-in-depth against interception and forgery【F:zero_trust_data_channels.go†L35-L102】.
@@ -225,7 +225,7 @@ Mobile miners incorporate power-aware logic, pausing work when battery reserves 
 where \(b\) is the current battery level and \(\tau\) is the minimum level required for mining.
 
 ## Identity and Access Management
-Blackridge Group Ltd. enforces strong identity controls with registries, audit logs, and role-based permissions.
+Neto Solaris enforces strong identity controls with registries, audit logs, and role-based permissions.
 
 ### ID Wallet Registration
 The `IDRegistry` maps wallet addresses to metadata and rejects duplicate entries, enabling constant-time lookups and registration checks【F:idwallet_registration.go†L8-L44】.
@@ -252,4 +252,4 @@ Biometric enrollment stores SHA-256 hashes of user templates alongside correspon
 3. Validate \( \mathrm{Verify}_{\text{ECDSA}}(pk, h, \sigma)\) for signature \(\sigma\).
 
 ## Conclusion
-The Synnergy Network’s strength derives from its rigorous mathematical underpinnings. By integrating vetted cryptographic primitives, adaptive consensus control, and intelligent analytics, **Blackridge Group Ltd.** delivers a blockchain platform that is secure, scalable, and ready for the future of decentralized applications.
+The Synnergy Network’s strength derives from its rigorous mathematical underpinnings. By integrating vetted cryptographic primitives, adaptive consensus control, and intelligent analytics, **Neto Solaris** delivers a blockchain platform that is secure, scalable, and ready for the future of decentralized applications.

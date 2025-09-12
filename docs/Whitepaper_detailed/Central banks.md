@@ -1,6 +1,6 @@
 # Central Banks
 
-*Prepared by **Blackridge Group Ltd.** as part of the Synnergy Network whitepaper.*
+*Prepared by **Neto Solaris** as part of the Synnergy Network whitepaper.*
 
 ## Strategic Role within the Synnergy Network
 Central banks act as sovereign monetary authorities on the Synnergy Network, enabling the issuance and management of central bank digital currencies (CBDCs) while preserving the integrity of the capped native SYN coin supply. Dedicated node roles coordinate with government and regulatory nodes and log policy decisions to the public ledger, providing transparent reporting to citizens and partners.
@@ -47,4 +47,4 @@ The `CrossChainTxManager` executes lock‑and‑mint and burn‑and‑release op
 Structured unit tests exercise the minting path, confirming that ledger balances remain immutable when CBDC units are created and that zero‑amount requests are rejected【F:core/central_banking_node_test.go†L9-L24】. Additional CLI tests verify subcommand output and error handling for automated deployments【F:cli/centralbank_test.go†L8-L19】.
 
 ## Conclusion
-By combining precise monetary controls with open‑source transparency, the Synnergy Network—engineered by **Blackridge Group Ltd.**—provides central banks a secure, extensible platform for CBDC innovation. The architecture ensures that sovereign authorities can evolve their digital currencies while maintaining the durability, auditability and interoperability required for national financial systems.
+By combining precise monetary controls with open‑source transparency, the Synnergy Network—engineered by **Neto Solaris**—provides central banks a secure, extensible platform for CBDC innovation. The architecture ensures that sovereign authorities can evolve their digital currencies while maintaining the durability, auditability and interoperability required for national financial systems.

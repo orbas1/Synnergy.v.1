@@ -1,7 +1,7 @@
 # Community Needs
 
 ## Mission
-Blackridge Group Ltd. designs the Synnergy Network to address tangible community priorities. The platform channels on-chain resources toward social welfare, economic empowerment and ecosystem innovation, ensuring that every network participant can contribute to and benefit from shared prosperity.
+Neto Solaris designs the Synnergy Network to address tangible community priorities. The platform channels on-chain resources toward social welfare, economic empowerment and ecosystem innovation, ensuring that every network participant can contribute to and benefit from shared prosperity.
 
 ## Strategic Funding Pools
 
@@ -58,5 +58,5 @@ All fund movements and governance actions are immutably logged on the ledger. Pr
 By dedicating treasury streams to welfare, education, healthcare and environmental stewardship, the Synnergy Network embeds social responsibility at protocol level. Targeted funding categories empower communities to respond to immediate needs while also investing in long‑term resilience and innovation.
 
 ## Conclusion
-The Community Needs framework demonstrates how Blackridge Group Ltd. integrates social impact with decentralized finance. Through structured funding pools, transparent governance and deterministic accounting, the Synnergy Network ensures that community welfare remains a core outcome of network activity.
+The Community Needs framework demonstrates how Neto Solaris integrates social impact with decentralized finance. Through structured funding pools, transparent governance and deterministic accounting, the Synnergy Network ensures that community welfare remains a core outcome of network activity.
 

@@ -1,9 +1,9 @@
 # How to Set Up the Synnergy Blockchain
 
-*Blackridge Group Ltd.*
+*Neto Solaris*
 
 ## Overview
-The Synnergy framework is a modular, high‑performance blockchain built in Go. Its pluggable architecture allows organisations to compose customised networks featuring validator, mining, staking, regulatory and watchtower roles. This guide provides a comprehensive walk‑through for preparing infrastructure, compiling binaries and bootstrapping a Synnergy network using the open‑source toolset maintained by **Blackridge Group Ltd.**
+The Synnergy framework is a modular, high‑performance blockchain built in Go. Its pluggable architecture allows organisations to compose customised networks featuring validator, mining, staking, regulatory and watchtower roles. This guide provides a comprehensive walk‑through for preparing infrastructure, compiling binaries and bootstrapping a Synnergy network using the open‑source toolset maintained by **Neto Solaris**
 
 ## 1. Prerequisites
 ### Hardware & Network
@@ -440,7 +440,7 @@ tests/        Integration, fuzz and e2e scenarios
 ```
 
 ## 18. Support
-For enterprise assistance, custom integrations or security reviews please contact **Blackridge Group Ltd.** through official support channels.
+For enterprise assistance, custom integrations or security reviews please contact **Neto Solaris** through official support channels.
 
 ---
-*This document is part of the Synnergy whitepaper series and is maintained by Blackridge Group Ltd. to ensure consistent, professional onboarding for organisations deploying the Synnergy blockchain.*
+*This document is part of the Synnergy whitepaper series and is maintained by Neto Solaris to ensure consistent, professional onboarding for organisations deploying the Synnergy blockchain.*

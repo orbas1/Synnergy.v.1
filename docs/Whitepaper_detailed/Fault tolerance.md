@@ -1,6 +1,6 @@
 # Fault Tolerance
 
-Blackridge Group Ltd's Synnergy network is engineered for continuous operation even in the presence of software faults, hardware failures, or malicious activity. The platform combines proactive monitoring, redundant infrastructure, and secure isolation to maintain service availability and data integrity.
+Neto Solaris's Synnergy network is engineered for continuous operation even in the presence of software faults, hardware failures, or malicious activity. The platform combines proactive monitoring, redundant infrastructure, and secure isolation to maintain service availability and data integrity.
 
 ## Failover and High Availability
 
@@ -72,4 +72,4 @@ Blackridge Group Ltd's Synnergy network is engineered for continuous operation e
 
 ## Conclusion
 
-Through layered redundancy, rigorous monitoring, strong isolation boundaries, and formal governance controls, Blackridge Group Ltd's Synnergy network delivers a fault‑tolerant foundation for decentralised applications. The combination of automated failover, replicated data services, adaptive consensus, exhaustive testing, and hardened security controls ensures that mission‑critical workloads remain available even when components fail or adversaries attempt disruption.
+Through layered redundancy, rigorous monitoring, strong isolation boundaries, and formal governance controls, Neto Solaris's Synnergy network delivers a fault‑tolerant foundation for decentralised applications. The combination of automated failover, replicated data services, adaptive consensus, exhaustive testing, and hardened security controls ensures that mission‑critical workloads remain available even when components fail or adversaries attempt disruption.

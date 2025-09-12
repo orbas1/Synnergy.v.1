@@ -1,6 +1,6 @@
 # Wallet
 
-Blackridge Group Ltd.’s Synnergy Network wallet is the primary interface for creating, securing and authorizing value on-chain. It combines hardened cryptography with flexible tooling so developers, institutions and end users can transact confidently across the ecosystem.
+Neto Solaris’s Synnergy Network wallet is the primary interface for creating, securing and authorizing value on-chain. It combines hardened cryptography with flexible tooling so developers, institutions and end users can transact confidently across the ecosystem.
 
 ## Cryptographic Foundation
 - **Key Generation:** Each wallet is built on an ECDSA key pair derived from the P-256 curve. The public key is hashed with SHA-256 and truncated to 20 bytes, yielding a 40-character hexadecimal address that uniquely identifies the account on-chain【F:core/wallet.go†L26-L41】.
@@ -56,4 +56,4 @@ Comprehensive tests validate wallet functionality at every layer. Core tests con
 - Register wallets with the identity registry when operating under compliance regimes.
 - Apply firewall rules to block sanctioned or suspicious addresses.
 
-By combining robust cryptography, layered security controls and a spectrum of automation tools, the Synnergy wallet empowers organizations to interact with the Blackridge Group Ltd. blockchain confidently while meeting stringent operational and regulatory requirements.
+By combining robust cryptography, layered security controls and a spectrum of automation tools, the Synnergy wallet empowers organizations to interact with the Neto Solaris blockchain confidently while meeting stringent operational and regulatory requirements.

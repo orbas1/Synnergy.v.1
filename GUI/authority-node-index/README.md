@@ -1,6 +1,6 @@
 # Authority Node Index GUI
 
-Enterprise-grade interface for managing and discovering authority nodes within the Synnergy network. Developed and maintained by **Blackridge Group Ltd.**, this module provides a TypeScript foundation with comprehensive tooling for linting, formatting, testing, and containerised deployment. The codebase targets Node.js 18 and ships as a lightweight container image for consistent execution across environments.
+Enterprise-grade interface for managing and discovering authority nodes within the Synnergy network. Developed and maintained by **Neto Solaris**, this module provides a TypeScript foundation with comprehensive tooling for linting, formatting, testing, and containerised deployment. The codebase targets Node.js 18 and ships as a lightweight container image for consistent execution across environments.
 
 ## Table of Contents
 - [Overview](#overview)
@@ -191,7 +191,7 @@ Contributions follow the guidelines in the repository root `CONTRIBUTING.md`. Pl
 Distributed under the MIT License. Refer to the root `LICENSE` file for full terms.
 
 ## Support
-For operational assistance or commercial support, contact Blackridge Group Ltd. through your usual support channel.
+For operational assistance or commercial support, contact Neto Solaris through your usual support channel.
 
 ---
-© 2024 Blackridge Group Ltd. All rights reserved.
+© 2024 Neto Solaris All rights reserved.

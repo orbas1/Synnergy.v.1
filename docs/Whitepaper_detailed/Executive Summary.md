@@ -1,9 +1,9 @@
 # Executive Summary
 
-*Prepared by Blackridge Group Ltd.*
+*Prepared by Neto Solaris*
 
 ## Vision
-Blackridge Group Ltd. delivers Synnergy, an enterprise blockchain framework engineered to bridge traditional finance with decentralised innovation. Our mission is to provide a secure, interoperable and intelligent infrastructure that enables organisations to deploy production‑ready distributed networks with confidence and agility.
+Neto Solaris delivers Synnergy, an enterprise blockchain framework engineered to bridge traditional finance with decentralised innovation. Our mission is to provide a secure, interoperable and intelligent infrastructure that enables organisations to deploy production‑ready distributed networks with confidence and agility.
 
 ## Platform Overview
 Synnergy is a modular, high‑performance blockchain written in Go. It offers pluggable node roles, AI‑assisted tooling and cross‑chain interoperability so ecosystems can prototype, pilot and operate on a single unified codebase. Beyond the core ledger, the repository ships dedicated modules for content distribution, environmental and geospatial monitoring, regulatory oversight and zero‑trust communication, allowing enterprises to tailor deployments to domain‑specific requirements.
@@ -72,5 +72,5 @@ Comprehensive tooling accelerates adoption:
 Synnergy follows a staged development roadmap encompassing over one hundred modules, tracked in the AGENTS index. Completed milestones span GUI dashboards, cross‑chain bridge tooling, data‑distribution services and compliance consoles, while forthcoming stages expand mining and staking managers, AI marketplaces, analytics suites and governance portals. The incremental approach ensures each component is hardened with documentation, tests and deployment scripts before graduation to production.
 
 ## Conclusion
-Blackridge Group Ltd.'s Synnergy Network combines adaptive consensus, intelligent services and rigorous security to deliver a next‑generation blockchain ecosystem. Through a cohesive suite of tools, specialised node roles and infrastructure automation, Synnergy empowers enterprises and communities to unlock new digital economies with confidence while maintaining auditability, sustainability and regulatory trust.
+Neto Solaris's Synnergy Network combines adaptive consensus, intelligent services and rigorous security to deliver a next‑generation blockchain ecosystem. Through a cohesive suite of tools, specialised node roles and infrastructure automation, Synnergy empowers enterprises and communities to unlock new digital economies with confidence while maintaining auditability, sustainability and regulatory trust.
 

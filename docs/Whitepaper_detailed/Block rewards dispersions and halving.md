@@ -1,6 +1,6 @@
 # Block Rewards Dispersions and Halving
 
-*Prepared by Blackridge Group Ltd.*
+*Prepared by Neto Solaris*
 
 ## 1. Emission Overview
 Synnergy Network's native currency, the Synthron coin (SYN), follows a capped issuance model. Key monetary constants are baked into the core protocol: a maximum supply of 500 million SYN, a 5 million SYN genesis allocation, an initial block reward of 1,252 SYN, and a halving interval of 200,000 blocks【F:core/coin.go†L6-L16】. With a three‑second target block time, each halving epoch spans roughly 6.9 days【F:configs/network.yaml†L12-L19】.
@@ -35,7 +35,7 @@ A_pow      = 0.40 * A_block  # PoW miners
 `A_pos` and `A_poh` are further subdivided in proportion to validator stake and time‑slot attendance, while rewards are subject to a cooldown period to discourage short‑term hopping【F:Synnergy_Network_Future_Of_Blockchan.md†L405-L417】. Treasuries and ecosystem funds are financed solely from transaction fees, ensuring block rewards remain an incentive for security.
 
 ### 3.1 Dynamic Weight Rebalancing
-Weights are not static. `AdjustWeights` recalibrates the distribution based on observed demand and stake concentration, clamping each mechanism between 7.5 % and 100 % before renormalising to unity【F:core/consensus.go†L61-L74】. This allows Blackridge operators to emphasise security primitives during periods of elevated load or threat.
+Weights are not static. `AdjustWeights` recalibrates the distribution based on observed demand and stake concentration, clamping each mechanism between 7.5 % and 100 % before renormalising to unity【F:core/consensus.go†L61-L74】. This allows Neto Solaris operators to emphasise security primitives during periods of elevated load or threat.
 
 ### 3.2 Runtime Reward Controls
 Operational teams may disable classes of validators or suspend PoW compensation without redeploying the network. `SetAvailability` toggles each consensus path, and `SetPoWRewards` halts payouts while leaving PoW participation for utility purposes【F:core/consensus.go†L130-L142】. The CLI exposes these levers via `synnergy consensus availability [pow] [pos] [poh]` and `synnergy consensus powrewards [enabled]`, the latter emitting audit logs when rewards are toggled【F:cli/consensus.go†L164-L176】.

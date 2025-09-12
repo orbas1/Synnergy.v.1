@@ -1,7 +1,7 @@
 # Blockchain Logic
 
 ## Overview
-Blackridge Group Ltd.'s Synnergy Network delivers a multi‑layered blockchain where transaction validation, state management, and cross‑chain orchestration operate in concert. The platform combines proof‑of‑history (PoH), proof‑of‑stake (PoS), and proof‑of‑work (PoW) to finalise blocks while a modular virtual machine executes programmable logic. This document details the core components that underpin ledger integrity and network determinism.
+Neto Solaris's Synnergy Network delivers a multi‑layered blockchain where transaction validation, state management, and cross‑chain orchestration operate in concert. The platform combines proof‑of‑history (PoH), proof‑of‑stake (PoS), and proof‑of‑work (PoW) to finalise blocks while a modular virtual machine executes programmable logic. This document details the core components that underpin ledger integrity and network determinism.
 
 ## Block Structure and Lifecycle
 Transactions first aggregate into **sub‑blocks** ordered by PoH and signed by a selected validator. Each sub‑block records its transaction list, validator identity, timestamp, PoH hash, and signature, ensuring deterministic ordering and PoS attestation【F:core/block.go†L10-L24】【F:core/block.go†L27-L37】. A full **block** then bundles validated sub‑blocks, references the previous block hash, and is sealed via a nonce that satisfies the PoW target derived from the header hash【F:core/block.go†L45-L67】. This three‑stage process—PoH sequencing, PoS validation, and PoW finalisation—anchors every block to an auditable chain of computation.
@@ -28,7 +28,7 @@ The lightweight **SimpleVM** interprets 24‑bit opcodes with a pluggable handle
 `ValidatorNode` combines base node behaviour with stake tracking and quorum enforcement, exposing methods to add, remove, or slash validators and to determine if quorum has been reached【F:core/validator_node.go†L5-L20】【F:core/validator_node.go†L23-L46】. Within the node core, staking enforces minimum deposits, while dedicated slashing handlers halve stake and flag misbehaving validators for offences such as double‑signing or downtime【F:core/node.go†L96-L132】.
 
 ## Cross‑Chain Coordination
-The `CrossChainManager` registers bridges between external networks, authorises relayers, and tracks each bridge's source, target, and permitted relayer set in thread‑safe maps【F:cross_chain.go†L10-L90】. This foundation enables Blackridge deployments to exchange assets or messages across heterogeneous chains under controlled governance.
+The `CrossChainManager` registers bridges between external networks, authorises relayers, and tracks each bridge's source, target, and permitted relayer set in thread‑safe maps【F:cross_chain.go†L10-L90】. This foundation enables Neto Solaris deployments to exchange assets or messages across heterogeneous chains under controlled governance.
 
 ## Dynamic Consensus and Network Adaptation
 The `ConsensusHopper` monitors transactions per second, network latency, and validator counts to switch between PoW, PoS, and PoH as conditions change【F:dynamic_consensus_hopping.go†L17-L29】. Its `Evaluate` routine promotes PoS during high throughput, selects PoH when validator participation drops, and otherwise defaults to PoW, ensuring the chain maintains performance and security across varying loads【F:dynamic_consensus_hopping.go†L57-L70】.
@@ -52,5 +52,5 @@ SystemHealthLogger captures runtime metrics for external inspection, Watchtower 
 Indexing nodes maintain in‑memory key/value stores for low‑latency queries while Geospatial nodes record location traces, enabling enterprise deployments to couple ledger events with spatial context and accelerate lookups across regulatory domains【F:indexing_node.go†L5-L25】【F:geospatial_node.go†L8-L39】.
 
 ## Security and Auditability
-Biometric hashes within transactions tie on‑chain activity to verified identities, ledger WAL persistence ensures replayable history, and validator slashing deters malicious behaviour. Combined with consensus weight adjustments, zero‑trust channels, regulatory logging, and cross‑chain access controls, Blackridge’s blockchain logic offers a robust, auditable ledger designed for regulated environments.
+Biometric hashes within transactions tie on‑chain activity to verified identities, ledger WAL persistence ensures replayable history, and validator slashing deters malicious behaviour. Combined with consensus weight adjustments, zero‑trust channels, regulatory logging, and cross‑chain access controls, Neto Solaris’s blockchain logic offers a robust, auditable ledger designed for regulated environments.
 

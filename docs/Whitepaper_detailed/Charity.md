@@ -1,10 +1,10 @@
 # Charity
 
 ## Overview
-Blackridge Group Ltd. embeds philanthropy into the core of the Synnergy Network. The charity subsystem channels on-chain revenue and community contributions toward transparent, programmable aid. Every donation, vote, and disbursement is auditable on the ledger, ensuring that social impact accompanies technological innovation.
+Neto Solaris embeds philanthropy into the core of the Synnergy Network. The charity subsystem channels on-chain revenue and community contributions toward transparent, programmable aid. Every donation, vote, and disbursement is auditable on the ledger, ensuring that social impact accompanies technological innovation.
 
 ## Funding Allocation
-A fixed percentage of every transaction fee is earmarked for charitable causes. The `DistributeFees` policy routes five percent of fees to Blackridge's internal initiatives and another five percent to an external community pool【F:core/fees.go†L101-L127】. This predictable allocation guarantees continual funding regardless of market activity.
+A fixed percentage of every transaction fee is earmarked for charitable causes. The `DistributeFees` policy routes five percent of fees to Neto Solaris's internal initiatives and another five percent to an external community pool【F:core/fees.go†L101-L127】. This predictable allocation guarantees continual funding regardless of market activity.
 
 ## Genesis Configuration and Treasury Accounts
 The initial ledger defines dedicated addresses for the internal and external pools, ensuring separation of duties and traceability from day one【F:configs/genesis.json†L4-L21】. Both accounts start with a zero balance, relying entirely on the automated fee stream and community donations for funding. Addresses are deterministically derived from hashed labels and the fee distribution routine maps allocations to these wallets, enabling independent auditing of genesis funds【F:core/genesis_wallets.go†L8-L59】.
@@ -24,7 +24,7 @@ The pool currently tracks votes and registrations while leaving automatic disbur
 ## Community Workflow
 1. **Register** – A charity submits its wallet, name, and category to join the pool.
 2. **Vote** – SYN900 token holders endorse preferred charities during each cycle; non‑holders are rejected at the consensus layer【F:core/charity.go†L103-L110】【F:core/charity_test.go†L22-L29】.
-3. **Donate** – Anyone may contribute additional tokens to strengthen the external pool or Blackridge’s internal fund.
+3. **Donate** – Anyone may contribute additional tokens to strengthen the external pool or Neto Solaris’s internal fund.
 4. **Disburse** – At cycle end, top‑voted charities become eligible for payouts from accumulated fees and donations.
 
 ## Command‑Line Interface
@@ -56,5 +56,5 @@ At the opcode layer the network reserves dedicated slots for charity functions, 
 Operational commands support machine‑readable output, scripted donations and automated reconciliation. The management CLI exposes deposit, withdrawal and balance queries for treasury teams【F:cli/charity.go†L178-L220】, while the SYN4200 token CLI records campaign donations and reports progress for dashboards【F:cli/syn4200_token.go†L13-L49】.
 
 ## Transparency and Future Directions
-All charity interactions are immutably stored, aligning Blackridge Group Ltd.'s charitable commitments with verifiable blockchain records. Planned enhancements include automated payout workflows, expanded campaign analytics, and on-chain governance to fine‑tune funding strategies.
+All charity interactions are immutably stored, aligning Neto Solaris's charitable commitments with verifiable blockchain records. Planned enhancements include automated payout workflows, expanded campaign analytics, and on-chain governance to fine‑tune funding strategies.
 

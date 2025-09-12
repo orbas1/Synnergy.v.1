@@ -1,5 +1,5 @@
 # Synnergy Network: Future of Blockchain
-**A Blackridge Group Ltd. Technical Whitepaper**
+**A Neto Solaris Technical Whitepaper**
 
 ## Table of Contents
 0. [Economic Theory and Blockchain Economics](#0-economic-theory-and-blockchain-economics)
@@ -104,7 +104,7 @@ Synnergy sets the stage for a new class of economically coherent blockchains whe
 monetary stability and decentralized innovation reinforce each other.
 
 ## 1. Introduction
-Synnergy Network, an initiative of Blackridge Group Ltd., is envisioned as a research-grade blockchain capable of operating in
+Synnergy Network, an initiative of Neto Solaris, is envisioned as a research-grade blockchain capable of operating in
 highly regulated environments while still preserving the open innovation that
 defined the earliest distributed ledgers.  The design process drew on academic work
 in distributed systems, cryptography, and economics.  By integrating reversible
@@ -892,7 +892,7 @@ deployment, charting a path toward a more equitable and scientifically grounded
 digital economy.  Its synthesis of economic theory, compliance tooling, and
 performance engineering is intended to take blockchain to the next level of public
 trust and institutional adoption.  Backed by the research and resources of
-Blackridge Group Ltd., Synnergy will continue to evolve through open collaboration
+Neto Solaris, Synnergy will continue to evolve through open collaboration
 and enterprise partnerships.
 
 ## 16. Comparative Analysis with Major Blockchains
@@ -939,7 +939,7 @@ maps local contracts to their counterparts on other networks, allowing complex
 applications to operate coherently across ecosystems【F:cross_chain_agnostic_protocols.go†L10-L47】【F:cross_chain_contracts.go†L5-L42】.
 
 **Analysis:** Native interoperability primitives make Synnergy a hub for
-multi-chain applications, positioning Blackridge Group Ltd.'s network to serve as a
+multi-chain applications, positioning Neto Solaris's network to serve as a
 connective tissue between otherwise isolated blockchain economies.
 
 ## 18. Enterprise Security and Operations
@@ -986,7 +986,7 @@ Finally, the `IDRegistry` lists wallets authorized to hold identity tokens, prev
 unregistered entities from interacting with protected assets【F:idwallet_registration.go†L8-L43】.
 
 **Analysis:** From high availability to identity-centric access controls, these
-operational pillars equip Blackridge Group Ltd.'s Synnergy Network with the
+operational pillars equip Neto Solaris's Synnergy Network with the
 observability and governance expected of mission-critical platforms.
 
 ## 19. Sustainable Operations and Predictive Analytics
@@ -1019,8 +1019,8 @@ average when no custom model is supplied【F:financial_prediction.go†L101-L107
 audit on-chain content repositories and enforce data-retention policies【F:data_resource_management.go†L5-L69】.
 
 **Analysis:** By coupling sustainability metrics with predictive analytics and data stewardship,
-Synnergy gives Blackridge Group Ltd.'s clients a platform that aligns operational
+Synnergy gives Neto Solaris's clients a platform that aligns operational
 excellence with environmental and fiscal responsibility.
 
-© 2024 Blackridge Group Ltd. All rights reserved.
+© 2024 Neto Solaris All rights reserved.
 

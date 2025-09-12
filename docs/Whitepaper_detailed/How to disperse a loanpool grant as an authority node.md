@@ -1,7 +1,7 @@
 # How to Disperse a LoanPool Grant as an Authority Node
 
 ## 1. Purpose
-Authority nodes are entrusted by **Blackridge Group Ltd** to release treasury funds only after a proposal or application has satisfied governance criteria. This guide walks through the review and disbursement process so funds are transferred securely and auditable on the Synnergy Network.
+Authority nodes are entrusted by **Neto Solaris** to release treasury funds only after a proposal or application has satisfied governance criteria. This guide walks through the review and disbursement process so funds are transferred securely and auditable on the Synnergy Network.
 
 ## 2. Architecture Overview
 The LoanPool stack is composed of tightly scoped components that together enforce governance:
@@ -72,7 +72,7 @@ Enterprise operators should employ the following controls:
 - **Verify updated pool metrics** using `LoanPoolManager.Stats` to ensure treasury balances and disbursement counters reflect the transaction【F:core/loanpool_management.go†L31-L44】.
 - **Archive proposal views** for governance records using `synnergy loanpool get [id]` after the payout; the view serialises all vote counts and flags for retention【F:core/loanpool_views.go†L5-L35】.
 - **Feed audit trails** into internal compliance platforms and monitoring dashboards for continuous oversight.
-- **Monitor remaining treasury** for future grants to maintain liquidity targets set by Blackridge Group Ltd.
+- **Monitor remaining treasury** for future grants to maintain liquidity targets set by Neto Solaris
 
 ## 8. Troubleshooting
 
@@ -87,9 +87,9 @@ Re-run `tick` to process approvals, verify authority status, or replenish treasu
 
 ## 9. Security and Governance Notes
 
-- Only authority nodes validated by Blackridge Group Ltd may invoke disbursement routines. Attempting to disburse from an unregistered address will fail the `IsAuthorityNode` check【F:core/authority_nodes.go†L98-L103】.
+- Only authority nodes validated by Neto Solaris may invoke disbursement routines. Attempting to disburse from an unregistered address will fail the `IsAuthorityNode` check【F:core/authority_nodes.go†L98-L103】.
 - Execute all commands over secure channels with hardware-backed keys, and replicate logs to the enterprise monitoring stack.
 - Use administrative pause and resume controls to isolate incidents or coordinate multi-region upgrades【F:cli/loanpool_management.go†L19-L29】.
 
-By following these steps, authority nodes ensure that LoanPool grants and loans are released in a controlled, transparent, and compliant manner consistent with Blackridge Group Ltd governance standards.
+By following these steps, authority nodes ensure that LoanPool grants and loans are released in a controlled, transparent, and compliant manner consistent with Neto Solaris governance standards.
 

@@ -2,7 +2,7 @@
 
 Becoming an authority node in the Synnergy Network is a formal on‑chain
 process designed to preserve the integrity, security and continuity of the
-ecosystem.  This guide from **Blackridge Group Ltd** explains the
+ecosystem.  This guide from **Neto Solaris** explains the
 prerequisites, application workflow and ongoing expectations for
 participants who wish to obtain and maintain authority status.
 
@@ -44,7 +44,7 @@ Prospective operators should prepare the following before applying:
 4. **Identity & KYC** – register operator information through the built‑in
    identity service and record a hashed KYC commitment so that governance
    actions can be audited【F:identity_verification.go†L9-L58】【F:compliance.go†L12-L70】.
-5. **Regulatory Policies** – review Blackridge Group’s operational standards
+5. **Regulatory Policies** – review Neto Solaris’s operational standards
    and confirm that any jurisdiction‑specific regulations are encoded in the
    network’s policy manager before launch【F:regulatory_management.go†L8-L38】.
 
@@ -153,7 +153,7 @@ Enterprise operators often automate routine tasks:
   metrics and detect anomalies【F:system_health_logging.go†L11-L47】.
 * **High Availability** – configure failover managers to keep authority
   services online during maintenance or outages【F:high_availability.go†L8-L69】.
-* **Regular Upgrades** – track releases from Blackridge Group Ltd and apply
+* **Regular Upgrades** – track releases from Neto Solaris and apply
   upgrades in a staged manner to minimise downtime.
 * **Community Engagement** – remain responsive to governance discussions and
   contribute to ecosystem documentation and tooling.
@@ -166,7 +166,7 @@ Enterprise operators often automate routine tasks:
 
 ---
 
-For questions or support, contact **Blackridge Group Ltd** through the
+For questions or support, contact **Neto Solaris** through the
 project’s official communication channels.  Operating an authority node is a
 privileged role; diligence and transparency are essential to sustain the
 Synnergy Network’s vision.

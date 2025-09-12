@@ -1,7 +1,7 @@
 # Understanding the Ledger
 
 ## Introduction
-Within the Synnergy Network by **Blackridge Group Ltd.**, the ledger is the authoritative record that synchronises value and state across every node. It combines block history, account balances, and unspent transaction outputs into a consistent dataset that applications, regulators, and end users can trust. The design targets enterprise deployments, weaving regulatory tooling, cross‑chain gateways and high‑availability services directly into core ledger functions.
+Within the Synnergy Network by **Neto Solaris**, the ledger is the authoritative record that synchronises value and state across every node. It combines block history, account balances, and unspent transaction outputs into a consistent dataset that applications, regulators, and end users can trust. The design targets enterprise deployments, weaving regulatory tooling, cross‑chain gateways and high‑availability services directly into core ledger functions.
 
 ## Core Data Structures
 ### Blocks and Sub-Blocks
@@ -87,7 +87,7 @@ Within the Synnergy Network by **Blackridge Group Ltd.**, the ledger is the auth
 - **Alerting**: Watchtower nodes and monitoring hooks raise alerts for abnormal chain events or integrity violations.
 
 ## Future Enhancements
-Blackridge Group Ltd. continues to refine the ledger with research into adaptive sharding, incremental pruning, and erasure-coded replication streams to further improve throughput and resilience.
+Neto Solaris continues to refine the ledger with research into adaptive sharding, incremental pruning, and erasure-coded replication streams to further improve throughput and resilience.
 
 ## Conclusion
 The ledger is the heartbeat of Synnergy Network operations. Through deterministic state management, robust persistence, and integration with consensus, compliance, and cross-chain modules, it delivers a secure and interoperable foundation for decentralised applications and financial services.

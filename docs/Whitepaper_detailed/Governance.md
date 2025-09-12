@@ -1,7 +1,7 @@
 # Governance
 
 ## Overview
-Blackridge Group Ltd. designs Synnergy Network governance as a layered system that blends on‑chain transparency with off‑chain accountability. Authority nodes, token holders and automated services cooperate through audited smart‑contract logic to steer protocol evolution while preserving security and regulatory compliance.
+Neto Solaris designs Synnergy Network governance as a layered system that blends on‑chain transparency with off‑chain accountability. Authority nodes, token holders and automated services cooperate through audited smart‑contract logic to steer protocol evolution while preserving security and regulatory compliance.
 
 ## Governance Architecture
 - **Authority Nodes** – regulated entities that validate proposals and execute approved changes. They operate dedicated tooling and are subject to continuous monitoring. The core `AuthorityNodeRegistry` catalogs addresses, assigns roles, records votes and can sample a weighted electorate for committee formation【F:core/authority_nodes.go†L12-L95】.
@@ -44,7 +44,7 @@ Each proposal carries an explicit expiry. When a proposal is created, the contra
 These modules ensure governance actions remain traceable and resistant to tampering across distributed environments.
 
 ## Full Blockchain Governance
-Governance spans the entire Synnergy stack. Authority nodes gatekeep policy changes, token-ledger balances and staking totals define voting weight, and smart-contract deadlines codify timeliness. CLI utilities and integration scripts wire these layers together so proposals flow from submission to audit logging without manual intervention, allowing Blackridge Group Ltd. to present a cohesive, end-to-end governance experience for regulators, enterprises and community stakeholders alike.
+Governance spans the entire Synnergy stack. Authority nodes gatekeep policy changes, token-ledger balances and staking totals define voting weight, and smart-contract deadlines codify timeliness. CLI utilities and integration scripts wire these layers together so proposals flow from submission to audit logging without manual intervention, allowing Neto Solaris to present a cohesive, end-to-end governance experience for regulators, enterprises and community stakeholders alike.
 
 ## Conclusion
-The Synnergy Network governance framework couples programmable on‑chain logic with disciplined oversight. Through modular tokens, auditable services and secure tooling, Blackridge Group Ltd. delivers a governance model that balances community participation with institutional accountability, positioning the platform for sustainable, transparent evolution.
+The Synnergy Network governance framework couples programmable on‑chain logic with disciplined oversight. Through modular tokens, auditable services and secure tooling, Neto Solaris delivers a governance model that balances community participation with institutional accountability, positioning the platform for sustainable, transparent evolution.

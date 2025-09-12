@@ -1,6 +1,6 @@
 # How to Write a Contract
 
-Blackridge Group Ltd. provides a powerful framework for authoring, deploying and managing smart contracts on the Synnergy Network. This guide walks developers through the full contract lifecycle—from selecting a language to managing upgrades—so that every contract adheres to our enterprise standards for security, performance and regulatory compliance.
+Neto Solaris provides a powerful framework for authoring, deploying and managing smart contracts on the Synnergy Network. This guide walks developers through the full contract lifecycle—from selecting a language to managing upgrades—so that every contract adheres to our enterprise standards for security, performance and regulatory compliance.
 
 ## Prerequisites
 
@@ -71,7 +71,7 @@ output, gasUsed, err := registry.Invoke(addr, "Execute", args, suppliedGas)
 
 ## Enumerating and Auditing Contracts
 
-The registry exposes helpers for discovering and validating deployed artifacts. `List` returns every tracked contract while `Get` fetches metadata for a specific address【F:contracts.go†L100-L116】. These APIs are safe for concurrent use and underpin audit tooling across Blackridge Group Ltd.
+The registry exposes helpers for discovering and validating deployed artifacts. `List` returns every tracked contract while `Get` fetches metadata for a specific address【F:contracts.go†L100-L116】. These APIs are safe for concurrent use and underpin audit tooling across Neto Solaris
 
 ```go
 for _, c := range registry.List() {
@@ -139,5 +139,5 @@ The `SimpleVM` offers configurable execution profiles—heavy, light and super l
 
 ## Conclusion
 
-By adhering to these guidelines, developers can author robust, maintainable smart contracts that leverage the full capabilities of the Synnergy Network while meeting the quality standards of Blackridge Group Ltd. Continued enhancements to tooling and runtime will further streamline contract development across our ecosystem.
+By adhering to these guidelines, developers can author robust, maintainable smart contracts that leverage the full capabilities of the Synnergy Network while meeting the quality standards of Neto Solaris Continued enhancements to tooling and runtime will further streamline contract development across our ecosystem.
 

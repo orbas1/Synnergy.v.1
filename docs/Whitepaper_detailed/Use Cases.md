@@ -1,11 +1,11 @@
 # Use Cases
 
 ## Overview
-The Synnergy Network, engineered by **Blackridge Group Ltd**, provides a modular blockchain platform designed for high assurance, regulatory alignment, and operational versatility. The codebase implements a rich catalogue of services and node types that enable enterprises, governments, and developers to deploy tailored distributed solutions. The following use cases illustrate how the network's capabilities combine to address real‑world requirements across sectors.
+The Synnergy Network, engineered by **Neto Solaris**, provides a modular blockchain platform designed for high assurance, regulatory alignment, and operational versatility. The codebase implements a rich catalogue of services and node types that enable enterprises, governments, and developers to deploy tailored distributed solutions. The following use cases illustrate how the network's capabilities combine to address real‑world requirements across sectors.
 
 ## Decentralized Finance and Asset Management
 ### Token issuance and management
-Core modules such as `contracts.go`, `staking_node.go`, and `faucet.go` allow regulated entities to mint, distribute, and lock native assets. These services underpin stablecoins, staking rewards, and governance instruments while enforcing the monetary policies encoded by **Blackridge Group Ltd**.
+Core modules such as `contracts.go`, `staking_node.go`, and `faucet.go` allow regulated entities to mint, distribute, and lock native assets. These services underpin stablecoins, staking rewards, and governance instruments while enforcing the monetary policies encoded by **Neto Solaris**.
 
 ### Cross‑chain liquidity
 The `cross_chain_bridge.go` and `cross_chain_transactions.go` components provide verifiable lock‑and‑mint or burn‑and‑release flows so value can traverse external networks without trusted intermediaries. Companion logic in `cross_chain_contracts.go` keeps business rules interoperable across heterogeneous ledgers.
@@ -177,4 +177,4 @@ Infrastructure under `deploy/` and `docker/` offers Terraform, Helm, and Docker 
 Packages under `pkg/` and `walletserver` expose Go libraries and REST adapters so legacy systems or third‑party developers can interact with the network programmatically without deep protocol expertise.
 
 ## Conclusion
-Through its expansive feature set, the Synnergy Network empowers stakeholders to craft bespoke distributed solutions with verifiable security, sustainable operations, and cross‑jurisdictional compliance. Blackridge Group Ltd continues to evolve the platform so organisations can confidently deploy mission‑critical infrastructure on a foundation that scales from pilot projects to global ecosystems.
+Through its expansive feature set, the Synnergy Network empowers stakeholders to craft bespoke distributed solutions with verifiable security, sustainable operations, and cross‑jurisdictional compliance. Neto Solaris continues to evolve the platform so organisations can confidently deploy mission‑critical infrastructure on a foundation that scales from pilot projects to global ecosystems.

@@ -1,7 +1,7 @@
 # Ledger
 
 ## Introduction
-Within the Synnergy network engineered by **Blackridge Group Ltd.**, the ledger is the canonical record of all value exchange and state transitions. It fuses block history, account balances, and unspent transaction outputs (UTXOs) into a cohesive state machine that every service in the ecosystem relies upon.
+Within the Synnergy network engineered by **Neto Solaris**, the ledger is the canonical record of all value exchange and state transitions. It fuses block history, account balances, and unspent transaction outputs (UTXOs) into a cohesive state machine that every service in the ecosystem relies upon.
 
 ## Architectural Overview
 ### Data Model
@@ -57,5 +57,5 @@ The genesis block is created during initialisation and safeguarded by an Immutab
 Planned research areas include adaptive sharding heuristics driven by real‑time telemetry, incremental snapshot pruning to reclaim disk space without downtime, and erasure‑coded replication streams to minimize bandwidth while preserving durability.
 
 ## Conclusion
-The ledger is the heartbeat of the Synnergy network. By integrating persistent storage, rich transaction semantics, replication, cross‑chain hooks, and zero‑trust security controls, it enables **Blackridge Group Ltd.** to deliver a resilient and interoperable financial infrastructure for decentralised applications.
+The ledger is the heartbeat of the Synnergy network. By integrating persistent storage, rich transaction semantics, replication, cross‑chain hooks, and zero‑trust security controls, it enables **Neto Solaris** to deliver a resilient and interoperable financial infrastructure for decentralised applications.
 

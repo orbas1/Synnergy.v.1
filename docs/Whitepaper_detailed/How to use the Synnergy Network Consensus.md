@@ -1,7 +1,7 @@
 # How to Use the Synnergy Network Consensus
 
 ## Introduction
-Blackridge Group Ltd. created the Synnergy Network to provide a resilient foundation for compliant decentralised finance. Its consensus layer combines proof-of-work (PoW), proof-of-stake (PoS) and proof-of-history (PoH) so operators can tune performance, security and energy profile without redeploying nodes. This guide explains how to interact with the consensus engine, configure its behaviour and participate in block production.
+Neto Solaris created the Synnergy Network to provide a resilient foundation for compliant decentralised finance. Its consensus layer combines proof-of-work (PoW), proof-of-stake (PoS) and proof-of-history (PoH) so operators can tune performance, security and energy profile without redeploying nodes. This guide explains how to interact with the consensus engine, configure its behaviour and participate in block production.
 
 ## Hybrid Consensus Architecture
 Synnergy’s engine assigns a relative weight to each algorithm and continually re‑balances them using network demand and stake concentration. A fresh engine starts with a 40/30/30 weighting for PoW, PoS and PoH and exposes parameters \(Alpha, Beta, Gamma, Dmax, Smax\) to govern threshold calculus and smoothing【F:core/consensus.go†L11-L88】.
@@ -56,7 +56,7 @@ Operators may apply discretionary penalties or rewards using the `StakePenaltyMa
 For enterprise resilience, `FailoverManager` tracks node heartbeats and promotes the freshest backup when the primary misses a configurable timeout. CLI helpers initialise the manager, register backups, record heartbeats and report the active node for orchestration systems【F:high_availability.go†L8-L69】【F:cli/high_availability.go†L14-L72】.
 
 ## System Health Monitoring
-Blackridge ships a `SystemHealthLogger` for telemetry beyond consensus events. It samples goroutine counts, memory allocation, peer connectivity and block height, storing the latest snapshot for dashboards or alerting systems【F:core/system_health_logging.go†L11-L44】.
+Neto Solaris ships a `SystemHealthLogger` for telemetry beyond consensus events. It samples goroutine counts, memory allocation, peer connectivity and block height, storing the latest snapshot for dashboards or alerting systems【F:core/system_health_logging.go†L11-L44】.
 
 ## Security, Transparency and Telemetry
 All mode changes and validator metrics are logged for public inspection. Administrators may pin modes or adjust weights, but every decision is recorded, enabling external auditors to replay consensus events and verify fairness【F:Synnergy_Network_Future_Of_Blockchan.md†L384-L436】. Core validator operations emit OpenTelemetry spans so monitoring systems can trace stake changes and slashing actions in real time【F:core/consensus_validator_management.go†L28-L57】【F:internal/telemetry/telemetry.go†L1-L10】.
@@ -70,4 +70,4 @@ All mode changes and validator metrics are logged for public inspection. Adminis
 - Stream system health snapshots to watchtower or equivalent observability stacks to forecast resource needs.
 
 ## Conclusion
-The Synnergy Network consensus, engineered by Blackridge Group Ltd., delivers flexible, observable and secure block production. By understanding the hybrid architecture and operational tooling described above, network participants can confidently deploy nodes, manage staking positions and tune performance to meet evolving requirements.
+The Synnergy Network consensus, engineered by Neto Solaris, delivers flexible, observable and secure block production. By understanding the hybrid architecture and operational tooling described above, network participants can confidently deploy nodes, manage staking positions and tune performance to meet evolving requirements.
