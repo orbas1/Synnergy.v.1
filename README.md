@@ -35,6 +35,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Opcode-aware contracts** – sample Solidity bridges, liquidity, multisig, oracle and token contracts invoke SNVM opcodes with deterministic gas costs.
 - **On-chain governance token** – the SYN300 module supports delegated voting, proposal lifecycle management and CLI tooling with documented gas and opcode mappings.
 - **Regulatory node logging** – `synnergy regnode approve` surfaces rejection reasons and address logs for auditability.
+- **Regulatory audits** – `synnergy regnode audit` reports whether an address has been flagged and returns recorded reasons.
 - **Wallet-signed approvals** – regulatory nodes verify transactions against registered wallet public keys, and the CLI can load and sign with a wallet file before submitting for approval.
 - **Web regulatory console** – the `web/pages/regnode.js` interface exposes approval, flagging and log retrieval through a browser UI.
 - **Strict flagging** – regulatory flags require explicit non-empty reasons for improved audit integrity.

@@ -68,6 +68,18 @@ func (n *RegulatoryNode) Logs(addr string) []string {
 	return out
 }
 
+// Audit reports whether an address has been flagged and returns a copy of its logs.
+// It allows external systems or CLI users to verify regulatory status without
+// mutating internal state.
+func (n *RegulatoryNode) Audit(addr string) ([]string, bool) {
+        n.mu.RLock()
+        entries, ok := n.logs[addr]
+        out := make([]string, len(entries))
+        copy(out, entries)
+        n.mu.RUnlock()
+        return out, ok
+}
+
 // ClearLogs removes all flags recorded for an address.
 func (n *RegulatoryNode) ClearLogs(addr string) {
 	n.mu.Lock()

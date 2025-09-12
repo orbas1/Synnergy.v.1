@@ -5,62 +5,65 @@ import (
 	"sync"
 )
 
-// IndexComponent defines a single asset within an index token.
-type IndexComponent struct {
+// Component represents a token and its weight within the index.
+type Component struct {
 	Token  string
 	Weight float64
 }
 
-// SYN3700Token aggregates multiple assets into a single index token.
+// SYN3700Token models a weighted index token.
 type SYN3700Token struct {
 	mu         sync.RWMutex
 	Name       string
 	Symbol     string
-	Components []IndexComponent
+	Components map[string]float64
 }
 
-// NewSYN3700Token creates a new empty index token.
+// NewSYN3700Token creates an empty index token.
 func NewSYN3700Token(name, symbol string) *SYN3700Token {
-	return &SYN3700Token{Name: name, Symbol: symbol}
+	return &SYN3700Token{
+		Name:       name,
+		Symbol:     symbol,
+		Components: make(map[string]float64),
+	}
 }
 
-// AddComponent adds an asset and its weight to the index.
+// AddComponent adds or updates a component token with a given weight.
 func (t *SYN3700Token) AddComponent(token string, weight float64) {
 	t.mu.Lock()
-	defer t.mu.Unlock()
-	t.Components = append(t.Components, IndexComponent{Token: token, Weight: weight})
+	t.Components[token] = weight
+	t.mu.Unlock()
 }
 
-// RemoveComponent removes an asset from the index by token symbol.
+// RemoveComponent deletes a component from the index.
 func (t *SYN3700Token) RemoveComponent(token string) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	for i, c := range t.Components {
-		if c.Token == token {
-			t.Components = append(t.Components[:i], t.Components[i+1:]...)
-			return nil
-		}
+	if _, ok := t.Components[token]; !ok {
+		return errors.New("component not found")
 	}
-	return errors.New("component not found")
+	delete(t.Components, token)
+	return nil
 }
 
-// ListComponents returns a snapshot of the current index components.
-func (t *SYN3700Token) ListComponents() []IndexComponent {
+// ListComponents returns a snapshot of all components.
+func (t *SYN3700Token) ListComponents() []Component {
 	t.mu.RLock()
-	defer t.mu.RUnlock()
-	comps := make([]IndexComponent, len(t.Components))
-	copy(comps, t.Components)
+	comps := make([]Component, 0, len(t.Components))
+	for tok, w := range t.Components {
+		comps = append(comps, Component{Token: tok, Weight: w})
+	}
+	t.mu.RUnlock()
 	return comps
 }
 
-// Value computes the weighted index value using the provided price map.
+// Value computes the index value given a map of token prices.
 func (t *SYN3700Token) Value(prices map[string]float64) float64 {
 	t.mu.RLock()
 	defer t.mu.RUnlock()
-	var sum float64
-	for _, c := range t.Components {
-		price := prices[c.Token]
-		sum += price * c.Weight
+	var total float64
+	for tok, w := range t.Components {
+		total += w * prices[tok]
 	}
-	return sum
+	return total
 }

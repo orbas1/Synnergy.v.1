@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"sync"
 	"time"
 )
 
@@ -27,6 +28,7 @@ type AgriculturalAsset struct {
 
 // AgriculturalRegistry manages agricultural assets.
 type AgriculturalRegistry struct {
+	mu     sync.RWMutex
 	assets map[string]*AgriculturalAsset
 }
 
@@ -37,6 +39,8 @@ func NewAgriculturalRegistry() *AgriculturalRegistry {
 
 // Register adds a new agricultural asset to the registry.
 func (r *AgriculturalRegistry) Register(id, assetType, owner, origin string, qty uint64, harvest, expiry time.Time, cert string) (*AgriculturalAsset, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	if _, exists := r.assets[id]; exists {
 		return nil, errors.New("asset exists")
 	}
@@ -47,6 +51,8 @@ func (r *AgriculturalRegistry) Register(id, assetType, owner, origin string, qty
 
 // Transfer moves ownership of an asset.
 func (r *AgriculturalRegistry) Transfer(id, newOwner string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	a, ok := r.assets[id]
 	if !ok {
 		return errors.New("asset not found")
@@ -58,6 +64,8 @@ func (r *AgriculturalRegistry) Transfer(id, newOwner string) error {
 
 // UpdateStatus updates the current status of an asset.
 func (r *AgriculturalRegistry) UpdateStatus(id, status string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	a, ok := r.assets[id]
 	if !ok {
 		return errors.New("asset not found")
@@ -69,6 +77,12 @@ func (r *AgriculturalRegistry) UpdateStatus(id, status string) error {
 
 // Get returns an agricultural asset by id.
 func (r *AgriculturalRegistry) Get(id string) (*AgriculturalAsset, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	a, ok := r.assets[id]
-	return a, ok
+	if !ok {
+		return nil, false
+	}
+	cp := *a
+	return &cp, true
 }

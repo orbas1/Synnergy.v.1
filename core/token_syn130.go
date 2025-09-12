@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"sync"
 	"time"
 )
 
@@ -33,6 +34,7 @@ type TangibleAsset struct {
 
 // TangibleAssetRegistry manages tangible assets.
 type TangibleAssetRegistry struct {
+	mu     sync.RWMutex
 	assets map[string]*TangibleAsset
 }
 
@@ -43,6 +45,8 @@ func NewTangibleAssetRegistry() *TangibleAssetRegistry {
 
 // Register adds a new tangible asset.
 func (r *TangibleAssetRegistry) Register(id, owner, meta string, value uint64) (*TangibleAsset, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	if _, exists := r.assets[id]; exists {
 		return nil, errors.New("asset exists")
 	}
@@ -53,6 +57,8 @@ func (r *TangibleAssetRegistry) Register(id, owner, meta string, value uint64) (
 
 // UpdateValuation updates the valuation of an asset.
 func (r *TangibleAssetRegistry) UpdateValuation(id string, val uint64) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	asset, ok := r.assets[id]
 	if !ok {
 		return errors.New("asset not found")
@@ -63,6 +69,8 @@ func (r *TangibleAssetRegistry) UpdateValuation(id string, val uint64) error {
 
 // RecordSale records a sale for the asset.
 func (r *TangibleAssetRegistry) RecordSale(id, buyer string, price uint64) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	asset, ok := r.assets[id]
 	if !ok {
 		return errors.New("asset not found")
@@ -74,6 +82,8 @@ func (r *TangibleAssetRegistry) RecordSale(id, buyer string, price uint64) error
 
 // StartLease begins a lease for the asset.
 func (r *TangibleAssetRegistry) StartLease(id, lessee string, payment uint64, start, end time.Time) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	asset, ok := r.assets[id]
 	if !ok {
 		return errors.New("asset not found")
@@ -84,6 +94,8 @@ func (r *TangibleAssetRegistry) StartLease(id, lessee string, payment uint64, st
 
 // EndLease terminates an active lease.
 func (r *TangibleAssetRegistry) EndLease(id string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
 	asset, ok := r.assets[id]
 	if !ok {
 		return errors.New("asset not found")
@@ -96,6 +108,12 @@ func (r *TangibleAssetRegistry) EndLease(id string) error {
 
 // Get returns a tangible asset by id.
 func (r *TangibleAssetRegistry) Get(id string) (*TangibleAsset, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
 	asset, ok := r.assets[id]
-	return asset, ok
+	if !ok {
+		return nil, false
+	}
+	cp := *asset
+	return &cp, true
 }

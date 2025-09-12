@@ -42,7 +42,7 @@ import (
 // discovery workflows used by the CLI and web interfaces. Stage 65 records DAO
 // role update operations so governance tooling prices admin-managed role
 // changes and authority term renewals. Stage 73 adds regulatory node approval,
-// flagging and log query operations so compliance tooling surfaces predictable
+// flagging, log query and audit operations so compliance tooling surfaces predictable
 // gas costs.
 type GasTable map[string]uint64
 

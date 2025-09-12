@@ -6,6 +6,7 @@ export default function RegNode() {
   const [flagAddr, setFlagAddr] = useState("");
   const [flagReason, setFlagReason] = useState("");
   const [logAddr, setLogAddr] = useState("");
+  const [auditAddr, setAuditAddr] = useState("");
   const [output, setOutput] = useState("");
 
   const run = async (args) => {
@@ -53,8 +54,8 @@ export default function RegNode() {
           Flag
         </button>
       </section>
-      <section style={{ marginBottom: 20 }}>
-        <h2>View Logs</h2>
+        <section style={{ marginBottom: 20 }}>
+          <h2>View Logs</h2>
         <input
           placeholder="address"
           value={logAddr}
@@ -66,7 +67,21 @@ export default function RegNode() {
         >
           Fetch Logs
         </button>
-      </section>
+        </section>
+        <section style={{ marginBottom: 20 }}>
+          <h2>Audit Address</h2>
+          <input
+            placeholder="address"
+            value={auditAddr}
+            onChange={(e) => setAuditAddr(e.target.value)}
+          />
+          <button
+            onClick={() => run(["audit", auditAddr])}
+            style={{ marginLeft: 10 }}
+          >
+            Audit
+          </button>
+        </section>
       <pre>{output}</pre>
     </main>
   );

@@ -61,6 +61,22 @@ func TestFlagRequiresReason(t *testing.T) {
 	}
 }
 
+func TestAuditReportsFlags(t *testing.T) {
+        mgr := NewRegulatoryManager()
+        node := NewRegulatoryNode("node", mgr)
+        _ = node.FlagEntity("carol", "suspicious activity")
+        logs, flagged := node.Audit("carol")
+        if !flagged {
+                t.Fatalf("expected carol to be flagged")
+        }
+        if len(logs) != 1 {
+                t.Fatalf("expected one log, got %v", logs)
+        }
+        if _, flagged := node.Audit("dave"); flagged {
+                t.Fatalf("expected dave to be clean")
+        }
+}
+
 func TestApproveTransactionNoManager(t *testing.T) {
 	node := NewRegulatoryNode("n", nil)
 	tx := Transaction{From: "alice", Amount: 100}

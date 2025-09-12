@@ -23,6 +23,9 @@ func NewSystemHealthLogger() *SystemHealthLogger {
 // Collect gathers metrics from the runtime and records them as the latest snapshot.
 // Caller may supply optional peer count and block height information.
 func (l *SystemHealthLogger) Collect(peerCount int, height uint64) watchtower.Metrics {
+	if peerCount < 0 {
+		peerCount = 0
+	}
 	var ms runtime.MemStats
 	runtime.ReadMemStats(&ms)
 

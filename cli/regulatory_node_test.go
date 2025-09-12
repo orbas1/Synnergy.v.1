@@ -60,3 +60,18 @@ func TestRegNodeFlagRequiresReason(t *testing.T) {
 		t.Fatalf("expected no logs, got %v", logs)
 	}
 }
+
+func TestRegNodeAuditReturnsStatus(t *testing.T) {
+        regManager = core.NewRegulatoryManager()
+        regNode = core.NewRegulatoryNode("regnode1", regManager)
+        _ = regNode.FlagEntity("mallory", "fraud")
+        cmd := RootCmd()
+        cmd.SetArgs([]string{"regnode", "audit", "mallory"})
+        if err := cmd.Execute(); err != nil {
+                t.Fatalf("audit failed: %v", err)
+        }
+        cmd.SetArgs([]string{"regnode", "audit", "trent"})
+        if err := cmd.Execute(); err != nil {
+                t.Fatalf("audit clean address failed: %v", err)
+        }
+}

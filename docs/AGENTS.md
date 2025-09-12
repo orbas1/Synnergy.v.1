@@ -7,7 +7,9 @@
 - Stage 67: Complete – ledger, light node, and liquidity pool validation with Kademlia gas tracking and CLI distance tests, plus identity service and wallet registry checks finalized.
 - Stage 68: Complete – mining node context control, fee distribution, and CLI mine-until integration finalized with gas pricing and opcode docs extended.
 - Stage 69: Complete – node and plasma modules hardened with concurrency-safe mempools, pause checks, opcode lookup tests and peer count CLI.
-- Stage 73: Complete – SYN300 governance token validated with wallet-signed regulatory approvals, regulatory node console and CLI alignment, gas/opcode entries and consensus integration for regulatory checks. Consensus now skips regulatory validation when no node is configured.
+- Stage 73: In progress – governance token validated; bill registry, currency token, futures contract and index token hardened with concurrency tests, and regulatory audit opcode surfaced across CLI and web. Remaining SYN3800+ modules pending.
+- Stage 74: In progress – system health logging clamped; tangible and agricultural asset registries made concurrency safe; access controller audit snapshots added. Transaction and SYN5000+ modules outstanding.
+- Stage 75: In progress – validator node supports concurrent joins; VM, wallet and cross-chain layers pending.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
@@ -1560,17 +1562,28 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 **Stage 73**
 - [x] core/syn300_token.go | governance token with validation and delegation error checks
 - [x] core/syn300_token_test.go | lifecycle and validation test coverage
-- [x] gas_table.go | regulatory node pricing annotated
+- [x] gas_table.go | regulatory node pricing annotated with audit operation
 - [x] core/consensus.go | bypasses regulatory checks when no node present
 - [x] core/consensus_test.go | verifies behaviour with and without regulatory node
 - [x] core/regulatory_node.go | approval succeeds when manager absent
 - [x] core/regulatory_node_test.go | manager-less approval test
-- [ ] core/syn3200.go
-- [ ] core/syn3200_test.go
-- [ ] core/syn3500_token.go
-- [ ] core/syn3500_token_test.go
-- [ ] core/syn3600.go
-- [ ] core/syn3600_test.go
+- [x] cli/regulatory_node.go | audit command exposes flagged logs with gas pricing
+- [x] cli/regulatory_node_test.go | audit command coverage
+- [x] core/regulatory_node.go | audit method returns logs without mutation
+- [x] core/regulatory_node_test.go | audit reporting test
+- [x] docs/reference/gas_table_list.md | RegNodeAudit cost documented
+- [x] docs/reference/opcodes_list.md | RegNodeAudit opcode recorded
+- [x] gas_table_test.go | validates RegNodeAudit pricing
+- [x] docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md | audit opcode and gas usage noted
+- [x] docs/guides/cli_quickstart.md | audit CLI documented
+- [x] README.md | audit feature referenced
+- [x] web/pages/regnode.js | audit UI integrated
+ - [x] core/syn3200.go
+ - [x] core/syn3200_test.go
+ - [x] core/syn3500_token.go
+ - [x] core/syn3500_token_test.go
+ - [x] core/syn3600.go
+ - [x] core/syn3600_test.go
 - [ ] core/syn3700_token.go
 - [ ] core/syn3700_token_test.go
 - [ ] core/syn3800.go
@@ -1593,20 +1606,20 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] core/syn700_test.go
 - [ ] core/syn800_token.go
 - [ ] core/syn800_token_test.go
-- [ ] core/system_health_logging.go
-- [ ] core/system_health_logging_test.go
-- [ ] core/token_syn130.go
-- [ ] core/token_syn130_test.go
-- [ ] core/token_syn4900.go
-- [ ] core/token_syn4900_test.go
+ - [x] core/system_health_logging.go
+ - [x] core/system_health_logging_test.go
+ - [x] core/token_syn130.go
+ - [x] core/token_syn130_test.go
+ - [x] core/token_syn4900.go
+ - [x] core/token_syn4900_test.go
 - [ ] core/transaction.go
 - [ ] core/transaction_control.go
 - [ ] core/transaction_control_test.go
 - [ ] core/transaction_test.go
 
 **Stage 75**
-- [ ] core/validator_node.go
-- [ ] core/validator_node_test.go
+ - [x] core/validator_node.go
+ - [x] core/validator_node_test.go
 - [ ] core/virtual_machine.go
 - [ ] core/virtual_machine_test.go
 - [ ] core/vm_sandbox_management.go
@@ -3816,7 +3829,7 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 | 60 | contracts_opcodes.go | [x] | opcode constants aligned with VM |
 | 60 | contracts_opcodes_test.go | [x] | opcode validation tests |
 | 60 | contracts_test.go | [x] | deployment and invocation tests |
-| 60 | core/access_control.go | [x] | role-based access utilities |
+| 60 | core/access_control.go | [x] | role-based access utilities with audit snapshots and concurrency tests |
 | 60 | core/access_control_test.go | [x] | access control unit tests |
 | 60 | core/address.go | [x] | address helpers and parsing |
 | 60 | core/address_test.go | [x] | address helper tests |
@@ -4056,14 +4069,14 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 | 72 | core/syn2900_test.go | [ ] | pending enterprise upgrade |
 | 73 | core/syn300_token.go | [x] | added error checks, gas/opcode docs, CLI alignment |
 | 73 | core/syn300_token_test.go | [x] | proposal lifecycle and validation tests |
-| 73 | core/syn3200.go | [ ] |
-| 73 | core/syn3200_test.go | [ ] |
-| 73 | core/syn3500_token.go | [ ] |
-| 73 | core/syn3500_token_test.go | [ ] |
-| 73 | core/syn3600.go | [ ] |
-| 73 | core/syn3600_test.go | [ ] |
-| 73 | core/syn3700_token.go | [ ] |
-| 73 | core/syn3700_token_test.go | [ ] |
+| 73 | core/syn3200.go | [x] | mutex-protected bill registry |
+| 73 | core/syn3200_test.go | [x] | lifecycle & concurrency tests |
+| 73 | core/syn3500_token.go | [x] | mutex-protected balances |
+| 73 | core/syn3500_token_test.go | [x] | mint/redeem and rate tests |
+| 73 | core/syn3600.go | [x] | idempotent settle with locking |
+| 73 | core/syn3600_test.go | [x] | concurrent settlement guard |
+| 73 | core/syn3700_token.go | [x] | weighted index token with mutexed components |
+| 73 | core/syn3700_token_test.go | [x] | concurrent component add/remove tests |
 | 73 | core/syn3800.go | [ ] |
 | 73 | core/syn3800_test.go | [ ] |
 | 73 | core/syn3900.go | [ ] |
@@ -4082,18 +4095,18 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 | 74 | core/syn700_test.go | [ ] |
 | 74 | core/syn800_token.go | [ ] |
 | 74 | core/syn800_token_test.go | [ ] |
-| 74 | core/system_health_logging.go | [ ] |
-| 74 | core/system_health_logging_test.go | [ ] |
-| 74 | core/token_syn130.go | [ ] |
-| 74 | core/token_syn130_test.go | [ ] |
-| 74 | core/token_syn4900.go | [ ] |
-| 74 | core/token_syn4900_test.go | [ ] |
+| 74 | core/system_health_logging.go | [x] | clamped negative peer counts |
+| 74 | core/system_health_logging_test.go | [x] | snapshot verifies clamping |
+| 74 | core/token_syn130.go | [x] | RWMutex asset registry |
+| 74 | core/token_syn130_test.go | [x] | concurrent valuation and lease |
+| 74 | core/token_syn4900.go | [x] | locked agricultural assets |
+| 74 | core/token_syn4900_test.go | [x] | concurrent transfer/status tests |
 | 74 | core/transaction.go | [ ] |
 | 74 | core/transaction_control.go | [ ] |
 | 74 | core/transaction_control_test.go | [ ] |
 | 74 | core/transaction_test.go | [ ] |
-| 75 | core/validator_node.go | [ ] |
-| 75 | core/validator_node_test.go | [ ] |
+| 75 | core/validator_node.go | [x] | quorum manager wiring |
+| 75 | core/validator_node_test.go | [x] | concurrent join quorum test |
 | 75 | core/virtual_machine.go | [ ] |
 | 75 | core/virtual_machine_test.go | [ ] |
 | 75 | core/vm_sandbox_management.go | [ ] |

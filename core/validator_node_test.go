@@ -1,6 +1,9 @@
 package core
 
-import "testing"
+import (
+	"sync"
+	"testing"
+)
 
 func TestValidatorNode(t *testing.T) {
 	ledger := NewLedger()
@@ -14,5 +17,24 @@ func TestValidatorNode(t *testing.T) {
 	vn.SlashValidator("v1")
 	if vn.HasQuorum() {
 		t.Fatalf("quorum should not hold after slashing")
+	}
+}
+
+func TestValidatorNodeConcurrentAdds(t *testing.T) {
+	ledger := NewLedger()
+	vn := NewValidatorNode("v1", "addr", ledger, 1, 3)
+	ids := []string{"a", "b", "c"}
+	var wg sync.WaitGroup
+	for _, id := range ids {
+		id := id
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			_ = vn.AddValidator(id, 5)
+		}()
+	}
+	wg.Wait()
+	if !vn.HasQuorum() {
+		t.Fatalf("quorum not reached with concurrent adds")
 	}
 }
