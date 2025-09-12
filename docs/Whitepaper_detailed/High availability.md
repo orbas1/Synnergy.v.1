@@ -1,7 +1,7 @@
 # High Availability
 
 ## Introduction
-Blackridge Group Ltd.'s Synnergy Network is engineered to deliver continuous service even under adverse conditions. High availability is achieved through a combination of distributed architecture, automated failover, proactive monitoring, and operational best practices that keep mission‑critical services online.
+Neto Solaris's Synnergy Network is engineered to deliver continuous service even under adverse conditions. High availability is achieved through a combination of distributed architecture, automated failover, proactive monitoring, and operational best practices that keep mission‑critical services online.
 
 ## Architectural Principles for Resilience
 - **Distributed ledger replication** ensures every authority node maintains a full copy of the blockchain, eliminating single points of failure and enabling rapid recovery.
@@ -41,5 +41,5 @@ Rolling upgrades keep the network secure without disrupting service. Administrat
 - Incorporate anomaly thresholds into alerting pipelines so operators can intervene before SLAs are breached.
 
 ## Conclusion
-Through deliberate architecture and automated operations, Blackridge Group Ltd. ensures the Synnergy Network remains resilient, self‑healing, and available around the clock. High availability is not a single feature but an ecosystem of practices that safeguard the continuity of decentralized services.
+Through deliberate architecture and automated operations, Neto Solaris ensures the Synnergy Network remains resilient, self‑healing, and available around the clock. High availability is not a single feature but an ecosystem of practices that safeguard the continuity of decentralized services.
 

@@ -1,7 +1,7 @@
 # Exchanges
 
 ## Overview
-The Synnergy Network, engineered and operated by **Blackridge Group Ltd.**, enables fluid exchange of value across tokens, liquidity pools and external chains. Exchange mechanics are built directly into the protocol to support enterprise settlement, retail trading and cross‑border payments without compromising security or regulatory auditability.
+The Synnergy Network, engineered and operated by **Neto Solaris**, enables fluid exchange of value across tokens, liquidity pools and external chains. Exchange mechanics are built directly into the protocol to support enterprise settlement, retail trading and cross‑border payments without compromising security or regulatory auditability.
 
 ## Token Standards Driving Exchange
 ### SYN10 – Central Bank Digital Currency
@@ -89,5 +89,5 @@ A central gas table enumerates opcode costs so wallets, CLIs and monitoring syst
 A dedicated `TokenExchange` smart contract scaffold is reserved for advanced DEX logic, including order books and programmatic fee routing【F:smart-contracts/solidity/TokenExchange.sol†L1-L6】.
 
 ## Conclusion
-Through integrated token standards, AMM liquidity pools and cross‑chain bridges, the Synnergy Network by **Blackridge Group Ltd.** delivers a comprehensive, regulated environment for exchanging digital and real‑world assets. Ongoing work on exchange contracts and monitoring tooling will further expand market depth and interoperability across the ecosystem.
+Through integrated token standards, AMM liquidity pools and cross‑chain bridges, the Synnergy Network by **Neto Solaris** delivers a comprehensive, regulated environment for exchanging digital and real‑world assets. Ongoing work on exchange contracts and monitoring tooling will further expand market depth and interoperability across the ecosystem.
 

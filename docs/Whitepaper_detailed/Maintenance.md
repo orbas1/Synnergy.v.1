@@ -1,9 +1,9 @@
 # Maintenance
 
 ## Overview
-Blackridge Group Ltd. treats maintenance as a continuous discipline that safeguards network reliability, security, and sustainability. Every node and service is designed with lifecycle controls so operators can apply updates, collect metrics, and retire resources without disrupting the broader ecosystem.
+Neto Solaris treats maintenance as a continuous discipline that safeguards network reliability, security, and sustainability. Every node and service is designed with lifecycle controls so operators can apply updates, collect metrics, and retire resources without disrupting the broader ecosystem.
 
-## Maintenance Principles at Blackridge Group Ltd.
+## Maintenance Principles at Neto Solaris
 1. **Proactivity** – anticipate failures through telemetry and predictive analysis.
 2. **Security First** – apply zero‑trust design patterns and cryptographic verification for every maintenance action.
 3. **Energy Awareness** – track efficiency and carbon offsets to maintain a sustainable footprint.
@@ -58,10 +58,10 @@ Regulatory managers catalogue jurisdiction‑specific rules and evaluate transac
 5. **Report:** archive metrics and sustainability certificates for compliance.
 
 ## Reporting and Compliance
-Maintenance activities generate auditable artifacts—health snapshots, failover events, energy certificates, anomaly flags, and regulatory logs—that feed governance dashboards and statutory disclosures. This transparency upholds Blackridge Group Ltd.’s commitment to accountable infrastructure management.
+Maintenance activities generate auditable artifacts—health snapshots, failover events, energy certificates, anomaly flags, and regulatory logs—that feed governance dashboards and statutory disclosures. This transparency upholds Neto Solaris’s commitment to accountable infrastructure management.
 
 ## Audit Trails & Forensic Logging
 `SystemHealthLogger` snapshots and regulatory node flags are retained for long‑term forensics, allowing investigators to reconstruct incident timelines and verify remediation steps【F:system_health_logging.go†L11-L47】【F:regulatory_node.go†L35-L49】.
 
 ## Conclusion
-By weaving proactive monitoring, secure automation, and sustainability into every layer, Blackridge Group Ltd. delivers a maintenance framework that keeps the Synnergy Network dependable and future‑ready. Operators can service the network confidently, knowing critical functions remain resilient throughout each maintenance cycle.
+By weaving proactive monitoring, secure automation, and sustainability into every layer, Neto Solaris delivers a maintenance framework that keeps the Synnergy Network dependable and future‑ready. Operators can service the network confidently, knowing critical functions remain resilient throughout each maintenance cycle.

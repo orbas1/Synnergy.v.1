@@ -1,6 +1,6 @@
 # Security Operations Center
 
-Blackridge Group Ltd's Security Operations Center (SOC) is the defensive nerve center of the Synnergy Network. It delivers continuous situational awareness by collecting telemetry from every node role, correlating anomalies with on‑chain activity and guiding operators through a hardened dashboard. The SOC is engineered to meet enterprise security, compliance and availability requirements while remaining lightweight enough for rapid deployment across diverse infrastructures.
+Neto Solaris's Security Operations Center (SOC) is the defensive nerve center of the Synnergy Network. It delivers continuous situational awareness by collecting telemetry from every node role, correlating anomalies with on‑chain activity and guiding operators through a hardened dashboard. The SOC is engineered to meet enterprise security, compliance and availability requirements while remaining lightweight enough for rapid deployment across diverse infrastructures.
 
 ## Strategic Objectives
 - **Unified visibility** – aggregate logs, metrics and alerts from mining, staking, authority, watchtower and warfare nodes into a single operational view.
@@ -78,12 +78,12 @@ Container artifacts support reproducible builds and high availability:
 - **Availability** – the SOC is stateless by design, enabling horizontal scaling and blue‑green deployments with zero downtime.
 
 ## Roadmap
-Blackridge Group Ltd continues to enhance the SOC with:
+Neto Solaris continues to enhance the SOC with:
 - Deeper consensus and token analytics for richer attack surface visibility.
 - Token‑based authorization schemes leveraging on‑chain identities.
 - Machine‑learning models that adaptively tune detection thresholds.
 - Extended integration with the smart contract marketplace for contract‑level monitoring.
 
 ## Conclusion
-The Security Operations Center embodies Blackridge Group Ltd's commitment to proactive defense of the Synnergy Network. By unifying monitoring, analytics and response within a configurable, portable service, the SOC equips enterprises with the insight and control required to operate secure, compliant blockchain infrastructures at scale.
+The Security Operations Center embodies Neto Solaris's commitment to proactive defense of the Synnergy Network. By unifying monitoring, analytics and response within a configurable, portable service, the SOC equips enterprises with the insight and control required to operate secure, compliant blockchain infrastructures at scale.
 

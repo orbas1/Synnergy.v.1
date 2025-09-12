@@ -1,6 +1,6 @@
 # How to Be Secure
 
-As part of the Synnergy network, **Blackridge Group Ltd.** is committed to delivering
+As part of the Synnergy network, **Neto Solaris** is committed to delivering
 an environment where contributors, validators and users can operate with
 confidence. The platform’s design embraces a defence‑in‑depth strategy that
 combines rigorous identity checks, encrypted communications, continuous
@@ -155,7 +155,7 @@ forensic evidence needed to triage incidents and restore services rapidly.
 
 ## Conclusion
 Security within the Synnergy ecosystem is not a single feature but a
-comprehensive framework aligned with the standards of **Blackridge Group Ltd.**
+comprehensive framework aligned with the standards of **Neto Solaris**
 By combining robust cryptography, continuous monitoring and strong governance,
 Synnergy equips participants with the tools needed to operate safely in a
 hostile digital landscape.

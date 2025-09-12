@@ -1,7 +1,7 @@
 # Virtual Machine
 
 ## Overview
-The Synnergy Virtual Machine (SVM) is the execution backbone of Blackridge Group Ltd.'s blockchain ecosystem. It provides a deterministic environment for running WebAssembly-based smart contracts, ensuring that every node evaluates transactions with identical results. The SVM's design emphasises modularity, resource efficiency and security so that the platform can support applications ranging from high-throughput financial services to lightweight mobile interactions.
+The Synnergy Virtual Machine (SVM) is the execution backbone of Neto Solaris's blockchain ecosystem. It provides a deterministic environment for running WebAssembly-based smart contracts, ensuring that every node evaluates transactions with identical results. The SVM's design emphasises modularity, resource efficiency and security so that the platform can support applications ranging from high-throughput financial services to lightweight mobile interactions.
 
 ## Execution Model
 At its core, the SVM interprets contracts encoded as sequences of 24-bit opcodes. Each opcode maps to a handler function responsible for transforming input bytes into new state. Unknown instructions default to a no-operation echo handler, keeping execution deterministic even when the opcode set evolves. Execution is driven through `ExecuteContext(ctx, wasm, method, args, gasLimit)` so callers can provide a cancellation context, raw opcode stream, optional method hint, initial arguments and a maximum gas allowance.
@@ -43,7 +43,7 @@ The opcode catalogue acts as a connective tissue across the Synnergy Network. Th
 - **Governance and Compliance** – KYC validation, risk scoring and regulatory audit trails.
 - **Security Services** – firewall configuration, biometric enrolment and zero‑trust data channels.
 
-Because each opcode resolves to a handler within the registry, contracts orchestrate these disparate services without embedding network-specific logic. This modularity also allows Blackridge Group Ltd. to introduce new capabilities simply by registering additional opcodes.
+Because each opcode resolves to a handler within the registry, contracts orchestrate these disparate services without embedding network-specific logic. This modularity also allows Neto Solaris to introduce new capabilities simply by registering additional opcodes.
 
 ## Lifecycle and Thread Safety
 The SVM is engineered for concurrent workloads. Internally, a read/write mutex guards lifecycle transitions so `Start` and `Stop` can be invoked repeatedly without race conditions. Each execution acquires a token from a buffered channel sized according to the chosen profile, ensuring that no more than the allowed number of contracts run simultaneously. This pattern delivers predictable throughput while preserving determinism across validator implementations.
@@ -98,7 +98,7 @@ Enterprise deployments require deep insight into runtime behaviour. The SVM and 
 The contract registry relies on the SVM for every deployment and invocation. By abstracting execution behind the `VirtualMachine` interface, other modules—such as cross-chain bridges, data services and token registries—invoke contracts without needing to understand low-level execution details. The opcode table also binds many system functions, allowing the VM to orchestrate actions across the wider Synnergy Network in a uniform manner.
 
 ## Security and Determinism
-Blackridge Group Ltd. designs the SVM with several safeguards:
+Neto Solaris designs the SVM with several safeguards:
 
 - **Context-aware Execution** – operations honour cancellation signals, ensuring stalled calls do not linger during network disruptions.
 - **Concurrency Limits** – resource profiles shield nodes from overload and deliberate denial-of-service attempts.
@@ -106,7 +106,7 @@ Blackridge Group Ltd. designs the SVM with several safeguards:
 - **Graceful Error Handling** – empty payloads, gas overflows or saturated concurrency queues return descriptive errors while unknown opcodes fall back to the default handler.
 
 ## Enterprise Integration and Deployment
-Because contracts compile to WebAssembly, developers can author logic in any language with a WASM toolchain while maintaining deterministic behaviour on the network. Dynamic opcode and gas registration allow phased rollouts of new modules, and profile-driven concurrency controls let operators tune resource usage for diverse hardware tiers. Combined with structured logging, telemetry and sandbox auditing, these capabilities equip Blackridge Group Ltd. with a production-ready execution layer suitable for mission-critical applications.
+Because contracts compile to WebAssembly, developers can author logic in any language with a WASM toolchain while maintaining deterministic behaviour on the network. Dynamic opcode and gas registration allow phased rollouts of new modules, and profile-driven concurrency controls let operators tune resource usage for diverse hardware tiers. Combined with structured logging, telemetry and sandbox auditing, these capabilities equip Neto Solaris with a production-ready execution layer suitable for mission-critical applications.
 
 ## Use Cases and Deployment Scenarios
 - **Authority Nodes** leverage the heavy profile to process large batches of transactions and complex contract interactions.
@@ -116,4 +116,4 @@ Because contracts compile to WebAssembly, developers can author logic in any lan
 In all cases, the unified VM architecture ensures that applications behave consistently regardless of where they run within the Synnergy Network.
 
 ## Conclusion
-The Synnergy Virtual Machine delivers a robust, extensible and resource-aware execution layer for the platform's smart contracts. Through its opcode-driven design, sandbox management, observability stack and multiple performance profiles, the SVM embodies Blackridge Group Ltd.'s commitment to secure and scalable decentralised computing.
+The Synnergy Virtual Machine delivers a robust, extensible and resource-aware execution layer for the platform's smart contracts. Through its opcode-driven design, sandbox management, observability stack and multiple performance profiles, the SVM embodies Neto Solaris's commitment to secure and scalable decentralised computing.

@@ -1,6 +1,6 @@
 # Applying to the Synnergy Charity Pool
 
-_Official guidance prepared by **Blackridge Group Ltd**_
+_Official guidance prepared by **Neto Solaris**_
 
 ## Overview
 The Synnergy Charity Pool is an on‑chain treasury that channels a portion of network fees and voluntary donations toward registered philanthropic initiatives. Charities register with the pool, receive votes from the community, and, at the close of each funding cycle, top‑voted organisations become eligible for disbursements. All interactions—registrations, deposits, votes, and payouts—are immutably recorded on the ledger for full transparency.
@@ -8,10 +8,10 @@ The Synnergy Charity Pool is an on‑chain treasury that channels a portion of n
 ## Funding Sources and Fee Allocation
 The pool is capitalised through two mechanisms:
 
-- **Protocol Fees** – Five percent of every transaction fee is routed into the external charity pool while a separate five percent supports Blackridge Group Ltd’s internal charitable programmes【F:core/fees.go†L115-L123】. These allocations are enforced by the network’s `DistributeFees` policy, ensuring predictable funding regardless of market activity.
+- **Protocol Fees** – Five percent of every transaction fee is routed into the external charity pool while a separate five percent supports Neto Solaris’s internal charitable programmes【F:core/fees.go†L115-L123】. These allocations are enforced by the network’s `DistributeFees` policy, ensuring predictable funding regardless of market activity.
 - **Voluntary Donations** – Community members or corporate sponsors may augment the pool by depositing additional tokens to the `charity_pool` account, increasing the resources available for distribution.
 
-All funds destined for external causes accumulate under the ledger address `charity_pool`, distinct from `internal_charity` which holds Blackridge‑directed initiatives【F:core/charity.go†L66-L69】.
+All funds destined for external causes accumulate under the ledger address `charity_pool`, distinct from `internal_charity` which holds Neto Solaris‑directed initiatives【F:core/charity.go†L66-L69】.
 
 ### Transaction Fee Distribution Model
 To provide full transparency to network participants, the Synnergy protocol publishes the complete breakdown of how each transaction fee is allocated:
@@ -19,7 +19,7 @@ To provide full transparency to network participants, the Synnergy protocol publ
 | Allocation Target | Percentage |
 |-------------------|-----------:|
 | Internal Development | 5% |
-| **Internal Charity (Blackridge programmes)** | **5%** |
+| **Internal Charity (Neto Solaris programmes)** | **5%** |
 | **External Charity Pool** | **5%** |
 | Loan Pool | 5% |
 | Passive Income Dividend | 5% |
@@ -36,7 +36,7 @@ Before submitting an application, prospective charities should ensure the follow
 - **Blockchain Address** – Each charity must control a Synnergy‑compatible wallet capable of receiving token transfers.
 - **Clear Mission Category** – Applicants select one of the predefined mission classes such as _HungerRelief_, _ChildrenHelp_, _WildlifeHelp_, _SeaSupport_, _DisasterSupport_, or _WarSupport_ when registering【F:core/charity.go†L12-L22】.
 - **Organisation Details** – A human‑readable name and concise description of activities help voters understand the cause.
-- **Compliance** – Charities should be legally registered within their jurisdictions and prepared to provide any documentation requested by Blackridge Group Ltd during due diligence.
+- **Compliance** – Charities should be legally registered within their jurisdictions and prepared to provide any documentation requested by Neto Solaris during due diligence.
 
 ## Step‑by‑Step Application Process
 1. **Prepare a Wallet**  
@@ -81,12 +81,12 @@ Each cycle includes a **registration window**, a **voting window**, and a **sett
 - **Voting Window** – Verified community members cast their votes. Real‑time totals can be audited from the ledger to help organisations gauge support.
 - **Settlement Window** – After voting ends, administrators tally results and prepare disbursements. Funds not awarded remain in the pool for future rounds.
 
-Blackridge Group Ltd publishes the official calendar, including cycle start and end dates, on our governance portal. Organisations planning major campaigns should file registrations at least one full cycle in advance to guarantee eligibility.
+Neto Solaris publishes the official calendar, including cycle start and end dates, on our governance portal. Organisations planning major campaigns should file registrations at least one full cycle in advance to guarantee eligibility.
 
 ## Funding, Donations, and Disbursement
 - **Donations** – Anyone can contribute to the pool by depositing tokens, which increases the pool balance available for future distribution【F:core/charity.go†L76-L87】.
 - **Payouts** – At the conclusion of each cycle, top‑voted charities may receive allocations from the pool. The reference implementation currently stores votes and registrations while leaving automated payout logic for future development【F:core/charity.go†L116-L123】.
-- **Withdrawal of Internal Funds** – Blackridge Group Ltd maintains an internal charity account for corporate initiatives; withdrawals from this account are managed separately from community‑directed funds【F:core/charity.go†L66-L69】.
+- **Withdrawal of Internal Funds** – Neto Solaris maintains an internal charity account for corporate initiatives; withdrawals from this account are managed separately from community‑directed funds【F:core/charity.go†L66-L69】.
 
 ### Auditing and Balance Queries
 Administrators and auditors can verify pool holdings at any time using the management CLI:
@@ -105,10 +105,10 @@ The command returns the current token balances for the community pool and the in
 ## Enterprise Integration and Compliance
 Larger organisations can integrate directly with the Synnergy Network through our APIs and enterprise SDKs. Ledger interactions such as registration, voting, donation tracking, and balance queries can be automated within existing back‑office systems, enabling near real‑time reconciliation and audit trails. Event webhooks and batch export endpoints are provided for enterprise resource‑planning platforms that require periodic snapshots.
 
-Blackridge Group Ltd conducts due diligence on all applicants and may request supplemental documentation to satisfy regulatory obligations or anti‑money‑laundering controls. Dedicated compliance contacts are available to help multinational charities align their internal policies with on‑chain transparency requirements.
+Neto Solaris conducts due diligence on all applicants and may request supplemental documentation to satisfy regulatory obligations or anti‑money‑laundering controls. Dedicated compliance contacts are available to help multinational charities align their internal policies with on‑chain transparency requirements.
 
 ## Support
-For assistance with registration or technical integration, contact the Blackridge Group Ltd support team via our official channels. Development proposals and enhancements to the charity module are welcomed through our public repository.
+For assistance with registration or technical integration, contact the Neto Solaris support team via our official channels. Development proposals and enhancements to the charity module are welcomed through our public repository.
 
 ---
-*Blackridge Group Ltd remains committed to leveraging the Synnergy Network for transparent, community‑driven philanthropy.*
+*Neto Solaris remains committed to leveraging the Synnergy Network for transparent, community‑driven philanthropy.*

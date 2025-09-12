@@ -1,6 +1,6 @@
-# Blackridge Group Ltd – AI Marketplace Module
+# Neto Solaris – AI Marketplace Module
 
-The AI Marketplace is a modular interface for discovering, evaluating, and acquiring AI services within the Synnergy Network. Developed and maintained by **Blackridge Group Ltd**, this package delivers a production‑ready scaffold for building marketplace capabilities or integrating external tooling.
+The AI Marketplace is a modular interface for discovering, evaluating, and acquiring AI services within the Synnergy Network. Developed and maintained by **Neto Solaris**, this package delivers a production‑ready scaffold for building marketplace capabilities or integrating external tooling.
 
 ## Overview
 
@@ -106,5 +106,5 @@ Additional architectural context and operational guides are located in [`docs/RE
 
 ## License
 
-This module is released under the terms of the repository's primary license. © Blackridge Group Ltd.
+This module is released under the terms of the repository's primary license. © Neto Solaris
 

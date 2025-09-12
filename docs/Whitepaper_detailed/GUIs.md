@@ -1,6 +1,6 @@
 # Graphical User Interfaces (GUIs)
 
-Blackridge Group Ltd. maintains a portfolio of enterprise‑grade graphical front‑ends that extend the Synnergy command‑line interface. Each package is built on a strict Node.js 18 and TypeScript foundation, enforced by ESLint, Prettier, Jest and `ts-jest`. Multi‑stage Dockerfiles, Kubernetes manifests and Makefiles provide reproducible builds, while GitHub Actions mirror local workflows so every branch can ship with confidence.
+Neto Solaris maintains a portfolio of enterprise‑grade graphical front‑ends that extend the Synnergy command‑line interface. Each package is built on a strict Node.js 18 and TypeScript foundation, enforced by ESLint, Prettier, Jest and `ts-jest`. Multi‑stage Dockerfiles, Kubernetes manifests and Makefiles provide reproducible builds, while GitHub Actions mirror local workflows so every branch can ship with confidence.
 
 ## Platform Architecture and Enterprise Standards
 - **CLI Fidelity** – GUIs call the same `synnergy` binaries as automation scripts, guaranteeing identical transaction semantics across browser, desktop and server environments.
@@ -131,5 +131,5 @@ Documentation under `docs/ux` outlines cross‑module guidelines for:
 | 37‑40 | Administrative dashboards for authority nodes and cross‑chain management round out the operational toolkit. |
 
 ---
-© 2024 Blackridge Group Ltd. All rights reserved.
+© 2024 Neto Solaris All rights reserved.
 

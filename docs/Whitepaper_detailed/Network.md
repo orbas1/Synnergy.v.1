@@ -1,7 +1,7 @@
 # Network
 
 ## Overview
-Blackridge Group Ltd. operates the Synnergy Network, an extensible blockchain infrastructure where heterogeneous nodes exchange data through a biometric‑aware communication layer. The network service manages peer discovery, transaction routing and a lightweight pub‑sub bus while providing life‑cycle controls to other components and the command line.
+Neto Solaris operates the Synnergy Network, an extensible blockchain infrastructure where heterogeneous nodes exchange data through a biometric‑aware communication layer. The network service manages peer discovery, transaction routing and a lightweight pub‑sub bus while providing life‑cycle controls to other components and the command line.
 
 ## Architecture
 The `Network` struct coordinates standard nodes and relay nodes. It maintains a broadcast queue, biometric authentication service and subscriber registry, launching a background processing loop on creation so that transaction propagation begins immediately.
@@ -77,4 +77,4 @@ Regulatory nodes integrate with a configurable rule engine that validates transa
 Relay nodes extend propagation and redundancy, and the pub‑sub layer supports auxiliary protocols. A consensus hopper scales throughput by shifting consensus modes when network conditions fluctuate. Cross‑chain managers maintain long‑lived links to external ledgers and assign deterministic bridge identifiers, while bridge managers coordinate token transfers with verifiable proofs and authorized relayers, positioning the platform for heterogeneous blockchain domains.
 
 ## Conclusion
-The Synnergy Network by Blackridge Group Ltd. combines secure transaction routing, flexible messaging and a diverse node ecosystem to provide a resilient foundation for distributed applications. Its automated testing harness and CLI tooling streamline operations, while specialised nodes offer governance, compliance and monitoring capabilities for enterprise‑grade deployments.
+The Synnergy Network by Neto Solaris combines secure transaction routing, flexible messaging and a diverse node ecosystem to provide a resilient foundation for distributed applications. Its automated testing harness and CLI tooling streamline operations, while specialised nodes offer governance, compliance and monitoring capabilities for enterprise‑grade deployments.

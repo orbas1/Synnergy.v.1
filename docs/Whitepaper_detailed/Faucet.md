@@ -1,6 +1,6 @@
 # Token Faucet
 
-Blackridge Group Ltd. provides a controlled token faucet within the Synnergy Network to dispense small amounts of test assets for development, onboarding, and QA activities. This document details the faucet's architecture, operational model, and usage patterns across the stack.
+Neto Solaris provides a controlled token faucet within the Synnergy Network to dispense small amounts of test assets for development, onboarding, and QA activities. This document details the faucet's architecture, operational model, and usage patterns across the stack.
 
 ## Design Objectives
 
@@ -41,7 +41,7 @@ A helper script, `faucet_fund.sh`, simplifies repeated funding requests from she
 
 ## Smart Contract Implementations
 
-For on‑chain scenarios, Blackridge supplies a reference Solidity contract `TokenFaucet.sol`. It exposes immutable token binding, owner identification, a configurable drip amount, and a 24‑hour wait period between requests【F:smart-contracts/solidity/TokenFaucet.sol†L10-L27】. Anyone may deposit additional liquidity, while only the owner may modify the drip rate or withdraw balances【F:smart-contracts/solidity/TokenFaucet.sol†L31-L45】.
+For on‑chain scenarios, Neto Solaris supplies a reference Solidity contract `TokenFaucet.sol`. It exposes immutable token binding, owner identification, a configurable drip amount, and a 24‑hour wait period between requests【F:smart-contracts/solidity/TokenFaucet.sol†L10-L27】. Anyone may deposit additional liquidity, while only the owner may modify the drip rate or withdraw balances【F:smart-contracts/solidity/TokenFaucet.sol†L31-L45】.
 
 An equivalent model is provided in Rust for WebAssembly targets, enabling cross‑platform faucet deployments with consistent semantics. The Rust struct records the owner, per‑call drip amount, and wait interval, tracking last request timestamps in a `HashMap` to enforce cooldowns【F:smart-contracts/rust/src/token_faucet.rs†L1-L23】. The compiled artefact (`smart-contracts/token_faucet.wasm`) allows the same logic to execute within Synnergy's WASM runtime.
 
@@ -83,5 +83,5 @@ Road‑map items include integrating CAPTCHA or signature verification for publi
 
 ## Conclusion
 
-The Blackridge Group Ltd. faucet provides a configurable and secure mechanism for distributing test tokens across the Synnergy Network. By combining lightweight Go services, CLI tooling, and smart‑contract implementations, the system ensures developers and stakeholders can experiment safely while maintaining governance over token issuance.
+The Neto Solaris faucet provides a configurable and secure mechanism for distributing test tokens across the Synnergy Network. By combining lightweight Go services, CLI tooling, and smart‑contract implementations, the system ensures developers and stakeholders can experiment safely while maintaining governance over token issuance.
 

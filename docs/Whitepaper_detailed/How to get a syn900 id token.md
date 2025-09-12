@@ -1,7 +1,7 @@
 # How to Get a SYN900 ID Token
 
 ## Overview
-Blackridge Group Ltd. issues the **SYN900** identity token as the cornerstone of user authentication on the Synnergy Network. Each token binds a wallet address to verified personal details, enabling compliant participation across modules such as the LoanPool, Charity Pool and governance portals. Unlike traditional credentials, the SYN900 token is privacy‑preserving and auditable, allowing services to confirm identity without exposing raw documentation.
+Neto Solaris issues the **SYN900** identity token as the cornerstone of user authentication on the Synnergy Network. Each token binds a wallet address to verified personal details, enabling compliant participation across modules such as the LoanPool, Charity Pool and governance portals. Unlike traditional credentials, the SYN900 token is privacy‑preserving and auditable, allowing services to confirm identity without exposing raw documentation.
 
 ## Why the SYN900 Token Matters
 - **Access control** – Contracts and services gate sensitive actions to proven identities. For example, the Charity Pool verifies token holders before counting a vote, rejecting any address without a registered ID【F:core/charity.go†L103-L110】.
@@ -57,7 +57,7 @@ These commands wrap the `IDRegistry` and `IdentityService` interfaces, enabling 
 
 ## Security Best Practices
 - Enable multi‑factor or hardware‑wallet authentication to guard the token.
-- Monitor verification logs for unusual activity and escalate discrepancies to Blackridge Group Ltd. support.
+- Monitor verification logs for unusual activity and escalate discrepancies to Neto Solaris support.
 - Use offline storage for seed phrases and rotate credentials when personnel change.
 - Review regulatory flags periodically via `RegulatoryNode.Logs` to ensure ongoing compliance【F:regulatory_node.go†L32-L43】.
 - Track `ComplianceService.RiskScore` to detect wallets accumulating fraud signals and respond before regulatory thresholds are breached【F:compliance.go†L83-L90】【F:compliance.go†L94-L100】.
@@ -68,4 +68,4 @@ These commands wrap the `IDRegistry` and `IdentityService` interfaces, enabling 
 - For economic incentives such as Passive Income distributions, consult the transaction fee distribution guide which shows how the `IDRegistry` underpins targeted payouts【F:docs/Whitepaper_detailed/Transaction fee distribution.md†L106-L110】.
 
 ---
-© Blackridge Group Ltd. All rights reserved.
+© Neto Solaris All rights reserved.

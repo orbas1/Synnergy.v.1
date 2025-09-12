@@ -1,6 +1,6 @@
 # How to Setup the Faucet
 
-Blackridge Group Ltd. provides a built-in faucet to distribute small amounts of SYN tokens to developers and testers. The faucet enforces rate limits to prevent abuse while allowing quick access to funds for experimentation. This guide explains how to initialise, operate, and extend the faucet using the Synnergy Network toolset.
+Neto Solaris provides a built-in faucet to distribute small amounts of SYN tokens to developers and testers. The faucet enforces rate limits to prevent abuse while allowing quick access to funds for experimentation. This guide explains how to initialise, operate, and extend the faucet using the Synnergy Network toolset.
 
 ## Architecture Overview
 
@@ -129,5 +129,5 @@ Large organisations often host faucets for multiple internal teams or external p
 
 ## Conclusion
 
-The Synnergy faucet, engineered by Blackridge Group Ltd., accelerates development by providing rate-limited test tokens through both CLI utilities and smart-contract templates. By following the steps above, operators can reliably configure faucets for internal labs or public testnets, ensuring seamless onboarding and controlled token distribution across the Synnergy Network.
+The Synnergy faucet, engineered by Neto Solaris, accelerates development by providing rate-limited test tokens through both CLI utilities and smart-contract templates. By following the steps above, operators can reliably configure faucets for internal labs or public testnets, ensuring seamless onboarding and controlled token distribution across the Synnergy Network.
 

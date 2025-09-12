@@ -1,6 +1,6 @@
 # How to Create Our Various Tokens
 
-Blackridge Group Ltd. designs the Synnergy Network to support a wide spectrum of tokenised assets, each governed by dedicated registries and ledgers. This guide explains how to instantiate and manage these tokens using the Synnergy libraries and tooling.
+Neto Solaris designs the Synnergy Network to support a wide spectrum of tokenised assets, each governed by dedicated registries and ledgers. This guide explains how to instantiate and manage these tokens using the Synnergy libraries and tooling.
 
 ## 1. Prerequisites
 
@@ -285,9 +285,9 @@ The `smart-contracts/solidity` directory offers additional token templates for s
 1. **Version control** every token contract or registry definition.
 2. **Write tests** for registry operations and permission checks before deployment.
 3. **Monitor events** emitted by registries to maintain off-chain mirrors of on-chain state.
-4. **Use the provided tooling** for consistent builds and to integrate with Blackridge Group’s deployment pipelines.
+4. **Use the provided tooling** for consistent builds and to integrate with Neto Solaris’s deployment pipelines.
 
 ## 7. Conclusion
 
-By selecting the appropriate standard and leveraging Synnergy’s registries, developers can model everything from simple utility passes to complex asset-backed instruments. Blackridge Group Ltd. provides both CLI and GUI tooling to streamline token creation while maintaining regulatory and operational rigor.
+By selecting the appropriate standard and leveraging Synnergy’s registries, developers can model everything from simple utility passes to complex asset-backed instruments. Neto Solaris provides both CLI and GUI tooling to streamline token creation while maintaining regulatory and operational rigor.
 

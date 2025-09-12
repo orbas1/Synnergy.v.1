@@ -1,6 +1,6 @@
 # How to Deploy a Contract
 
-Blackridge Group Ltd provides a deterministic smart‑contract environment in the
+Neto Solaris provides a deterministic smart‑contract environment in the
 Synnergy Network. Contracts are compiled to WebAssembly (WASM) and deployed via
 the `synnergy` command‑line interface (CLI), yielding an immutable address
 derived from the bytecode hash. This guide describes how to publish and manage
@@ -261,7 +261,7 @@ metrics and success/failure tags that feed directly into enterprise dashboards.
 ## Conclusion
 
 By following these steps, developers can confidently deploy and administer
-smart contracts on the Synnergy Network under the Blackridge Group Ltd
+smart contracts on the Synnergy Network under the Neto Solaris
 umbrella. The deterministic tooling and accompanying templates streamline
 contract lifecycles while preserving security and auditability. Whether rolling
 out a single template or orchestrating a fleet of cross‑chain and AI contracts,

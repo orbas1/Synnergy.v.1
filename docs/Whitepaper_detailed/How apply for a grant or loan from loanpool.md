@@ -1,7 +1,7 @@
 # How to Apply for a Grant or Loan from the LoanPool
 
 ## 1. Overview
-The LoanPool is Blackridge Group Ltd's on-chain credit facility for the Synnergy Network. It allows our community to propose, review and disburse grants or loans from a shared treasury in a transparent and auditable manner. Two complementary flows exist:
+The LoanPool is Neto Solaris's on-chain credit facility for the Synnergy Network. It allows our community to propose, review and disburse grants or loans from a shared treasury in a transparent and auditable manner. Two complementary flows exist:
 
 - **Proposals** – Authority nodes or authorised users submit proposals to direct treasury funds to a recipient. These can represent grants or structured loans.
 - **Applications** – Individual users submit personal loan requests that are voted on before disbursement.
@@ -115,7 +115,7 @@ Disbursement authority is restricted to vetted governance participants:
 - The virtual machine provides a `Loanpool_IsAuthority` opcode so contracts and CLIs can verify that the caller is a registered authority before releasing funds【F:core/opcode.go†L603-L610】.
 - Authority nodes are managed through the `synnergy authority` CLI, which supports registration, voting and electorate sampling for due diligence【F:cli/authority_nodes.go†L15-L48】.
 
-Only nodes passing these checks may invoke `loanpool disburse` or `loanpool_apply disburse`, ensuring that loan and grant distribution remains under explicit Blackridge Group Ltd oversight.
+Only nodes passing these checks may invoke `loanpool disburse` or `loanpool_apply disburse`, ensuring that loan and grant distribution remains under explicit Neto Solaris oversight.
 
 ## 7. Tracking and Management
 Both proposals and applications can be inspected and listed for auditability:
@@ -134,7 +134,7 @@ synnergy loanpool cancel [creator] [id]
 synnergy loanpool extend [creator] [id] [hrs]
 ```
 
-Administrative operators at Blackridge Group Ltd can pause new submissions or review treasury statistics through the `loanmgr` commands:
+Administrative operators at Neto Solaris can pause new submissions or review treasury statistics through the `loanmgr` commands:
 
 ```bash
 synnergy loanmgr pause
@@ -152,7 +152,7 @@ Structured outputs make the LoanPool suitable for enterprise monitoring and auto
 - Machine‑readable responses allow orchestration tools to trigger disbursements or workflow steps programmatically.
 
 ## 9. Compliance and Security
-Blackridge Group Ltd enforces strict security around LoanPool operations:
+Neto Solaris enforces strict security around LoanPool operations:
 
 - **Identity verification** – All participants must authenticate via SYN900 tokens with KYC/AML compliance, with verification methods logged for audit.
 - **Multi‑factor authentication** – Sensitive actions require multiple verification factors, including optional biometric checks.
@@ -167,6 +167,6 @@ Blackridge Group Ltd enforces strict security around LoanPool operations:
 - Review `loanmgr stats` periodically and cancel or extend proposals proactively when circumstances evolve.
 
 ## 11. Support
-For additional assistance or to escalate issues, contact the Blackridge Group Ltd support team through your authority node representative or the official Synnergy Network communication channels.
+For additional assistance or to escalate issues, contact the Neto Solaris support team through your authority node representative or the official Synnergy Network communication channels.
 
 By following these steps and aligning with our compliance standards, applicants can seamlessly access grants or loans from the LoanPool while contributing to the health and growth of the Synnergy ecosystem.

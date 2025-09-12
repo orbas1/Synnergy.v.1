@@ -1,6 +1,6 @@
 # Transaction Fee Distribution
 
-Blackridge Group Ltd.'s Synnergy Network employs a transparent and programmable fee model that funds ecosystem growth while incentivizing network actors. This document details how fees are computed, how they are adjusted for enterprise policy, and how every collected unit is allocated across the platform.
+Neto Solaris's Synnergy Network employs a transparent and programmable fee model that funds ecosystem growth while incentivizing network actors. This document details how fees are computed, how they are adjusted for enterprise policy, and how every collected unit is allocated across the platform.
 
 ## Fee Components
 
@@ -87,7 +87,7 @@ Enterprise deployments require transparent reporting. The `AuditManager` records
 
 ## CLI Tooling
 
-Blackridge Group provides command‑line tools to interact with the fee system:
+Neto Solaris provides command‑line tools to interact with the fee system:
 
 - `tx fee` – Estimates fees and shows the resulting distribution, enforcing optional caps and floors via `--cap` and `--floor` flags【F:cli/transaction.go†L79-L117】.
 - `fees estimate` – Quick fee forecasts incorporating live network load【F:cli/fees.go†L17-L55】.
@@ -109,5 +109,5 @@ Assuming an average network fee of 0.02 SYN and 1,000,000 daily transactions, th
 
 ## Summary
 
-Through a modular fee model, comprehensive gas accounting, and a clearly defined distribution schema, the Synnergy Network channels transaction revenue into development, community programmes, validator incentives and long‑term sustainability. Blackridge Group Ltd. ensures every fee reinforces the ecosystem, balancing profitability with social impact, regulatory compliance and operational resilience.
+Through a modular fee model, comprehensive gas accounting, and a clearly defined distribution schema, the Synnergy Network channels transaction revenue into development, community programmes, validator incentives and long‑term sustainability. Neto Solaris ensures every fee reinforces the ecosystem, balancing profitability with social impact, regulatory compliance and operational resilience.
 

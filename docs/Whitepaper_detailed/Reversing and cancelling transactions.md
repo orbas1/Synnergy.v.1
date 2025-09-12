@@ -1,7 +1,7 @@
 # Reversing and Cancelling Transactions
 
 ## Introduction
-Blackridge Group Ltd. designs the Synnergy Network to provide enterprises with programmable, controllable digital value transfers.  Beyond simple fund movement, organisations require mechanisms to halt or undo operations when errors, disputes, or regulatory interventions arise.  The network therefore supports two complementary capabilities: **cancelling scheduled transactions** and **reversing confirmed transactions**.  Both functions preserve ledger integrity while allowing the ecosystem to recover from mistakes or fraudulent activity.
+Neto Solaris designs the Synnergy Network to provide enterprises with programmable, controllable digital value transfers.  Beyond simple fund movement, organisations require mechanisms to halt or undo operations when errors, disputes, or regulatory interventions arise.  The network therefore supports two complementary capabilities: **cancelling scheduled transactions** and **reversing confirmed transactions**.  Both functions preserve ledger integrity while allowing the ecosystem to recover from mistakes or fraudulent activity.
 
 ## Scheduled Transactions and Cancellation
 The platform allows a payment to be staged for execution at a future time.  A
@@ -151,4 +151,4 @@ to achieve the same outcomes within automated workflows.
 - Monitor outstanding reversal requests to ensure they conclude within the allowed window.
 
 ## Conclusion
-Through these mechanisms Blackridge Group Ltd. equips the Synnergy Network with comprehensive transaction control.  Organisations can schedule payments confidently, revoke them when circumstances change, and rely on a governed reversal process when settlement errors must be rectified.  The combination of programmability and oversight delivers a resilient financial substrate for modern digital commerce.
+Through these mechanisms Neto Solaris equips the Synnergy Network with comprehensive transaction control.  Organisations can schedule payments confidently, revoke them when circumstances change, and rely on a governed reversal process when settlement errors must be rectified.  The combination of programmability and oversight delivers a resilient financial substrate for modern digital commerce.

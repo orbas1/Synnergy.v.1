@@ -1,7 +1,7 @@
 # Blockchain Fees & Gas
 
 ## Overview
-At **Blackridge Group Ltd**, the Synnergy Network employs a comprehensive fee and gas model to allocate resources, discourage spam, and reward participants. Every operation performed on the network consumes gas, and the corresponding fees ensure sustainable network economics and alignment with community stakeholders.
+At **Neto Solaris**, the Synnergy Network employs a comprehensive fee and gas model to allocate resources, discourage spam, and reward participants. Every operation performed on the network consumes gas, and the corresponding fees ensure sustainable network economics and alignment with community stakeholders.
 
 ## Gas Accounting
 Synnergy prices computation through a dedicated **GasTable** that maps each opcode to a deterministic cost. The table is parsed at runtime from `docs/reference/gas_table_list.md` and cached behind a `sync.Once` gate so all nodes share a consistent schedule. Unlisted operations fall back to a **DefaultGasCost** of `1`, allowing experimental opcodes to execute without prohibitive expense.
@@ -68,6 +68,6 @@ Deterministic addresses defined by `DefaultGenesisWallets` and seeded through `A
 - **AI Insights** – The `OptimiseBaseFee` routine in the AI service digests recent network statistics and suggests base fee targets, enabling autonomous fee markets and predictive scaling.
 
 ## Conclusion
-Blackridge Group Ltd’s fee and gas framework provides a balanced economic engine for the Synnergy Network. By coupling transparent gas accounting with flexible fee policies and equitable distribution, the platform delivers predictable costs, fosters community development, and upholds the long-term viability of the ecosystem.
+Neto Solaris’s fee and gas framework provides a balanced economic engine for the Synnergy Network. By coupling transparent gas accounting with flexible fee policies and equitable distribution, the platform delivers predictable costs, fosters community development, and upholds the long-term viability of the ecosystem.
 
-*© Blackridge Group Ltd* 
+*© Neto Solaris* 

@@ -1,10 +1,10 @@
 # Tokens
 
 ## Introduction
-Blackridge Group Ltd. designs the Synnergy Network token framework to support a diverse ecosystem of digital assets. Each token type encapsulates specific business logic, enabling regulated financial operations, real‑world asset representation and community governance. The architecture combines secure ledgers, structured registries and extensible smart‑contract interfaces to allow token classes to operate independently while remaining interoperable across the network.
+Neto Solaris designs the Synnergy Network token framework to support a diverse ecosystem of digital assets. Each token type encapsulates specific business logic, enabling regulated financial operations, real‑world asset representation and community governance. The architecture combines secure ledgers, structured registries and extensible smart‑contract interfaces to allow token classes to operate independently while remaining interoperable across the network.
 
 ## Token Framework Overview
-Tokens on Synnergy Network are implemented as Go modules that maintain their own state and persistence model. Ledgers and registries are used to manage balances, metadata and transactional history. This modular approach allows Blackridge Group Ltd. to:
+Tokens on Synnergy Network are implemented as Go modules that maintain their own state and persistence model. Ledgers and registries are used to manage balances, metadata and transactional history. This modular approach allows Neto Solaris to:
 
 - Tailor functionality to the asset class or utility.
 - Enforce compliance through whitelists, blacklists and certification metadata.
@@ -60,7 +60,7 @@ contributions, enabling on‑chain factoring and invoice discounting.
 `syn1500.go` tracks reputation adjustments through `ReputationEvent` entries, allowing communities to weight governance influence or service access based on historical behaviour.
 
 ### SYN2500 – DAO Registry
-`syn2500_token.go` maintains structured membership records including join time, voting power and arbitrary metadata. The registry enables Blackridge Group Ltd. to build rich DAO applications that track member evolution without affecting underlying token balances.
+`syn2500_token.go` maintains structured membership records including join time, voting power and arbitrary metadata. The registry enables Neto Solaris to build rich DAO applications that track member evolution without affecting underlying token balances.
 
 ## Asset‑Backed Tokens
 ### SYN130 – Tangible Assets
@@ -112,7 +112,7 @@ providing a verifiable record of labour agreements across enterprises.
 ## Utility and Functional Tokens
 ### SYN600 – Reward Token
 `token_syn600.go` implements staking mechanics and reward balances to
-incentivise participation across Blackridge Group Ltd. services.
+incentivise participation across Neto Solaris services.
 
 ### SYN721 – Non‑Fungible Token
 `syn721_token.go` stores unique asset metadata and owner addresses,
@@ -213,7 +213,7 @@ timestamps, while mutex‑protected maps maintain party signatures and
 status transitions for evidentiary integrity.
 
 ## Comprehensive Token Catalogue
-The Synnergy Network includes a broad library of token standards maintained by Blackridge Group Ltd.  Each token listed below is implemented in the Go codebase and exposes deterministic APIs for enterprise integration.
+The Synnergy Network includes a broad library of token standards maintained by Neto Solaris  Each token listed below is implemented in the Go codebase and exposes deterministic APIs for enterprise integration.
 
 | Token | Purpose |
 |-------|---------|
@@ -277,7 +277,7 @@ The Synnergy Network includes a broad library of token standards maintained by B
 7. **CLI and API Automation** – Each module ships with matching CLI commands under `cli/` enabling enterprises to script minting, transfers and registry queries.
 
 ## Security and Compliance
-Blackridge Group Ltd. embeds security controls across token modules:
+Neto Solaris embeds security controls across token modules:
 
 - **Whitelisting & Blacklisting** – SYN223 prevents illicit transfers by validating recipient addresses.
 - **Certification Metadata** – SYN800 and SYN4900 tokens record certification details to meet industry standards.
@@ -287,7 +287,7 @@ Blackridge Group Ltd. embeds security controls across token modules:
 - **Dispute Logging** – SYN4700 records legal disputes and status transitions to support evidentiary workflows.
 
 ## Interoperability
-Although each token manages its own state, consistent Go interfaces enable integration with other modules such as the virtual machine, cross‑chain bridge and governance services. Registries can be exposed via APIs or smart contracts, allowing tokens to participate in broader DeFi, supply‑chain or charity ecosystems managed by Blackridge Group Ltd.
+Although each token manages its own state, consistent Go interfaces enable integration with other modules such as the virtual machine, cross‑chain bridge and governance services. Registries can be exposed via APIs or smart contracts, allowing tokens to participate in broader DeFi, supply‑chain or charity ecosystems managed by Neto Solaris
 
 ## Use Cases
 - **Real‑estate and equipment tokenisation** using SYN130 and SYN800.
@@ -298,5 +298,5 @@ Although each token manages its own state, consistent Go interfaces enable integ
 - **Transparent philanthropic drives** facilitated through SYN4200.
 
 ## Conclusion
-The Synnergy Network token suite developed by Blackridge Group Ltd. demonstrates a modular, secure and extensible approach to digital asset management. By aligning token logic with real‑world processes—governance, asset custody, supply‑chain tracking and charitable giving—the platform equips partners to build sophisticated decentralised applications while maintaining regulatory rigour and operational transparency.
+The Synnergy Network token suite developed by Neto Solaris demonstrates a modular, secure and extensible approach to digital asset management. By aligning token logic with real‑world processes—governance, asset custody, supply‑chain tracking and charitable giving—the platform equips partners to build sophisticated decentralised applications while maintaining regulatory rigour and operational transparency.
 

@@ -1,7 +1,7 @@
 # Ledger Replication and Distribution
 
 ## Overview
-The Synnergy Network, engineered by **Blackridge Group Ltd.**, relies on a resilient ledger replication and distribution architecture to guarantee data integrity across all participating nodes. Each node maintains a verifiable copy of the blockchain, ensuring consensus, fault tolerance, and rapid recovery from failures.
+The Synnergy Network, engineered by **Neto Solaris**, relies on a resilient ledger replication and distribution architecture to guarantee data integrity across all participating nodes. Each node maintains a verifiable copy of the blockchain, ensuring consensus, fault tolerance, and rapid recovery from failures.
 
 ## Architectural Objectives
 - **Consistency:** Every node should converge on the same ledger state after block propagation.
@@ -52,4 +52,4 @@ A **SystemHealthLogger** collects runtime metrics—goroutines, memory usage, pe
 - Integrate failover managers and health loggers to surface anomalies before they escalate.
 
 ## Conclusion
-Blackridge Group Ltd. delivers a comprehensive replication and distribution stack for the Synnergy Network. Through layered services, secure transport, and robust state management, the network sustains a consistent, recoverable ledger across a decentralized ecosystem.
+Neto Solaris delivers a comprehensive replication and distribution stack for the Synnergy Network. Through layered services, secure transport, and robust state management, the network sustains a consistent, recoverable ledger across a decentralized ecosystem.

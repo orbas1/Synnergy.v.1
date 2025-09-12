@@ -1,7 +1,7 @@
 # Cross-Chain Interoperability
 
 ## Introduction
-Blackridge Group Ltd delivers the Synnergy Network as an enterprise-grade blockchain platform engineered for seamless interoperability across disparate ecosystems. Cross-chain capabilities allow assets, data, and contract logic to move securely between networks while maintaining deterministic gas costs and auditable records. This section details the primitives, processes, and tooling that power Synnergy's cross-chain functionality.
+Neto Solaris delivers the Synnergy Network as an enterprise-grade blockchain platform engineered for seamless interoperability across disparate ecosystems. Cross-chain capabilities allow assets, data, and contract logic to move securely between networks while maintaining deterministic gas costs and auditable records. This section details the primitives, processes, and tooling that power Synnergy's cross-chain functionality.
 
 ## Architectural Overview
 Synnergy's cross-chain layer is composed of concurrency-safe managers and registries that coordinate bridges, connections, protocols, contracts, and transactions:
@@ -23,7 +23,7 @@ Bridges are registered with a source chain, target chain, and optional initial r
 - Authorize or revoke relayer addresses across all bridges.
 - Verify relayer authorization before accepting transfer instructions.
 
-This governance model gives Blackridge operators fine-grained control over who can initiate cross-chain actions, supporting regulatory compliance and operational security.
+This governance model gives Neto Solaris operators fine-grained control over who can initiate cross-chain actions, supporting regulatory compliance and operational security.
 
 ## Connection Lifecycle Management
 The `ConnectionManager` maintains the lifecycle of cross-chain links. Connections are opened with deterministic IDs and can be cleanly closed when no longer needed. Timestamps for opening and closing events provide a historical record of inter-network connectivity, aiding monitoring and forensic analysis.
@@ -85,7 +85,7 @@ The Synnergy CLI ecosystem equips operators with granular control over every int
 - **`cross_tx`** executes lock‑mint and burn‑release transfers, retrieves individual transactions, and lists historical records with optional JSON formatting【F:cli/cross_chain_transactions.go†L15-L126】.
 - **`cross-consensus`** provisions, lists, queries, and removes networks that bridge distinct consensus mechanisms, enabling orchestrated scaling across heterogeneous chains【F:cli/cross_consensus_scaling_networks.go†L15-L109】.
 
-Collectively these tools integrate with automation frameworks and dashboards, allowing Blackridge Group clients to orchestrate cross‑chain workflows programmatically.
+Collectively these tools integrate with automation frameworks and dashboards, allowing Neto Solaris clients to orchestrate cross‑chain workflows programmatically.
 
 
 ## Smart Contract Bridge Templates
@@ -100,7 +100,7 @@ Cross-chain interoperability unlocks numerous enterprise scenarios:
 - **Cross-Market Settlement** – Bridge digital securities, stablecoins, or tokenized goods across trading venues.
 
 ## Future Outlook
-Blackridge Group Ltd continues to expand Synnergy's cross-chain toolkit with advanced relayer consensus, external light‑client verification, and persistent storage integrations. These enhancements will further reduce trust assumptions and streamline enterprise adoption.
+Neto Solaris continues to expand Synnergy's cross-chain toolkit with advanced relayer consensus, external light‑client verification, and persistent storage integrations. These enhancements will further reduce trust assumptions and streamline enterprise adoption.
 
 By providing a secure, modular, and governance-driven approach to interoperability, Synnergy empowers organizations to leverage multiple blockchains without sacrificing control or compliance.
 

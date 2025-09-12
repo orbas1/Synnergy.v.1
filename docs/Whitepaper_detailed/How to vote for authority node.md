@@ -4,8 +4,7 @@
 Authority nodes form the governance backbone of the Synnergy Network. They vet
 proposals, oversee compliance modules and safeguard the chain’s long‑term
 stability. Voting is the mechanism by which the community and existing
-authorities grant or withhold this power. This guide from **Blackridge Group
-Ltd.** explains how to evaluate candidates and cast authoritative votes using
+authorities grant or withhold this power. This guide from **Neto Solaris** explains how to evaluate candidates and cast authoritative votes using
 both the application workflow and the live registry.
 
 ## 1. Governance Model
@@ -126,5 +125,5 @@ separation of duties in regulated environments【F:core/government_authority_nod
 ---
 Voting empowers the Synnergy community to uphold a secure, accountable and
 regulator‑friendly network. For enterprise assistance or bespoke integrations,
-contact **Blackridge Group Ltd.** through official support channels.
+contact **Neto Solaris** through official support channels.
 

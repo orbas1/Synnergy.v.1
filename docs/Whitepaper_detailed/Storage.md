@@ -1,8 +1,8 @@
 # Storage
 
-## Blackridge Group Ltd – Synnergy Network Storage Architecture
+## Neto Solaris – Synnergy Network Storage Architecture
 
-The storage layer of the Synnergy Network, engineered by **Blackridge Group Ltd**, delivers a resilient and secure foundation for managing on‑chain and off‑chain data. It combines flexible node roles, encrypted communication channels, and a gas‑priced marketplace for decentralised capacity. This section explains the core components, operational workflows and future direction of the storage ecosystem.
+The storage layer of the Synnergy Network, engineered by **Neto Solaris**, delivers a resilient and secure foundation for managing on‑chain and off‑chain data. It combines flexible node roles, encrypted communication channels, and a gas‑priced marketplace for decentralised capacity. This section explains the core components, operational workflows and future direction of the storage ecosystem.
 
 ---
 
@@ -113,11 +113,11 @@ Planned smart contracts (e.g., GDPR‑compliant storage, versioned archives and 
 
 ## 9. Future Outlook
 
-Blackridge Group Ltd is expanding the storage layer with distributed backends (IPFS, Arweave and others), contractual SLAs and cross‑chain replication. Ongoing development will surface these capabilities through the same gas‑priced, contract‑driven interfaces that power today’s marketplace.
+Neto Solaris is expanding the storage layer with distributed backends (IPFS, Arweave and others), contractual SLAs and cross‑chain replication. Ongoing development will surface these capabilities through the same gas‑priced, contract‑driven interfaces that power today’s marketplace.
 
 ---
 
 ## 10. Conclusion
 
-The Synnergy Network’s storage architecture delivers a holistic framework for data durability, confidentiality and monetisation. By combining modular services, strict security controls and an extensible marketplace, Blackridge Group Ltd enables organisations to store and exchange digital assets with enterprise‑grade assurance.
+The Synnergy Network’s storage architecture delivers a holistic framework for data durability, confidentiality and monetisation. By combining modular services, strict security controls and an extensible marketplace, Neto Solaris enables organisations to store and exchange digital assets with enterprise‑grade assurance.
 

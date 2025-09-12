@@ -1,7 +1,7 @@
 # Nodes
 
 ## Overview
-The Synnergy Network, engineered by **Blackridge Group Ltd.**, is built upon a
+The Synnergy Network, engineered by **Neto Solaris**, is built upon a
 versatile node ecosystem. Nodes are distributed software agents that validate
 transactions, maintain ledger state, enforce compliance, and surface network
 intelligence. The architecture emphasizes modularity so that each node type can
@@ -149,7 +149,7 @@ operations:
   latency, and throughput to produce autoscaling recommendations.
 
 ## Enterprise Deployment and Operations
-Blackridge Group Ltd. curates a full operations toolchain so organizations can
+Neto Solaris curates a full operations toolchain so organizations can
 run nodes at scale:
 
 - **High Availability** – nodes are shipped as container images with
@@ -193,7 +193,7 @@ whitelisted relayers, and forensic and historical subsystems provide tamper‑
 evident audit trails.
 
 ## Deployment and Maintenance
-Blackridge Group Ltd. provides container images and infrastructure‑as‑code
+Neto Solaris provides container images and infrastructure‑as‑code
 artifacts for orchestrating nodes across on‑premises or cloud environments.
 Operators should monitor system health metrics, schedule regular certificate
 renewal for energy‑efficient nodes, rotate keys used in biometric and regulatory
@@ -210,6 +210,6 @@ green‑energy marketplaces.
 The Synnergy node framework empowers operators to tailor deployments to
 specific roles—from lightweight indexing nodes to fully fledged validator or
 regulatory instances. By combining modular subsystems with robust security and
-compliance tooling, Blackridge Group Ltd. delivers a flexible foundation for
+compliance tooling, Neto Solaris delivers a flexible foundation for
 next‑generation decentralized infrastructure.
 

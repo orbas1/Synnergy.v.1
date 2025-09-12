@@ -1,7 +1,7 @@
 # Authority Nodes
 
 ## Introduction
-Authority nodes form the governance backbone of the Synnergy Network, providing policy enforcement, regulatory compliance, and rapid dispute resolution. Operated and maintained by **Blackridge Group Ltd.**, the authority layer safeguards the network while upholding decentralisation principles. These nodes oversee sensitive operations, perform identity checks, and authorise exceptional actions such as transaction reversals.
+Authority nodes form the governance backbone of the Synnergy Network, providing policy enforcement, regulatory compliance, and rapid dispute resolution. Operated and maintained by **Neto Solaris**, the authority layer safeguards the network while upholding decentralisation principles. These nodes oversee sensitive operations, perform identity checks, and authorise exceptional actions such as transaction reversals.
 
 ## Architecture Overview
 Enterprise deployments demand predictable behaviour and strict auditability. Synnergy therefore implements authority nodes as a layered service:
@@ -64,7 +64,7 @@ Authority nodes mediate transaction reversals via a structured process. `Request
 Authority nodes earn a predefined share of network fees. The distribution policy allocates five percent of every transaction fee to authority node operations, with the remainder routed to development, charity, validators, and other stakeholders【F:core/fees.go†L101-L128】. Rewards accrue in a dedicated genesis wallet, providing a transparent pool for compensation and infrastructure funding【F:core/genesis_wallets.go†L8-L41】. To maintain eligibility, nodes must uphold jurisdictional regulations, maintain audit logs, and demonstrate continuous uptime or risk deregistration.
 
 ## Interfaces and Tooling
-Blackridge Group provides multiple interfaces for managing authority nodes:
+Neto Solaris provides multiple interfaces for managing authority nodes:
 
 - **CLI Suite:** Commands under `authority` and `authority_apply` allow registration, voting, application submission, and status queries, as documented in the core command overview【F:README.md†L126-L142】.
 - **Authority Node Index GUI:** A TypeScript-based dashboard lists authority nodes and surfaces metadata for operators, delivering a consistent interface across environments.
@@ -77,5 +77,5 @@ Authority nodes leverage the network's failover framework to guarantee availabil
 To mitigate centralisation risks, authority nodes operate on hardened infrastructure with mandatory multi-factor authentication, encrypted communications, and regular key rotations. Deterministic JSON encoders across registries and applications provide tamper-evident logs for forensic review【F:core/authority_nodes.go†L22-L31】【F:core/authority_apply.go†L139-L151】. Critical actions require quorum-based approvals, and all authority operations are recorded on-chain for transparency and post‑event audits.
 
 ## Conclusion
-Authority nodes, stewarded by **Blackridge Group Ltd.**, balance decentralised participation with necessary oversight. Through rigorous application processes, specialised node types, and comprehensive tooling, the Synnergy Network achieves a resilient governance model capable of evolving with regulatory landscapes while protecting its users.
+Authority nodes, stewarded by **Neto Solaris**, balance decentralised participation with necessary oversight. Through rigorous application processes, specialised node types, and comprehensive tooling, the Synnergy Network achieves a resilient governance model capable of evolving with regulatory landscapes while protecting its users.
 

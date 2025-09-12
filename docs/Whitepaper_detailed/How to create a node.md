@@ -1,7 +1,7 @@
 # How to Create a Node
 
 ## Introduction
-Blackridge Group Ltd. designs the Synnergy Network to be a modular, secure, and sustainable blockchain platform. Nodes are the operational backbone of this network, processing transactions, safeguarding data, and enabling advanced features like regulatory oversight and energy-aware consensus. This guide explains how to create and deploy a node that aligns with Synnergy’s architecture and governance principles.
+Neto Solaris designs the Synnergy Network to be a modular, secure, and sustainable blockchain platform. Nodes are the operational backbone of this network, processing transactions, safeguarding data, and enabling advanced features like regulatory oversight and energy-aware consensus. This guide explains how to create and deploy a node that aligns with Synnergy’s architecture and governance principles.
 
 ## Node Archetypes
 Synnergy provides a broad catalog of node implementations so operators can tailor infrastructure to their mission. The main families are outlined below.
@@ -104,5 +104,5 @@ Audit, Forensic, and Historical nodes extend operational assurance: AuditNode re
 Energy‑efficient nodes can issue sustainability certificates and determine when throttling is necessary to maintain efficiency targets【F:energy_efficient_node.go†L52-L75】. For jurisdictions with oversight requirements, regulatory nodes evaluate transactions and log compliance violations for auditability【F:regulatory_node.go†L25-L43】.
 
 ## Conclusion
-By following this guide, organisations can deploy nodes that integrate seamlessly with the Synnergy Network while meeting operational, environmental, and regulatory expectations. For enterprise support and advanced tooling, contact Blackridge Group Ltd.
+By following this guide, organisations can deploy nodes that integrate seamlessly with the Synnergy Network while meeting operational, environmental, and regulatory expectations. For enterprise support and advanced tooling, contact Neto Solaris
 

@@ -1,7 +1,7 @@
 # Artificial Intelligence
 
 ## Strategic Vision
-Blackridge Group Ltd. embeds artificial intelligence at the core of the Synnergy Network to deliver predictive insight, autonomous optimisation and a self‑service model economy. The AI stack operates within a privacy‑preserving, decentralised environment while satisfying enterprise governance requirements.
+Neto Solaris embeds artificial intelligence at the core of the Synnergy Network to deliver predictive insight, autonomous optimisation and a self‑service model economy. The AI stack operates within a privacy‑preserving, decentralised environment while satisfying enterprise governance requirements.
 
 ## AI Service Layer
 The `AIService` orchestrates prediction utilities and model commerce through concurrency‑safe registries backed by read‑write mutexes【F:ai.go†L32-L38】.
@@ -38,8 +38,8 @@ A common `PriceModel` interface supports multiple predictors—simple moving ave
 End‑to‑end tests exercise prediction APIs, marketplace flows, training controls, inference operations, drift and anomaly detection and secure storage to guarantee deterministic behaviour across modules【F:ai_modules_test.go†L8-L142】.
 
 ## Enterprise Governance and Branding
-Every AI capability is engineered under Blackridge Group Ltd.’s commitment to responsible innovation. Royalty tracking, auditable job metadata and encrypted model handling demonstrate how the platform aligns powerful machine intelligence with transparent governance and monetisation.
+Every AI capability is engineered under Neto Solaris’s commitment to responsible innovation. Royalty tracking, auditable job metadata and encrypted model handling demonstrate how the platform aligns powerful machine intelligence with transparent governance and monetisation.
 
 ## Conclusion
-By coupling predictive engines, lifecycle management, continuous monitoring and AI‑aware smart contracts, the Synnergy Network delivers a unified framework for secure, accountable artificial intelligence. Blackridge clients can deploy, monetise and evolve models directly within the blockchain ecosystem while maintaining rigorous operational control.
+By coupling predictive engines, lifecycle management, continuous monitoring and AI‑aware smart contracts, the Synnergy Network delivers a unified framework for secure, accountable artificial intelligence. Neto Solaris clients can deploy, monetise and evolve models directly within the blockchain ecosystem while maintaining rigorous operational control.
 

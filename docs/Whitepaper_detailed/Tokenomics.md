@@ -1,6 +1,6 @@
 # Tokenomics
 
-*Prepared by Blackridge Group Ltd.*
+*Prepared by Neto Solaris*
 
 ## 1. Economic Overview
 The Synnergy Network employs a multifaceted economic model that aligns incentives for validators, developers, token holders and the wider community. Its native currency, the Synthron coin (SYN), underpins governance, secures consensus, and fuels on‑chain activity. Purpose‑built token classes extend utility across real‑world assets, stable value instruments, index products, and specialized enterprise use cases.
@@ -174,4 +174,4 @@ A regulatory manager evaluates transactions against jurisdiction-specific rules 
 The combination of capped supply, deflationary issuance, fee redistribution, and real‑world asset integration establishes a resilient economic base. Incentives align network security with community growth while earmarked fee flows fund continuous development, charitable outreach, and ecosystem innovation.
 
 ## 9. Conclusion
-Blackridge Group Ltd. has engineered the Synnergy Network’s tokenomics to merge robust economic theory with practical utility. Through disciplined emission schedules, transparent treasury operations, and diversified token standards, the platform delivers a sustainable foundation for decentralized applications and socially conscious finance.
+Neto Solaris has engineered the Synnergy Network’s tokenomics to merge robust economic theory with practical utility. Through disciplined emission schedules, transparent treasury operations, and diversified token standards, the platform delivers a sustainable foundation for decentralized applications and socially conscious finance.

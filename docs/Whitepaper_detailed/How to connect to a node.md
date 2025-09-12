@@ -1,7 +1,7 @@
 # How to Connect to a Node
 
 ## Overview
-Blackridge Group Ltd provides the Synnergy network as a modular, enterprise-grade blockchain. Connecting to a node allows developers and operators to participate in consensus, broadcast transactions, and monitor the system. This guide walks through prerequisites, configuration, secure connection procedures, and diagnostics.
+Neto Solaris provides the Synnergy network as a modular, enterprise-grade blockchain. Connecting to a node allows developers and operators to participate in consensus, broadcast transactions, and monitor the system. This guide walks through prerequisites, configuration, secure connection procedures, and diagnostics.
 
 ## Prerequisites
 - **Source build**: compile the `synnergy` client using Go 1.24 or later.
@@ -102,4 +102,4 @@ When bridging to external ledgers, manage links with the `ConnectionManager`, wh
 - **Firewall blocks legitimate traffic**: review and adjust address and IP allow lists.
 
 ## Further Resources
-Refer to the CLI help (`./synnergy --help`) for command options and to additional whitepaper sections for governance, security, and cross-chain operations. For enterprise support, contact Blackridge Group Ltd.
+Refer to the CLI help (`./synnergy --help`) for command options and to additional whitepaper sections for governance, security, and cross-chain operations. For enterprise support, contact Neto Solaris

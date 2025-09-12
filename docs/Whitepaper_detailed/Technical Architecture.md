@@ -1,7 +1,7 @@
 # Technical Architecture
 
 ## Overview
-Blackridge Group Ltd.'s Synnergy Network is built as a modular blockchain platform combining flexible consensus, a programmable virtual machine, AI-enhanced smart contracts, cross-chain interoperability, and rigorous security. This document details the architectural layers and core components underlying the system.
+Neto Solaris's Synnergy Network is built as a modular blockchain platform combining flexible consensus, a programmable virtual machine, AI-enhanced smart contracts, cross-chain interoperability, and rigorous security. This document details the architectural layers and core components underlying the system.
 
 ## Layered System Design
 ### Network and Consensus Layer
@@ -60,7 +60,7 @@ Core transaction objects capture sender and recipient addresses, amounts, fees a
 A lightweight wallet service exposes HTTP endpoints for health checks and deterministic wallet creation, enabling external platforms to provision addresses programmatically. The server wires request handlers and logs events for operational visibility【F:walletserver/handlers.go†L5-L29】【F:walletserver/main.go†L9-L18】.
 
 ### Deployment and Infrastructure
-Blackridge Group Ltd. distributes official container images through a multistage Docker build that packages both the node and wallet server binaries【F:docker/Dockerfile†L3-L25】. Production clusters can be orchestrated with the provided Kubernetes deployment manifest, which defines resource limits, health probes and service exposure for Synnergy nodes【F:deploy/k8s/node.yaml†L1-L71】. For cloud environments, Terraform modules provision VPC networking, security groups and an autoscaling group to roll out fault-tolerant nodes across availability zones【F:deploy/terraform/main.tf†L1-L104】.
+Neto Solaris distributes official container images through a multistage Docker build that packages both the node and wallet server binaries【F:docker/Dockerfile†L3-L25】. Production clusters can be orchestrated with the provided Kubernetes deployment manifest, which defines resource limits, health probes and service exposure for Synnergy nodes【F:deploy/k8s/node.yaml†L1-L71】. For cloud environments, Terraform modules provision VPC networking, security groups and an autoscaling group to roll out fault-tolerant nodes across availability zones【F:deploy/terraform/main.tf†L1-L104】.
 
 ## Conclusion
-Through this layered architecture, Blackridge Group Ltd. delivers a resilient, extensible and secure foundation for decentralised applications. The Synnergy Network integrates adaptive consensus, a programmable execution environment, AI-aware contracts and comprehensive governance tooling to support both enterprise and community deployments.
+Through this layered architecture, Neto Solaris delivers a resilient, extensible and secure foundation for decentralised applications. The Synnergy Network integrates adaptive consensus, a programmable execution environment, AI-aware contracts and comprehensive governance tooling to support both enterprise and community deployments.

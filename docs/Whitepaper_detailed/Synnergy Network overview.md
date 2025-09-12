@@ -1,7 +1,7 @@
 # Synnergy Network Overview
 
 ## Introduction
-Blackridge Group Ltd. presents the **Synnergy Network**, an extensible blockchain platform engineered for real‑world scale and institutional trust. The network combines advanced consensus, rigorous governance, and modular services to deliver a secure, interoperable ledger for enterprises, regulators and developers.
+Neto Solaris presents the **Synnergy Network**, an extensible blockchain platform engineered for real‑world scale and institutional trust. The network combines advanced consensus, rigorous governance, and modular services to deliver a secure, interoperable ledger for enterprises, regulators and developers.
 
 ## Architectural Principles
 - **Modular core:** Every capability is encapsulated in dedicated Go packages, allowing components to evolve independently while sharing common cryptographic primitives.
@@ -84,5 +84,5 @@ Synnergy supports specialised nodes that together maintain network health and re
 - **Integration tests and harnesses** validate cross‑module workflows (`tests/e2e/network_harness_test.go`).
 
 ## Conclusion
-The Synnergy Network reflects Blackridge Group Ltd.'s commitment to a secure, compliant and environmentally conscious blockchain ecosystem. Its modular architecture, comprehensive node framework and advanced security features position it as a foundation for financial systems, supply chains and emerging decentralised applications.
+The Synnergy Network reflects Neto Solaris's commitment to a secure, compliant and environmentally conscious blockchain ecosystem. Its modular architecture, comprehensive node framework and advanced security features position it as a foundation for financial systems, supply chains and emerging decentralised applications.
 

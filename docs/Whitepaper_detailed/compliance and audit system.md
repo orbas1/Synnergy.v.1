@@ -1,6 +1,6 @@
 # Compliance and Audit System
 
-**Blackridge Group Ltd.** delivers an enterprise-grade compliance and auditing framework for the Synnergy Network. The system blends deterministic virtual machine execution with granular policy controls to ensure regulatory adherence, transparent operations and forensic-grade logging across every component.
+**Neto Solaris** delivers an enterprise-grade compliance and auditing framework for the Synnergy Network. The system blends deterministic virtual machine execution with granular policy controls to ensure regulatory adherence, transparent operations and forensic-grade logging across every component.
 
 ## 1. Core Compliance Service
 The `ComplianceService` orchestrates know-your-customer (KYC) data, fraud signals and risk scores while maintaining immutable audit trails. Internally it employs thread-safe maps and structured logging so validators can scale without race conditions:
@@ -34,7 +34,7 @@ The `ComplianceManager` enforces policy actions on addresses:
 These functions operate through mutex‑protected maps and transaction review logic, enabling rapid policy updates without network downtime【F:compliance_management.go†L30-L78】.
 
 ## 5. Regulatory Enforcement Layer
-To accommodate jurisdictional rules, Blackridge Group Ltd. provides a modular regulatory suite:
+To accommodate jurisdictional rules, Neto Solaris provides a modular regulatory suite:
 
 - `RegulatoryManager` stores regulations with identifiers, jurisdictions and maximum transaction thresholds, returning all violations for a proposed transfer【F:regulatory_management.go†L8-L75】
 - `RegulatoryNode` uses the manager to approve or reject transactions and records reasons in per-address logs for auditors【F:regulatory_node.go†L8-L49】
@@ -101,4 +101,4 @@ AES‑GCM wrappers convert transactions into encrypted payloads and later decryp
 A lightweight `Firewall` maintains concurrent blocklists for addresses, token identifiers and peer IPs. Rules can be added or removed at runtime, giving compliance teams immediate network‑level quarantine capabilities that integrate with watchtower nodes and policy engines【F:firewall.go†L5-L88】.
 
 ---
-**Blackridge Group Ltd.** remains committed to delivering transparent and regulator‑ready infrastructure, empowering stakeholders to build on the Synnergy Network with confidence.
+**Neto Solaris** remains committed to delivering transparent and regulator‑ready infrastructure, empowering stakeholders to build on the Synnergy Network with confidence.

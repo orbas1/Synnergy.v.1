@@ -1,6 +1,6 @@
-# Blackridge Group Ltd. — AI Marketplace Documentation
+# Neto Solaris — AI Marketplace Documentation
 
-The **AI Marketplace** module provides a foundational interface for exchanging AI services and datasets across the Synnergy Network. Developed and maintained by Blackridge Group Ltd., this component delivers a lightweight HTTP service and flexible scaffolding for building production‑ready marketplace features. The module is intentionally small to act as a reference implementation that teams can clone or extend when building bespoke trading venues for algorithms, models, or analytics data.
+The **AI Marketplace** module provides a foundational interface for exchanging AI services and datasets across the Synnergy Network. Developed and maintained by Neto Solaris, this component delivers a lightweight HTTP service and flexible scaffolding for building production‑ready marketplace features. The module is intentionally small to act as a reference implementation that teams can clone or extend when building bespoke trading venues for algorithms, models, or analytics data.
 
 ---
 
@@ -85,7 +85,7 @@ Beyond the `src/` directory, the repository includes a concise set of folders th
 | `Dockerfile` & `docker-compose.yml` | Containerisation artefacts for local or cloud deployments |
 | `Makefile` | Convenience targets wrapping common npm commands |
 
-This layout mirrors typical Blackridge Group Ltd. projects, offering a consistent developer experience across the Synnergy ecosystem.
+This layout mirrors typical Neto Solaris projects, offering a consistent developer experience across the Synnergy ecosystem.
 
 ---
 
@@ -132,10 +132,10 @@ The default server responds on `http://localhost:3000` and can be tested with an
 | `npm run lint` | Lint source with ESLint |
 | `npm run format` | Format code with Prettier |
 
-A simple `Makefile` wraps the install, build, and test operations for convenience. Prior to opening a pull request, execute `npm run lint` and `npm run format` to ensure code quality and consistent styling across the Blackridge Group Ltd. codebase.
+A simple `Makefile` wraps the install, build, and test operations for convenience. Prior to opening a pull request, execute `npm run lint` and `npm run format` to ensure code quality and consistent styling across the Neto Solaris codebase.
 
 ### Code Style Guidelines
-The codebase adheres to a strict TypeScript configuration (`strict: true` in [`tsconfig.json`](../tsconfig.json)) and ESLint rules enforced by [`npm run lint`](../package.json). Prettier maintains consistent formatting across files. Commits should follow the conventional message format (`type: summary`) used across Blackridge Group Ltd. repositories.
+The codebase adheres to a strict TypeScript configuration (`strict: true` in [`tsconfig.json`](../tsconfig.json)) and ESLint rules enforced by [`npm run lint`](../package.json). Prettier maintains consistent formatting across files. Commits should follow the conventional message format (`type: summary`) used across Neto Solaris repositories.
 
 ---
 
@@ -229,7 +229,7 @@ Review the repository-wide [SECURITY.md](../../../SECURITY.md) and [CODE_OF_COND
 
 ## 9. Contributing & Support
 
-Contributions are welcome. Please review the repository-wide [CONTRIBUTING.md](../../../CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](../../../CODE_OF_CONDUCT.md) for guidelines. Issues and feature requests can be submitted through the project tracker under the Blackridge Group Ltd. organization.
+Contributions are welcome. Please review the repository-wide [CONTRIBUTING.md](../../../CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](../../../CODE_OF_CONDUCT.md) for guidelines. Issues and feature requests can be submitted through the project tracker under the Neto Solaris organization.
 
 For security concerns, consult the global [SECURITY.md](../../../SECURITY.md) policy before reporting vulnerabilities.
 When submitting patches, ensure that tests and linters pass locally and use descriptive commit messages following the conventional `type: summary` format.
@@ -299,8 +299,8 @@ For structured logging, consider integrating libraries such as `pino` or `winsto
 
 ## 15. License
 
-This module is released under the [MIT License](../../../LICENSE). Blackridge Group Ltd. and Synnergy contributors provide the software "as is" without warranty of any kind.
+This module is released under the [MIT License](../../../LICENSE). Neto Solaris and Synnergy contributors provide the software "as is" without warranty of any kind.
 
 ---
 
-© 2024 Blackridge Group Ltd. — All rights reserved.
+© 2024 Neto Solaris — All rights reserved.
