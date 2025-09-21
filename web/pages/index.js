@@ -60,27 +60,28 @@ export default function Home() {
       <section style={{ marginBottom: 24 }}>
         <h2>Opportunity Orb Overview</h2>
         <p>
-          The orb showcases Synnergy&apos;s emerging professional ecosystem—a global map of
-          potential collaborations we are curating before formally onboarding clients. Each
-          node represents a prospective partnership, specialist exchange, or market pathway
-          that demonstrates how talent and expertise can intersect within the Synnergy
-          network.
+          The orb celebrates Synnergy&apos;s ambition to become a meeting ground for professionals
+          everywhere. Rather than presenting customer metrics or automated workflows, it
+          sketches the kinds of collaborations, mentorships, and service exchanges we aim to
+          unlock as the network comes online.
         </p>
         <ul>
           <li>
-            <strong>Worldwide perspective.</strong> The constantly shifting layout mirrors the
-            breadth of industries, time zones, and disciplines we are preparing to connect
-            across the globe.
+            <strong>Global reach.</strong> Each point of light gestures to a region, industry, or
+            craft where people could soon find partners, clients, or teammates.
           </li>
           <li>
-            <strong>Dynamic connection cues.</strong> Wobbling nodes and luminous trails
-            illustrate opportunities gaining momentum, signaling where meaningful
-            professional interactions can take shape next.
+            <strong>Active learning.</strong> Gentle motion hints at the courses, shared
+            experiences, and peer feedback loops we plan to offer for continual growth.
           </li>
           <li>
-            <strong>Responsive clarity.</strong> The lightweight canvas adapts instantly to
-            desktops, tablets, and phones so stakeholders can explore the opportunity space
-            from any device.
+            <strong>Service marketplace.</strong> Connecting arcs represent future spaces where
+            specialists can showcase skills, respond to briefs, and collaborate on meaningful
+            work.
+          </li>
+          <li>
+            <strong>Inclusive design.</strong> The lightweight canvas remains responsive across
+            devices so anyone can explore the possibilities wherever they are.
           </li>
         </ul>
       </section>
