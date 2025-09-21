@@ -57,33 +57,6 @@ export default function Home() {
   return (
     <main style={{ padding: 20 }}>
       <h1>Synnergy Control Panel</h1>
-      <section style={{ marginBottom: 24 }}>
-        <h2>Opportunity Orb Overview</h2>
-        <p>
-          The orb showcases Synnergy&apos;s emerging professional ecosystem—a global map of
-          potential collaborations we are curating before formally onboarding clients. Each
-          node represents a prospective partnership, specialist exchange, or market pathway
-          that demonstrates how talent and expertise can intersect within the Synnergy
-          network.
-        </p>
-        <ul>
-          <li>
-            <strong>Worldwide perspective.</strong> The constantly shifting layout mirrors the
-            breadth of industries, time zones, and disciplines we are preparing to connect
-            across the globe.
-          </li>
-          <li>
-            <strong>Dynamic connection cues.</strong> Wobbling nodes and luminous trails
-            illustrate opportunities gaining momentum, signaling where meaningful
-            professional interactions can take shape next.
-          </li>
-          <li>
-            <strong>Responsive clarity.</strong> The lightweight canvas adapts instantly to
-            desktops, tablets, and phones so stakeholders can explore the opportunity space
-            from any device.
-          </li>
-        </ul>
-      </section>
       <p>Select a command, fill in optional flags, and run.</p>
       <p>
         <a href="/regnode">Regulatory node console</a>
