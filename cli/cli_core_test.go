@@ -5,8 +5,11 @@ import (
 	"io"
 	"os"
 	"strings"
+	"sync"
 	"testing"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 	"synnergy/core"
 )
 
@@ -18,14 +21,78 @@ func execCommand(args ...string) (string, error) {
 	r, w, _ := os.Pipe()
 	old := os.Stdout
 	os.Stdout = w
+	pipeBuf := new(bytes.Buffer)
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go func() {
+		_, _ = io.Copy(pipeBuf, r)
+		wg.Done()
+	}()
 	cmd.SetArgs(args)
 	_, err := cmd.ExecuteC()
 	cmd.SetArgs([]string{})
+	resetCommandFlags(cmd)
 	w.Close()
+	wg.Wait()
 	os.Stdout = old
-	outBuf, _ := io.ReadAll(r)
 	r.Close()
-	return strings.TrimSpace(buf.String() + string(outBuf)), err
+	return strings.TrimSpace(buf.String() + pipeBuf.String()), err
+}
+
+func resetCommandFlags(cmd *cobra.Command) {
+	resetFlagSet(cmd.Flags())
+	resetFlagSet(cmd.PersistentFlags())
+	for _, c := range cmd.Commands() {
+		resetCommandFlags(c)
+	}
+}
+
+func resetFlagSet(fs *pflag.FlagSet) {
+	if fs == nil {
+		return
+	}
+	fs.VisitAll(func(f *pflag.Flag) {
+		switch f.Value.Type() {
+		case "stringSlice":
+			_ = f.Value.Set("")
+		default:
+			_ = f.Value.Set(f.DefValue)
+		}
+		f.Changed = false
+	})
+}
+
+func jsonPayload(out string) string {
+	lines := strings.Split(out, "\n")
+	start := -1
+	end := -1
+	for i, line := range lines {
+		trimmed := strings.TrimSpace(line)
+		if start == -1 && (strings.HasPrefix(trimmed, "{") || strings.HasPrefix(trimmed, "[")) {
+			start = i
+		}
+		if strings.HasSuffix(trimmed, "}") || strings.HasSuffix(trimmed, "]") {
+			end = i
+		}
+	}
+	if start == -1 {
+		return out
+	}
+	if end == -1 {
+		end = len(lines) - 1
+	}
+	return strings.TrimSpace(strings.Join(lines[start:end+1], "\n"))
+}
+
+func firstNonGasLine(out string) string {
+	for _, line := range strings.Split(out, "\n") {
+		trimmed := strings.TrimSpace(line)
+		if trimmed == "" || strings.HasPrefix(trimmed, "gas cost:") {
+			continue
+		}
+		return trimmed
+	}
+	return ""
 }
 
 func TestAddressParse(t *testing.T) {
