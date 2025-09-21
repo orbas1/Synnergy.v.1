@@ -7,7 +7,7 @@
 - Stage 67: Complete – ledger, light node, and liquidity pool validation with Kademlia gas tracking and CLI distance tests, plus identity service and wallet registry checks finalized.
 - Stage 68: Complete – mining node context control, fee distribution, and CLI mine-until integration finalized with gas pricing and opcode docs extended.
 - Stage 69: Complete – node and plasma modules hardened with concurrency-safe mempools, pause checks, opcode lookup tests and peer count CLI.
-- Stage 73: In progress – governance token validated; bill registry, currency token, futures contract and index token hardened with concurrency tests, and regulatory audit opcode surfaced across CLI and web. Remaining SYN3800+ modules pending.
+- Stage 73: Complete – enterprise index, grant, benefit, charity, legal and utility modules now require wallet-signed workflows, persist their state for CLI/web automation, expose telemetry across CLI, VM and web, and refreshed docs/guides capture the expanded gas/opcode catalogue.
 - Stage 74: In progress – system health logging clamped; tangible and agricultural asset registries made concurrency safe; access controller audit snapshots added. Transaction and SYN5000+ modules outstanding.
 - Stage 75: In progress – validator node supports concurrent joins; VM, wallet and cross-chain layers pending.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
@@ -1584,17 +1584,59 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
  - [x] core/syn3500_token_test.go
  - [x] core/syn3600.go
  - [x] core/syn3600_test.go
-- [ ] core/syn3700_token.go
-- [ ] core/syn3700_token_test.go
-- [ ] core/syn3800.go
-- [ ] core/syn3800_test.go
-- [ ] core/syn3900.go
-- [ ] core/syn3900_test.go
-- [ ] core/syn4200_token.go
-- [ ] core/syn4200_token_test.go
-- [ ] core/syn4700.go
-- [ ] core/syn4700_test.go
-- [ ] core/syn500.go
+- [x] core/syn3700_token.go | controller-aware index token with digest validation, telemetry and orchestrator hooks
+- [x] core/syn3700_token_test.go | authorised workflow, telemetry and concurrency coverage
+- [x] core/syn3800.go | grant registry telemetry and signed disbursement verification
+- [x] core/syn3800_test.go | lifecycle, validation and telemetry assertions
+- [x] core/syn3900.go | benefit registry telemetry and list APIs
+- [x] core/syn3900_test.go | claim, list and telemetry coverage
+- [x] core/syn4200_token.go | charity telemetry aggregation
+- [x] core/syn4200_token_test.go | lifecycle and telemetry assertions
+- [x] core/syn4700.go | legal registry telemetry accessor
+- [x] core/syn4700_test.go | telemetry coverage
+- [x] core/syn500.go | utility telemetry reporting
+- [x] core/stage73_orchestrator.go | VM/consensus integration layer
+- [x] core/transaction.go | metadata digest helper for signed requests
+- [x] core/transaction_test.go | metadata digest tests
+- [x] core/crypto_serialization.go | reusable encoder/decoder for persisted public keys
+- [x] core/stage73_state.go | JSON persistence for Stage 73 modules with fault-tolerant recovery
+- [x] core/stage73_state_test.go | round-trip tests covering signatures, grants and utility usage
+- [x] cli/syn3700_token.go | wallet-signed index management and telemetry commands
+- [x] cli/syn3700_token_test.go | end-to-end CLI coverage with status/audit checks
+- [x] cli/syn3800.go | grant status command and telemetry JSON
+- [x] cli/syn3800_test.go | status command coverage
+- [x] cli/syn3900.go | benefit list/status commands
+- [x] cli/syn3900_test.go | list/status coverage
+- [x] cli/syn4200_token.go | charity status command
+- [x] cli/syn4200_token_test.go | status coverage
+- [x] cli/syn500.go | utility telemetry command
+- [x] cli/syn500_test.go | telemetry coverage
+- [x] cli/stage73_state.go | CLI loader/saver, `--stage73-state` flag and dirty tracking
+- [x] cli/syn4700.go | legal token persistence and state marking for Stage 73 store
+- [x] cli/syn4700_test.go | refreshed to use isolated Stage 73 state paths
+- [x] cli/wallet_loader.go | pluggable wallet loader to support test memory stores
+- [x] cli/stage73_test_helpers.go | deterministic in-memory wallets for Stage 73 CLI suites
+- [x] cli/cli_core_test.go | resets flag state between commands for reliable Stage 73 validation
+- [x] cli/syn3700_token_test.go | memory wallet fixtures and updated validation expectations
+- [x] cli/syn3800_test.go | memory wallet fixtures and richer error assertions
+- [x] cli/syn3900_test.go | memory wallet fixtures and richer error assertions
+- [x] cli/syn500_test.go | stabilized usage window to avoid false resets
+- [x] web/pages/api/run.js | injects persistent Stage 73 state path for browser requests
+- [x] web/pages/stage73.js | documents persistence and improved workflow guidance
+- [x] web/pages/index.js | links the Stage 73 enterprise console from the control panel
+- [x] docs/Whitepaper_detailed/GUIs.md | Stage 73 web console persistence noted
+- [x] docs/Whitepaper_detailed/guide/cli_guide.md | `--stage73-state` flag documented for enterprise modules
+- [x] docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md | persistence tied to deterministic fees
+- [x] docs/Whitepaper_detailed/guide/token_guide.md | persistence, privacy and governance narrative updated
+- [x] docs/guides/cli_quickstart.md | instructions for persisting Stage 73 CLI state
+- [x] docs/reference/gas_table_list.md | new Stage 73 gas entries documented
+- [x] docs/reference/opcodes_list.md | Stage 73 telemetry opcodes recorded
+- [x] docs/guides/cli_quickstart.md | Stage 73 workflows documented
+- [x] docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md | telemetry opcodes described
+- [x] docs/Whitepaper_detailed/guide/token_guide.md | Stage 73 token descriptions and orchestrator note
+- [x] README.md | Stage 73 summary refreshed
+- [x] docs/Whitepaper_detailed/guide/cli_guide.md | Stage 73 CLI commands outlined
+- [x] docs/AGENTS.md | tracker updated with completion notes
 
 **Stage 74**
 - [ ] core/syn5000.go
