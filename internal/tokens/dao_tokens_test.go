@@ -22,7 +22,10 @@ func TestSYN223TokenTransfer(t *testing.T) {
 func TestSYN300TokenGovernanceFlow(t *testing.T) {
 	tok := NewSYN300Token(map[string]uint64{"alice": 100, "bob": 50})
 	tok.Delegate("bob", "alice")
-	id := tok.CreateProposal("alice", "test proposal")
+	id, err := tok.CreateProposal("alice", "test proposal")
+	if err != nil {
+		t.Fatalf("create proposal: %v", err)
+	}
 	if err := tok.Vote(id, "alice", true); err != nil {
 		t.Fatalf("vote: %v", err)
 	}

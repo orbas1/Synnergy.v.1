@@ -1,7 +1,9 @@
 package main
 
 import (
+	"io"
 	"os"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/subosito/gotenv"
@@ -34,14 +36,50 @@ func main() {
 	}
 
 	// Configure logging based on loaded configuration.
-	lvl, err := logrus.ParseLevel(cfg.LogLevel)
+	lvl, err := logrus.ParseLevel(cfg.Log.Level)
 	if err != nil {
 		logrus.Fatalf("invalid log level: %v", err)
 	}
 	logrus.SetLevel(lvl)
+	logrus.SetReportCaller(cfg.Log.IncludeCaller)
+
+	switch strings.ToLower(cfg.Log.Format) {
+	case "text":
+		logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
+	default:
+		logrus.SetFormatter(&logrus.JSONFormatter{})
+	}
+
+	outputs := make([]io.Writer, 0, len(cfg.Log.Outputs))
+	for _, out := range cfg.Log.Outputs {
+		switch strings.ToLower(out) {
+		case "stderr":
+			outputs = append(outputs, os.Stderr)
+		case "stdout":
+			outputs = append(outputs, os.Stdout)
+		default:
+			outputs = append(outputs, os.Stdout)
+		}
+	}
+	if len(outputs) == 0 {
+		outputs = []io.Writer{os.Stdout}
+	}
+	logrus.SetOutput(io.MultiWriter(outputs...))
 
 	// Warm up caches for shared resources and ensure gas costs are registered.
 	synn.LoadGasTable()
+	stage78Gas := map[string]uint64{
+		"EnterpriseBootstrap":      120,
+		"EnterpriseConsensusSync":  95,
+		"EnterpriseWalletSeal":     60,
+		"EnterpriseNodeAudit":      75,
+		"EnterpriseAuthorityElect": 80,
+	}
+	if inserted, err := synn.EnsureGasSchedule(stage78Gas); err != nil {
+		logrus.Fatalf("stage 78 gas sync failed: %v", err)
+	} else if len(inserted) > 0 {
+		logrus.Infof("registered %d stage 78 opcodes", len(inserted))
+	}
 	mustRegister := func(name string) {
 		if err := synn.RegisterGasCost(name, synn.GasCost(name)); err != nil {
 			logrus.Fatalf("register gas cost %s: %v", name, err)
@@ -119,6 +157,12 @@ func main() {
 	mustRegister("KademliaGet")
 	mustRegister("KademliaClosest")
 	mustRegister("KademliaDistance")
+	// Stage 78 enterprise orchestrator operations
+	mustRegister("EnterpriseBootstrap")
+	mustRegister("EnterpriseConsensusSync")
+	mustRegister("EnterpriseWalletSeal")
+	mustRegister("EnterpriseNodeAudit")
+	mustRegister("EnterpriseAuthorityElect")
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.

@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -112,21 +113,21 @@ func LoadGasTable() GasTable {
 // GasCost returns the gas price for a given opcode name. If the opcode is not
 // present in the table, DefaultGasCost is returned.
 func GasCost(opcode string) uint64 {
-        tbl := LoadGasTable()
-        if c, ok := tbl[opcode]; ok {
-                return c
-        }
-        return DefaultGasCost
+	tbl := LoadGasTable()
+	if c, ok := tbl[opcode]; ok {
+		return c
+	}
+	return DefaultGasCost
 }
 
 // MustGasCost returns the gas price for an opcode and panics if it is missing.
 // It is useful during initialization of critical modules where undefined
 // pricing would indicate a misconfigured build or documentation drift.
 func MustGasCost(opcode string) uint64 {
-        if c, ok := LoadGasTable()[opcode]; ok {
-                return c
-        }
-        panic(fmt.Sprintf("missing gas cost for opcode %s", opcode))
+	if c, ok := LoadGasTable()[opcode]; ok {
+		return c
+	}
+	panic(fmt.Sprintf("missing gas cost for opcode %s", opcode))
 }
 
 // HasOpcode reports whether a gas price is defined for the opcode.
@@ -134,6 +135,45 @@ func HasOpcode(name string) bool {
 	tbl := LoadGasTable()
 	_, ok := tbl[name]
 	return ok
+}
+
+// EnsureGasSchedule guarantees that each opcode in schedule has a registered gas
+// price. New entries are registered with the provided cost while existing
+// entries are updated if the documented price has changed. The function returns
+// the list of opcodes that were inserted for the first time, enabling callers to
+// surface enterprise readiness checks across the CLI and web interfaces.
+func EnsureGasSchedule(schedule map[string]uint64) ([]string, error) {
+	if len(schedule) == 0 {
+		return nil, nil
+	}
+
+	LoadGasTable()
+
+	gasMu.Lock()
+	defer gasMu.Unlock()
+
+	if gasCache == nil {
+		gasCache = make(GasTable)
+	}
+
+	inserted := make([]string, 0, len(schedule))
+	for name, cost := range schedule {
+		if name == "" {
+			return inserted, fmt.Errorf("%w: name", ErrInvalidGasRegistration)
+		}
+		if cost == 0 {
+			return inserted, fmt.Errorf("%w: cost", ErrInvalidGasRegistration)
+		}
+		if _, exists := gasCache[name]; !exists {
+			inserted = append(inserted, name)
+		}
+		gasCache[name] = cost
+	}
+
+	if len(inserted) > 1 {
+		sort.Strings(inserted)
+	}
+	return inserted, nil
 }
 
 // RegisterGasCost allows the CLI or tests to inject additional opcode pricing

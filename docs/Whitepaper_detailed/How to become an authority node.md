@@ -164,6 +164,11 @@ Enterprise operators often automate routine tasks:
 * [How to Disperse a Loanpool Grant as an Authority Node](./How%20to%20disperse%20a%20loanpool%20grant%20as%20an%20authority%20node.md)
 * [Authority Node Index GUI](../architecture/node_operations_dashboard_architecture.md)
 
+## Stage 78 Enterprise Enhancements
+- **Authority telemetry:** `core.NewEnterpriseOrchestrator` records registry membership, consensus relayers and wallet custody so candidates and incumbents can review authority health through `synnergy orchestrator status` or the control panel before elections.【F:core/enterprise_orchestrator.go†L21-L166】【F:cli/orchestrator.go†L6-L75】
+- **Cost alignment:** Stage 78 gas documentation covers orchestrator-driven authority elections, audits and wallet sealing, giving operators deterministic expenses for campaigning, onboarding and compliance tasks.【F:docs/reference/gas_table_list.md†L420-L424】
+- **Election resilience:** Expanded orchestrator tests exercise authority registration, consensus synchronisation and gas updates under unit, situational, stress, functional and real-world scenarios, ensuring governance remains dependable during peak voting periods.【F:core/enterprise_orchestrator_test.go†L5-L75】【F:cli/orchestrator_test.go†L5-L26】
+
 ---
 
 For questions or support, contact **Neto Solaris** through the

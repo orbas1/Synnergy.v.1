@@ -417,6 +417,11 @@
 | `NewElectedAuthorityNode` | `1` |
 | `NewEnergyEfficiencyTracker` | `1` |
 | `NewEnergyEfficientNode` | `1` |
+| `EnterpriseAuthorityElect` | `80` |
+| `EnterpriseBootstrap` | `120` |
+| `EnterpriseConsensusSync` | `95` |
+| `EnterpriseNodeAudit` | `75` |
+| `EnterpriseWalletSeal` | `60` |
 | `NewEnvironmentalMonitoringNode` | `1` |
 | `NewEvent` | `1` |
 | `NewFailoverManager` | `1` |
