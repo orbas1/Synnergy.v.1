@@ -9,8 +9,6 @@ import (
 	"synnergy/core"
 )
 
-var legalRegistry = core.NewLegalTokenRegistry()
-
 func init() {
 	cmd := &cobra.Command{
 		Use:   "syn4700",
@@ -42,8 +40,13 @@ func init() {
 			if len(parties) == 0 {
 				return fmt.Errorf("at least one party required")
 			}
+			store, err := stage73State()
+			if err != nil {
+				return err
+			}
 			t := core.NewLegalToken(id, name, symbol, doctype, hash, owner, time.Unix(expiry, 0), supply, parties)
-			legalRegistry.Add(t)
+			store.Legal().Add(t)
+			markStage73Dirty()
 			cmd.Println("token created")
 			return nil
 		},
@@ -72,13 +75,18 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Add a party signature",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			t, ok := legalRegistry.Get(args[0])
+			store, err := stage73State()
+			if err != nil {
+				return err
+			}
+			t, ok := store.Legal().Get(args[0])
 			if !ok {
 				return fmt.Errorf("not found")
 			}
 			if err := t.Sign(args[1], args[2]); err != nil {
 				return err
 			}
+			markStage73Dirty()
 			cmd.Println("signed")
 			return nil
 		},
@@ -89,11 +97,16 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Revoke a signature",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			t, ok := legalRegistry.Get(args[0])
+			store, err := stage73State()
+			if err != nil {
+				return err
+			}
+			t, ok := store.Legal().Get(args[0])
 			if !ok {
 				return fmt.Errorf("not found")
 			}
 			t.RevokeSignature(args[1])
+			markStage73Dirty()
 			cmd.Println("revoked")
 			return nil
 		},
@@ -104,7 +117,11 @@ func init() {
 		Args:  cobra.ExactArgs(2),
 		Short: "Update token status",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			t, ok := legalRegistry.Get(args[0])
+			store, err := stage73State()
+			if err != nil {
+				return err
+			}
+			t, ok := store.Legal().Get(args[0])
 			if !ok {
 				return fmt.Errorf("not found")
 			}
@@ -112,6 +129,7 @@ func init() {
 			switch s {
 			case core.LegalTokenStatusPending, core.LegalTokenStatusActive, core.LegalTokenStatusCompleted, core.LegalTokenStatusDisputed:
 				t.UpdateStatus(s)
+				markStage73Dirty()
 				return nil
 			default:
 				return fmt.Errorf("invalid status")
@@ -124,7 +142,11 @@ func init() {
 		Args:  cobra.RangeArgs(2, 3),
 		Short: "Record a dispute",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			t, ok := legalRegistry.Get(args[0])
+			store, err := stage73State()
+			if err != nil {
+				return err
+			}
+			t, ok := store.Legal().Get(args[0])
 			if !ok {
 				return fmt.Errorf("not found")
 			}
@@ -136,6 +158,7 @@ func init() {
 				res = args[2]
 			}
 			t.Dispute(args[1], res)
+			markStage73Dirty()
 			cmd.Println("disputed")
 			return nil
 		},
@@ -146,7 +169,11 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show token info",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			t, ok := legalRegistry.Get(args[0])
+			store, err := stage73State()
+			if err != nil {
+				return err
+			}
+			t, ok := store.Legal().Get(args[0])
 			if !ok {
 				return fmt.Errorf("not found")
 			}

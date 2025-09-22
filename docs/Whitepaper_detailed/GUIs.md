@@ -28,6 +28,14 @@ The following modules illustrate how diverse Synnergy workflows are rendered thr
 - Explores DAO state with environment variables `API_URL`, `LOG_LEVEL` and `DATABASE_URL` driving runtime settings.
 - Deterministic roll‑outs are ensured via Jest tests and container images.
 
+#### Stage 73 Control Panel (`web/pages/stage73.js`)
+- Presents grants, benefits, legal tokens and utility telemetry using the shared Stage 73 snapshot with digest and last update metadata.
+- Provides wallet-aware forms for `syn3700`, `syn3800`, `syn3900`, `syn4200_token`, `syn4700` and `syn500` commands, reusing the `/api/run` queue so browser-triggered actions persist atomically.
+- Polls `/api/stage73` for the orchestrator-aligned digest and canonical JSON, guaranteeing the UI reflects the same state exposed to the VM and consensus layers.
+- The backing API executes the CLI with `--stage73-state` so browser actions persist to the same JSON store used by automation and integration tests.
+- Snapshot and telemetry opcodes from the `Stage73Orchestrator` expose VM-backed health data without direct file access.
+
+
 ### Security & Compliance
 #### Compliance Dashboard (`GUI/compliance-dashboard`)
 - Monitors regulatory adherence with Node 18+, ESLint, Prettier and Jest in the toolchain.

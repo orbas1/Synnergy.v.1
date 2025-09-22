@@ -19,7 +19,6 @@ func TestSyn3800Lifecycle(t *testing.T) {
 	useMemoryWalletLoader(t)
 	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
 	resetStage73LoadedForTests()
-	grantRegistry = core.NewGrantRegistry()
 	authorizer, path := createWalletFile(t, "pass")
 	out, err := execCommand("syn3800", "create", "bob", "research", "100", "--authorizer", path+":pass")
 	if err != nil {
@@ -93,7 +92,6 @@ func TestSyn3800Validation(t *testing.T) {
 	useMemoryWalletLoader(t)
 	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
 	resetStage73LoadedForTests()
-	grantRegistry = core.NewGrantRegistry()
 	if _, err := execCommand("syn3800", "create", "", "name", "10"); err == nil {
 		t.Fatal("expected error for missing beneficiary")
 	} else if !strings.Contains(err.Error(), "beneficiary") {

@@ -15,6 +15,7 @@ Stage 43 adds pricing for DAO membership operations so governance tooling can an
 Stage 65 introduces gas costs and opcodes for DAO token ledger operations so member-gated minting, burning and transfers remain predictable, and records authority term renewals.
 Stage 67 registers Kademlia distance and lookup operations so DHT queries surface deterministic fees across the CLI and VM.
 Stage 73 introduces an audit opcode for regulatory nodes, enabling deterministic gas charges when verifying flagged addresses via CLI or web consoles.
+Stage 77 extends the Stage 73 catalogue with orchestrator opcodes (`0x730001` for snapshots and `0x730002` for telemetry) so the virtual machine can stream the persisted grant, benefit and utility state without touching the filesystem. These handlers use the Stage 73 snapshot and therefore inherit the same deterministic gas pricing as other telemetry helpers. The `/api/stage73` endpoint hashes the canonical JSON using the same digest algorithm so browser requests and VM opcode invocations observe identical gas footprints and tamper-evident payloads.
 Stage 74 extends auditing to access control with an `Access_Audit` opcode that snapshots role assignments for administrative tooling.
 
 ## Opcode Structure

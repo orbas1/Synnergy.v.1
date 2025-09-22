@@ -9,7 +9,6 @@ import (
 func TestSyn500Lifecycle(t *testing.T) {
 	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
 	resetStage73LoadedForTests()
-	syn500Token = nil
 	out, err := execCommand("syn500", "create", "--name", "Loyalty", "--symbol", "LOY", "--owner", "alice", "--dec", "2", "--supply", "10")
 	if err != nil {
 		t.Fatalf("create: %v", err)
@@ -60,7 +59,6 @@ func TestSyn500Lifecycle(t *testing.T) {
 func TestSyn500Validation(t *testing.T) {
 	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
 	resetStage73LoadedForTests()
-	syn500Token = nil
 	if _, err := execCommand("syn500", "create", "--name", "", "--symbol", "LOY", "--owner", "alice", "--dec", "1", "--supply", "10"); err == nil {
 		t.Fatal("expected error for name")
 	}

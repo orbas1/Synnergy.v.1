@@ -19,7 +19,6 @@ func TestSyn3900Lifecycle(t *testing.T) {
 	useMemoryWalletLoader(t)
 	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
 	resetStage73LoadedForTests()
-	benefitRegistry = core.NewBenefitRegistry()
 	recipient, path := createClaimWallet(t, "pass")
 	out, err := execCommand("syn3900", "register", recipient.Address, "housing", "200", "--approver", path+":pass")
 	if err != nil {
@@ -83,7 +82,6 @@ func TestSyn3900Validation(t *testing.T) {
 	useMemoryWalletLoader(t)
 	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
 	resetStage73LoadedForTests()
-	benefitRegistry = core.NewBenefitRegistry()
 	if _, err := execCommand("syn3900", "register", "", "program", "10"); err == nil {
 		t.Fatal("expected error for missing recipient")
 	} else if !strings.Contains(err.Error(), "recipient") {

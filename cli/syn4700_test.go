@@ -2,6 +2,7 @@ package cli
 
 import (
 	"encoding/json"
+	"path/filepath"
 	"strconv"
 	"testing"
 	"time"
@@ -10,7 +11,8 @@ import (
 )
 
 func TestSyn4700Lifecycle(t *testing.T) {
-	legalRegistry = core.NewLegalTokenRegistry()
+	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
+	resetStage73LoadedForTests()
 	expiry := time.Now().Add(time.Hour).Unix()
 	if _, err := execCommand("syn4700", "create", "--id", "t1", "--name", "Agreement", "--symbol", "AGR", "--doctype", "contract", "--hash", "h", "--owner", "alice", "--expiry", strconv.FormatInt(expiry, 10), "--supply", "100", "--party", "alice", "--party", "bob"); err != nil {
 		t.Fatalf("create: %v", err)
@@ -44,7 +46,8 @@ func TestSyn4700Lifecycle(t *testing.T) {
 }
 
 func TestSyn4700Validation(t *testing.T) {
-	legalRegistry = core.NewLegalTokenRegistry()
+	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
+	resetStage73LoadedForTests()
 	expiry := time.Now().Add(time.Hour).Unix()
 	if _, err := execCommand("syn4700", "create", "--id", "t1", "--name", "A", "--symbol", "A", "--doctype", "d", "--hash", "h", "--owner", "o", "--expiry", strconv.FormatInt(expiry, 10), "--supply", "0", "--party", "p1"); err == nil {
 		t.Fatal("expected error for zero supply")

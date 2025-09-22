@@ -1,13 +1,8 @@
 package cli
 
-import (
-	"testing"
-
-	"synnergy/core"
-)
+import "testing"
 
 func TestSyn4200TokenLifecycle(t *testing.T) {
-	syn4200 = core.NewSYN4200Token()
 	if _, err := execCommand("syn4200_token", "donate", "AAA", "--from", "alice", "--amt", "50", "--purpose", "school"); err != nil {
 		t.Fatalf("donate: %v", err)
 	}
@@ -21,7 +16,6 @@ func TestSyn4200TokenLifecycle(t *testing.T) {
 }
 
 func TestSyn4200TokenValidation(t *testing.T) {
-	syn4200 = core.NewSYN4200Token()
 	if _, err := execCommand("syn4200_token", "donate", "AAA", "--from", "", "--amt", "10"); err == nil {
 		t.Fatal("expected error for missing from")
 	}

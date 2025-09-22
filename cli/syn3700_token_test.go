@@ -19,7 +19,6 @@ func TestSyn3700CLIWorkflow(t *testing.T) {
 	useMemoryWalletLoader(t)
 	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
 	resetStage73LoadedForTests()
-	syn3700 = nil
 	controller, path := createIndexWallet(t, "pass")
 	if out, err := execCommand("syn3700", "init", "--name", "Institutional", "--symbol", "IDX", "--controller", path+":pass"); err != nil {
 		t.Fatalf("init: %v (output: %s)", err, out)
@@ -106,7 +105,6 @@ func TestSyn3700CLIValidation(t *testing.T) {
 	useMemoryWalletLoader(t)
 	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
 	resetStage73LoadedForTests()
-	syn3700 = nil
 	_, path := createIndexWallet(t, "pass")
 	if _, err := execCommand("syn3700", "add", "AAA", "--weight", "1", "--wallet", path, "--password", "pass"); err == nil {
 		t.Fatal("expected error when not initialised")

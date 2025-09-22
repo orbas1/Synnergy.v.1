@@ -4,10 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"synnergy/core"
 )
-
-var syn4200 = core.NewSYN4200Token()
 
 func init() {
 	cmd := &cobra.Command{
@@ -26,7 +23,13 @@ func init() {
 			if from == "" || amt == 0 {
 				return fmt.Errorf("from and positive amt required")
 			}
-			syn4200.Donate(args[0], from, amt, purpose)
+			store, err := stage73State()
+			if err != nil {
+				return err
+			}
+			registry := store.Charity()
+			registry.Donate(args[0], from, amt, purpose)
+			markStage73Dirty()
 			cmd.Println("donation recorded")
 			return nil
 		},
@@ -42,7 +45,11 @@ func init() {
 		Args:  cobra.ExactArgs(1),
 		Short: "Show campaign progress",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			amt, ok := syn4200.CampaignProgress(args[0])
+			store, err := stage73State()
+			if err != nil {
+				return err
+			}
+			amt, ok := store.Charity().CampaignProgress(args[0])
 			if !ok {
 				return fmt.Errorf("not found")
 			}

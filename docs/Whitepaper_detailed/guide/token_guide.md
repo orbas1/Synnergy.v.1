@@ -129,18 +129,21 @@ how specialised assets can be modelled on top of the base abstractions:
 | `syn2900.go` | General insurance policies and claim handling. |
 | `syn3400.go` | Foreign‑exchange pair registry with rate updates. |
 | `syn3500_token.go` | Fiat‑pegged currency token with mint and redeem operations. |
-| `syn3700_token.go` | Index token that aggregates multiple assets by weight. |
-| `syn4200_token.go` | Charity campaign token used for tracking donations. |
+| `syn3700_token.go` | Stage 73 index token with controller enforcement, audit trails and persistence through `Stage73Store`. |
+| `syn4200_token.go` | Stage 73 charity campaign registry writing donations to the shared snapshot for dashboards. |
 | `syn2700.go` | Dividend token distributing rewards proportionally to holders. |
 | `syn3200.go` | Convertible token applying a dynamic conversion ratio. |
 | `syn3600.go` | Governance weight ledger for on‑chain voting schemes. |
-| `syn3800.go` | Capped supply token enforcing hard issuance limits. |
-| `syn3900.go` | Vesting token releasing grants after a specified time. |
-| `syn500.go` | Loyalty points token with expirations. |
+| `syn3800.go` | Stage 73 grant registry capturing authorisers, disbursement history and telemetry. |
+| `syn3900.go` | Stage 73 benefit registry validating recipients, approvers and approval audits. |
+| `syn4700.go` | Stage 73 legal token registry persisting signatures, disputes and status updates. |
+| `syn500.go` | Stage 73 utility token tracking service tiers and usage windows with telemetry. |
 | `syn5000.go` | Multi‑chain token supporting cross‑chain transfers. |
 | `syn4700.go` | Legal document token recording parties, signatures and dispute status. |
 
 These examples can be used as templates when designing new token types.
+
+Stage 73 tokens share the `Stage73Store` snapshot so CLI sessions, automated tests and the `/stage73` browser console all interact with the same persisted state. The web tier queues API requests before invoking the Go CLI which guarantees atomic writes and reuses the orchestrator digest for tamper detection across grants, benefits, legal instruments and utility telemetry.
 
 ## Native coin
 

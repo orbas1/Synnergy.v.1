@@ -21194,3 +21194,16 @@ npm start
 ```
 
 Tests and lint checks can be run with `npm test` and `npm run lint` respectively.
+
+## Stage 73 – Enterprise Grants, Benefits and Utility Controls
+
+Stage 73 commands require authenticated wallets and align the CLI, runtime integration and web function web experience:
+
+- **SYN3700** now enforces controller-only mutations. `syn3700 add`, `syn3700 remove` and `syn3700 rebalance` require a wallet and password while `snapshot`, `controllers`, `status`, `value` and `audit` return JSON for direct ingestion by the operations dashboard.
+- **SYN3800** grant orchestration captures digital signatures for every release. The CLI persists authorizer sets, surfaces telemetry totals via `syn3800 status` and exposes tamper-evident logs through `syn3800 audit`.
+- **SYN3900** benefit approvals validate the claimant wallet and restrict approvals to registered approvers. `syn3900 status` reports pending, claimed and approved counts so compliance teams can track workloads in real time.
+- **SYN500** utility grants support configurable usage windows and expose JSON telemetry to the function web UI and monitoring pipelines.
+
+The CLI exposes a persistent snapshot through the Stage 73 store. Launch the CLI with `--stage73-state /path/to/state.json` to share grant, benefit, legal and utility data across repeated invocations, the browser console and automated tests. Snapshots are written atomically and surfaced via the `Stage73Orchestrator`, which registers VM opcodes for querying the JSON state and adjusts consensus weights when grant or benefit activity spikes. The `/stage73` browser console consumes the same snapshot and orchestrator digest through the `web/pages/api/stage73` endpoint, and the API queue ensures only one CLI process writes to disk at a time so the JSON payload cannot be corrupted by concurrent requests.
+
+All commands emit a gas cost preface followed by structured output, keeping the virtual machine, consensus layer and user interfaces synchronized while satisfying regulatory audit requirements.

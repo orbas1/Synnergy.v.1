@@ -148,5 +148,13 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Automate packaging and artifact publishing in CI/CD with distinct stable and pre-release channels.
     - Document installation, upgrade, and rollback procedures and verify packages through integration tests.
 
+21. **Stage 77 – Runtime Integration and Deployment Hardening ✅**
+    - Added `internal/runtime/integration.go` to orchestrate the node, consensus engine, wallet and VM so CLI, Docker, Kubernetes, Terraform and the web UI all consume the same runtime state.
+    - Validated opcode pricing through `EnsureGasCosts` and the new runtime integration tests, preventing gas documentation drift.
+    - Hardened Docker, Kubernetes and Terraform artefacts with health checks, telemetry sidecars, auto scaling policies, encrypted secrets and multi-tier networking.
+    - Delivered a production-ready JavaScript function web backed by the shared runtime to surface consensus telemetry and wallet workflows.
+    - Introduced `core.Stage73Store` and the Stage73Orchestrator so Stage 73 CLI modules share an atomic JSON snapshot (`--stage73-state`), VM opcodes expose grant and benefit telemetry, and the new Stage 73 control panel reuses the same persisted data.
+    - Added `/api/run` queueing, `/api/stage73` digest exports and a comprehensive `/stage73` UI so browser-initiated commands persist atomically, reuse canonical hashes and mirror orchestrator telemetry; regression suites cover concurrent saves, corrupt snapshot handling and full CLI-to-web integration.
+
 These stages, once completed, will transition the repository from a prototype into a maintainable, production-grade codebase suitable for enterprise deployment.
 

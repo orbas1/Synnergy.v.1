@@ -44,6 +44,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Institutional banking** – bank nodes require Ed25519-signed requests to register or remove participating institutions.
 - **Bank node index** – track banking nodes via a thread-safe index exposed through `bank_index` CLI commands.
 - **Extensible CLI** – built with [Cobra](https://github.com/spf13/cobra) and backed by `cli.Execute()`.
+- **Stage 73 enterprise CLI alignment** – `syn3700`, `syn3800`, `syn3900` and `syn500` commands now require wallet authentication, persist state through the shared Stage 73 snapshot (`--stage73-state`) and stream telemetry into the function web UI while the Stage73Orchestrator keeps the VM and consensus weights in sync with grant, benefit and utility activity. A dedicated `/stage73` control panel exposes the same snapshot and orchestrator digest to the browser, queuing CLI executions so concurrent web requests cannot corrupt the persisted state.
 - **Resource-managed CLI** – connection pool commands can release individual peers and `contractopcodes` reports gas costs for contract operations.
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
