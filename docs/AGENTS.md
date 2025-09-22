@@ -2169,12 +2169,13 @@ Stage 79 complete: runtime bootstrap aligned CLI, VM, consensus, ledger and wall
 - [ ] scripts/certificate_issue.sh
 
 **Stage 98**
-- [ ] scripts/certificate_renew.sh
-- [ ] scripts/chain_rollback_prevention.sh
-- [ ] scripts/chain_state_snapshot.sh
-- [ ] scripts/ci_setup.sh
-- [ ] scripts/cleanup_artifacts.sh
-- [ ] scripts/cli_help_generator.sh
+- [x] scripts/certificate_renew.sh – enterprise renewal workflow with CLI submission, metrics, locking, and dry-run coverage
+- [x] scripts/chain_rollback_prevention.sh – enterprise rollback guard with CLI mitigation,
+  checkpoint automation, metrics emission, and concurrency-safe locking
+- [x] scripts/chain_state_snapshot.sh – snapshot automation with retention, metrics, locking, and CLI/fixture parity for audit trails
+- [x] scripts/ci_setup.sh – profile-aware CI bootstrap with dry-run reporting, locking, cache/log handling, and toolchain orchestration
+- [x] scripts/cleanup_artifacts.sh – safety-aware artifact pruning with retention filters, pattern controls, metrics, and concurrency guards
+- [x] scripts/cli_help_generator.sh – CLI help publisher supporting recorded definitions, live introspection, markdown/json output, and metrics emission
 - [ ] scripts/cli_tooling.sh
 - [ ] scripts/compliance_audit.sh
 - [ ] scripts/compliance_rule_update.sh
@@ -2188,6 +2189,8 @@ Stage 79 complete: runtime bootstrap aligned CLI, VM, consensus, ledger and wall
 - [ ] scripts/consensus_start.sh
 - [ ] scripts/consensus_validator_manage.sh
 - [ ] scripts/content_node_setup.sh
+
+_Stage 98 progress: certificate automation, rollback guard, and four CLI/operations utilities upgraded; twelve scripts pending enterprise hardening._
 
 **Stage 99**
 - [ ] scripts/contract_coverage_report.sh
