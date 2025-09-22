@@ -8,6 +8,7 @@
 - Stage 68: Complete – mining node context control, fee distribution, and CLI mine-until integration finalized with gas pricing and opcode docs extended.
 - Stage 69: Complete – node and plasma modules hardened with concurrency-safe mempools, pause checks, opcode lookup tests and peer count CLI.
 - Stage 73: Complete – enterprise index, grant, benefit, charity, legal and utility modules now require wallet-signed workflows, persist their state for CLI/web automation, expose telemetry across CLI, VM and web, and refreshed docs/guides capture the expanded gas/opcode catalogue.
+- Stage 79: Complete – runtime bootstrap, manifest-driven tooling, ledger replication opcodes and enterprise Stage 79 documentation shipped across CLI, VM, consensus, wallet and web control plane.
 - Stage 74: In progress – system health logging clamped; tangible and agricultural asset registries made concurrency safe; access controller audit snapshots added. Transaction and SYN5000+ modules outstanding.
 - Stage 75: In progress – validator node supports concurrent joins; VM, wallet and cross-chain layers pending.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
@@ -1745,24 +1746,26 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 
 **Stage 79**
 - [x] docs/Whitepaper_detailed/How to connect to a node.md
-- [ ] docs/Whitepaper_detailed/How to create a node.md
+- [x] docs/Whitepaper_detailed/How to create a node.md
 - [x] docs/Whitepaper_detailed/How to create our various tokens.md
-- [ ] docs/Whitepaper_detailed/How to deploy a contract.md
-- [ ] docs/Whitepaper_detailed/How to disperse a loanpool grant as an authority node.md
-- [ ] docs/Whitepaper_detailed/How to get a syn900 id token.md
-- [ ] docs/Whitepaper_detailed/How to setup faucet.md
-- [ ] docs/Whitepaper_detailed/How to setup the blockchain.md
-- [ ] docs/Whitepaper_detailed/How to use the CLI.md
-- [ ] docs/Whitepaper_detailed/How to use the Synnergy Network Consensus.md
-- [ ] docs/Whitepaper_detailed/How to vote for authority node.md
-- [ ] docs/Whitepaper_detailed/How to write a contract.md
-- [ ] docs/Whitepaper_detailed/Ledger replication and distribution.md
-- [ ] docs/Whitepaper_detailed/Ledger.md
-- [ ] docs/Whitepaper_detailed/Loanpool.md
-- [ ] docs/Whitepaper_detailed/Maintenance.md
-- [ ] docs/Whitepaper_detailed/Mathematical Algorithms.md
-- [ ] docs/Whitepaper_detailed/Network.md
-- [ ] docs/Whitepaper_detailed/Nodes.md
+- [x] docs/Whitepaper_detailed/How to deploy a contract.md
+- [x] docs/Whitepaper_detailed/How to disperse a loanpool grant as an authority node.md
+- [x] docs/Whitepaper_detailed/How to get a syn900 id token.md
+- [x] docs/Whitepaper_detailed/How to setup faucet.md
+- [x] docs/Whitepaper_detailed/How to setup the blockchain.md
+- [x] docs/Whitepaper_detailed/How to use the CLI.md
+- [x] docs/Whitepaper_detailed/How to use the Synnergy Network Consensus.md
+- [x] docs/Whitepaper_detailed/How to vote for authority node.md
+- [x] docs/Whitepaper_detailed/How to write a contract.md
+- [x] docs/Whitepaper_detailed/Ledger replication and distribution.md
+- [x] docs/Whitepaper_detailed/Ledger.md
+- [x] docs/Whitepaper_detailed/Loanpool.md
+- [x] docs/Whitepaper_detailed/Maintenance.md
+- [x] docs/Whitepaper_detailed/Mathematical Algorithms.md
+- [x] docs/Whitepaper_detailed/Network.md
+- [x] docs/Whitepaper_detailed/Nodes.md
+
+Stage 79 complete: runtime bootstrap aligned CLI, VM, consensus, ledger and wallet services; gas/opcode catalogues expanded for replication and compliance flows; documentation, manifest-driven UI integration and regression tests refreshed for enterprise maintenance.
 
 **Stage 80**
 - [ ] docs/Whitepaper_detailed/Opcodes and gas.md
