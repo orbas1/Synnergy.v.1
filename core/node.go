@@ -160,3 +160,14 @@ func (n *Node) Rehabilitate(addr string) {
 		_ = n.Validators.Add(context.Background(), addr, stake)
 	}
 }
+
+// PendingTransactionCount returns the number of queued transactions awaiting
+// inclusion in a block. It is safe for concurrent use by background services.
+func (n *Node) PendingTransactionCount() int {
+	if n == nil {
+		return 0
+	}
+	n.mu.Lock()
+	defer n.mu.Unlock()
+	return len(n.Mempool)
+}
