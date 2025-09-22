@@ -63,11 +63,13 @@ type SynnergyConsensus struct {
 	validatorPubKeys map[string][]byte
 }
 
+var defaultConsensusWeights = ConsensusWeights{PoW: 0.40, PoS: 0.30, PoH: 0.30}
+
 // NewSynnergyConsensus returns a new consensus engine with default parameters
 // derived from the Synnergy specification.
 func NewSynnergyConsensus() *SynnergyConsensus {
 	return &SynnergyConsensus{
-		Weights:          ConsensusWeights{PoW: 0.40, PoS: 0.30, PoH: 0.30},
+		Weights:          defaultConsensusWeights,
 		Alpha:            0.5,
 		Beta:             0.5,
 		Gamma:            0.1,
@@ -87,6 +89,16 @@ func (sc *SynnergyConsensus) SetRegulatoryNode(rn *RegulatoryNode) {
 	sc.mu.Lock()
 	sc.RegNode = rn
 	sc.mu.Unlock()
+}
+
+// ConsensusTelemetry captures real-world health indicators for the consensus
+// network so the engine can rebalance towards safer defaults when necessary.
+type ConsensusTelemetry struct {
+	ParticipationRate float64
+	FinalizationRate  float64
+	AvgBlockInterval  time.Duration
+	IncidentRate      int
+	AnomalyScore      float64
 }
 
 // RegisterValidatorPublicKey records the validator's public key so sub-blocks
@@ -129,20 +141,10 @@ func (sc *SynnergyConsensus) AdjustWeights(D, S float64) {
 	loadInv := 1 - (D / sc.Dmax)
 	weights.PoH = clamp(weights.PoH+sc.Gamma*(loadInv-weights.PoH), 0.075, 1)
 
-	if !sc.PoWAvailable || !sc.PoWRewards {
-		weights.PoW = 0
-	}
-	if !sc.PoSAvailable {
-		weights.PoS = 0
-	}
-	if !sc.PoHAvailable {
-		weights.PoH = 0
-	}
-
-	weights = normalizeWeights(weights)
-	sc.Weights = weights
+	sc.Weights = sc.resilientWeightsLocked(weights)
+	finalWeights := sc.Weights
 	sc.mu.Unlock()
-	ilog.Info("adjust_weights", "pow", weights.PoW, "pos", weights.PoS, "poh", weights.PoH)
+	ilog.Info("adjust_weights", "pow", finalWeights.PoW, "pos", finalWeights.PoS, "poh", finalWeights.PoH)
 }
 
 // Tload computes the network-load component of the transition threshold.
@@ -202,16 +204,30 @@ func (sc *SynnergyConsensus) SetAvailability(pow, pos, poh bool) {
 	sc.PoWAvailable = pow
 	sc.PoSAvailable = pos
 	sc.PoHAvailable = poh
+	sc.Weights = sc.resilientWeightsLocked(sc.Weights)
+	finalPow := sc.PoWAvailable
+	finalPos := sc.PoSAvailable
+	finalPoh := sc.PoHAvailable
 	sc.mu.Unlock()
-	ilog.Info("set_availability", "pow", pow, "pos", pos, "poh", poh)
+	ilog.Info(
+		"set_availability",
+		"pow_requested", pow,
+		"pos_requested", pos,
+		"poh_requested", poh,
+		"pow_effective", finalPow,
+		"pos_effective", finalPos,
+		"poh_effective", finalPoh,
+	)
 }
 
 // SetPoWRewards indicates whether mining rewards remain for PoW miners.
 func (sc *SynnergyConsensus) SetPoWRewards(enabled bool) {
 	sc.mu.Lock()
 	sc.PoWRewards = enabled
+	sc.Weights = sc.resilientWeightsLocked(sc.Weights)
+	effective := sc.PoWRewards
 	sc.mu.Unlock()
-	ilog.Info("set_pow_rewards", "enabled", enabled)
+	ilog.Info("set_pow_rewards", "requested", enabled, "effective", effective)
 }
 
 // SelectValidator deterministically selects a validator using a VRF-style
@@ -646,7 +662,7 @@ func (sc *SynnergyConsensus) WeightsSnapshot() ConsensusWeights {
 // SetWeights overrides the consensus weights, normalising the provided values.
 func (sc *SynnergyConsensus) SetWeights(w ConsensusWeights) {
 	sc.mu.Lock()
-	sc.Weights = normalizeWeights(w)
+	sc.Weights = sc.resilientWeightsLocked(w)
 	sc.mu.Unlock()
 }
 
@@ -663,6 +679,66 @@ func (sc *SynnergyConsensus) getRegNode() *RegulatoryNode {
 	sc.mu.RLock()
 	defer sc.mu.RUnlock()
 	return sc.RegNode
+}
+
+// ApplyTelemetrySnapshot ingests runtime telemetry and rebalances consensus
+// weightings to favour the most reliable mechanism while isolating unhealthy
+// participants. It is safe for concurrent use.
+func (sc *SynnergyConsensus) ApplyTelemetrySnapshot(metrics ConsensusTelemetry) {
+	sc.mu.Lock()
+	weights := sc.Weights
+
+	if metrics.ParticipationRate > 0 && metrics.ParticipationRate < 0.65 {
+		weights.PoS *= 0.6
+		weights.PoW += 0.15
+	}
+	if metrics.FinalizationRate > 0 && metrics.FinalizationRate < 0.8 {
+		weights.PoW += 0.1
+	}
+	if metrics.AvgBlockInterval > 0 {
+		ratio := metrics.AvgBlockInterval.Seconds() / expectedBlockIntervalSeconds
+		switch {
+		case ratio > 1.5:
+			weights.PoH += 0.1
+			weights.PoW += 0.05
+		case ratio < 0.5:
+			weights.PoH *= 0.8
+		}
+	}
+	if metrics.IncidentRate > 0 || metrics.AnomalyScore > 0.7 {
+		sc.PoHAvailable = false
+		weights.PoH = 0
+		weights.PoW += 0.1
+	}
+
+	sc.Weights = sc.resilientWeightsLocked(weights)
+	finalWeights := sc.Weights
+	finalAvailability := ConsensusWeights{}
+	if sc.PoWAvailable {
+		finalAvailability.PoW = 1
+	}
+	if sc.PoSAvailable {
+		finalAvailability.PoS = 1
+	}
+	if sc.PoHAvailable {
+		finalAvailability.PoH = 1
+	}
+	sc.mu.Unlock()
+
+	ilog.Info(
+		"apply_telemetry",
+		"participation", metrics.ParticipationRate,
+		"finalization", metrics.FinalizationRate,
+		"avg_block_interval", metrics.AvgBlockInterval.Seconds(),
+		"incident_rate", metrics.IncidentRate,
+		"anomaly_score", metrics.AnomalyScore,
+		"pow_weight", finalWeights.PoW,
+		"pos_weight", finalWeights.PoS,
+		"poh_weight", finalWeights.PoH,
+		"pow_available", finalAvailability.PoW,
+		"pos_available", finalAvailability.PoS,
+		"poh_available", finalAvailability.PoH,
+	)
 }
 
 func normalizeWeights(w ConsensusWeights) ConsensusWeights {
@@ -684,4 +760,45 @@ func normalizeWeights(w ConsensusWeights) ConsensusWeights {
 		PoS: w.PoS / total,
 		PoH: w.PoH / total,
 	}
+}
+
+func (sc *SynnergyConsensus) applyAvailabilityLocked(weights ConsensusWeights) ConsensusWeights {
+	if !sc.PoWAvailable || !sc.PoWRewards {
+		weights.PoW = 0
+	}
+	if !sc.PoSAvailable {
+		weights.PoS = 0
+	}
+	if !sc.PoHAvailable {
+		weights.PoH = 0
+	}
+	return weights
+}
+
+func (sc *SynnergyConsensus) resilientWeightsLocked(weights ConsensusWeights) ConsensusWeights {
+	weights = normalizeWeights(weights)
+	weights = sc.applyAvailabilityLocked(weights)
+
+	total := weights.PoW + weights.PoS + weights.PoH
+	if total > 0 {
+		return weights
+	}
+
+	fallback := defaultConsensusWeights
+	switch {
+	case sc.PoWAvailable && sc.PoWRewards:
+		fallback = ConsensusWeights{PoW: 1}
+	case sc.PoSAvailable:
+		fallback = ConsensusWeights{PoS: 1}
+	case sc.PoHAvailable:
+		fallback = ConsensusWeights{PoH: 1}
+	default:
+		sc.PoWAvailable = true
+		sc.PoWRewards = true
+		fallback = defaultConsensusWeights
+		ilog.Info("consensus_fallback", "reason", "no_mechanism_available", "action", "reactivated_pow")
+	}
+
+	fallback = normalizeWeights(fallback)
+	return sc.applyAvailabilityLocked(fallback)
 }

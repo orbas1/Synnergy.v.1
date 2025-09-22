@@ -170,6 +170,55 @@ func TestChooseChainRejectsExcessiveFutureTimestamp(t *testing.T) {
 	}
 }
 
+func TestAvailabilityFallbackReactivatesMechanism(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	sc.SetAvailability(false, false, false)
+	weights := sc.WeightsSnapshot()
+	if weights.PoW == 0 {
+		t.Fatalf("expected PoW weight to be restored when all mechanisms disabled")
+	}
+	if !sc.PoWAvailable {
+		t.Fatalf("expected PoW availability to be re-enabled for resiliency")
+	}
+}
+
+func TestApplyTelemetrySnapshotAdjustsWeights(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	sc.SetWeights(ConsensusWeights{PoW: 0.2, PoS: 0.5, PoH: 0.3})
+
+	sc.ApplyTelemetrySnapshot(ConsensusTelemetry{
+		ParticipationRate: 0.4,
+		FinalizationRate:  0.55,
+		AvgBlockInterval:  18 * time.Second,
+		IncidentRate:      1,
+		AnomalyScore:      0.9,
+	})
+
+	weights := sc.WeightsSnapshot()
+	if weights.PoW <= 0.2 {
+		t.Fatalf("expected PoW weight to increase to stabilize network, got %v", weights.PoW)
+	}
+	if weights.PoS >= 0.5 {
+		t.Fatalf("expected PoS weight to reduce due to low participation, got %v", weights.PoS)
+	}
+	if sc.PoHAvailable {
+		t.Fatalf("expected PoH to be isolated after incident telemetry")
+	}
+}
+
+func TestSetPoWRewardsFallback(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	sc.SetAvailability(true, false, false)
+	sc.SetPoWRewards(false)
+	if !sc.PoWRewards {
+		t.Fatalf("expected PoW rewards to remain enabled when providing sole consensus fallback")
+	}
+	weights := sc.WeightsSnapshot()
+	if weights.PoW == 0 {
+		t.Fatalf("expected PoW weight to remain non-zero for fallback")
+	}
+}
+
 func testConsensusBlock(prev *Block, timestamp int64, finalized bool, validator string, txCount int) *Block {
 	txs := make([]*Transaction, txCount)
 	for i := range txs {
