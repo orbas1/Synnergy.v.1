@@ -21,3 +21,7 @@ Docker images provide a reproducible environment for running Synnergy nodes, wal
 
 ## CLI Integration
 Containers typically invoke the `synnergy` binary directly; additional helper scripts can bootstrap networks via Compose.
+
+## Enterprise Diagnostics
+- The `synnergy integration status` command is safe to run inside production containers; it uses in-memory ledgers and wallets so health probes never mutate on-disk state.
+- Container orchestrators can call the CLI with `--format json` and stream the results into standard logging pipelines, matching the data rendered in the Enterprise Integration Health view.

@@ -24,3 +24,7 @@ Loanpool modules administer community lending pools that issue grants or loans t
 ## CLI Integration
 - `synnergy loanpool` – create pools and manage funding.
 - `synnergy loanpool-apply` – submit or review applications.
+
+## Enterprise Diagnostics
+- Diagnostic runs credit the integration wallet before mining a block, validating that ledger minting and fee accounting—prerequisites for loan disbursements—remain functional.
+- Operators can compare CLI output with loanpool dashboards to ensure credit availability and authority quorum are aligned.

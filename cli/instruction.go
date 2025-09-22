@@ -58,7 +58,11 @@ func init() {
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("InstructionList")
 			cat := core.Catalogue()
-			printOutput(cat)
+			payload := make(map[string]string, len(cat))
+			for _, entry := range cat {
+				payload[entry.Name] = fmt.Sprintf("0x%06x", uint32(entry.Op))
+			}
+			printOutput(payload)
 		},
 	})
 

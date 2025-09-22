@@ -20,3 +20,7 @@ Specialized nodes register their capabilities and expose APIs relevant to their 
 
 ## CLI Integration
 Relevant features expose dedicated CLI commands such as `synnergy geospatial-node` or `synnergy energy-node` depending on the module.
+
+## Enterprise Diagnostics
+- Specialized modules inherit the baseline assurance from `synnergy integration status`, which validates consensus, wallet and authority scaffolding before custom workloads start.
+- Teams can extend the diagnostics map with domain-specific checks, and the output will remain consumable by the web dashboard and automation without further changes.

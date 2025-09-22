@@ -85,6 +85,17 @@ func (m *ConsensusNetworkManager) ListNetworks() []ConsensusNetwork {
 	return out
 }
 
+// AuthorizedRelayers exposes the currently approved relayer addresses.
+func (m *ConsensusNetworkManager) AuthorizedRelayers() []string {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	out := make([]string, 0, len(m.relayers))
+	for addr := range m.relayers {
+		out = append(out, addr)
+	}
+	return out
+}
+
 // GetNetwork retrieves a network configuration by ID.
 func (m *ConsensusNetworkManager) GetNetwork(id int) (ConsensusNetwork, error) {
 	m.mu.RLock()

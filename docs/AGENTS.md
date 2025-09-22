@@ -10,6 +10,7 @@
 - Stage 73: Complete – enterprise index, grant, benefit, charity, legal and utility modules now require wallet-signed workflows, persist their state for CLI/web automation, expose telemetry across CLI, VM and web, and refreshed docs/guides capture the expanded gas/opcode catalogue.
 - Stage 74: In progress – system health logging clamped; tangible and agricultural asset registries made concurrency safe; access controller audit snapshots added. Transaction and SYN5000+ modules outstanding.
 - Stage 75: In progress – validator node supports concurrent joins; VM, wallet and cross-chain layers pending.
+- Stage 81: Complete – integration diagnostics hardened with enterprise readiness probes (security, scalability, privacy, governance, interoperability, compliance), Stage 73 enterprise workflows aligned across CLI/core/web, documentation refreshed and telemetry surfaced in the dashboard.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
@@ -1795,7 +1796,7 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [x] docs/Whitepaper_detailed/architecture/identity_access_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/kubernetes_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/loanpool_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/module_cli_list.md
+- [x] docs/Whitepaper_detailed/architecture/module_cli_list.md – Enterprise integration command documented with web telemetry alignment and opcode defaults.
 - [x] docs/Whitepaper_detailed/architecture/monitoring_logging_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/nft_marketplace_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/node_roles_architecture.md
@@ -1805,6 +1806,29 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [x] docs/Whitepaper_detailed/architecture/storage_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/tokens_transactions_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/virtual_machine_architecture.md
+- [x] README.md – documented wallet-signed enterprise workflows and expanded CLI command table
+- [x] Synnergy_Whitepaper.md – highlighted enterprise automation and integration diagnostics
+- [x] docs/guides/cli_quickstart.md – added Stage 73 wallet-signed command usage examples
+- [x] docs/reference/gas_table_list.md – noted Stage 81 opcode alignment for grants, benefits and diagnostics
+- [x] docs/reference/opcodes_list.md – annotated Stage 73 enterprise opcode alignment
+- [x] docs/Whitepaper_detailed/guide/opcode_and_gas_guide.md – described Stage 73 wallet-signed automation flows
+- [x] docs/Whitepaper_detailed/architecture/module_cli_list.md – captured Stage 73 CLI/core synchronisation
+- [x] core/platform_integration.go – diagnostics respect context cancellation and record latency with issue tracking
+- [x] core/platform_integration_test.go – added timeout and concurrency coverage
+- [x] cli/integration_test.go – verified table output formatting
+- [x] core/syn3800.go – grant registry adds statuses, authorizer enforcement and audit telemetry
+- [x] core/syn3900.go – benefit registry now tracks claims, approvals and status telemetry
+- [x] core/syn500.go – utility token gained rate limiting windows and telemetry snapshots
+- [x] core/syn3700_token.go – index token exposes controller management, audit logging and drift-aware balancing
+- [x] cli/syn3800.go – wallet-signed grant CLI with persistence, audit and status commands
+- [x] cli/syn3900.go – wallet-signed benefit CLI with approval and status reporting
+- [x] cli/syn500.go – utility CLI adds status/telemetry commands and persisted limits
+- [x] cli/syn3700_token.go – controller-gated index CLI with snapshot, telemetry and audit outputs
+- [x] cli/stage73_state.go – shared persistence helper for Stage 73 modules
+- [x] core/syn3800_test.go – updated for new statuses and audit events
+- [x] core/syn3900_test.go – validated approvals and telemetry
+- [x] core/syn3700_token_test.go – exercised controller enforcement and concurrency
+- [x] web/pages/index.js – surfaced integration issues and aria-live feedback for accessibility
 
 **Stage 82**
 - [x] docs/Whitepaper_detailed/architecture/wallet_architecture.md
@@ -4270,7 +4294,7 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 | 81 | docs/Whitepaper_detailed/architecture/identity_access_architecture.md | [x] |
 | 81 | docs/Whitepaper_detailed/architecture/kubernetes_architecture.md | [x] |
 | 81 | docs/Whitepaper_detailed/architecture/loanpool_architecture.md | [x] |
-| 81 | docs/Whitepaper_detailed/architecture/module_cli_list.md | [ ] |
+| 81 | docs/Whitepaper_detailed/architecture/module_cli_list.md | [x] | integration command, gas defaults and web telemetry alignment documented |
 | 81 | docs/Whitepaper_detailed/architecture/monitoring_logging_architecture.md | [x] |
 | 81 | docs/Whitepaper_detailed/architecture/nft_marketplace_architecture.md | [x] |
 | 81 | docs/Whitepaper_detailed/architecture/node_operations_dashboard_architecture.md | [x] |

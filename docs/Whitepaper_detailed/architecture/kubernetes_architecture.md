@@ -22,3 +22,7 @@ Kubernetes manifests enable scalable deployments of Synnergy components in clust
 
 ## CLI Integration
 While Kubernetes handles orchestration, containers still invoke the `synnergy` CLI for node operations.
+
+## Enterprise Diagnostics
+- Cluster health checks can execute `synnergy integration status --format json` as a readiness probe, ensuring consensus, wallet and authority subsystems are online before routing traffic.
+- The integration status output mirrors the dashboard widget so SRE runbooks use consistent telemetry regardless of whether they operate via kubectl, the CLI or the browser.

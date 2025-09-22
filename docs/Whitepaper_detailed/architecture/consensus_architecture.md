@@ -29,3 +29,7 @@ Consensus modules decide how blocks are produced and agreed upon across heteroge
 - `synnergy consensus-service` – start or stop a mining service.
 - `synnergy consensus-node` – create a node fixed to a particular mode.
 - `synnergy consensus-adaptive` – query and tune adaptive management weights.
+
+## Enterprise Diagnostics
+- `synnergy integration status` now reports active consensus relays, validator readiness and the weight mix that powered the most recent synthetic block. The output is consumable in JSON for automation or as a human-readable table for operational runbooks.
+- The web control panel surfaces the same telemetry through the new Enterprise Integration Health widget, ensuring browser operators see the same values that the CLI aggregates.

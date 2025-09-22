@@ -49,21 +49,21 @@ func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	if !HasOpcode("RegNodeLogs") {
 		t.Fatalf("missing RegNodeLogs opcode")
 	}
-        if GasCost("RegNodeLogs") != 1 {
-                t.Fatalf("unexpected cost for RegNodeLogs")
-        }
-        if !HasOpcode("RegNodeAudit") {
-                t.Fatalf("missing RegNodeAudit opcode")
-        }
-        if GasCost("RegNodeAudit") != 3 {
-                t.Fatalf("unexpected cost for RegNodeAudit")
-        }
-        if !HasOpcode("Access_Audit") {
-                t.Fatalf("missing Access_Audit opcode")
-        }
-        if GasCost("Access_Audit") != 2 {
-                t.Fatalf("unexpected cost for Access_Audit")
-        }
+	if GasCost("RegNodeLogs") != 1 {
+		t.Fatalf("unexpected cost for RegNodeLogs")
+	}
+	if !HasOpcode("RegNodeAudit") {
+		t.Fatalf("missing RegNodeAudit opcode")
+	}
+	if GasCost("RegNodeAudit") != 3 {
+		t.Fatalf("unexpected cost for RegNodeAudit")
+	}
+	if !HasOpcode("Access_Audit") {
+		t.Fatalf("missing Access_Audit opcode")
+	}
+	if GasCost("Access_Audit") != 2 {
+		t.Fatalf("unexpected cost for Access_Audit")
+	}
 }
 
 func TestRegisterGasCostValidation(t *testing.T) {
@@ -82,4 +82,17 @@ func TestMustGasCostPanics(t *testing.T) {
 		}
 	}()
 	MustGasCost("UnknownOpcode")
+}
+
+func TestEnsureEnterpriseOpcodes(t *testing.T) {
+	ResetGasTable()
+	EnsureEnterpriseOpcodes()
+	for name, cost := range EnterpriseOpcodes() {
+		if !HasOpcode(name) {
+			t.Fatalf("enterprise opcode %s missing", name)
+		}
+		if GasCost(name) != cost {
+			t.Fatalf("unexpected cost for %s", name)
+		}
+	}
 }

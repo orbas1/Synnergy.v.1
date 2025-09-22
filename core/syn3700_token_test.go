@@ -7,12 +7,17 @@ import (
 
 func TestSYN3700TokenLifecycle(t *testing.T) {
 	tok := NewSYN3700Token("Index", "IDX")
-	tok.AddComponent("AAA", 0.5)
-	tok.AddComponent("BBB", 0.5)
-	if err := tok.RemoveComponent("CCC"); err == nil {
+	tok.AddController("ctrl")
+	if err := tok.AddComponent("AAA", 0.5, 0.1, "ctrl"); err != nil {
+		t.Fatalf("add AAA: %v", err)
+	}
+	if err := tok.AddComponent("BBB", 0.5, 0.1, "ctrl"); err != nil {
+		t.Fatalf("add BBB: %v", err)
+	}
+	if err := tok.RemoveComponent("CCC", "ctrl"); err == nil {
 		t.Fatalf("expected missing component error")
 	}
-	if err := tok.RemoveComponent("BBB"); err != nil {
+	if err := tok.RemoveComponent("BBB", "ctrl"); err != nil {
 		t.Fatalf("remove: %v", err)
 	}
 	comps := tok.ListComponents()
@@ -27,12 +32,13 @@ func TestSYN3700TokenLifecycle(t *testing.T) {
 
 func TestSYN3700TokenConcurrentAdd(t *testing.T) {
 	tok := NewSYN3700Token("Index", "IDX")
+	tok.AddController("ctrl")
 	var wg sync.WaitGroup
 	for i := 0; i < 10; i++ {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
-			tok.AddComponent(string(rune('A'+i)), 0.1)
+			_ = tok.AddComponent(string(rune('A'+i)), 0.1, 0.1, "ctrl")
 		}(i)
 	}
 	wg.Wait()

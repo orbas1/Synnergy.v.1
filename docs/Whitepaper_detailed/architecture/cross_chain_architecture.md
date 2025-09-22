@@ -26,3 +26,7 @@ Cross-chain components allow the Synnergy Network to interoperate with external 
 - `synnergy cross-chain` – manage bridge operations and relay status.
 - `synnergy cross-chain-connection` – configure endpoints and authorizations.
 - `synnergy cross-chain-bridge` – lock, release and verify assets.
+
+## Enterprise Diagnostics
+- `synnergy integration status` now spins up a `synnergy-main` → `synnergy-enterprise` relay during its health sweep, guaranteeing cross-consensus routing is warm before production traffic is sent.
+- The Enterprise Integration Health dashboard summarizes relay counts and authorized relayers directly from the CLI probe so browser operators have the same view as automation.

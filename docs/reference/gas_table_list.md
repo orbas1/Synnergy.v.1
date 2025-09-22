@@ -1,4 +1,5 @@
 <!-- Stage 25 adds node operation pricing such as SetMode, Stake and ReportFork; Stage 35 integrates storage marketplace operations; Stage 36 adds NFT marketplace operations -->
+<!-- Stage 73 and Stage 81 ensure regulatory, grant, benefit, utility and integration diagnostics opcodes remain aligned with CLI and VM workflows -->
 | Function | Gas Cost |
 |---|---|
 | `Accrue` | `1` |
@@ -240,6 +241,15 @@
 | `Info` | `1` |
 | `InitContracts` | `1500` |
 | `InitialPrice` | `1` |
+| `IntegrationAuthoritySync` | `2` |
+| `IntegrationComplianceProbe` | `4` |
+| `IntegrationConsensusProbe` | `3` |
+| `IntegrationDiagnostics` | `5` |
+| `IntegrationGovernanceProbe` | `3` |
+| `IntegrationInteroperabilityProbe` | `5` |
+| `IntegrationPrivacyProbe` | `3` |
+| `IntegrationScalabilityProbe` | `7` |
+| `IntegrationSecurityProbe` | `4` |
 | `InvokeAIContract` | `750` |
 | `Invoke` | `1` |
 | `IsActive` | `1` |

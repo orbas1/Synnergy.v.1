@@ -23,3 +23,7 @@ This architecture governs token standards, contract execution and the lifecycle 
 ## CLI Integration
 - `synnergy syn20`, `synnergy syn200`, etc. – manage specific token standards.
 - `synnergy tx` – build and broadcast transactions.
+
+## Enterprise Diagnostics
+- New enterprise opcodes (`IntegrationDiagnostics`, `IntegrationConsensusProbe`, `IntegrationAuthoritySync`) are registered automatically during the integration probe, guaranteeing the gas table is aligned with documentation.
+- Diagnostic transactions mined by the probe validate that ledger fee distribution and token transfers behave correctly before real workloads resume.

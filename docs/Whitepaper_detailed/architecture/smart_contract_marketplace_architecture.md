@@ -21,3 +21,7 @@ The smart-contract marketplace lets developers publish and trade reusable WebAss
 
 ## CLI Integration
 - `synnergy contracts` – deploy, list and remove marketplace contracts.
+
+## Enterprise Diagnostics
+- VM readiness and opcode cost registration are validated by `synnergy integration status`, which registers enterprise opcodes before executing diagnostics.
+- Contract marketplace operators can reference the diagnostics output to confirm templates will execute with the expected gas pricing.

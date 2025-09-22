@@ -57,3 +57,18 @@ func TestVMContextCancel(t *testing.T) {
 		t.Fatalf("expected context cancellation error")
 	}
 }
+
+func TestSimpleVMModeString(t *testing.T) {
+	heavy := NewSimpleVM(VMHeavy)
+	if heavy.ModeString() != "heavy" {
+		t.Fatalf("expected heavy mode, got %s", heavy.ModeString())
+	}
+	superLight := NewSimpleVM(VMSuperLight)
+	if superLight.ModeString() != "super-light" {
+		t.Fatalf("expected super-light mode, got %s", superLight.ModeString())
+	}
+	light := NewSimpleVM()
+	if light.ModeString() != "light" {
+		t.Fatalf("expected light mode, got %s", light.ModeString())
+	}
+}

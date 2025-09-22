@@ -47,6 +47,10 @@ Gas prices are defined in [`gas_table.go`](gas_table.go).  Each opcode has a det
 Stage 66 adds support for the `SYN_GAS_OVERRIDES` environment variable so operators can adjust gas costs at runtime without editing documentation or rebuilding binaries.
 
 Stage 19 introduces additional opcodes for the reserve‑backed `SYN1000` stablecoin and its index manager. Gas costs for creating tokens, adjusting reserves and computing valuations are explicitly defined to ensure predictable execution fees.
+
+Stage 81 adds enterprise diagnostics helpers (`IntegrationDiagnostics`, `IntegrationConsensusProbe`, `IntegrationAuthoritySync`, `IntegrationSecurityProbe`, `IntegrationScalabilityProbe`, `IntegrationPrivacyProbe`, `IntegrationGovernanceProbe`, `IntegrationInteroperabilityProbe`, `IntegrationComplianceProbe`). These opcodes keep the `synnergy integration status` command, associated tests and the web dashboard aligned by reserving deterministic gas prices for the full readiness sweep.
+
+Stage 73 refreshed the enterprise automation catalogue.  The SYN3800 grant opcodes now work in tandem with wallet-signed CLI releases and persist audit entries so controller dashboards can replay disbursement history.  SYN3900 benefit opcodes similarly record claim and approval transitions for JSON telemetry while SYN500 utility opcodes capture rolling usage windows and tier audits.  The SYN3700 index token opcodes received controller-gated drift management so governance policies defined in the CLI map one-to-one with VM execution.
 Stage 20 expands the opcode catalogue with dividend, convertible, governance,
 capped supply, vesting, loyalty and multi‑chain token primitives. Each function
 receives a deterministic gas price so these extensions remain affordable during

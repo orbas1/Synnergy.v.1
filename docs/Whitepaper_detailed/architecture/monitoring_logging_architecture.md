@@ -21,3 +21,7 @@ Observability components provide operators with insight into node health and net
 ## CLI Integration
 - `synnergy watchtower` – manage watchtower nodes.
 - `synnergy logs` – stream or filter system logs (via `system_health_logging`).
+
+## Enterprise Diagnostics
+- Integration status runs append a consolidated diagnostics map that monitoring stacks can ingest to detect regressions across VM, consensus and authority subsystems.
+- Because the probe only uses ephemeral state, it can be scheduled alongside watchtower sweeps without polluting operational log stores.

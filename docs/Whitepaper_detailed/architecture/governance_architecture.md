@@ -25,3 +25,7 @@ Governance modules enable token holders to shape network parameters through prop
 - `synnergy dao-token` – mint and manage governance tokens.
 - `synnergy dao-proposal` – create and review proposals.
 - `synnergy dao-stake` – manage staking balances.
+
+## Enterprise Diagnostics
+- `synnergy integration status` registers authority observers on every run and reports the expanded cohort, making it obvious when governance registries drift out of sync.
+- JSON output from the diagnostics command includes validator and authority counts that governance dashboards can poll alongside proposal data.

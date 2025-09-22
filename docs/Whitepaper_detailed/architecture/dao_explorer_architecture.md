@@ -26,3 +26,7 @@ The DAO Explorer gives stakeholders a streamlined view into decentralized govern
 - `synnergy dao` – entry point for DAO operations.
 - `synnergy dao-proposal` – manage proposals.
 - `synnergy dao-stake` – deposit or withdraw staking amounts.
+
+## Enterprise Diagnostics
+- `synnergy integration status` exercises DAO staking automatically by crediting a validator wallet and observing the block that finalises the transaction. This proves the explorer’s backing services remain hydrated without a manual smoke test.
+- The Enterprise Integration Health widget in the web UI relays the same diagnostics stream so governance operators can spot consensus or wallet regressions at a glance.

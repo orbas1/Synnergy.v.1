@@ -56,6 +56,18 @@ var (
 	gasMu    sync.RWMutex
 )
 
+var enterpriseOpcodes = map[string]uint64{
+	"IntegrationDiagnostics":           5,
+	"IntegrationConsensusProbe":        3,
+	"IntegrationAuthoritySync":         2,
+	"IntegrationSecurityProbe":         4,
+	"IntegrationScalabilityProbe":      7,
+	"IntegrationPrivacyProbe":          3,
+	"IntegrationGovernanceProbe":       3,
+	"IntegrationInteroperabilityProbe": 5,
+	"IntegrationComplianceProbe":       4,
+}
+
 // ErrInvalidGasRegistration is returned when registering an opcode with an empty
 // name or zero cost.
 var ErrInvalidGasRegistration = errors.New("invalid gas registration")
@@ -98,6 +110,11 @@ func loadGasTable() {
 		span.RecordError(err)
 		ilog.Error("gas_table_scan", "error", err)
 	}
+	for name, cost := range enterpriseOpcodes {
+		if _, exists := tbl[name]; !exists {
+			tbl[name] = cost
+		}
+	}
 	gasCache = tbl
 }
 
@@ -112,21 +129,21 @@ func LoadGasTable() GasTable {
 // GasCost returns the gas price for a given opcode name. If the opcode is not
 // present in the table, DefaultGasCost is returned.
 func GasCost(opcode string) uint64 {
-        tbl := LoadGasTable()
-        if c, ok := tbl[opcode]; ok {
-                return c
-        }
-        return DefaultGasCost
+	tbl := LoadGasTable()
+	if c, ok := tbl[opcode]; ok {
+		return c
+	}
+	return DefaultGasCost
 }
 
 // MustGasCost returns the gas price for an opcode and panics if it is missing.
 // It is useful during initialization of critical modules where undefined
 // pricing would indicate a misconfigured build or documentation drift.
 func MustGasCost(opcode string) uint64 {
-        if c, ok := LoadGasTable()[opcode]; ok {
-                return c
-        }
-        panic(fmt.Sprintf("missing gas cost for opcode %s", opcode))
+	if c, ok := LoadGasTable()[opcode]; ok {
+		return c
+	}
+	panic(fmt.Sprintf("missing gas cost for opcode %s", opcode))
 }
 
 // HasOpcode reports whether a gas price is defined for the opcode.
@@ -162,4 +179,27 @@ func ResetGasTable() {
 	gasCache = nil
 	gasMu.Unlock()
 	gasOnce = sync.Once{}
+}
+
+// EnsureEnterpriseOpcodes injects enterprise defaults into the cached gas table.
+func EnsureEnterpriseOpcodes() {
+	gasMu.Lock()
+	if gasCache == nil {
+		gasCache = make(GasTable)
+	}
+	for name, cost := range enterpriseOpcodes {
+		if _, exists := gasCache[name]; !exists {
+			gasCache[name] = cost
+		}
+	}
+	gasMu.Unlock()
+}
+
+// EnterpriseOpcodes exposes the integration specific opcode catalogue.
+func EnterpriseOpcodes() map[string]uint64 {
+	out := make(map[string]uint64, len(enterpriseOpcodes))
+	for name, cost := range enterpriseOpcodes {
+		out[name] = cost
+	}
+	return out
 }

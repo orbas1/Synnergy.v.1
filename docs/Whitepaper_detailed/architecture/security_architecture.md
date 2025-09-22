@@ -25,3 +25,7 @@ Security modules protect the network from malicious actors and data leakage. Lay
 - `synnergy firewall` – manage firewall rules.
 - `synnergy private-tx` – create and inspect private transactions.
 - `synnergy anomaly` – review detected anomalies.
+
+## Enterprise Diagnostics
+- Diagnostic runs avoid persistent state while still exercising validator staking, ensuring security modules see authentic traffic during synthetic tests.
+- The Enterprise Integration Health widget provides a signed, tamper-evident snapshot of system posture that security teams can archive for compliance evidence.

@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
@@ -13,6 +15,9 @@ func init() {
 	cmd := &cobra.Command{
 		Use:   "syn500",
 		Short: "SYN500 utility token",
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			return ensureStage73Loaded()
+		},
 	}
 
 	createCmd := &cobra.Command{
@@ -31,6 +36,9 @@ func init() {
 				return fmt.Errorf("decimals and supply must be positive")
 			}
 			syn500Token = core.NewSYN500Token(name, symbol, owner, uint8(dec), supply)
+			if err := persistStage73(); err != nil {
+				return err
+			}
 			cmd.Println("token created")
 			return nil
 		},
@@ -56,16 +64,29 @@ func init() {
 			}
 			tier, _ := cmd.Flags().GetInt("tier")
 			max, _ := cmd.Flags().GetUint64("max")
+			windowStr, _ := cmd.Flags().GetString("window")
 			if tier <= 0 || max == 0 {
 				return fmt.Errorf("tier and max must be positive")
 			}
-			syn500Token.Grant(args[0], tier, max)
+			window := time.Hour
+			if windowStr != "" {
+				parsed, err := time.ParseDuration(windowStr)
+				if err != nil {
+					return fmt.Errorf("invalid window: %w", err)
+				}
+				window = parsed
+			}
+			syn500Token.Grant(args[0], tier, max, window)
+			if err := persistStage73(); err != nil {
+				return err
+			}
 			cmd.Println("granted")
 			return nil
 		},
 	}
 	grantCmd.Flags().Int("tier", 0, "service tier")
-	grantCmd.Flags().Uint64("max", 0, "max usage")
+	grantCmd.Flags().Uint64("max", 0, "max usage within the window")
+	grantCmd.Flags().String("window", "1h", "usage window (e.g. 30m, 1h, 24h)")
 	grantCmd.MarkFlagRequired("tier")
 	grantCmd.MarkFlagRequired("max")
 
@@ -80,11 +101,46 @@ func init() {
 			if err := syn500Token.Use(args[0]); err != nil {
 				return err
 			}
+			if err := persistStage73(); err != nil {
+				return err
+			}
 			cmd.Println("usage recorded")
 			return nil
 		},
 	}
 
-	cmd.AddCommand(createCmd, grantCmd, useCmd)
+	statusCmd := &cobra.Command{
+		Use:   "status <addr>",
+		Args:  cobra.ExactArgs(1),
+		Short: "Show address usage status",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if syn500Token == nil {
+				return fmt.Errorf("token not created")
+			}
+			tier, ok := syn500Token.Status(args[0])
+			if !ok {
+				return fmt.Errorf("address not granted")
+			}
+			data, _ := json.MarshalIndent(tier, "", "  ")
+			cmd.Println(string(data))
+			return nil
+		},
+	}
+
+	telemetryCmd := &cobra.Command{
+		Use:   "telemetry",
+		Short: "Show aggregate grant telemetry",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if syn500Token == nil {
+				return fmt.Errorf("token not created")
+			}
+			tele := syn500Token.Telemetry()
+			data, _ := json.MarshalIndent(tele, "", "  ")
+			cmd.Println(string(data))
+			return nil
+		},
+	}
+
+	cmd.AddCommand(createCmd, grantCmd, useCmd, statusCmd, telemetryCmd)
 	rootCmd.AddCommand(cmd)
 }

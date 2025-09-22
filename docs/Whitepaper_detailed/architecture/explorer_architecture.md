@@ -21,3 +21,7 @@ The Explorer provides read‑only insight into ledger state and network activity
 ## CLI Integration
 - `synnergy ledger` – retrieve block headers and history.
 - `synnergy tx` – inspect transaction details.
+
+## Enterprise Diagnostics
+- The Explorer’s landing page now consumes `/api/integration`, which proxies `synnergy integration status`, to display validator, consensus and wallet readiness before any block queries are executed.
+- Operations teams can compare the Explorer widget with CLI output to confirm UI, CLI and backend data paths remain in sync after upgrades.

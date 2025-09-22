@@ -107,6 +107,25 @@ func (vm *SimpleVM) Status() bool {
 	return vm.running
 }
 
+// Mode returns the configured resource profile for the VM.
+func (vm *SimpleVM) Mode() VMMode {
+	vm.mu.RLock()
+	defer vm.mu.RUnlock()
+	return vm.mode
+}
+
+// ModeString returns a human readable representation of the VM mode.
+func (vm *SimpleVM) ModeString() string {
+	switch vm.Mode() {
+	case VMHeavy:
+		return "heavy"
+	case VMSuperLight:
+		return "super-light"
+	default:
+		return "light"
+	}
+}
+
 // RegisterOpcode associates an opcode with a handler. Nil handlers
 // fallback to the VM's default no-op implementation.
 func (vm *SimpleVM) RegisterOpcode(code uint32, h opcodeHandler) {

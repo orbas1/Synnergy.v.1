@@ -23,3 +23,7 @@ Storage components handle data persistence, distribution and secure retrieval fo
 
 ## CLI Integration
 - `synnergy data` – manage resources, distribution and access policies.
+
+## Enterprise Diagnostics
+- Integration diagnostics confirm ledger and VM readiness, prerequisites for reliable dataset leasing and audit trails.
+- Output is forwarded to the Enterprise Integration Health widget so storage operators can coordinate remedial action with consensus teams using shared telemetry.

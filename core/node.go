@@ -18,7 +18,7 @@ type Node struct {
 	Blockchain    []*Block
 	Validators    *ValidatorManager
 	MaxTxPerBlock int
-	mu            sync.Mutex
+	mu            sync.RWMutex
 }
 
 // NewNode creates a new node instance.
@@ -129,4 +129,18 @@ func (n *Node) Rehabilitate(addr string) {
 	if stake > 0 {
 		_ = n.Validators.Add(context.Background(), addr, stake)
 	}
+}
+
+// BlockHeight returns the height of the local blockchain.
+func (n *Node) BlockHeight() int {
+	n.mu.RLock()
+	defer n.mu.RUnlock()
+	return len(n.Blockchain)
+}
+
+// PendingTransactions exposes the number of transactions queued in the mempool.
+func (n *Node) PendingTransactions() int {
+	n.mu.RLock()
+	defer n.mu.RUnlock()
+	return len(n.Mempool)
 }

@@ -4,6 +4,22 @@ Stage 23 updates consensus and governance CLI modules to emit gas information fo
 Stage 39 introduces liquidity pool modules and accompanying CLI commands used by the DEX Screener.
 Stage 40 refactors block utilities and adds validated JSON-output coin commands with accompanying tests.
 
+## Enterprise CLI and Web Alignment
+
+- **`synnergy integration status`** – new umbrella command that spins up a fully wired node, wallet, virtual machine and consensus relay in heavy mode. It emits JSON or table output and is consumed by the browser-based Enterprise Integration Health widget.
+- **Web control panel telemetry** – `/api/integration` proxies the CLI so operations teams receive identical diagnostics whether they run the command locally or view the dashboard.
+- **Enterprise opcodes** – `IntegrationDiagnostics`, `IntegrationConsensusProbe`, `IntegrationAuthoritySync`, `IntegrationSecurityProbe`, `IntegrationScalabilityProbe`, `IntegrationPrivacyProbe`, `IntegrationGovernanceProbe`, `IntegrationInteroperabilityProbe` and `IntegrationComplianceProbe` are injected into the gas table at load time so CLI and documentation stay synchronized. The same defaults are surfaced in guides and reference tables.
+- **Tests and fault tolerance** – `core/platform_integration_test.go` exercises consensus, ledger, authority and VM flows while `cli/integration_test.go` ensures the CLI outputs machine-parsable JSON.
+- **Stage 73 enterprise workflows** – `cli/syn3800.go`, `cli/syn3900.go`, `cli/syn500.go` and `cli/syn3700_token.go` now persist state, require wallet-signed actions, expose JSON audit logs and mirror their core counterparts (`core/syn3800.go`, `core/syn3900.go`, `core/syn500.go`, `core/syn3700_token.go`) so the CLI, VM and documentation remain aligned.
+
+### How to use the integration command
+
+```
+synnergy integration status --format json
+```
+
+The command returns a diagnostics map containing VM mode, consensus network counts, authority registry size, wallet address and health messages. Passing `--format table` produces a human-readable summary for runbooks or incident bridges.
+
 ## Module Files
      1	access_control.go
      2	address_zero.go

@@ -22,3 +22,7 @@ Nodes advertise their role during handshake, enabling peers to route requests ap
 - `synnergy indexing-node` – manage indexing services.
 - `synnergy watchtower` – administer watchtower nodes.
 - `synnergy regulatory-node` – access regulatory functions.
+
+## Enterprise Diagnostics
+- `synnergy integration status` touches base node, wallet and authority registries so node role automation can trust the environment before provisioning specialized services.
+- Future role-specific health checks can extend the diagnostics map; the CLI already exposes the map for downstream tooling through JSON.

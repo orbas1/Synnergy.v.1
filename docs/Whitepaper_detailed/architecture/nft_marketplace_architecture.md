@@ -22,3 +22,7 @@ The NFT marketplace allows creators to mint and trade tokens representing unique
 
 ## CLI Integration
 - `synnergy nft-marketplace` – manage listings and execute trades.
+
+## Enterprise Diagnostics
+- Marketplace operations rely on VM availability and ledger settlement; both are validated when `synnergy integration status` mines its diagnostic block and reports VM concurrency.
+- Automation can gate NFT releases on a clean diagnostics report, aligning CLI and GUI expectations before creators schedule drops.

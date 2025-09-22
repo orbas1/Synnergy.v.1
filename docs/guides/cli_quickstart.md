@@ -13,6 +13,15 @@ make build
 - `synnergy tx send` – send a transaction
 - `synnergy node status` – display node synchronization status
 - `synnergy mining mine-until <data> <prefix> --timeout <sec>` – hash input until the prefix is found or a timeout elapses
+- `synnergy integration status --format json` – run full-stack diagnostics and retrieve a machine-readable health snapshot including security, scalability, privacy, governance, interoperability and compliance probes
+- `synnergy syn3800 create <beneficiary> <name> <amount> --authorizer wallet.json:pass` – register a grant and store the wallet-signed authorizer
+- `synnergy syn3800 release <id> <amount> <note> --wallet wallet.json --password pass` – disburse funds with audit logging
+- `synnergy syn3900 register <recipient> <program> <amount> --approver wallet.json:pass` – record a benefit programme with an approver signature
+- `synnergy syn3900 claim <id> --wallet wallet.json --password pass` – claim benefits using the registered recipient wallet
+- `synnergy syn500 grant <addr> --tier 1 --max 5 --window 24h` – grant a service tier with a rolling usage window
+- `synnergy syn500 status <addr>` – inspect current tier usage and remaining capacity in JSON form
+- `synnergy syn3700 init --name Institutional --symbol IDX --controller wallet.json:pass` – bootstrap the institutional index with a controller wallet
+- `synnergy syn3700 add AAA --weight 0.5 --drift 0.1 --wallet wallet.json --password pass` – add a component with drift tolerance enforced by controller signatures
 - `synnergy peer count` – show the number of known peers
 - `synnergy charity_pool --json registration <addr>` – view charity registration info as JSON
 - `synnergy charity_mgmt donate <from> <amount>` – donate tokens to the charity pool

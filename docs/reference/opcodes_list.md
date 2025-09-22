@@ -1,4 +1,5 @@
 <!-- Stage 25 ensures full node, light node, mining, staking, watchtower and warfare opcodes are documented for UI integration -->
+<!-- Stage 73 aligns enterprise grant, benefit, utility and index modules with wallet-signed CLI workflows and audit telemetry -->
 
 # Opcode Reference
 
@@ -198,6 +199,15 @@ and warfare nodes as well as UI integrations.
 | `Index` | `0x1000B3` |
 | `Info` | `0x1000B4` |
 | `InitialPrice` | `0x1000B5` |
+| `IntegrationAuthoritySync` | `0x900003` |
+| `IntegrationComplianceProbe` | `0x900009` |
+| `IntegrationConsensusProbe` | `0x900002` |
+| `IntegrationDiagnostics` | `0x900001` |
+| `IntegrationGovernanceProbe` | `0x900007` |
+| `IntegrationInteroperabilityProbe` | `0x900008` |
+| `IntegrationPrivacyProbe` | `0x900006` |
+| `IntegrationScalabilityProbe` | `0x900005` |
+| `IntegrationSecurityProbe` | `0x900004` |
 | `Invoke` | `0x1000B6` |
 | `InvokeAIContract` | `0x1000B7` |
 | `IsActive` | `0x1000B8` |

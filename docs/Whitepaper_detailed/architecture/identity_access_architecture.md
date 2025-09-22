@@ -24,3 +24,7 @@ Identity services provide secure onboarding and fine‑grained access control. T
 ## CLI Integration
 - `synnergy idwallet` – register identity wallets.
 - `synnergy access` – manage roles and permissions.
+
+## Enterprise Diagnostics
+- The integration probe mints a temporary wallet with cryptographic signatures, confirming identity onboarding remains functional without persisting any PII.
+- Enterprise Integration Health exposes the wallet address used during diagnostics so auditors can trace activity without accessing server logs.

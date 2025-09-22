@@ -30,6 +30,8 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Cross-chain interoperability** – bridges, protocol registries, connection managers and transaction relays (`core.NewBridgeRegistry`, `core.NewProtocolRegistry`, `core.NewChainConnectionManager`, `core.NewCrossChainTxManager`). Stage 42 finalises these modules with JSON emitting CLIs for deposits, claims and contract mappings.
 - **AI modules** – contract management, inference analysis, anomaly detection and secure storage (`core.NewAIEnhancedContract`, `core.NewAIDriftMonitor`).
 - **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()`, tunable at runtime through the `SYN_GAS_OVERRIDES` environment variable and adjustable with `synnergy.RegisterGasCost()`, which validates opcode names and costs.
+- **Enterprise integration diagnostics** – `synnergy integration status` boots a hardened VM, wallet, node and consensus relay to report JSON or table health summaries (security, scalability, privacy, governance, interoperability and compliance) consumed by the web control panel and SRE tooling.
+- **Enterprise grants and benefits** – SYN3800 grants, SYN3900 benefits, SYN500 utility tokens and SYN3700 index tokens now enforce wallet-signed approvals, persistent state and JSON audit telemetry for automation.
 - **Kademlia DHT tools** – CLI support for storing, retrieving and computing XOR distance between keys with gas-aware execution.
 - **Controlled proof-of-work** – mining nodes expose a `MineUntil` helper and `synnergy mining mine-until` command so hashing stops when a context is cancelled, a prefix target is reached, or a timeout fires.
 - **Opcode-aware contracts** – sample Solidity bridges, liquidity, multisig, oracle and token contracts invoke SNVM opcodes with deterministic gas costs.
@@ -159,14 +161,16 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `audit_node start|log|list` | Operate a bootstrap audit node for network-wide logs |
 | `authority register|vote|list` | Manage the authority node registry (`core.NewAuthorityNodeRegistry`) |
 | `authority_apply submit|vote|finalize|list` | Handle authority node applications (`core.NewAuthorityApplicationManager`) |
+| `integration status [--format json|table]` | Run end-to-end diagnostics that verify VM, consensus, wallet, authority and enterprise readiness dimensions |
 | `bankinst register|remove|list|is --pub --sig` | Manage institutional bank participants with signed requests (`core.NewBankInstitutionalNode`) |
 | `banknodes types` | Display supported bank node categories |
 | `basenode start|stop|running|peers|dial` | Control a base network node (`core.NewBaseNode`) |
 | `basetoken init|mint|balance` | Interact with a basic token (`tokens.NewBaseToken`) |
 | `dex liquidity <pair>` | Query on-chain liquidity pool reserves |
-| `syn500 create|grant|use` | Manage service-tier utility tokens |
-| `syn3800 create|release|get|list` | Manage programmatic grants via `core.GrantRegistry` |
-| `syn3900 register|claim|get` | Track government benefits (`core.BenefitRegistry`) |
+| `syn500 create|grant|use|status|telemetry` | Manage service-tier utility tokens with rate limits and JSON telemetry |
+| `syn3800 create|authorize|release|get|list|audit|status` | Wallet-signed grant lifecycle backed by persistent audit trails |
+| `syn3900 register|claim|approve|get|list|status` | Manage benefits with claim approvals and status telemetry |
+| `syn3700 init|add|remove|snapshot|status|controllers|value|rebalance|audit` | Governance-controlled index token with drift-aware balancing |
 | `syn4200_token donate|progress` | Record charity donations and view campaign totals |
 | `syn4700 create|sign|status|info|dispute` | Administer legal-document tokens |
 | `dao-members add|remove|role|list` | Manage DAO membership with JSON output and ECDSA verification |

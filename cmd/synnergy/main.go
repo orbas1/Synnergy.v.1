@@ -42,6 +42,7 @@ func main() {
 
 	// Warm up caches for shared resources and ensure gas costs are registered.
 	synn.LoadGasTable()
+	synn.EnsureEnterpriseOpcodes()
 	mustRegister := func(name string) {
 		if err := synn.RegisterGasCost(name, synn.GasCost(name)); err != nil {
 			logrus.Fatalf("register gas cost %s: %v", name, err)
@@ -120,6 +121,17 @@ func main() {
 	mustRegister("KademliaClosest")
 	mustRegister("KademliaDistance")
 	logrus.Debug("gas table loaded")
+
+	// Enterprise integration opcodes keep diagnostics costed for telemetry.
+	mustRegister("IntegrationDiagnostics")
+	mustRegister("IntegrationConsensusProbe")
+	mustRegister("IntegrationAuthoritySync")
+	mustRegister("IntegrationSecurityProbe")
+	mustRegister("IntegrationScalabilityProbe")
+	mustRegister("IntegrationPrivacyProbe")
+	mustRegister("IntegrationGovernanceProbe")
+	mustRegister("IntegrationInteroperabilityProbe")
+	mustRegister("IntegrationComplianceProbe")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.
 	_ = core.NewAuthorityNodeRegistry()

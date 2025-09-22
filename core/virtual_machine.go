@@ -98,6 +98,25 @@ func (vm *SimpleVM) RegisterHandler(op uint32, h opcodeHandler) {
 // for monitoring and tests.
 func (vm *SimpleVM) Concurrency() int { return cap(vm.limiter) }
 
+// Mode returns the configured resource profile for the VM.
+func (vm *SimpleVM) Mode() VMMode {
+	vm.mu.RLock()
+	defer vm.mu.RUnlock()
+	return vm.mode
+}
+
+// ModeString returns a human readable representation of the VM mode.
+func (vm *SimpleVM) ModeString() string {
+	switch vm.Mode() {
+	case VMHeavy:
+		return "heavy"
+	case VMSuperLight:
+		return "super-light"
+	default:
+		return "light"
+	}
+}
+
 // Start marks the VM as running. It is safe to call multiple times.
 func (vm *SimpleVM) Start() error {
 	vm.mu.Lock()

@@ -18,7 +18,22 @@ var (
 	memoryWalletsMu sync.Mutex
 	memoryWallets   map[string]memoryWallet
 	memorySeq       uint64
+	stage73Mu       sync.Mutex
+	stage73Path     = ""
+	stage73Loaded   bool
 )
+
+func setStage73StatePath(path string) {
+	stage73Mu.Lock()
+	stage73Path = path
+	stage73Mu.Unlock()
+}
+
+func resetStage73LoadedForTests() {
+	stage73Mu.Lock()
+	stage73Loaded = false
+	stage73Mu.Unlock()
+}
 
 func useMemoryWalletLoader(t *testing.T) {
 	t.Helper()

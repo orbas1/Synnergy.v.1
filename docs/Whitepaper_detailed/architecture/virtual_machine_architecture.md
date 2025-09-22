@@ -22,3 +22,7 @@ The Synnergy Virtual Machine (SVM) executes WebAssembly smart contracts in a det
 
 ## CLI Integration
 - `synnergy vm` – inspect VM settings and manage snapshots.
+
+## Enterprise Diagnostics
+- `synnergy integration status` runs the VM in heavy mode and exposes `mode` plus `concurrency` through its JSON payload, enabling external automation to verify execution capacity.
+- The command also registers enterprise opcode defaults ensuring VM and gas table documentation stay synchronized.
