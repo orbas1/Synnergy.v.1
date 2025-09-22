@@ -15,7 +15,10 @@ import (
 // to ensure candidates can be submitted and subsequently listed.
 func TestAuthorityApplySubmit(t *testing.T) {
 	// reset global state used by the CLI commands
-	authorityRegistry = core.NewAuthorityNodeRegistry()
+	ledger = core.NewLedger()
+	authorityValidators = core.NewValidatorManager(core.MinStake)
+	authorityReg = core.NewAuthorityNodeRegistry(ledger, authorityValidators, 1)
+	authorityRegistry = authorityReg
 	applyManager = core.NewAuthorityApplicationManager(authorityRegistry, time.Hour)
 
 	// submit an application
@@ -36,6 +39,7 @@ func TestAuthorityApplySubmit(t *testing.T) {
 	voter := hex.EncodeToString(pub)
 	msg := fmt.Sprintf("%s:%t", apps[0].ID, true)
 	sig := ed25519.Sign(priv, []byte(msg))
+	ledger.Mint(voter, 10)
 	rootCmd.SetOut(new(bytes.Buffer))
 	rootCmd.SetArgs([]string{"authority_apply", "vote", voter, apps[0].ID, "true", "--pub", hex.EncodeToString(pub), "--sig", hex.EncodeToString(sig)})
 	if err := rootCmd.Execute(); err != nil {

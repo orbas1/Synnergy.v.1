@@ -106,7 +106,7 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/syn2900.go` | `43` | `func (p *TokenInsurancePolicy) Claim(now time.Time) (uint64, error) {` |
 | `core/authority_node_index_test.go` | `5` | `func TestAuthorityNodeIndex(t *testing.T) {` |
 | `core/regulatory_management_test.go` | `5` | `func TestRegulatoryManager(t *testing.T) {` |
-| `core/dao_token.go` | `18` | `func NewDAOTokenLedger(mgr *DAOManager) *DAOTokenLedger {` |
+| `core/dao_token.go` | `18` | `func NewDAOTokenLedger(mgr *DAOManager, ledger *Ledger) *DAOTokenLedger {` |
 | `core/dao_token.go` | `23` | `func (l *DAOTokenLedger) Mint(daoID, admin, addr string, amount uint64) error {` |
 | `core/dao_token.go` | `44` | `func (l *DAOTokenLedger) Transfer(daoID, from, to string, amount uint64) error {` |
 | `core/dao_token.go` | `63` | `func (l *DAOTokenLedger) Balance(daoID, addr string) uint64 {` |
@@ -300,7 +300,7 @@ This catalogue lists exported functions across the repository for quick navigati
 | `Tokens/index.go` | `15` | `func (r *Registry) NextID() TokenID {` |
 | `Tokens/index.go` | `21` | `func (r *Registry) Register(t Token) {` |
 | `Tokens/index.go` | `26` | `func (r *Registry) Get(id TokenID) (Token, bool) {` |
-| `core/contracts.go` | `39` | `func NewContractRegistry(vm VirtualMachine) *ContractRegistry {` |
+| `core/contracts.go` | `39` | `func NewContractRegistry(vm VirtualMachine, ledger *Ledger) *ContractRegistry {` |
 | `core/contracts.go` | `49` | `func CompileWASM(src []byte) ([]byte, string, error) {` |
 | `core/contracts.go` | `60` | `func (r *ContractRegistry) Deploy(wasm []byte, manifest string, gasLimit uint64, owner string) (string, error) {` |
 | `core/contracts.go` | `84` | `func (r *ContractRegistry) Invoke(addr, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {` |
@@ -638,7 +638,7 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/dao.go` | `51` | `func (m *DAOManager) Leave(id, addr string) error {` |
 | `core/dao.go` | `61` | `func (m *DAOManager) Info(id string) (*DAO, error) {` |
 | `core/dao.go` | `70` | `func (m *DAOManager) List() []*DAO {` |
-| `core/dao_staking.go` | `21` | `func NewDAOStaking(mgr *DAOManager) *DAOStaking {` |
+| `core/dao_staking.go` | `21` | `func NewDAOStaking(mgr *DAOManager, ledger *Ledger) *DAOStaking {` |
 | `core/dao_staking.go` | `26` | `func (s *DAOStaking) Stake(daoID, addr string, amount uint64) error {` |
 | `core/dao_staking.go` | `44` | `func (s *DAOStaking) Unstake(daoID, addr string, amount uint64) error {` |
 | `core/dao_staking.go` | `63` | `func (s *DAOStaking) Balance(daoID, addr string) uint64 {` |
@@ -795,7 +795,7 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/snvm_test.go` | `21` | `func TestSNVMDivideByZero(t *testing.T) {` |
 | `core/validator_node_test.go` | `5` | `func TestValidatorNode(t *testing.T) {` |
 | `core/identity_verification_test.go` | `5` | `func TestIdentityService(t *testing.T) {` |
-| `core/authority_nodes.go` | `23` | `func NewAuthorityNodeRegistry() *AuthorityNodeRegistry {` |
+| `core/authority_nodes.go` | `23` | `func NewAuthorityNodeRegistry(ledger *Ledger, validators *ValidatorManager, minBalance uint64) *AuthorityNodeRegistry {` |
 | `core/authority_nodes.go` | `28` | `func (r *AuthorityNodeRegistry) Register(addr, role string) (*AuthorityNode, error) {` |
 | `core/authority_nodes.go` | `38` | `func (r *AuthorityNodeRegistry) Vote(voterAddr, candidateAddr string) error {` |
 | `core/authority_nodes.go` | `48` | `func (r *AuthorityNodeRegistry) Electorate(size int) []string {` |

@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	authorityRegistry = core.NewAuthorityNodeRegistry()
+	authorityRegistry = authorityReg
 	applyManager      = core.NewAuthorityApplicationManager(authorityRegistry, time.Hour)
 )
 

@@ -12,7 +12,9 @@ func TestDAOStaking(t *testing.T) {
 		t.Fatalf("create: %v", err)
 	}
 
-	s := NewDAOStaking(mgr)
+	ledger := NewLedger()
+	ledger.Mint("admin", 20)
+	s := NewDAOStaking(mgr, ledger)
 	if err := s.Stake(dao.ID, "admin", 10); err != nil {
 		t.Fatalf("stake: %v", err)
 	}

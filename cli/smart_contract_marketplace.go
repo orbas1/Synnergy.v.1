@@ -10,9 +10,16 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var marketplace = core.NewSmartContractMarketplace(core.NewSimpleVM())
+var marketplace *core.SmartContractMarketplace
+
+func ensureMarketplace() {
+	if marketplace == nil {
+		marketplace = core.NewSmartContractMarketplace(core.NewSimpleVM(), ledger)
+	}
+}
 
 func init() {
+	ensureMarketplace()
 	cmd := &cobra.Command{
 		Use:   "marketplace",
 		Short: "Deploy and trade smart contracts",

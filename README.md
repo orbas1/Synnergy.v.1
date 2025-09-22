@@ -113,7 +113,7 @@ pkg/          Reusable libraries and experimental modules
 5. Warm caches by calling `synnergy.LoadGasTable()`, synchronising the Stage 78 enterprise schedule with `synnergy.EnsureGasSchedule()` and registering contextual metadata with `synnergy.RegisterGasMetadata()` for core operations like `MineBlock`, `OpenConnection`, `MintNFT` and the enterprise orchestrator opcodes. Stage 79 extends this bootstrap to the enterprise special node gas schedule so combined-node attach, broadcast, snapshot and ledger queries remain deterministic across the CLI and GUI.
 6. Pre-load modules used by the CLI:
    - `core.NewNetwork` for pub‑sub networking
-   - `core.NewContractRegistry` backed by `core.NewSimpleVM`
+   - `core.NewContractRegistry` backed by `core.NewSimpleVM` and a shared `core.Ledger`
    - DAO managers (`core.NewDAOManager`, `core.NewProposalManager`, …)
    - Wallet, watchtower and warfare nodes (`core.NewWallet`, `core.NewWatchtowerNode`, `core.NewWarfareNode`)
    - Token constructors in `internal/tokens` (`tokens.NewSYN223Token`, etc.)

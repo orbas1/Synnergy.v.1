@@ -14,11 +14,21 @@ import (
 // Stage 38 validates the AI contract registry through the CLI with secure invocation paths.
 var (
 	aiVM       = core.NewSimpleVM()
-	baseReg    = core.NewContractRegistry(aiVM)
-	aiRegistry = core.NewAIContractRegistry(baseReg)
+	baseReg    *core.ContractRegistry
+	aiRegistry *core.AIContractRegistry
 )
 
+func ensureAIRegistry() {
+	if baseReg == nil {
+		baseReg = core.NewContractRegistry(aiVM, ledger)
+	}
+	if aiRegistry == nil {
+		aiRegistry = core.NewAIContractRegistry(baseReg)
+	}
+}
+
 func init() {
+	ensureAIRegistry()
 	aiVM.Start()
 
 	aiCmd := &cobra.Command{Use: "ai_contract", Short: "AI enhanced contract operations"}

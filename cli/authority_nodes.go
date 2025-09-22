@@ -11,7 +11,10 @@ import (
 	"synnergy/core"
 )
 
-var authorityReg = core.NewAuthorityNodeRegistry()
+var (
+	authorityValidators = core.NewValidatorManager(core.MinStake)
+	authorityReg        = core.NewAuthorityNodeRegistry(ledger, authorityValidators, 1)
+)
 
 func init() {
 	authCmd := &cobra.Command{
