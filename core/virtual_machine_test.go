@@ -142,3 +142,46 @@ func TestVMHooksCaptureTraces(t *testing.T) {
 		}
 	}
 }
+
+func TestSimpleVMCallMeterUnlimited(t *testing.T) {
+	vm := NewSimpleVM()
+	for i := 0; i < 128; i++ {
+		if err := vm.Gas(1); err != nil {
+			t.Fatalf("unexpected gas error: %v", err)
+		}
+	}
+	if vm.CallGasLimit() != 0 {
+		t.Fatalf("expected unlimited gas meter")
+	}
+	if vm.CallGasUsed() != 128 {
+		t.Fatalf("expected used gas to reflect consumed charges")
+	}
+}
+
+func TestSimpleVMCallMeterLimitAndRefill(t *testing.T) {
+	vm := NewSimpleVM()
+	vm.ConfigureCallMeter(5, time.Millisecond)
+
+	for i := 0; i < 5; i++ {
+		if err := vm.Gas(1); err != nil {
+			t.Fatalf("unexpected gas error: %v", err)
+		}
+	}
+	if err := vm.Gas(1); err == nil {
+		t.Fatalf("expected gas limit error once meter is exhausted")
+	} else if !errors.Is(err, ErrGasLimit) {
+		t.Fatalf("expected ErrGasLimit, got %v", err)
+	}
+
+	time.Sleep(2 * time.Millisecond)
+	if remaining := vm.CallGasRemaining(); remaining != 5 {
+		t.Fatalf("expected meter to refill, remaining %d", remaining)
+	}
+	if err := vm.Gas(3); err != nil {
+		t.Fatalf("unexpected error after refill: %v", err)
+	}
+	vm.DisableCallMeter()
+	if vm.CallGasLimit() != 0 || vm.CallGasRemaining() != 0 {
+		t.Fatalf("expected disabled meter to report unlimited usage")
+	}
+}

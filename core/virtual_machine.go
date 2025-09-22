@@ -44,15 +44,16 @@ type opcodeHandler func([]byte) ([]byte, error)
 // VM includes simple bottleneck management through a concurrency limiter and
 // satisfies the VirtualMachine interface.
 type SimpleVM struct {
-	mu           sync.RWMutex
-	running      bool
-	mode         VMMode
-	limiter      chan struct{}
-	handlers     map[uint32]opcodeHandler
-	defaultH     opcodeHandler
-	callHandlers map[string]func() error
-	hooks        []ExecutionHook
-	metrics      vmMetrics
+        mu           sync.RWMutex
+        running      bool
+        mode         VMMode
+        limiter      chan struct{}
+        handlers     map[uint32]opcodeHandler
+        defaultH     opcodeHandler
+        callHandlers map[string]func() error
+        hooks        []ExecutionHook
+        metrics      vmMetrics
+        callMeter    callMeter
 }
 
 // ErrGasLimit is returned when execution exhausts its allotted gas.
@@ -92,10 +93,88 @@ type VMMetrics struct {
 }
 
 type executionContext struct {
-	vm        *SimpleVM
-	limit     uint64
-	remaining uint64
-	used      uint64
+        vm        *SimpleVM
+        limit     uint64
+        remaining uint64
+        used      uint64
+}
+
+type callMeter struct {
+        mu         sync.Mutex
+        limit      uint64
+        remaining  uint64
+        used       uint64
+        refill     time.Duration
+        lastRefill time.Time
+}
+
+func (m *callMeter) configure(limit uint64, refill time.Duration) {
+        m.mu.Lock()
+        defer m.mu.Unlock()
+        m.limit = limit
+        m.refill = refill
+        if limit == 0 {
+                m.remaining = 0
+        } else {
+                m.remaining = limit
+        }
+        m.used = 0
+        m.lastRefill = time.Now()
+}
+
+func (m *callMeter) disable() {
+        m.mu.Lock()
+        defer m.mu.Unlock()
+        m.limit = 0
+        m.remaining = 0
+        m.used = 0
+        m.refill = 0
+        m.lastRefill = time.Now()
+}
+
+func (m *callMeter) snapshot() (uint64, uint64, uint64) {
+        m.mu.Lock()
+        defer m.mu.Unlock()
+        m.maybeRefillLocked(time.Now())
+        return m.limit, m.remaining, m.used
+}
+
+func (m *callMeter) consume(amount uint64) error {
+        m.mu.Lock()
+        defer m.mu.Unlock()
+        now := time.Now()
+        m.maybeRefillLocked(now)
+        if m.limit == 0 {
+                m.used += amount
+                m.lastRefill = now
+                return nil
+        }
+        if amount > m.remaining {
+                m.used += amount
+                m.remaining = 0
+                m.lastRefill = now
+                return fmt.Errorf("%w: required %d remaining %d", ErrGasLimit, amount, uint64(0))
+        }
+        m.remaining -= amount
+        m.used += amount
+        m.lastRefill = now
+        return nil
+}
+
+func (m *callMeter) maybeRefillLocked(now time.Time) {
+        if m.limit == 0 || m.refill <= 0 {
+                return
+        }
+        if m.lastRefill.IsZero() {
+                m.remaining = m.limit
+                m.lastRefill = now
+                return
+        }
+        if now.Sub(m.lastRefill) >= m.refill {
+                m.remaining = m.limit
+                m.used = 0
+                m.lastRefill = now
+        }
 }
 
 // Call implements the OpContext interface used by the global opcode dispatcher.
@@ -111,9 +190,51 @@ func (vm *SimpleVM) Call(name string) error {
 	return handler()
 }
 
-// Gas satisfies the OpContext interface. The lightweight VM does not meter gas
-// beyond counting opcodes, so this is a no-op placeholder.
-func (vm *SimpleVM) Gas(uint64) error { return nil }
+// Gas satisfies the OpContext interface. The VM exposes a lightweight gas
+// meter that can be configured for direct opcode dispatches (outside of the
+// bytecode interpreter). When a limit is configured the meter enforces the
+// ceiling and returns ErrGasLimit when exhausted.
+func (vm *SimpleVM) Gas(amount uint64) error {
+        if amount == 0 {
+                return nil
+        }
+        if err := vm.callMeter.consume(amount); err != nil {
+                return err
+        }
+        return nil
+}
+
+// ConfigureCallMeter enables gas accounting for direct calls through the VM's
+// OpContext implementation. Setting limit to zero results in unlimited gas.
+// When refillInterval is greater than zero the meter automatically resets after
+// the interval elapses.
+func (vm *SimpleVM) ConfigureCallMeter(limit uint64, refillInterval time.Duration) {
+        vm.callMeter.configure(limit, refillInterval)
+}
+
+// DisableCallMeter clears the call meter state returning the VM to unlimited
+// gas consumption for direct opcode dispatches.
+func (vm *SimpleVM) DisableCallMeter() {
+        vm.callMeter.disable()
+}
+
+// CallGasRemaining reports the remaining gas budget for direct opcode calls.
+func (vm *SimpleVM) CallGasRemaining() uint64 {
+        _, remaining, _ := vm.callMeter.snapshot()
+        return remaining
+}
+
+// CallGasLimit returns the configured gas ceiling for direct opcode execution.
+func (vm *SimpleVM) CallGasLimit() uint64 {
+        limit, _, _ := vm.callMeter.snapshot()
+        return limit
+}
+
+// CallGasUsed returns the amount of gas charged through the direct call meter.
+func (vm *SimpleVM) CallGasUsed() uint64 {
+        _, _, used := vm.callMeter.snapshot()
+        return used
+}
 
 // NewSimpleVM creates a new stopped virtual machine instance.  An optional
 // mode can be supplied to configure resource limits; by default a light VM is
@@ -135,20 +256,21 @@ func NewSimpleVM(modes ...VMMode) *SimpleVM {
 		capacity = 1
 	}
 
-	vm := &SimpleVM{
-		mode:         mode,
-		limiter:      make(chan struct{}, capacity),
-		callHandlers: make(map[string]func() error),
-	}
-	vm.handlers = map[uint32]opcodeHandler{
+        vm := &SimpleVM{
+                mode:         mode,
+                limiter:      make(chan struct{}, capacity),
+                callHandlers: make(map[string]func() error),
+        }
+        vm.handlers = map[uint32]opcodeHandler{
 		0x000000: func(b []byte) ([]byte, error) { // NOP/echo
 			out := make([]byte, len(b))
 			copy(out, b)
 			return out, nil
 		},
 	}
-	vm.defaultH = vm.handlers[0x000000]
-	return vm
+        vm.defaultH = vm.handlers[0x000000]
+        vm.callMeter.configure(0, 0)
+        return vm
 }
 
 // RegisterHandler allows callers to inject or override opcode handlers at

@@ -1,12 +1,14 @@
 package core
 
 import (
-	"context"
-	"crypto/sha256"
-	"math/big"
-	"sort"
-	"sync"
-	"time"
+        "context"
+        "crypto/sha256"
+        "fmt"
+        "math"
+        "math/big"
+        "sort"
+        "sync"
+        "time"
 
 	ilog "synnergy/internal/log"
 )
@@ -14,10 +16,19 @@ import (
 // ConsensusWeights holds the relative weights assigned to each consensus
 // mechanism.  Values are represented as percentages that sum to 1.0.
 type ConsensusWeights struct {
-	PoW float64
-	PoS float64
-	PoH float64
+        PoW float64
+        PoS float64
+        PoH float64
 }
+
+var maxPoWTarget = new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(1))
+
+const (
+        expectedBlockIntervalSeconds = 12.0
+        stalePenaltyWindow           = 5 * time.Minute
+        maxStalePenalty              = 0.45
+        diversityBoostCap            = 0.05
+)
 
 // SynnergyConsensus encapsulates the consensus algorithms and their dynamic
 // weighting.
@@ -340,34 +351,233 @@ func (sc *SynnergyConsensus) FinalizeBlock(b *Block, votes map[string]bool, vm *
 // ChooseChain selects the longest chain from the candidates. This placeholder
 // fork-choice rule enables nodes to converge on a canonical history.
 func (sc *SynnergyConsensus) ChooseChain(chains [][]*Block) []*Block {
-	var best []*Block
-	var bestScore uint64
-	var bestFinalized int
-	for _, c := range chains {
-		var score uint64
-		finalized := 0
-		for _, blk := range c {
-			if blk == nil {
-				continue
-			}
-			weight := uint64(len(blk.SubBlocks))
-			if weight == 0 {
-				weight = 1
-			}
-			score += weight
-			if blk.Finalized {
-				finalized++
-				score += weight * 10
-			}
-		}
-		if best == nil || finalized > bestFinalized || (finalized == bestFinalized && (score > bestScore || (score == bestScore && len(c) > len(best)))) {
-			best = c
-			bestScore = score
-			bestFinalized = finalized
-		}
-	}
-	ilog.Info("fork_choice", "score", bestScore, "finalized", bestFinalized)
-	return best
+        if len(chains) == 0 {
+                ilog.Info("fork_choice", "score", 0.0, "reason", "no_candidates")
+                return nil
+        }
+
+        weights := normalizeWeights(sc.WeightsSnapshot())
+        var (
+                chosen   []*Block
+                bestEval chainEvaluation
+                haveBest bool
+        )
+
+        for _, candidate := range chains {
+                eval, err := sc.evaluateChain(candidate, weights)
+                if err != nil {
+                        ilog.Info("fork_choice_skip", "reason", err.Error())
+                        continue
+                }
+                if !haveBest || eval.betterThan(bestEval) {
+                        chosen = candidate
+                        bestEval = eval
+                        haveBest = true
+                }
+        }
+
+        if !haveBest {
+                ilog.Info("fork_choice", "score", 0.0, "reason", "no_valid_chain")
+                return nil
+        }
+
+        ilog.Info(
+                "fork_choice",
+                "score", bestEval.score,
+                "pow_component", bestEval.powComponent,
+                "pos_component", bestEval.posComponent,
+                "poh_component", bestEval.pohComponent,
+                "finalized", bestEval.finalized,
+                "length", bestEval.length,
+                "unique_validators", bestEval.uniqueValidators,
+                "tip_time", bestEval.tipTime.Unix(),
+        )
+
+        return chosen
+}
+
+type chainEvaluation struct {
+        score            float64
+        powComponent     float64
+        posComponent     float64
+        pohComponent     float64
+        finalized        int
+        length           int
+        tipTime          time.Time
+        tipHash          string
+        uniqueValidators int
+        participation    float64
+}
+
+func (e chainEvaluation) betterThan(other chainEvaluation) bool {
+        if e.score != other.score {
+                return e.score > other.score
+        }
+        if e.finalized != other.finalized {
+                return e.finalized > other.finalized
+        }
+        if e.length != other.length {
+                return e.length > other.length
+        }
+        switch {
+        case other.tipTime.IsZero() && !e.tipTime.IsZero():
+                return true
+        case e.tipTime.IsZero() && !other.tipTime.IsZero():
+                return false
+        case !e.tipTime.Equal(other.tipTime):
+                return e.tipTime.After(other.tipTime)
+        }
+        return e.tipHash > other.tipHash
+}
+
+func (sc *SynnergyConsensus) evaluateChain(chain []*Block, weights ConsensusWeights) (chainEvaluation, error) {
+        if len(chain) == 0 {
+                return chainEvaluation{}, fmt.Errorf("empty chain")
+        }
+
+        eval := chainEvaluation{length: len(chain)}
+        validators := make(map[string]struct{})
+
+        var (
+                powAccum      float64
+                totalSubBlock int
+                prevHash      string
+                prevTimestamp int64
+        )
+
+        for i, blk := range chain {
+                if blk == nil {
+                        return chainEvaluation{}, fmt.Errorf("nil block at index %d", i)
+                }
+                if err := blk.Validate(); err != nil {
+                        return chainEvaluation{}, fmt.Errorf("block %d invalid: %w", i, err)
+                }
+                if i > 0 {
+                        if blk.PrevHash != prevHash {
+                                return chainEvaluation{}, fmt.Errorf("block %d prev hash mismatch", i)
+                        }
+                        if blk.Timestamp < prevTimestamp {
+                                return chainEvaluation{}, fmt.Errorf("block %d timestamp regressed", i)
+                        }
+                }
+                if blk.Hash != "" {
+                        powAccum += powQuality(blk.Hash)
+                } else if blk.Nonce > 0 {
+                        powAccum += 1 / float64(blk.Nonce)
+                }
+                if blk.Finalized {
+                        eval.finalized++
+                }
+                for _, sb := range blk.SubBlocks {
+                        if sb == nil {
+                                continue
+                        }
+                        totalSubBlock++
+                        validators[sb.Validator] = struct{}{}
+                }
+                prevHash = blk.Hash
+                prevTimestamp = blk.Timestamp
+        }
+
+        eval.uniqueValidators = len(validators)
+        if last := chain[len(chain)-1]; last != nil {
+                eval.tipHash = last.Hash
+                if last.Timestamp > 0 {
+                        eval.tipTime = time.Unix(last.Timestamp, 0)
+                }
+        }
+
+        eval.powComponent = clamp(powAccum/float64(len(chain)), 0, 1)
+        if totalSubBlock > 0 {
+                eval.posComponent = clamp(float64(len(validators))/float64(totalSubBlock), 0, 1)
+                eval.participation = eval.posComponent
+        }
+        eval.pohComponent = pohContinuityScore(chain)
+        if totalSubBlock > 0 {
+                avg := float64(totalSubBlock) / float64(len(chain))
+                eval.pohComponent = 0.7*eval.pohComponent + 0.3*math.Min(1, avg/8)
+        }
+
+        score := weights.PoW*eval.powComponent + weights.PoS*eval.posComponent + weights.PoH*eval.pohComponent
+        if eval.length > 0 {
+                score += 0.2 * float64(eval.finalized) / float64(eval.length)
+        }
+
+        if !eval.tipTime.IsZero() {
+                if age := time.Since(eval.tipTime); age > 0 {
+                        penalty := (age.Seconds() / stalePenaltyWindow.Seconds()) * 0.05
+                        if penalty > maxStalePenalty {
+                                penalty = maxStalePenalty
+                        }
+                        score -= penalty
+                }
+        }
+
+        diversity := math.Min(float64(len(validators))/25.0, diversityBoostCap)
+        score += diversity
+
+        if math.IsNaN(score) || math.IsInf(score, 0) {
+                return chainEvaluation{}, fmt.Errorf("invalid score computed")
+        }
+
+        eval.score = score
+        return eval, nil
+}
+
+func powQuality(hash string) float64 {
+        if hash == "" {
+                return 0
+        }
+        value := new(big.Int)
+        if _, ok := value.SetString(hash, 16); !ok {
+                return 0
+        }
+        if value.Sign() <= 0 {
+                return 1
+        }
+        remaining := new(big.Int).Sub(maxPoWTarget, value)
+        if remaining.Sign() <= 0 {
+                return 0
+        }
+        ratio := new(big.Float).Quo(new(big.Float).SetInt(remaining), new(big.Float).SetInt(maxPoWTarget))
+        f, _ := ratio.Float64()
+        if f < 0 {
+                return 0
+        }
+        if f > 1 {
+                return 1
+        }
+        return f
+}
+
+func pohContinuityScore(chain []*Block) float64 {
+        if len(chain) <= 1 {
+                return 1
+        }
+        var (
+                total float64
+                prev  = chain[0].Timestamp
+        )
+        for i := 1; i < len(chain); i++ {
+                ts := chain[i].Timestamp
+                if ts <= prev {
+                        return 0
+                }
+                delta := float64(ts - prev)
+                if delta <= 0 {
+                        return 0
+                }
+                ratio := delta / expectedBlockIntervalSeconds
+                if ratio > 1 {
+                        ratio = 1 / ratio
+                }
+                if ratio > 1 {
+                        ratio = 1
+                }
+                total += ratio
+                prev = ts
+        }
+        return clamp(total/float64(len(chain)-1), 0, 1)
 }
 
 func clamp(v, min, max float64) float64 {
