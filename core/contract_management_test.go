@@ -2,15 +2,36 @@ package core
 
 import (
 	"context"
+	"sync"
 	"testing"
 )
+
+type recordingObserver struct {
+	mu     sync.Mutex
+	events []ContractRegistryEventType
+}
+
+func (r *recordingObserver) HandleContractRegistryEvent(event ContractRegistryEvent) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	r.events = append(r.events, event.Type)
+}
+
+func (r *recordingObserver) Types() []ContractRegistryEventType {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	out := make([]ContractRegistryEventType, len(r.events))
+	copy(out, r.events)
+	return out
+}
 
 func TestContractManager(t *testing.T) {
 	vm := NewSimpleVM()
 	_ = vm.Start()
 	ledger := NewLedger()
 	ledger.Credit("owner", 1_000)
-	reg := NewContractRegistry(vm, ledger)
+	obs := &recordingObserver{}
+	reg := NewContractRegistry(vm, ledger, WithContractRegistryObserver(obs))
 	addr, err := reg.Deploy([]byte{0x01}, "", 5, "owner")
 	if err != nil {
 		t.Fatalf("deploy: %v", err)
@@ -33,5 +54,22 @@ func TestContractManager(t *testing.T) {
 	}
 	if err := mgr.Upgrade(context.Background(), addr, []byte{0x02}, 6); err != nil {
 		t.Fatalf("upgrade: %v", err)
+	}
+
+	want := []ContractRegistryEventType{
+		ContractRegistryEventDeploy,
+		ContractRegistryEventPause,
+		ContractRegistryEventResume,
+		ContractRegistryEventTransfer,
+		ContractRegistryEventUpgrade,
+	}
+	got := obs.Types()
+	if len(got) != len(want) {
+		t.Fatalf("unexpected event count %d want %d", len(got), len(want))
+	}
+	for i, typ := range want {
+		if got[i] != typ {
+			t.Fatalf("event[%d] = %s, want %s", i, got[i], typ)
+		}
 	}
 }

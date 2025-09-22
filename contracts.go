@@ -3,7 +3,10 @@ package synnergy
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
+	"fmt"
+	"strings"
 	"sync"
 )
 
@@ -39,6 +42,45 @@ type Contract struct {
 	Paused   bool   // whether execution is paused
 }
 
+// ContractRegistryEventType enumerates observable registry actions.
+type ContractRegistryEventType string
+
+const (
+	// ContractRegistryEventDeploy signals that a contract was deployed.
+	ContractRegistryEventDeploy ContractRegistryEventType = "DEPLOY"
+	// ContractRegistryEventInvoke signals a successful invocation.
+	ContractRegistryEventInvoke ContractRegistryEventType = "INVOKE"
+	// ContractRegistryEventInvokeFailed signals a failed invocation.
+	ContractRegistryEventInvokeFailed ContractRegistryEventType = "INVOKE_FAILED"
+	// ContractRegistryEventTransfer signals that ownership changed.
+	ContractRegistryEventTransfer ContractRegistryEventType = "TRANSFER"
+	// ContractRegistryEventPause indicates a contract was paused.
+	ContractRegistryEventPause ContractRegistryEventType = "PAUSE"
+	// ContractRegistryEventResume indicates a contract was resumed.
+	ContractRegistryEventResume ContractRegistryEventType = "RESUME"
+	// ContractRegistryEventUpgrade signals that a contract was upgraded.
+	ContractRegistryEventUpgrade ContractRegistryEventType = "UPGRADE"
+)
+
+// ContractRegistryEvent describes an observable action performed by the registry.
+type ContractRegistryEvent struct {
+	Type     ContractRegistryEventType
+	Contract *Contract
+	Method   string
+	Caller   string
+	GasLimit uint64
+	GasUsed  uint64
+	Err      error
+}
+
+// ContractRegistryObserver consumes registry events for telemetry or auditing.
+type ContractRegistryObserver interface {
+	HandleContractRegistryEvent(event ContractRegistryEvent)
+}
+
+// ContractRegistryOption customises registry construction.
+type ContractRegistryOption func(*ContractRegistry)
+
 // VirtualMachine defines the execution interface required by the contract
 // registry. The VM is implemented in virtual_machine.go.
 type VirtualMachine interface {
@@ -56,10 +98,35 @@ type ContractRegistry struct {
 	vm           VirtualMachine
 	ledger       Ledger
 	feeCollector string
+	observer     ContractRegistryObserver
 }
 
+// WithContractRegistryObserver configures the registry to emit events.
+func WithContractRegistryObserver(obs ContractRegistryObserver) ContractRegistryOption {
+	return func(r *ContractRegistry) {
+		r.observer = obs
+	}
+}
+
+var (
+	// ErrContractAlreadyExists indicates the contract has already been deployed.
+	ErrContractAlreadyExists = errors.New("contract already deployed")
+	// ErrContractNotFound indicates an address lookup failed.
+	ErrContractNotFound = errors.New("contract not found")
+	// ErrContractPaused indicates execution is disabled.
+	ErrContractPaused = errors.New("contract paused")
+	// ErrWASMRequired is returned when deployment or upgrade receives no bytecode.
+	ErrWASMRequired = errors.New("wasm bytecode required")
+	// ErrInvalidManifest indicates that manifest JSON failed validation.
+	ErrInvalidManifest = errors.New("invalid contract manifest")
+	// ErrGasLimitTooLow indicates a zero or insufficient gas limit.
+	ErrGasLimitTooLow = errors.New("gas limit must be greater than zero")
+	// ErrGasChargeFailed wraps ledger charging failures.
+	ErrGasChargeFailed = errors.New("gas charge failed")
+)
+
 // NewContractRegistry initialises an empty registry backed by the provided VM.
-func NewContractRegistry(vm VirtualMachine, ledger Ledger) *ContractRegistry {
+func NewContractRegistry(vm VirtualMachine, ledger Ledger, opts ...ContractRegistryOption) *ContractRegistry {
 	reg := &ContractRegistry{
 		contracts:    make(map[string]*Contract),
 		vm:           vm,
@@ -77,6 +144,11 @@ func NewContractRegistry(vm VirtualMachine, ledger Ledger) *ContractRegistry {
 				Manifest: rec.Manifest,
 				GasLimit: rec.GasLimit,
 			}
+		}
+	}
+	for _, opt := range opts {
+		if opt != nil {
+			opt(reg)
 		}
 	}
 	return reg
@@ -98,7 +170,13 @@ func CompileWASM(src []byte) ([]byte, string, error) {
 // returned.
 func (r *ContractRegistry) Deploy(wasm []byte, manifest string, gasLimit uint64, owner string) (string, error) {
 	if len(wasm) == 0 {
-		return "", errors.New("wasm bytecode required")
+		return "", ErrWASMRequired
+	}
+	if gasLimit == 0 {
+		return "", ErrGasLimitTooLow
+	}
+	if err := validateManifest(manifest); err != nil {
+		return "", err
 	}
 	hash := sha256.Sum256(wasm)
 	addr := hex.EncodeToString(hash[:])
@@ -107,11 +185,11 @@ func (r *ContractRegistry) Deploy(wasm []byte, manifest string, gasLimit uint64,
 	_, exists := r.contracts[addr]
 	r.mu.RUnlock()
 	if exists {
-		return "", errors.New("contract already deployed")
+		return "", fmt.Errorf("%w: %s", ErrContractAlreadyExists, addr)
 	}
 	if r.ledger != nil && gasLimit > 0 {
 		if err := r.ledger.Transfer(owner, r.feeCollector, gasLimit, 0); err != nil {
-			return "", err
+			return "", fmt.Errorf("%w: %v", ErrGasChargeFailed, err)
 		}
 	}
 	r.mu.Lock()
@@ -120,26 +198,30 @@ func (r *ContractRegistry) Deploy(wasm []byte, manifest string, gasLimit uint64,
 		if r.ledger != nil && gasLimit > 0 {
 			_ = r.ledger.Transfer(r.feeCollector, owner, gasLimit, 0)
 		}
-		return "", errors.New("contract already deployed")
+		return "", fmt.Errorf("%w: %s", ErrContractAlreadyExists, addr)
 	}
+	wasmCopy := make([]byte, len(wasm))
+	copy(wasmCopy, wasm)
 	r.contracts[addr] = &Contract{
 		Address:  addr,
 		Owner:    owner,
-		WASM:     wasm,
+		WASM:     wasmCopy,
 		Manifest: manifest,
 		GasLimit: gasLimit,
 	}
 	if r.ledger != nil {
-		stored := make([]byte, len(wasm))
-		copy(stored, wasm)
 		r.ledger.StoreContract(LedgerContractRecord{
 			Address:  addr,
 			Owner:    owner,
 			Manifest: manifest,
 			GasLimit: gasLimit,
-			WASM:     stored,
+			WASM:     wasmCopy,
 		})
 	}
+	r.emit(ContractRegistryEvent{
+		Type:     ContractRegistryEventDeploy,
+		Contract: cloneContract(r.contracts[addr]),
+	})
 	return addr, nil
 }
 
@@ -154,10 +236,10 @@ func (r *ContractRegistry) InvokeFrom(addr, caller, method string, args []byte, 
 	c, ok := r.contracts[addr]
 	r.mu.RUnlock()
 	if !ok {
-		return nil, 0, errors.New("contract not found")
+		return nil, 0, fmt.Errorf("%w: %s", ErrContractNotFound, addr)
 	}
 	if c.Paused {
-		return nil, 0, errors.New("contract paused")
+		return nil, 0, fmt.Errorf("%w: %s", ErrContractPaused, addr)
 	}
 	limit := gasLimit
 	if limit == 0 || limit > c.GasLimit {
@@ -169,7 +251,7 @@ func (r *ContractRegistry) InvokeFrom(addr, caller, method string, args []byte, 
 	}
 	if r.ledger != nil && limit > 0 {
 		if err := r.ledger.Transfer(payer, r.feeCollector, limit, 0); err != nil {
-			return nil, 0, err
+			return nil, 0, fmt.Errorf("%w: %v", ErrGasChargeFailed, err)
 		}
 	}
 	out, used, err := r.vm.Execute(c.WASM, method, args, limit)
@@ -177,13 +259,32 @@ func (r *ContractRegistry) InvokeFrom(addr, caller, method string, args []byte, 
 		if r.ledger != nil && limit > 0 {
 			_ = r.ledger.Transfer(r.feeCollector, payer, limit, 0)
 		}
-	} else if r.ledger != nil && used < limit {
+		r.emit(ContractRegistryEvent{
+			Type:     ContractRegistryEventInvokeFailed,
+			Contract: cloneContract(c),
+			Method:   method,
+			Caller:   payer,
+			GasLimit: limit,
+			GasUsed:  used,
+			Err:      err,
+		})
+		return out, used, err
+	}
+	if r.ledger != nil && used < limit {
 		refund := limit - used
 		if refund > 0 {
 			_ = r.ledger.Transfer(r.feeCollector, payer, refund, 0)
 		}
 	}
-	return out, used, err
+	r.emit(ContractRegistryEvent{
+		Type:     ContractRegistryEventInvoke,
+		Contract: cloneContract(c),
+		Method:   method,
+		Caller:   payer,
+		GasLimit: limit,
+		GasUsed:  used,
+	})
+	return out, used, nil
 }
 
 // List returns all deployed contracts.
@@ -203,4 +304,56 @@ func (r *ContractRegistry) Get(addr string) (*Contract, bool) {
 	defer r.mu.RUnlock()
 	c, ok := r.contracts[addr]
 	return c, ok
+}
+
+func (r *ContractRegistry) emit(event ContractRegistryEvent) {
+	if r.observer == nil {
+		return
+	}
+	r.observer.HandleContractRegistryEvent(event)
+}
+
+func (r *ContractRegistry) persistContract(c *Contract) {
+	if r == nil || r.ledger == nil || c == nil {
+		return
+	}
+	wasmCopy := make([]byte, len(c.WASM))
+	copy(wasmCopy, c.WASM)
+	r.ledger.StoreContract(LedgerContractRecord{
+		Address:  c.Address,
+		Owner:    c.Owner,
+		Manifest: c.Manifest,
+		GasLimit: c.GasLimit,
+		WASM:     wasmCopy,
+	})
+}
+
+func cloneContract(c *Contract) *Contract {
+	if c == nil {
+		return nil
+	}
+	wasmCopy := make([]byte, len(c.WASM))
+	copy(wasmCopy, c.WASM)
+	return &Contract{
+		Address:  c.Address,
+		Owner:    c.Owner,
+		WASM:     wasmCopy,
+		Manifest: c.Manifest,
+		GasLimit: c.GasLimit,
+		Paused:   c.Paused,
+	}
+}
+
+func validateManifest(manifest string) error {
+	if strings.TrimSpace(manifest) == "" {
+		return nil
+	}
+	var payload any
+	if err := json.Unmarshal([]byte(manifest), &payload); err != nil {
+		return fmt.Errorf("%w: %v", ErrInvalidManifest, err)
+	}
+	if payload == nil {
+		return fmt.Errorf("%w: manifest cannot be null", ErrInvalidManifest)
+	}
+	return nil
 }

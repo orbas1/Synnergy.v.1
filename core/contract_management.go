@@ -2,6 +2,8 @@ package core
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
 	ierr "synnergy/internal/errors"
 	"synnergy/internal/telemetry"
@@ -22,13 +24,24 @@ func (m *ContractManager) Transfer(ctx context.Context, addr, newOwner string) e
 	ctx, span := telemetry.Tracer("core.contracts").Start(ctx, "ContractManager.Transfer")
 	defer span.End()
 
+	newOwner = strings.TrimSpace(newOwner)
+	if newOwner == "" {
+		return ierr.New(ierr.Invalid, "new contract owner cannot be empty")
+	}
 	c, ok := m.registry.Get(addr)
 	if !ok {
-		return ierr.New(ierr.NotFound, "contract not found")
+		return ierr.New(ierr.NotFound, fmt.Sprintf("contract not found: %s", addr))
 	}
 	m.registry.mu.Lock()
 	c.Owner = newOwner
+	snapshot := cloneContract(c)
 	m.registry.mu.Unlock()
+	m.registry.persistContract(snapshot)
+	m.registry.emit(ContractRegistryEvent{
+		Type:     ContractRegistryEventTransfer,
+		Contract: snapshot,
+		Caller:   newOwner,
+	})
 	return nil
 }
 
@@ -39,11 +52,17 @@ func (m *ContractManager) Pause(ctx context.Context, addr string) error {
 
 	c, ok := m.registry.Get(addr)
 	if !ok {
-		return ierr.New(ierr.NotFound, "contract not found")
+		return ierr.New(ierr.NotFound, fmt.Sprintf("contract not found: %s", addr))
 	}
 	m.registry.mu.Lock()
 	c.Paused = true
+	snapshot := cloneContract(c)
 	m.registry.mu.Unlock()
+	m.registry.emit(ContractRegistryEvent{
+		Type:     ContractRegistryEventPause,
+		Contract: snapshot,
+		Caller:   snapshot.Owner,
+	})
 	return nil
 }
 
@@ -54,11 +73,17 @@ func (m *ContractManager) Resume(ctx context.Context, addr string) error {
 
 	c, ok := m.registry.Get(addr)
 	if !ok {
-		return ierr.New(ierr.NotFound, "contract not found")
+		return ierr.New(ierr.NotFound, fmt.Sprintf("contract not found: %s", addr))
 	}
 	m.registry.mu.Lock()
 	c.Paused = false
+	snapshot := cloneContract(c)
 	m.registry.mu.Unlock()
+	m.registry.emit(ContractRegistryEvent{
+		Type:     ContractRegistryEventResume,
+		Contract: snapshot,
+		Caller:   snapshot.Owner,
+	})
 	return nil
 }
 
@@ -68,18 +93,28 @@ func (m *ContractManager) Upgrade(ctx context.Context, addr string, wasm []byte,
 	defer span.End()
 
 	if len(wasm) == 0 {
-		return ierr.New(ierr.Invalid, "wasm bytecode required")
+		return ierr.New(ierr.Invalid, ErrWASMRequired.Error())
 	}
 	c, ok := m.registry.Get(addr)
 	if !ok {
-		return ierr.New(ierr.NotFound, "contract not found")
+		return ierr.New(ierr.NotFound, fmt.Sprintf("contract not found: %s", addr))
 	}
 	m.registry.mu.Lock()
-	c.WASM = wasm
+	wasmCopy := make([]byte, len(wasm))
+	copy(wasmCopy, wasm)
+	c.WASM = wasmCopy
 	if gasLimit > 0 {
 		c.GasLimit = gasLimit
 	}
+	snapshot := cloneContract(c)
 	m.registry.mu.Unlock()
+	m.registry.persistContract(snapshot)
+	m.registry.emit(ContractRegistryEvent{
+		Type:     ContractRegistryEventUpgrade,
+		Contract: snapshot,
+		Caller:   snapshot.Owner,
+		GasLimit: snapshot.GasLimit,
+	})
 	return nil
 }
 
@@ -90,7 +125,7 @@ func (m *ContractManager) Info(ctx context.Context, addr string) (*Contract, err
 
 	c, ok := m.registry.Get(addr)
 	if !ok {
-		return nil, ierr.New(ierr.NotFound, "contract not found")
+		return nil, ierr.New(ierr.NotFound, fmt.Sprintf("contract not found: %s", addr))
 	}
-	return c, nil
+	return cloneContract(c), nil
 }

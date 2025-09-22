@@ -1,7 +1,10 @@
 package synnergy
 
 import (
+	"encoding/hex"
 	"errors"
+	"fmt"
+	"strings"
 	"sync"
 )
 
@@ -12,6 +15,17 @@ type AIContractRegistry struct {
 	mu   sync.RWMutex
 	meta map[string]string // contract address -> model hash
 }
+
+var (
+	// ErrAIContractNotFound is returned when an address is not
+	// associated with a registered AI contract.
+	ErrAIContractNotFound = errors.New("ai contract not found")
+	// ErrInsufficientGas indicates that the supplied gas limit is below
+	// the minimum required for the operation.
+	ErrInsufficientGas = errors.New("insufficient gas limit")
+	// ErrInvalidModelHash indicates the provided model hash was empty or malformed.
+	ErrInvalidModelHash = errors.New("invalid model hash")
+)
 
 // NewAIContractRegistry creates a new registry using the provided base
 // registry. The base registry handles deployment and invocation while this type
@@ -26,6 +40,17 @@ func NewAIContractRegistry(base *ContractRegistry) *AIContractRegistry {
 // DeployAIContract deploys the WASM bytecode and records the associated model
 // hash. The returned address can later be used to invoke the contract.
 func (r *AIContractRegistry) DeployAIContract(wasm []byte, modelHash, manifest string, gasLimit uint64, owner string) (string, error) {
+	modelHash = strings.ToLower(strings.TrimSpace(modelHash))
+	if modelHash == "" {
+		return "", ErrInvalidModelHash
+	}
+	if _, err := hex.DecodeString(modelHash); err != nil {
+		return "", fmt.Errorf("%w: must be hex", ErrInvalidModelHash)
+	}
+	required := GasCost("DeployAIContract")
+	if gasLimit < required {
+		return "", fmt.Errorf("%w: need %d", ErrInsufficientGas, required)
+	}
 	addr, err := r.base.Deploy(wasm, manifest, gasLimit, owner)
 	if err != nil {
 		return "", err
@@ -39,8 +64,15 @@ func (r *AIContractRegistry) DeployAIContract(wasm []byte, modelHash, manifest s
 // InvokeAIContract invokes the "infer" method of the specified contract. The
 // input payload is passed as arguments to the VM.
 func (r *AIContractRegistry) InvokeAIContract(addr string, input []byte, gasLimit uint64) ([]byte, uint64, error) {
-	if _, ok := r.meta[addr]; !ok {
-		return nil, 0, errors.New("ai contract not found")
+	r.mu.RLock()
+	_, ok := r.meta[addr]
+	r.mu.RUnlock()
+	if !ok {
+		return nil, 0, ErrAIContractNotFound
+	}
+	required := GasCost("InvokeAIContract")
+	if gasLimit < required {
+		return nil, 0, fmt.Errorf("%w: need %d", ErrInsufficientGas, required)
 	}
 	return r.base.Invoke(addr, "infer", input, gasLimit)
 }
