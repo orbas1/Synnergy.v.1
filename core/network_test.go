@@ -4,6 +4,8 @@ import (
 	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
+	"errors"
+	"sync"
 	"testing"
 	"time"
 )
@@ -13,6 +15,7 @@ import (
 func TestNetworkBroadcast(t *testing.T) {
 	svc := NewBiometricService()
 	network := NewNetwork(svc)
+	defer network.Stop()
 
 	// setup nodes and relay
 	n1 := NewNode("n1", "addr1", NewLedger())
@@ -55,6 +58,7 @@ func TestNetworkBroadcast(t *testing.T) {
 // messages to all subscribed listeners.
 func TestNetworkPubSub(t *testing.T) {
 	net := NewNetwork(NewBiometricService())
+	defer net.Stop()
 	sub := net.Subscribe("demo")
 	msg := []byte("ping")
 	net.Publish("demo", msg)
@@ -66,4 +70,51 @@ func TestNetworkPubSub(t *testing.T) {
 	case <-time.After(100 * time.Millisecond):
 		t.Fatalf("did not receive published message")
 	}
+}
+
+func TestNetworkRetry(t *testing.T) {
+	net := NewNetwork(NewBiometricService())
+	defer net.Stop()
+	net.SetRetryPolicy(3, 10*time.Millisecond)
+	net.SetEnqueueTimeout(20 * time.Millisecond)
+
+	target := &delayedTarget{succeedAfter: 1}
+	net.AddTarget("delayed", target)
+
+	tx := NewTransaction("alice", "bob", 1, 0, 0)
+	net.EnqueueTransaction(tx)
+
+	time.Sleep(80 * time.Millisecond)
+
+	if got := target.Received(); got != 1 {
+		t.Fatalf("expected 1 successful delivery, got %d", got)
+	}
+	metrics := net.Metrics()
+	if metrics.Retries == 0 {
+		t.Fatalf("expected retry metrics to be recorded")
+	}
+}
+
+type delayedTarget struct {
+	mu           sync.Mutex
+	failCount    int
+	succeedAfter int
+	received     int
+}
+
+func (d *delayedTarget) AddTransaction(*Transaction) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	if d.failCount < d.succeedAfter {
+		d.failCount++
+		return errors.New("temporary failure")
+	}
+	d.received++
+	return nil
+}
+
+func (d *delayedTarget) Received() int {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+	return d.received
 }

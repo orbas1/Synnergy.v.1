@@ -169,6 +169,21 @@ func (l *Ledger) AddBlock(b *Block) error {
 	return nil
 }
 
+// HasBlock reports whether a block with the given hash exists on the ledger.
+func (l *Ledger) HasBlock(hash string) bool {
+	if hash == "" {
+		return false
+	}
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	for _, b := range l.blocks {
+		if b != nil && b.Hash == hash {
+			return true
+		}
+	}
+	return false
+}
+
 // GetBalance returns the balance for a given address.
 func (l *Ledger) GetBalance(addr string) uint64 {
 	l.mu.RLock()
