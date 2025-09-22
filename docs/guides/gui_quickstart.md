@@ -51,3 +51,12 @@ docker build -t syn-wallet GUI/wallet
 
 Other interfaces follow the same commands shown above.
 
+## Control Panel Enhancements
+
+The Stage 79 control panel refresh adds an **Enterprise Special Node** widget
+next to the orchestrator diagnostics. The dashboard consumes the
+`/api/enterprise-special` endpoint, surfaced by the CLI command
+`synnergy enterprise-special status --json`, and renders aggregated plugin
+counts, role distribution, mempool depth and validator totals alongside the
+existing orchestrator telemetry.
+

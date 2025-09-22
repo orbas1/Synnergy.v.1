@@ -80,6 +80,18 @@ func main() {
 	} else if len(inserted) > 0 {
 		logrus.Infof("registered %d stage 78 opcodes", len(inserted))
 	}
+	enterpriseSpecialGas := map[string]uint64{
+		"EnterpriseSpecialAttach":    110,
+		"EnterpriseSpecialDetach":    55,
+		"EnterpriseSpecialBroadcast": 145,
+		"EnterpriseSpecialSnapshot":  40,
+		"EnterpriseSpecialLedger":    30,
+	}
+	if inserted, err := synn.EnsureGasSchedule(enterpriseSpecialGas); err != nil {
+		logrus.Fatalf("enterprise special gas sync failed: %v", err)
+	} else if len(inserted) > 0 {
+		logrus.Infof("registered %d enterprise special opcodes", len(inserted))
+	}
 	register := func(category, description string, names ...string) {
 		for _, name := range names {
 			cost := synn.GasCost(name)
@@ -102,6 +114,7 @@ func main() {
 	register("monetary", "Stage 40 monetary policy queries", "BlockReward", "CirculatingSupply", "RemainingSupply", "InitialPrice", "AlphaFactor", "MinimumStake")
 	register("p2p", "Stage 67 Kademlia routing operations", "KademliaStore", "KademliaGet", "KademliaClosest", "KademliaDistance")
 	register("orchestrator", "Stage 78 enterprise orchestrator operations", "EnterpriseBootstrap", "EnterpriseConsensusSync", "EnterpriseWalletSeal", "EnterpriseNodeAudit", "EnterpriseAuthorityElect")
+	register("enterprise", "Stage 79 enterprise combined node operations", "EnterpriseSpecialAttach", "EnterpriseSpecialDetach", "EnterpriseSpecialBroadcast", "EnterpriseSpecialSnapshot", "EnterpriseSpecialLedger")
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.

@@ -23,6 +23,12 @@ The documentation is split into several key sections:
 Links to additional material in the repository root are provided throughout the
 guides where relevant.
 
+Stage 79 introduces the **Enterprise Special Node**, an aggregation layer that
+plugs multiple infrastructure roles into a single enterprise control surface.
+Its API, opcode catalogue and deterministic gas schedule are documented in the
+reference section and mirrored across the CLI and GUI for parity with the
+existing enterprise orchestrator.
+
 For a complete listing of every document in this tree, consult the
 [documentation index](contents/README.md).
 

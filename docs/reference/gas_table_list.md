@@ -424,6 +424,11 @@
 | `EnterpriseConsensusSync` | `95` |
 | `EnterpriseNodeAudit` | `75` |
 | `EnterpriseWalletSeal` | `60` |
+| `EnterpriseSpecialAttach` | `110` |
+| `EnterpriseSpecialDetach` | `55` |
+| `EnterpriseSpecialBroadcast` | `145` |
+| `EnterpriseSpecialSnapshot` | `40` |
+| `EnterpriseSpecialLedger` | `30` |
 | `NewEnvironmentalMonitoringNode` | `1` |
 | `NewEvent` | `1` |
 | `NewFailoverManager` | `1` |

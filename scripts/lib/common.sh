@@ -147,22 +147,33 @@ retry() {
 }
 
 synnergy_cli_path() {
-  if [[ -n "${SYN_CLI_BIN:-}" && -x "$SYN_CLI_BIN" ]]; then
-    printf '%s\n' "$SYN_CLI_BIN"
-    return 0
+  if [[ -n "${SYN_CLI_BIN:-}" ]]; then
+    if [[ -x "$SYN_CLI_BIN" ]]; then
+      printf '%s\n' "$SYN_CLI_BIN"
+      return 0
+    fi
+    log_error "binary not found: $SYN_CLI_BIN"
+    return 1
   fi
   local compiled="$PROJECT_ROOT/bin/synnergy"
   if [[ -x "$compiled" ]]; then
     printf '%s\n' "$compiled"
     return 0
   fi
-  printf 'go run ./cmd/synnergy'
+  printf '%s\n' 'go run ./cmd/synnergy'
   return 0
 }
 
 synnergy_cli() {
   local bin
-  bin="$(synnergy_cli_path)"
+  local path_output
+  if ! path_output="$(synnergy_cli_path)"; then
+    if [[ -n "$path_output" ]]; then
+      printf '%s\n' "$path_output" >&2
+    fi
+    return 1
+  fi
+  bin="$path_output"
   local -a args=()
   if [[ "$bin" == go* ]]; then
     args=(go run ./cmd/synnergy "$@")

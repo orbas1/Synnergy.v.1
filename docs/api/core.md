@@ -20,6 +20,7 @@ The core package implements consensus, transaction processing, networking and ot
 - `CrossChainRegistry` – stores contract address mappings across networks
 - `ConsensusNetworkManager` – registers cross-consensus scaling networks
 - `CustodialNode` – maintains off-chain asset custody records
+- `EnterpriseSpecialNode` – aggregates heterogeneous node plugins into a combined enterprise control surface
 
 ## Interfaces
 
