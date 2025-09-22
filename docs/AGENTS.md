@@ -10,6 +10,7 @@
 - Stage 73: Complete – enterprise index, grant, benefit, charity, legal and utility modules now require wallet-signed workflows, persist their state for CLI/web automation, expose telemetry across CLI, VM and web, and refreshed docs/guides capture the expanded gas/opcode catalogue.
 - Stage 74: In progress – system health logging clamped; tangible and agricultural asset registries made concurrency safe; access controller audit snapshots added. Transaction and SYN5000+ modules outstanding.
 - Stage 75: In progress – validator node supports concurrent joins; VM, wallet and cross-chain layers pending.
+- Stage 93: Complete – governance and financial token suites hardened with audited gas-safe flows, CLI alignment and dedicated tests.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
@@ -2057,28 +2058,28 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] internal/tokens/syn2600_test.go
 
 **Stage 93**
-- [ ] internal/tokens/syn2700.go
-- [ ] internal/tokens/syn2700_test.go
-- [ ] internal/tokens/syn2800.go
-- [ ] internal/tokens/syn2800_test.go
-- [ ] internal/tokens/syn2900.go
-- [ ] internal/tokens/syn2900_test.go
-- [ ] internal/tokens/syn300_token.go
-- [ ] internal/tokens/syn300_token_test.go
-- [ ] internal/tokens/syn3200.go
-- [ ] internal/tokens/syn3200_test.go
-- [ ] internal/tokens/syn3400.go
-- [ ] internal/tokens/syn3400_test.go
-- [ ] internal/tokens/syn3500_token.go
-- [ ] internal/tokens/syn3500_token_test.go
-- [ ] internal/tokens/syn3600.go
-- [ ] internal/tokens/syn3600_test.go
-- [ ] internal/tokens/syn3700_token.go
-- [ ] internal/tokens/syn3700_token_test.go
-- [ ] internal/tokens/syn3800.go
+- [x] internal/tokens/syn2700.go | dividend engine now enforces pro-rata rounding with audit history and holder lifecycle helpers
+- [x] internal/tokens/syn2700_test.go | verifies lifecycle validation, fair remainder distribution and concurrent snapshots
+- [x] internal/tokens/syn2800.go | life policy registry gains grace period controls, settlement tracking and stronger validation
+- [x] internal/tokens/syn2800_test.go | exercises premium flows, claim settlement and grace period handling
+- [x] internal/tokens/syn2900.go | general insurance registry now reserves coverage, tracks settlements and exposes exposure stats
+- [x] internal/tokens/syn2900_test.go | ensures premium validation, claim reservation and exhaustion workflows
+- [x] internal/tokens/syn300_token.go | governance token adds mint/burn/transfer, delegation-aware quorum with deadline enforcement
+- [x] internal/tokens/syn300_token_test.go | covers supply changes, delegation voting and executed proposal safeguards
+- [x] internal/tokens/syn3200.go | conversion module now uses rational math with exact snapshots and guarded ratio updates
+- [x] internal/tokens/syn3200_test.go | validates fractional ratio rounding and guard rails
+- [x] internal/tokens/syn3400.go | forex registry deduplicates pairs, supports symbol lookups and safe removals
+- [x] internal/tokens/syn3400_test.go | checks registration, updates, symbol queries and removal
+- [x] internal/tokens/syn3500_token.go | fiat token now tracks allowances, freezing, total supply and guarded transfers
+- [x] internal/tokens/syn3500_token_test.go | validates lifecycle, allowance spending and rate updates
+- [x] internal/tokens/syn3600.go | governance weights expose total accounting and top holder introspection
+- [x] internal/tokens/syn3600_test.go | verifies weight adjustments and ranking helpers
+- [x] internal/tokens/syn3700_token.go | index token supports component updates, normalization and contribution insights
+- [x] internal/tokens/syn3700_token_test.go | checks normalization, value breakdowns and removal errors
+- [x] internal/tokens/syn3800.go | capped token now surfaces cap controls, remaining capacity and defensive mint/burn checks
 
 **Stage 94**
-- [ ] internal/tokens/syn3800_test.go
+- [x] internal/tokens/syn3800_test.go | aligned with enhanced cap logic and error guards
 - [ ] internal/tokens/syn3900.go
 - [ ] internal/tokens/syn3900_test.go
 - [ ] internal/tokens/syn4200_token.go
