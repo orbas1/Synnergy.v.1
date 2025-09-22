@@ -63,5 +63,11 @@ Maintenance activities generate auditable artifacts—health snapshots, failover
 ## Audit Trails & Forensic Logging
 `SystemHealthLogger` snapshots and regulatory node flags are retained for long‑term forensics, allowing investigators to reconstruct incident timelines and verify remediation steps【F:system_health_logging.go†L11-L47】【F:regulatory_node.go†L35-L49】.
 
+## Stage 79 Enhancements
+- **Bootstrap-aligned service plane.** The Stage 79 runtime initialises the virtual machine, ledger, consensus manager, wallet and shared registries in one guarded routine so maintenance tooling, the CLI and the web console run against identical infrastructure without manual wiring【F:cmd/synnergy/bootstrap.go†L17-L142】【F:cmd/synnergy/main.go†L18-L55】.
+- **Deterministic maintenance gas and opcodes.** Ledger replication, primary election, privacy envelopes and compliance disbursement gained documented opcodes and gas ceilings, allowing runbooks to budget failover and audit flows with deterministic costs before interventions begin【F:contracts_opcodes.go†L240-L404】【F:docs/reference/opcodes_list.md†L260-L700】【F:docs/reference/gas_table_list.md†L820-L839】.
+- **Remote manifest-driven runbooks.** Operations teams can export the full CLI manifest and stream it into the React control panel, enabling secured browser sessions to preview flags, enforce dry-run execution and log remediation output without SSH access to production nodes【F:cli/gui_manifest.go†L20-L118】【F:web/pages/api/commands.js†L1-L29】【F:web/pages/api/run.js†L1-L21】【F:web/pages/index.js†L87-L200】.
+- **Runtime validation coverage.** Automated tests now assert that gas catalogues are registered before maintenance workflows execute and that manifest exports remain machine readable, providing regression coverage for Stage 79 orchestration features【F:cmd/synnergy/bootstrap_test.go†L10-L41】【F:cli/gui_cmd_test.go†L11-L82】.
+
 ## Conclusion
 By weaving proactive monitoring, secure automation, and sustainability into every layer, Neto Solaris delivers a maintenance framework that keeps the Synnergy Network dependable and future‑ready. Operators can service the network confidently, knowing critical functions remain resilient throughout each maintenance cycle.

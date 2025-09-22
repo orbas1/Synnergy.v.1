@@ -206,6 +206,12 @@ distribution. Staking nodes support delegators with transparent balance queries,
 while energy‑efficient nodes can monetize sustainability certificates within
 green‑energy marketplaces.
 
+## Stage 79 Enhancements
+- **Coordinated node bootstrap.** The Stage 79 runtime assembles ledger, VM, consensus and wallet services before CLI commands run, meaning every node class—authority, regulatory, custodial or watchtower—starts from a consistent, fault-tolerant baseline without bespoke wiring【F:cmd/synnergy/bootstrap.go†L17-L142】【F:cmd/synnergy/main.go†L18-L55】.
+- **Enterprise governance opcodes.** Newly catalogued primitives including `Node_Attest`, `Ledger_StreamReplication`, `Ledger_PrimaryElection`, `Ledger_PrivacyEnvelope` and `Loanpool_ComplianceDisburse` give operators verifiable workflows for attestation, failover, privacy-preserving exports and regulated payouts with documented gas ceilings for budgeting deployments【F:contracts_opcodes.go†L240-L404】【F:docs/reference/opcodes_list.md†L260-L700】【F:docs/reference/gas_table_list.md†L820-L839】.
+- **Manifest-connected tooling.** A manifest-exporting CLI command now feeds the React control panel so operations teams can inspect node commands, required flags and dry-run behaviours in a browser, while regression tests keep the manifest contract stable across releases【F:cli/gui_manifest.go†L20-L118】【F:web/pages/api/commands.js†L1-L29】【F:web/pages/api/run.js†L1-L21】【F:web/pages/index.js†L87-L200】【F:cli/gui_cmd_test.go†L11-L82】.
+- **Gas assurance for lifecycle actions.** Stage 79 tests verify that every required opcode is priced before nodes start, preventing migrations or recovery drills from running without the deterministic gas assumptions codified in the runtime【F:cmd/synnergy/bootstrap_test.go†L10-L41】【F:gas_table.go†L20-L167】.
+
 ## Conclusion
 The Synnergy node framework empowers operators to tailor deployments to
 specific roles—from lightweight indexing nodes to fully fledged validator or
