@@ -7,6 +7,19 @@ import (
 	"testing"
 )
 
+func registerTestValidator(t *testing.T) *Wallet {
+	t.Helper()
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	if err := RegisterValidatorWallet(w); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	t.Cleanup(func() { UnregisterValidator(w.Address) })
+	return w
+}
+
 func TestThreshold(t *testing.T) {
 	sc := NewSynnergyConsensus()
 	if sc.Threshold(2, 3) != sc.Alpha*2+sc.Beta*3 {
@@ -79,18 +92,19 @@ func TestSelectValidatorMajorityStake(t *testing.T) {
 func TestFinalizeBlockRewards(t *testing.T) {
 	sc := NewSynnergyConsensus()
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "v1")
+	w := registerTestValidator(t)
+	sb := NewSubBlock([]*Transaction{tx}, w.Address)
 	b := NewBlock([]*SubBlock{sb}, "")
 	vm := NewValidatorManager(1)
-	_ = vm.Add(context.Background(), "v1", 5)
-	votes := map[string]bool{"v1": true, "v2": true, "v3": false}
+	_ = vm.Add(context.Background(), w.Address, 5)
+	votes := map[string]bool{w.Address: true, "v2": true, "v3": false}
 	if !sc.FinalizeBlock(b, votes, vm, 2) {
 		t.Fatalf("expected block to finalize")
 	}
 	if !b.Finalized {
 		t.Fatalf("block not marked finalized")
 	}
-	if vm.Stake("v1") != 7 {
+	if vm.Stake(w.Address) != 7 {
 		t.Fatalf("reward not applied")
 	}
 }
@@ -98,11 +112,13 @@ func TestFinalizeBlockRewards(t *testing.T) {
 func TestValidateSubBlock(t *testing.T) {
 	sc := NewSynnergyConsensus()
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "val")
+	w := registerTestValidator(t)
+	sb := NewSubBlock([]*Transaction{tx}, w.Address)
+	sc.RegisterValidatorPublicKey(w.Address, &w.PublicKey)
 	if !sc.ValidateSubBlock(sb) {
 		t.Fatalf("expected valid sub-block")
 	}
-	sb.Signature = "bad"
+	sb.Signature = []byte("bad")
 	if sc.ValidateSubBlock(sb) {
 		t.Fatalf("expected invalid sub-block")
 	}
@@ -111,7 +127,9 @@ func TestValidateSubBlock(t *testing.T) {
 func TestValidateBlock(t *testing.T) {
 	sc := NewSynnergyConsensus()
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "val")
+	w := registerTestValidator(t)
+	sb := NewSubBlock([]*Transaction{tx}, w.Address)
+	sc.RegisterValidatorPublicKey(w.Address, &w.PublicKey)
 	block := NewBlock([]*SubBlock{sb}, "")
 	sc.MineBlock(block, 1)
 	if !sc.ValidateBlock(block) {
@@ -134,12 +152,14 @@ func TestValidateSubBlockRegulatory(t *testing.T) {
 		t.Fatalf("wallet: %v", err)
 	}
 	rn.RegisterWallet(w)
+	validator := registerTestValidator(t)
+	sc.RegisterValidatorPublicKey(validator.Address, &validator.PublicKey)
 
 	tx := NewTransaction(w.Address, "bob", 5, 0, 0)
 	if _, err := w.Sign(tx); err != nil {
 		t.Fatalf("sign: %v", err)
 	}
-	sb := NewSubBlock([]*Transaction{tx}, "val")
+	sb := NewSubBlock([]*Transaction{tx}, validator.Address)
 	if !sc.ValidateSubBlock(sb) {
 		t.Fatalf("expected valid sub-block")
 	}
@@ -148,7 +168,7 @@ func TestValidateSubBlockRegulatory(t *testing.T) {
 	if _, err := w.Sign(tx2); err != nil {
 		t.Fatalf("sign2: %v", err)
 	}
-	sb2 := NewSubBlock([]*Transaction{tx2}, "val")
+	sb2 := NewSubBlock([]*Transaction{tx2}, validator.Address)
 	if sc.ValidateSubBlock(sb2) {
 		t.Fatalf("expected regulatory rejection")
 	}
@@ -160,9 +180,11 @@ func TestValidateSubBlockWithoutRegNode(t *testing.T) {
 	mgr.AddRegulation(Regulation{ID: "r1", MaxAmount: 10})
 	rn := NewRegulatoryNode("rn", mgr)
 	sc.SetRegulatoryNode(rn)
+	validator := registerTestValidator(t)
+	sc.RegisterValidatorPublicKey(validator.Address, &validator.PublicKey)
 
 	tx := NewTransaction("alice", "bob", 20, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "val")
+	sb := NewSubBlock([]*Transaction{tx}, validator.Address)
 	if sc.ValidateSubBlock(sb) {
 		t.Fatalf("expected rejection with regulatory node")
 	}

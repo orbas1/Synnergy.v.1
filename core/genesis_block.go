@@ -27,7 +27,7 @@ func (n *Node) InitGenesis(wallets GenesisWallets) (GenesisStats, *Block, error)
 		return GenesisStats{}, nil, err
 	}
 	n.Ledger.Credit(wallets.CreatorWallet, GenesisAllocation)
-	sb := NewSubBlock(nil, wallets.Genesis)
+	sb := NewGenesisSubBlock(wallets.Genesis)
 	block := NewBlock([]*SubBlock{sb}, "")
 	n.Consensus.MineBlock(block, 1)
 	n.Blockchain = append(n.Blockchain, block)

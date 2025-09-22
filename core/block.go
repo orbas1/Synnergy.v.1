@@ -1,9 +1,13 @@
 package core
 
 import (
+	"crypto/ecdsa"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/hex"
+	"errors"
 	"fmt"
+	"math/big"
 	"time"
 )
 
@@ -13,7 +17,9 @@ type SubBlock struct {
 	Validator    string
 	PohHash      string
 	Timestamp    int64
-	Signature    string
+	Signature    []byte
+	ValidatorKey []byte
+	System       bool
 }
 
 const maxTimeDriftSeconds = 300 // five minutes
@@ -22,7 +28,18 @@ const maxTimeDriftSeconds = 300 // five minutes
 func NewSubBlock(txs []*Transaction, validator string) *SubBlock {
 	sb := &SubBlock{Transactions: txs, Validator: validator, Timestamp: time.Now().Unix()}
 	sb.PohHash = sb.Hash()
-	sb.Signature = signSubBlock(validator, sb.PohHash)
+	if err := SignSubBlock(sb); err != nil {
+		sb.Signature = nil
+	}
+	return sb
+}
+
+// NewGenesisSubBlock constructs a system-signed sub-block used exclusively for
+// the genesis block. The sub-block contains no transactions and is marked so
+// that validation bypasses signature checks while still providing a PoH link.
+func NewGenesisSubBlock(validator string) *SubBlock {
+	sb := &SubBlock{Validator: validator, Timestamp: time.Now().Unix(), System: true}
+	sb.PohHash = sb.Hash()
 	return sb
 }
 
@@ -40,8 +57,30 @@ func (sb *SubBlock) Hash() string {
 
 // VerifySignature confirms the sub-block was signed by the stated validator.
 func (sb *SubBlock) VerifySignature() bool {
-	expected := signSubBlock(sb.Validator, sb.PohHash)
-	return sb.Signature == expected
+	if sb.System {
+		return len(sb.Transactions) == 0
+	}
+	if len(sb.Signature) == 0 || len(sb.ValidatorKey) == 0 {
+		return false
+	}
+	pub, err := decodePublicKey(sb.ValidatorKey)
+	if err != nil {
+		return false
+	}
+	if deriveAddress(pub) != sb.Validator {
+		return false
+	}
+	digest, err := hex.DecodeString(sb.PohHash)
+	if err != nil {
+		return false
+	}
+	mid := len(sb.Signature) / 2
+	if mid == 0 {
+		return false
+	}
+	r := new(big.Int).SetBytes(sb.Signature[:mid])
+	s := new(big.Int).SetBytes(sb.Signature[mid:])
+	return ecdsa.Verify(pub, digest, r, s)
 }
 
 // Validate checks the internal consistency of the sub-block and ensures it was
@@ -49,7 +88,9 @@ func (sb *SubBlock) VerifySignature() bool {
 // malformed or tampered with.
 func (sb *SubBlock) Validate() error {
 	if len(sb.Transactions) == 0 {
-		return fmt.Errorf("no transactions")
+		if !sb.System {
+			return fmt.Errorf("no transactions")
+		}
 	}
 	seen := make(map[string]struct{})
 	for _, tx := range sb.Transactions {
@@ -61,7 +102,7 @@ func (sb *SubBlock) Validate() error {
 		}
 		seen[tx.ID] = struct{}{}
 	}
-	if sb.Validator == "" {
+	if !sb.System && sb.Validator == "" {
 		return fmt.Errorf("validator required")
 	}
 	now := time.Now().Unix()
@@ -74,8 +115,16 @@ func (sb *SubBlock) Validate() error {
 	if sb.PohHash != sb.Hash() {
 		return fmt.Errorf("poh hash mismatch")
 	}
-	if !sb.VerifySignature() {
-		return fmt.Errorf("invalid signature")
+	if !sb.System {
+		if len(sb.Signature) == 0 {
+			return fmt.Errorf("signature required")
+		}
+		if len(sb.ValidatorKey) == 0 {
+			return fmt.Errorf("validator key required")
+		}
+		if !sb.VerifySignature() {
+			return fmt.Errorf("invalid signature")
+		}
 	}
 	return nil
 }
@@ -107,9 +156,49 @@ func (b *Block) HeaderHash(nonce uint64) string {
 	return hex.EncodeToString(h.Sum(nil))
 }
 
-func signSubBlock(validator, msg string) string {
-	h := sha256.Sum256([]byte(validator + msg))
-	return hex.EncodeToString(h[:])
+// SignSubBlock looks up the validator's wallet from the global registry and
+// signs the sub-block's PoH hash. If no key is registered, an error is
+// returned. The helper is exported so CLI tooling can opportunistically sign
+// sub-blocks after loading a wallet file.
+func SignSubBlock(sb *SubBlock) error {
+	if sb == nil {
+		return errors.New("sub-block required")
+	}
+	if sb.System {
+		return nil
+	}
+	priv := validatorPrivateKey(sb.Validator)
+	if priv == nil {
+		return fmt.Errorf("no signing key for validator %s", sb.Validator)
+	}
+	sig, key, err := signSubBlock(priv, sb.PohHash)
+	if err != nil {
+		return err
+	}
+	sb.Signature = sig
+	sb.ValidatorKey = key
+	return nil
+}
+
+func signSubBlock(priv *ecdsa.PrivateKey, msg string) ([]byte, []byte, error) {
+	if priv == nil {
+		return nil, nil, errors.New("private key required")
+	}
+	digest, err := hex.DecodeString(msg)
+	if err != nil {
+		return nil, nil, err
+	}
+	r, s, err := ecdsa.Sign(rand.Reader, priv, digest)
+	if err != nil {
+		return nil, nil, err
+	}
+	sig := make([]byte, 64)
+	rb := r.Bytes()
+	sb := s.Bytes()
+	copy(sig[32-len(rb):32], rb)
+	copy(sig[64-len(sb):], sb)
+	pub := encodePublicKey(&priv.PublicKey)
+	return sig, pub, nil
 }
 
 // Validate checks that the block and its sub-blocks are internally consistent.

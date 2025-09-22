@@ -2,13 +2,36 @@ package cli
 
 import (
 	"strconv"
+	"sync"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
 	ilog "synnergy/internal/log"
 )
 
-var consensus = core.NewSynnergyConsensus()
+var (
+	consensus           = core.NewSynnergyConsensus()
+	consensusMinerOnce  sync.Once
+	consensusMinerAddr  string
+	consensusMinerError error
+)
+
+func ensureConsensusValidator() (string, error) {
+	consensusMinerOnce.Do(func() {
+		wallet, err := core.NewWallet()
+		if err != nil {
+			consensusMinerError = err
+			return
+		}
+		if err := core.RegisterValidatorWallet(wallet); err != nil {
+			consensusMinerError = err
+			return
+		}
+		consensus.RegisterValidatorPublicKey(wallet.Address, &wallet.PublicKey)
+		consensusMinerAddr = wallet.Address
+	})
+	return consensusMinerAddr, consensusMinerError
+}
 
 func init() {
 	consensusCmd := &cobra.Command{
@@ -25,7 +48,16 @@ func init() {
 				printOutput(map[string]any{"error": "invalid difficulty"})
 				return
 			}
-			sb := core.NewSubBlock([]*core.Transaction{}, "validator")
+			validator, err := ensureConsensusValidator()
+			if err != nil {
+				printOutput(map[string]any{"error": err.Error()})
+				return
+			}
+			sb := core.NewSubBlock([]*core.Transaction{}, validator)
+			if err := core.SignSubBlock(sb); err != nil {
+				printOutput(map[string]any{"error": err.Error()})
+				return
+			}
 			b := core.NewBlock([]*core.SubBlock{sb}, "")
 			consensus.MineBlock(b, uint8(diff))
 			ilog.Info("cli_mine", "nonce", b.Nonce)

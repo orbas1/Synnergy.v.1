@@ -19,6 +19,7 @@ type Node struct {
 	Validators    *ValidatorManager
 	MaxTxPerBlock int
 	mu            sync.Mutex
+	wallets       map[string]*Wallet
 }
 
 // NewNode creates a new node instance.
@@ -33,6 +34,7 @@ func NewNode(id, addr string, ledger *Ledger) *Node {
 		Blockchain:    []*Block{},
 		Validators:    NewValidatorManager(MinStake),
 		MaxTxPerBlock: 100,
+		wallets:       make(map[string]*Wallet),
 	}
 }
 
@@ -75,6 +77,10 @@ func (n *Node) MineBlock() *Block {
 	if validator == "" {
 		return nil
 	}
+	wallet := n.wallets[validator]
+	if wallet == nil {
+		return nil
+	}
 	sb := NewSubBlock(n.Mempool, validator)
 	if !n.Consensus.ValidateSubBlock(sb) {
 		return nil
@@ -115,6 +121,22 @@ func (n *Node) SetStake(addr string, amount uint64) error {
 		return fmt.Errorf("stake below minimum: %d", amount)
 	}
 	return n.Validators.Add(context.Background(), addr, amount)
+}
+
+// RegisterValidatorWallet associates a wallet with a validator address so the
+// node can sign sub-blocks on its behalf.
+func (n *Node) RegisterValidatorWallet(w *Wallet) error {
+	if w == nil {
+		return fmt.Errorf("wallet required")
+	}
+	if err := RegisterValidatorWallet(w); err != nil {
+		return err
+	}
+	n.mu.Lock()
+	n.wallets[w.Address] = w
+	n.mu.Unlock()
+	n.Consensus.RegisterValidatorPublicKey(w.Address, &w.PublicKey)
+	return nil
 }
 
 func (n *Node) eligibleStakes() map[string]uint64 {

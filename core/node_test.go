@@ -9,7 +9,14 @@ func TestMineBlockFeeDistribution(t *testing.T) {
 	ledger := NewLedger()
 	ledger.Credit("alice", 200)
 	node := NewNode("miner", "addr", ledger)
-	validator := "validator1"
+	validatorWallet, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	if err := node.RegisterValidatorWallet(validatorWallet); err != nil {
+		t.Fatalf("register validator: %v", err)
+	}
+	validator := validatorWallet.Address
 	node.SetStake(validator, 2)
 	tx := NewTransaction("alice", "bob", 10, 100, 0)
 	if err := node.AddTransaction(tx); err != nil {
