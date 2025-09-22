@@ -11,39 +11,38 @@ import (
 	synnergy "synnergy"
 )
 
-// main launches a standalone watchtower node. The node periodically
-// collects system metrics and logs them. Shutdown is handled gracefully
-// on SIGINT/SIGTERM signals.
-func main() {
-	logger := log.New(os.Stdout, "watchtower: ", log.LstdFlags|log.Lmicroseconds)
-	node := synnergy.NewWatchtowerNode("watchtower-1", logger)
-
-	ctx, cancel := context.WithCancel(context.Background())
+func run(ctx context.Context, node *synnergy.WatchtowerNode, logger *log.Logger, signals <-chan os.Signal, shutdownTimeout time.Duration) error {
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	// capture OS signals for graceful shutdown
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
-		<-sigCh
-		logger.Println("shutdown signal received")
-		cancel()
+		select {
+		case <-ctx.Done():
+			return
+		case _, ok := <-signals:
+			if !ok {
+				cancel()
+				return
+			}
+			if logger != nil {
+				logger.Println("shutdown signal received")
+			}
+			cancel()
+		}
 	}()
 
 	if err := node.Start(ctx); err != nil {
-		logger.Fatalf("failed to start watchtower node: %v", err)
+		return err
 	}
 
-	// block until context is cancelled
 	<-ctx.Done()
 
-	// allow some time for clean shutdown
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), shutdownTimeout)
 	defer shutdownCancel()
 
 	done := make(chan struct{})
 	go func() {
-		if err := node.Stop(); err != nil {
+		if err := node.Stop(); err != nil && logger != nil {
 			logger.Printf("error stopping watchtower node: %v", err)
 		}
 		close(done)
@@ -51,8 +50,28 @@ func main() {
 
 	select {
 	case <-done:
-		logger.Println("watchtower node stopped")
+		if logger != nil {
+			logger.Println("watchtower node stopped")
+		}
+		return nil
 	case <-shutdownCtx.Done():
-		logger.Println("timeout waiting for watchtower node to stop")
+		if logger != nil {
+			logger.Println("timeout waiting for watchtower node to stop")
+		}
+		return shutdownCtx.Err()
+	}
+}
+
+// main launches a standalone watchtower node. The node periodically
+// collects system metrics and logs them. Shutdown is handled gracefully
+// on SIGINT/SIGTERM signals.
+func main() {
+	logger := log.New(os.Stdout, "watchtower: ", log.LstdFlags|log.Lmicroseconds)
+	node := synnergy.NewWatchtowerNode("watchtower-1", logger)
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+	if err := run(context.Background(), node, logger, sigCh, 5*time.Second); err != nil {
+		logger.Printf("watchtower shutdown error: %v", err)
 	}
 }
