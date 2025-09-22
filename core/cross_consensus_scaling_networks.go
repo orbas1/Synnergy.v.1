@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"sort"
 	"sync"
 )
 
@@ -83,6 +84,19 @@ func (m *ConsensusNetworkManager) ListNetworks() []ConsensusNetwork {
 		out = append(out, n)
 	}
 	return out
+}
+
+// AuthorizedRelayers returns a sorted list of whitelisted relayer addresses.
+// The slice is safe for reuse by callers.
+func (m *ConsensusNetworkManager) AuthorizedRelayers() []string {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	relayers := make([]string, 0, len(m.relayers))
+	for addr := range m.relayers {
+		relayers = append(relayers, addr)
+	}
+	sort.Strings(relayers)
+	return relayers
 }
 
 // GetNetwork retrieves a network configuration by ID.

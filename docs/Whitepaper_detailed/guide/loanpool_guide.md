@@ -3,6 +3,19 @@
 LoanPool Module
 Overview
 The LoanPool is a strategically managed pool of funds derived from a portion of transaction fees, designed to foster innovation and support critical areas such as healthcare, poverty alleviation, education, environmental sustainability, small business support, and ecosystem innovation within the ecosystem and beyond. The funds in the LoanPool are meticulously allocated into various categories to address diverse community needs, ensuring efficient and transparent usage in line with system governance and authorization protocols. Below are the detailed allocations and their specific purposes:
+
+## Stage 82 Operational Guarantees
+
+Stage 82 links the LoanPool to the enterprise bootstrap pipeline. When operators run
+`synnergy orchestrator bootstrap`, the runtime verifies that the consensus mesh is
+synchronised, the orchestrator wallet is sealed, ledger reads succeed and authority
+roles are intact before any loan proposal is evaluated. The CLI and web dashboard
+display the orchestrator's wallet seal status, consensus relayer count and authority
+role distribution, enabling compliance teams to halt disbursements if governance
+prerequisites are not met. Gas metadata for LoanPool governance and compliance
+operations is registered during bootstrap so borrowers, regulators and auditors see
+identical fee schedules across documentation, CLI output and the JavaScript control
+panel.
 Poverty Fund
 Allocation: 5% of the entire LoanPool
 Purpose: Alleviate poverty through targeted financial support.

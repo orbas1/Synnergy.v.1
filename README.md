@@ -48,8 +48,12 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Resource-managed CLI** – connection pool commands can release individual peers and `contractopcodes` reports gas costs for contract operations.
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
+
+- **Enterprise orchestrator** – Stage 78 introduces `core.NewEnterpriseOrchestrator` and the `synnergy orchestrator` CLI to unify VM readiness, consensus relayers, wallet bootstrap, authority registry state and gas documentation with telemetry for CLI and web dashboards. Stage 82 adds the `synnergy orchestrator bootstrap` command, shared orchestrator injection for CLI/web tooling, richer diagnostics (wallet seal, relayer count, authority roles, gas sync time) and execution hooks that log opcode failures for fault-tolerant recovery.
+=======
 - **Enterprise orchestrator** – Stage 78 introduces `core.NewEnterpriseOrchestrator` and the `synnergy orchestrator` CLI to unify VM readiness, consensus relayers, wallet bootstrap, authority registry state and gas documentation with telemetry for CLI and web dashboards.
 - **Enterprise special node** – Stage 79 bundles heterogeneous infrastructure via `core.NewEnterpriseSpecialNode`, exposing `synnergy enterprise-special` commands, deterministic Stage 79 gas schedule entries and matching opcodes for attach, broadcast, snapshot and ledger aggregation flows.
+
 - **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
 - **Resilient node primitives** – forensic nodes prune over-capacity logs, full node modes are mutex-protected, gateway endpoints require a running node, and failover managers can remove stale peers.
 - **Thread-safe mempools and plasma bridge safeguards** – node mempools are mutex-protected for concurrent submissions and Plasma bridge operations surface explicit paused errors.
@@ -92,6 +96,16 @@ pkg/          Reusable libraries and experimental modules
 
 ## Bootstrap Sequence
 `cmd/synnergy/main.go` orchestrates start-up:
+
+1. Load environment variables with `gotenv.Load()` and create an interrupt-aware context via `signal.NotifyContext`.
+2. Initialise a tracer provider (`otel.SetTracerProvider`) so all modules can emit spans safely.
+3. Load configuration with `config.Load` and validate log destinations, formats and levels via `configureLogging`.
+4. Call `bootstrapRuntime` to start the shared VM, pre-warm module registries (authority, DAO, bridge, sandbox, wallet, tokens, security) and register shutdown hooks.
+5. Attach a VM execution hook that logs failed opcodes with opcode name, gas cost and remaining gas to aid incident response.
+6. Execute `registerEnterpriseGasMetadata()` to ensure the Stage 78 enterprise schedule is enforced and that every documented opcode has descriptive metadata for the CLI and web dashboards.
+7. Instantiate `core.NewEnterpriseOrchestrator`, run `EnterpriseBootstrap` to verify VM, consensus, wallet, ledger and authority readiness, then inject the orchestrator into the CLI for reuse by the JavaScript control panel.
+8. Finally, invoke `cli.Execute()` to dispatch Cobra commands.
+=======
 1. Load environment variables with `gotenv.Load()`.
 2. Resolve configuration path from `SYN_CONFIG` or `config.DefaultConfigPath`.
 3. Parse YAML via `config.Load` and configure logging.
@@ -105,8 +119,10 @@ pkg/          Reusable libraries and experimental modules
    - Token constructors in `internal/tokens` (`tokens.NewSYN223Token`, etc.)
 7. Finally, invoke `cli.Execute()` to dispatch Cobra commands.
 
+
 Enterprise deployments rely on the defensive modules initialised above:
 
+- **Enterprise bootstrap orchestration** – `core.NewEnterpriseOrchestrator` runs `EnterpriseBootstrap` during start-up, sealing the orchestrator wallet, validating consensus relayers, auditing the ledger and publishing diagnostics (wallet seal, relayer count, authority roles, gas sync time) to both the CLI and the JavaScript control panel.
 - **Warfare node telemetry** – `core.NewWarfareNode` now issues per-commander key pairs, enforces signed command envelopes with
   replay protection, and streams logistics/tactical events to both CLI (`synnergy warfare events`) and the web console.
 - **Watchtower observability** – `core.NewWatchtowerNode` emits start/stop/fork alerts alongside periodic metric snapshots via
@@ -240,12 +256,22 @@ across CI, staging and developer laptops.
 Stage 78 upgrades the runtime with a hardened enterprise orchestrator that validates end-to-end readiness across the virtual machine, consensus mesh, wallets, node registries and gas documentation. The orchestrator powers the `synnergy orchestrator` CLI and exports JSON suitable for the function web dashboards so operators can embed live diagnostics into existing tooling.
 
 ```bash
+./synnergy orchestrator bootstrap       # Stage 78/82 readiness, VM + ledger audit
 ./synnergy orchestrator status          # human-readable snapshot
 ./synnergy orchestrator status --json   # machine-readable diagnostics
 ./synnergy orchestrator sync            # refresh gas schedule & authority counts
 ```
 
-Diagnostics confirm VM mode and concurrency, consensus network registration, wallet provenance, authority node totals, and whether Stage 78 opcodes are documented with enterprise-grade gas costs. Results surface through the updated Next.js API (`web/pages/api/orchestrator.js`) and dashboard widgets on the control panel home page, ensuring parity between CLI automation and browser operations. Stress, situational and real-world tests under `core/enterprise_orchestrator_test.go` and `cli/orchestrator_test.go` assert fault tolerance, security controls and regulatory alignment, keeping performance predictable even under high-throughput workloads.
+Diagnostics confirm VM mode and concurrency, consensus network registration,
+wallet provenance, authority role distribution, consensus relayer totals, gas
+synchronisation timestamps and whether Stage 78 opcodes remain documented with
+enterprise-grade gas costs. Stage 82 extends the CLI and Next.js control panel
+(`web/pages/api/orchestrator.js`) with these fields so automation can block
+transactions if the orchestrator wallet is unsealed or relayers are missing.
+Stress, situational and real-world tests under `core/enterprise_orchestrator_test.go`
+and `cli/orchestrator_test.go` assert fault tolerance, security controls and
+regulatory alignment, while VM execution hooks log opcode failures with gas
+context to aid debugging during high-throughput workloads.
 
 ## Stage 79 Enterprise Special Node
 Stage 79 introduces the enterprise special node – a combined control surface that plugs multiple node roles into a single enterprise endpoint. The `core.NewEnterpriseSpecialNode` constructor ensures the Stage 79 gas schedule is synchronised and exposes helpers such as `EnterpriseSpecialAttach`, `EnterpriseSpecialBroadcast`, `EnterpriseSpecialSnapshot` and `EnterpriseSpecialLedger` so VM opcodes, the CLI and the GUI reference the same deterministic operations.

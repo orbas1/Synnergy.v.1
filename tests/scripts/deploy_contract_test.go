@@ -14,7 +14,11 @@ func TestDeployContractNoArgs(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected error when running without args")
 	}
-	if !strings.Contains(string(out), "Usage:") {
+	body := string(out)
+	if !strings.Contains(body, "--wasm is required") {
+		t.Fatalf("expected missing wasm message, got: %s", out)
+	}
+	if !strings.Contains(body, "Usage:") {
 		t.Fatalf("expected usage output, got: %s", out)
 	}
 }
@@ -45,7 +49,7 @@ func TestDeployContractMissingBinary(t *testing.T) {
 	if err == nil {
 		t.Fatalf("expected error for missing binary")
 	}
-	if !strings.Contains(string(out), "binary not found") {
+	if !strings.Contains(string(out), "SYN_CLI_BIN is not executable") {
 		t.Fatalf("expected binary not found message, got: %s", out)
 	}
 }

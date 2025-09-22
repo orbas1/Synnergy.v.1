@@ -9,6 +9,19 @@ This guide provides an expanded orientation for contributors who want to
 understand or extend the runtime.  It groups related modules and highlights
 their responsibilities, common interactions and supporting documentation.
 
+## Stage 82 Module Coordination
+
+Stage 82 tightens the integration between modules that previously operated
+independently. `bootstrapRuntime` now initialises the authority registry,
+consensus manager, VM sandbox, secrets manager, wallet services and token suite
+in a single routine. `registerEnterpriseGasMetadata` guarantees that contract,
+storage, DAO, wallet, node and orchestrator modules share the same gas metadata,
+while `configureLogging` validates logging expectations before any module emits
+telemetry. The new `EnterpriseOrchestrator` helpers expose module state through
+`synnergy orchestrator bootstrap`, and execution hooks surface VM failures to the
+log pipeline so maintainers can trace issues back to the originating module
+without enabling verbose debug builds.
+
 ## Directory Orientation
 
 ```

@@ -3,6 +3,19 @@
 
 This guide documents the utility scripts located in `cmd/scripts`. Each script wraps common `synnergy` CLI commands to showcase typical workflows and to help automate repetitive tasks during development. The collection now includes helpers for the faucet service, DAO voting, marketplace listings and storage deals. A working Go toolchain and the compiled `synnergy` binary are required.
 
+## Stage 82 Automation Updates
+
+Stage 82 integrates the enterprise bootstrap flow into the script toolbox. The
+`devnet_start.sh` and `bootstrap_network.sh` helpers now call `synnergy orchestrator
+bootstrap` as their first step, ensuring the heavy VM, wallet, consensus relayers
+and ledger audit are initialised before any subsequent commands run. Script
+output records the orchestrator diagnostics—including wallet seal state,
+consensus relayer count and gas synchronisation time—so operators can capture the
+same context exported by the JavaScript control panel. Logging and gas metadata
+are validated at bootstrap through the new `configureLogging` and
+`registerEnterpriseGasMetadata` helpers, reducing the chance of misconfigured test
+runs.
+
 ## Prerequisites
 
 1. Run `./setup_synn.sh` to install Go and fetch project dependencies.

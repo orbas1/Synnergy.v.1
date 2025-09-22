@@ -2,6 +2,18 @@
 
 This guide explains how to deploy the Synnergy blockchain on a fresh Linux server and run its full test suite. The steps use the repository root `/workspace/Synnergy.v.1` but can be adapted for any path.
 
+## Stage 82 Readiness Checks
+
+Stage 82 streamlines server bring-up by folding the enterprise bootstrap flow
+into the recommended setup. After building the CLI, run `synnergy orchestrator
+bootstrap` to initialise the VM, synchronise consensus relayers, seal the wallet
+and perform a ledger audit. The command returns JSON diagnostics that mirror the
+JavaScript control panel—wallet seal state, consensus relayer count, authority
+role distribution and gas synchronisation timestamp—so automation can block
+deployments if any prerequisite fails. Logging destinations, formats and levels
+are validated via `configureLogging`, while `registerEnterpriseGasMetadata`
+ensures all nodes share the same gas schedule before integration tests execute.
+
 ## Prerequisites
 
 Prepare a server with the following software:

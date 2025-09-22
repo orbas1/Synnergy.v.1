@@ -7,6 +7,27 @@ Go and ships a collection of command line utilities alongside the core
 libraries.  The project focuses on extensibility rather than production
 readiness.  Further background can be found in [`WHITEPAPER.md`](../../WHITEPAPER.md).
 
+## Stage 82 Developer Update
+
+Stage 82 focuses on operational hardening so developers can exercise the full
+enterprise stack from the CLI, automated tests and the JavaScript control panel.
+`cmd/synnergy/main.go` now bootstraps the runtime through `bootstrapRuntime`,
+validates log configuration with `configureLogging`, registers deterministic gas
+metadata and injects a shared `EnterpriseOrchestrator` instance. The new
+`synnergy orchestrator bootstrap` command drives the Stage 78 opcodes—VM start,
+consensus synchronisation, wallet sealing, node audit and authority election—so
+integration tests and browser tooling can assert readiness with a single call.
+Execution hooks emit warnings for failed VM opcodes, and consensus relayer counts
+are exposed through the API and CLI to simplify observability.
+
+Tests were expanded accordingly: `core/enterprise_orchestrator_test.go` now
+contains unit, situational, stress and end-to-end bootstrap checks; `cmd/synnergy/main_test.go`
+verifies logging configuration and gas metadata registration; and the CLI suite
+includes coverage for the new bootstrap command. The web UI surfaces sealed
+wallet status, consensus relayer counts, authority role distribution and gas
+sync timestamps so developers can correlate CLI output with browser telemetry
+while debugging permissioned networks.
+
 The primary entrypoint is the `synnergy` binary which exposes a large set of
 sub‑commands through the
 [Cobra](https://github.com/spf13/cobra) framework. Development helpers in

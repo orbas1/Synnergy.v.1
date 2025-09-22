@@ -4,6 +4,19 @@
 
 Synnergy's contract platform executes WebAssembly (WASM) bytecode in a pluggable virtual machine. Contracts are registered through the on-chain `ContractRegistry` and executed deterministically with gas metering. This guide covers authoring, compiling, deploying and invoking contracts on a Synnergy node.
 
+## Stage 82 Execution Improvements
+
+Stage 82 adds safety rails for contract execution. `registerEnterpriseGasMetadata`
+ensures contract opcodes share the same descriptive metadata as the rest of the
+runtime, so the CLI, documentation and JavaScript control panel expose identical
+gas costs when deploying or invoking bytecode. `bootstrapRuntime` registers a VM
+execution hook that logs opcode failures with opcode names, gas cost and
+remaining gas, allowing auditors to trace problematic contracts without enabling
+debug instrumentation. During `synnergy orchestrator bootstrap` the heavy VM is
+started, the orchestrator wallet is sealed and the ledger is audited before any
+contract deployment occurs, giving developers confidence that WASM execution
+targets a verified environment.
+
 Contracts can be written in any language that compiles to WASM64. The repository includes Solidity examples compiled with a compatible toolchain. Rust and AssemblyScript are also common choices. Once compiled, bytecode is hashed to derive a deterministic contract address and may optionally include a Ricardian manifest binding legal terms to the code hash.
 
 ## Directory Structure
