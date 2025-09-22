@@ -32,6 +32,7 @@ make build
 - `synnergy zero-trust authorize <id> <participant> <pubkey>` – add a participant public key capable of pushing encrypted payloads
 - `synnergy zero-trust events <id> --since <seq>` – fetch channel lifecycle events (open, message, rotate, close) for monitoring pipelines
 - `synnergy zero-trust rotate <id> <hexkey>` – rotate the symmetric encryption key while retaining authorised participants
+- `synnergy gas list --json` – enumerate opcode pricing with Stage 91 metadata including categories and descriptions for dashboards
 
 ## Help
 Run `synnergy --help` or `synnergy <command> --help` for more details.
@@ -60,3 +61,13 @@ The root command provides options that apply to every sub-command:
 ## Sharding
 - `synnergy sharding leader set <id> <addr> --json` – assign a leader to a shard
 - `synnergy sharding map --json` – list shard-to-leader mappings
+
+## Stage 100 Automation Helpers
+
+- `scripts/devnet_start.sh` provisions a wallet-backed devnet, starts the
+  simple VM, bootstraps networking and adjusts consensus weights in one step.
+- `scripts/docker_build.sh` and `scripts/docker_compose_up.sh` provide
+  reproducible container builds with retry, logging and optional registry
+  pushes.
+- `scripts/e2e_network_tests.sh` runs a CLI-driven smoke test that asserts swarm
+  membership counts, weight balancing and broadcast health.

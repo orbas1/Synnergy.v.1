@@ -157,6 +157,9 @@ func (m *CrossChainManager) RegisterBridge(sourceChain, targetChain, relayerAddr
 	if bridge.Active {
 		atomic.AddUint64(&m.metrics.active, 1)
 	}
+	if relayerAddr != "" {
+		atomic.AddUint64(&m.metrics.authorizedRelay, 1)
+	}
 	m.emit(BridgeEvent{Type: BridgeEventRegistered, Bridge: *bridge, Relayer: relayerAddr, Timestamp: now})
 	if relayerAddr != "" {
 		atomic.AddUint64(&m.metrics.authorizedRelay, 1)
@@ -252,12 +255,25 @@ func (m *CrossChainManager) AuthorizeBridgeRelayer(id, addr string) error {
 	if bridge.Relayers == nil {
 		bridge.Relayers = make(map[string]struct{})
 	}
+	if _, exists := bridge.Relayers[addr]; exists {
+		bridge.UpdatedAt = now
+		snapshot := *bridge
+		m.mu.Unlock()
+		m.emit(BridgeEvent{Type: BridgeEventRelayerAuthorized, Bridge: snapshot, Relayer: addr, Timestamp: now})
+		return nil
+	}
 	bridge.Relayers[addr] = struct{}{}
 	bridge.UpdatedAt = now
+	if m.relayers == nil {
+		m.relayers = make(map[string]struct{})
+	}
+	if _, exists := m.relayers[addr]; !exists {
+		m.relayers[addr] = struct{}{}
+		atomic.AddUint64(&m.metrics.authorizedRelay, 1)
+	}
 	snapshot := *bridge
 	m.mu.Unlock()
 
-	atomic.AddUint64(&m.metrics.authorizedRelay, 1)
 	m.emit(BridgeEvent{Type: BridgeEventRelayerAuthorized, Bridge: snapshot, Relayer: addr, Timestamp: now})
 	return nil
 }

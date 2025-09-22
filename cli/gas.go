@@ -1,15 +1,16 @@
 package cli
 
 import (
+	"bytes"
 	"fmt"
+	"text/tabwriter"
 
 	"github.com/spf13/cobra"
-	"synnergy/core"
+	synn "synnergy"
 )
 
 var (
-	gasTable = core.DefaultGasTable()
-	gasCmd   = &cobra.Command{
+	gasCmd = &cobra.Command{
 		Use:   "gas",
 		Short: "Interact with gas table",
 	}
@@ -21,11 +22,23 @@ func init() {
 		Short: "List gas costs",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("GasList")
-			out := map[string]uint64{}
-			for op, cost := range gasTable {
-				out[fmt.Sprintf("%v", op)] = cost
+			entries := synn.GasCatalogue()
+			if jsonOutput {
+				printOutput(entries)
+				return
 			}
-			printOutput(out)
+			buf := &bytes.Buffer{}
+			tw := tabwriter.NewWriter(buf, 0, 0, 2, ' ', 0)
+			fmt.Fprintln(tw, "OPCODE\tCOST\tCATEGORY\tDESCRIPTION")
+			for _, entry := range entries {
+				desc := entry.Description
+				if desc == "" {
+					desc = "-"
+				}
+				fmt.Fprintf(tw, "%s\t%d\t%s\t%s\n", entry.Name, entry.Cost, entry.Category, desc)
+			}
+			tw.Flush()
+			fmt.Print(buf.String())
 		},
 	}
 	gasCmd.AddCommand(listCmd)
