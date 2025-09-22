@@ -1,11 +1,11 @@
 package core
 
 import (
-        "context"
-        "fmt"
-        "math"
-        "testing"
-        "time"
+	"context"
+	"fmt"
+	"math"
+	"testing"
+	"time"
 )
 
 func registerTestValidator(t *testing.T) *Wallet {
@@ -91,7 +91,7 @@ func TestSelectValidatorMajorityStake(t *testing.T) {
 }
 
 func TestFinalizeBlockRewards(t *testing.T) {
-        sc := NewSynnergyConsensus()
+	sc := NewSynnergyConsensus()
 	tx := NewTransaction("a", "b", 1, 0, 0)
 	w := registerTestValidator(t)
 	sb := NewSubBlock([]*Transaction{tx}, w.Address)
@@ -111,78 +111,92 @@ func TestFinalizeBlockRewards(t *testing.T) {
 }
 
 func TestChooseChainPrefersWellFinalizedChain(t *testing.T) {
-        sc := NewSynnergyConsensus()
-        now := time.Now().Unix()
+	sc := NewSynnergyConsensus()
+	now := time.Now().Unix()
 
-        chainA := []*Block{
-                testConsensusBlock(nil, now, true, "valA1", 5),
-        }
-        chainA = append(chainA, testConsensusBlock(chainA[len(chainA)-1], now+12, true, "valA2", 6))
-        chainA = append(chainA, testConsensusBlock(chainA[len(chainA)-1], now+24, true, "valA3", 6))
+	chainA := []*Block{
+		testConsensusBlock(nil, now, true, "valA1", 5),
+	}
+	chainA = append(chainA, testConsensusBlock(chainA[len(chainA)-1], now+12, true, "valA2", 6))
+	chainA = append(chainA, testConsensusBlock(chainA[len(chainA)-1], now+24, true, "valA3", 6))
 
-        chainB := []*Block{
-                testConsensusBlock(nil, now-600, false, "valB", 2),
-        }
-        chainB = append(chainB, testConsensusBlock(chainB[len(chainB)-1], now-420, false, "valB", 2))
-        chainB = append(chainB, testConsensusBlock(chainB[len(chainB)-1], now-240, false, "valB", 2))
-        chainB = append(chainB, testConsensusBlock(chainB[len(chainB)-1], now-60, false, "valB", 1))
+	chainB := []*Block{
+		testConsensusBlock(nil, now-600, false, "valB", 2),
+	}
+	chainB = append(chainB, testConsensusBlock(chainB[len(chainB)-1], now-420, false, "valB", 2))
+	chainB = append(chainB, testConsensusBlock(chainB[len(chainB)-1], now-240, false, "valB", 2))
+	chainB = append(chainB, testConsensusBlock(chainB[len(chainB)-1], now-60, false, "valB", 1))
 
-        selected := sc.ChooseChain([][]*Block{chainB, chainA})
-        if selected == nil || selected[0] != chainA[0] {
-                t.Fatalf("expected chainA to be selected")
-        }
+	selected := sc.ChooseChain([][]*Block{chainB, chainA})
+	if selected == nil || selected[0] != chainA[0] {
+		t.Fatalf("expected chainA to be selected")
+	}
 }
 
 func TestChooseChainSkipsInvalidCandidates(t *testing.T) {
-        sc := NewSynnergyConsensus()
-        now := time.Now().Unix()
+	sc := NewSynnergyConsensus()
+	now := time.Now().Unix()
 
-        valid := []*Block{
-                testConsensusBlock(nil, now, true, "val1", 3),
-                testConsensusBlock(nil, now+20, true, "val2", 3),
-        }
-        // fix prev hash linkage for valid chain
-        valid[1].PrevHash = valid[0].Hash
-        valid[1].Hash = valid[1].HeaderHash(valid[1].Nonce)
+	valid := []*Block{
+		testConsensusBlock(nil, now, true, "val1", 3),
+		testConsensusBlock(nil, now+20, true, "val2", 3),
+	}
+	// fix prev hash linkage for valid chain
+	valid[1].PrevHash = valid[0].Hash
+	valid[1].Hash = valid[1].HeaderHash(valid[1].Nonce)
 
-        invalid := []*Block{
-                testConsensusBlock(nil, now+100, false, "valX", 1),
-                testConsensusBlock(nil, now+90, false, "valX", 1), // timestamp regression
-        }
+	invalid := []*Block{
+		testConsensusBlock(nil, now+100, false, "valX", 1),
+		testConsensusBlock(nil, now+90, false, "valX", 1), // timestamp regression
+	}
 
-        selected := sc.ChooseChain([][]*Block{invalid, valid})
-        if selected == nil || selected[0] != valid[0] {
-                t.Fatalf("expected valid chain to be selected when competitor invalid")
-        }
+	selected := sc.ChooseChain([][]*Block{invalid, valid})
+	if selected == nil || selected[0] != valid[0] {
+		t.Fatalf("expected valid chain to be selected when competitor invalid")
+	}
+}
+
+func TestChooseChainRejectsExcessiveFutureTimestamp(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	baseline := time.Now().Add(-time.Minute)
+	origNow := consensusNow
+	consensusNow = func() time.Time { return baseline }
+	t.Cleanup(func() { consensusNow = origNow })
+
+	future := baseline.Add(maxFutureDrift + 5*time.Second)
+	futureBlock := testConsensusBlock(nil, future.Unix(), true, "future", 3)
+	if chain := sc.ChooseChain([][]*Block{{futureBlock}}); chain != nil {
+		t.Fatalf("expected chain to be rejected due to future drift allowance")
+	}
 }
 
 func testConsensusBlock(prev *Block, timestamp int64, finalized bool, validator string, txCount int) *Block {
-        txs := make([]*Transaction, txCount)
-        for i := range txs {
-                txs[i] = &Transaction{
-                        ID:     fmt.Sprintf("%s-tx-%d-%d", validator, timestamp, i),
-                        From:   validator,
-                        To:     fmt.Sprintf("recipient-%d", i),
-                        Amount: 1,
-                }
-        }
-        sb := NewSubBlock(txs, validator)
-        if timestamp > 0 {
-                sb.Timestamp = timestamp - 1
-                sb.PohHash = sb.Hash()
-                sb.Signature = signSubBlock(sb.Validator, sb.PohHash)
-        }
-        blk := NewBlock([]*SubBlock{sb}, "")
-        if prev != nil {
-                blk.PrevHash = prev.Hash
-        }
-        if timestamp > 0 {
-                blk.Timestamp = timestamp
-        }
-        blk.Nonce = uint64(txCount + 1)
-        blk.Hash = blk.HeaderHash(blk.Nonce)
-        blk.Finalized = finalized
-        return blk
+	txs := make([]*Transaction, txCount)
+	for i := range txs {
+		txs[i] = &Transaction{
+			ID:     fmt.Sprintf("%s-tx-%d-%d", validator, timestamp, i),
+			From:   validator,
+			To:     fmt.Sprintf("recipient-%d", i),
+			Amount: 1,
+		}
+	}
+	sb := NewSubBlock(txs, validator)
+	if timestamp > 0 {
+		sb.Timestamp = timestamp - 1
+		sb.PohHash = sb.Hash()
+		sb.Signature = signSubBlock(sb.Validator, sb.PohHash)
+	}
+	blk := NewBlock([]*SubBlock{sb}, "")
+	if prev != nil {
+		blk.PrevHash = prev.Hash
+	}
+	if timestamp > 0 {
+		blk.Timestamp = timestamp
+	}
+	blk.Nonce = uint64(txCount + 1)
+	blk.Hash = blk.HeaderHash(blk.Nonce)
+	blk.Finalized = finalized
+	return blk
 }
 
 func TestValidateSubBlock(t *testing.T) {
