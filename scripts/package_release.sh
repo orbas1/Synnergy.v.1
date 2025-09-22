@@ -1,38 +1,92 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+# shellcheck source=lib/common.sh
+source "$SCRIPT_DIR/lib/common.sh"
+
 usage() {
   cat <<'USAGE'
-Usage: $(basename "$0") [version]
-Builds the synnergy binary and packages it with checksums for release.
+Build and package the Synnergy CLI for release.
 
-Arguments:
-  version  Optional version tag to embed in archive name.
+Usage: package_release.sh [--version VERSION] [--output DIR] [--skip-tests]
+                          [--sign]
+
+Options:
+  --version VERSION  Semantic version tag applied to artifacts (default: 0.0.0-dev).
+  --output DIR       Directory to store build artifacts (default: ./dist).
+  --skip-tests       Skip running go test ./... prior to packaging.
+  --sign             Generate SHA512 digest for release_sign_verify.sh.
+  -h, --help         Show this help message.
 USAGE
 }
 
-if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
-  usage
-  exit 0
+VERSION="0.0.0-dev"
+OUTPUT_DIR="$ROOT_DIR/dist"
+SKIP_TESTS=false
+SIGN=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --version)
+      VERSION=$2
+      shift 2
+      ;;
+    --output)
+      OUTPUT_DIR=$2
+      shift 2
+      ;;
+    --skip-tests)
+      SKIP_TESTS=true
+      shift
+      ;;
+    --sign)
+      SIGN=true
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      usage
+      fail "unknown flag $1"
+      ;;
+  esac
+done
+
+require_commands go tar
+mkdir -p "$OUTPUT_DIR"
+
+if [[ $SKIP_TESTS == false ]]; then
+  log_info "Running go test ./..."
+  (
+    cd "$ROOT_DIR"
+    go test ./...
+  )
 fi
 
-VERSION="${1:-latest}"
+log_info "Building synnergy CLI"
+(
+  cd "$ROOT_DIR"
+  go build -o "$OUTPUT_DIR/synnergy" ./cmd/synnergy
+)
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_DIR="$SCRIPT_DIR/.."
-DIST_DIR="$ROOT_DIR/dist/$VERSION"
-BIN_NAME="synnergy"
+ARCHIVE="$OUTPUT_DIR/synnergy-$VERSION.tar.gz"
+log_info "Creating archive $ARCHIVE"
+(
+  cd "$OUTPUT_DIR"
+  tar -czf "$(basename "$ARCHIVE")" synnergy
+)
 
-mkdir -p "$DIST_DIR"
-cd "$ROOT_DIR"
+if [[ $SIGN == true ]]; then
+  require_commands openssl
+  log_info "Generating SHA512 digest"
+  (
+    cd "$OUTPUT_DIR"
+    openssl dgst -sha512 "$(basename "$ARCHIVE")" >"$(basename "$ARCHIVE").sha512"
+  )
+fi
 
-echo "Building $BIN_NAME..."
-go build -o "$DIST_DIR/$BIN_NAME" ./cmd/synnergy
-
-echo "Packaging artifacts..."
-tar -C "$DIST_DIR" -czf "$DIST_DIR/${BIN_NAME}_${VERSION}.tar.gz" "$BIN_NAME"
-
-echo "Generating checksums..."
-sha256sum "$DIST_DIR/${BIN_NAME}_${VERSION}.tar.gz" > "$DIST_DIR/${BIN_NAME}_${VERSION}.tar.gz.sha256"
-
-echo "Release package created at $DIST_DIR"
+log_info "Package build complete"

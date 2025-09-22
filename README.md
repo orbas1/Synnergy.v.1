@@ -14,6 +14,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
   - [Multi-node Devnet](#multi-node-devnet)
 - [CLI Modules](#cli-modules)
 - [Stage 78 Enterprise Diagnostics](#stage-78-enterprise-diagnostics)
+- [Stage 103 Operational Runbooks](#stage-103-operational-runbooks)
 - [Production Deployment](#production-deployment)
   - [Docker Compose](#docker-compose)
   - [Kubernetes (Helm)](#kubernetes-helm)
@@ -114,6 +115,27 @@ Enterprise deployments rely on the defensive modules initialised above:
 - **Zero-trust data channels** – `core.NewZeroTrustEngine` orchestrates encrypted channels with participant governance,
   key rotation and retention controls. CLI helpers (`synnergy zero-trust authorize`, `rotate`, `events`) expose the
   same lifecycle flows used by automation scripts and the browser UI.
+
+## Stage 103 Operational Runbooks
+
+Stage 103 introduces hardened automation for the CLI, VM, consensus and wallet layers. All scripts live in `scripts/` and emit
+structured logs for the Function Web UX:
+
+- `scripts/mining_node_setup.sh` provisions and monitors mining workers, warms mempools and verifies `MiningStatus` gas costs.
+- `scripts/mobile_mining_node_setup.sh` calibrates mobile mining nodes with adaptive power budgets and streaming telemetry.
+- `scripts/node_setup.sh` turns wallet addresses into fully staked validator nodes with optional miner activation.
+- `scripts/multi_node_cluster_setup.sh` bootstraps local clusters, generates topology manifests and seeds network peers.
+- `scripts/network_diagnostics.sh`, `network_harness.sh`, `network_migration.sh` and `network_partition_test.sh` expose fault
+  tolerance drills and record JSON artefacts for observability pipelines.
+- `scripts/mint_nft.sh`, `private_transactions.sh` and `proposal_lifecycle.sh` orchestrate marketplace, privacy and DAO
+  governance lifecycles with deterministic CLI signatures.
+- `scripts/regulatory_node_setup.sh` and `regulatory_report.sh` synchronise the regulatory manager, wallet signatures and
+  compliance reporting.
+- `scripts/package_release.sh`, `performance_regression.sh`, `pki_setup.sh` and `release_sign_verify.sh` deliver enterprise
+  build, benchmark, PKI and signing workflows ensuring binaries, certificates and archives remain verifiable.
+
+Each runbook sources `scripts/lib/common.sh`, which standardises logging, retries, secure file handling and CLI discovery so the
+tooling remains consistent across air-gapped environments and CI/CD pipelines.
 
 ## Getting Started
 

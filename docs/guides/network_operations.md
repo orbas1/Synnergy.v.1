@@ -4,8 +4,12 @@ This guide outlines day‑to‑day tasks for running Synnergy nodes and maintain
 
 ## Joining the Network
 
-1. Follow the [Node Setup Guide](node_setup.md).
-2. Register your node using `synnergy node register`.
+1. Run `scripts/node_setup.sh --start-mining` to provision a wallet, stake funds,
+   grant the validator role and start the miner with Function Web telemetry
+   enabled. The script wraps the CLI workflow documented in the Node Setup Guide
+   and emits JSON suitable for automation pipelines.
+2. Register your node using `synnergy node register` if you need deterministic
+   peer IDs for static peering.
 3. Open required ports and configure firewalls.
 
 ## Staking
@@ -22,15 +26,25 @@ This guide outlines day‑to‑day tasks for running Synnergy nodes and maintain
 
 ## Monitoring
 
-- Use `synnergy health status` for local checks.
+- Use `synnergy health status` for local checks and
+  `scripts/network_diagnostics.sh --iterations 10` to record JSON snapshots of
+  peer availability. The diagnostics script is resilient to transient failures
+  and retries operations with exponential back‑off.
 - Aggregated dashboards are available via the node operations dashboard GUI.
-- Logs are written to `logs/`; rotate them periodically.
+- Logs are written to `logs/`; rotate them periodically. The
+  `scripts/network_harness.sh` utility exercises broadcast, consensus and mining
+  pipelines to validate alerting configurations after upgrades.
 
 ## Upgrades
 
-- Pull new releases and run `go build` to update the binary.
-- Restart the node with minimal downtime using systemd or Docker restarts.
-- Follow release notes for any required migrations.
+- Pull new releases and run `scripts/package_release.sh --version <tag>` to
+  execute the vetted build pipeline. Use `scripts/release_sign_verify.sh` to sign
+  or verify release archives before deployment.
+- When migrating between releases, execute `scripts/network_migration.sh` to
+  capture pre/post peer snapshots and validate that consensus continues to
+  produce blocks through a rolling restart.
+- For full failover drills, run `scripts/network_partition_test.sh` to simulate
+  a partition and confirm that the network recovers with acceptable gas costs.
 
 ## Key Management
 

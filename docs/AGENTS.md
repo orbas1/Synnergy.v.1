@@ -2273,26 +2273,26 @@ Stage 79 complete: runtime bootstrap aligned CLI, VM, consensus, ledger and wall
 - [ ] scripts/metrics_alert_dispatch.sh
 - [ ] scripts/metrics_export.sh
 
-**Stage 103**
-- [ ] scripts/mining_node_setup.sh
-- [ ] scripts/mint_nft.sh
-- [ ] scripts/mobile_mining_node_setup.sh
-- [ ] scripts/multi_factor_setup.sh
-- [ ] scripts/multi_node_cluster_setup.sh
-- [ ] scripts/network_diagnostics.sh
-- [ ] scripts/network_harness.sh
-- [ ] scripts/network_migration.sh
-- [ ] scripts/network_partition_test.sh
-- [ ] scripts/node_setup.sh
-- [ ] scripts/optimization_node_setup.sh
-- [ ] scripts/package_release.sh
-- [ ] scripts/performance_regression.sh
-- [ ] scripts/pki_setup.sh
-- [ ] scripts/private_transactions.sh
-- [ ] scripts/proposal_lifecycle.sh
-- [ ] scripts/regulatory_node_setup.sh
-- [ ] scripts/regulatory_report.sh
-- [ ] scripts/release_sign_verify.sh
+**Stage 103 ✅** – Enterprise automation scripts wired to CLI/VM modules, gas-safe runbooks documented in README and network guide updated.
+- [x] scripts/mining_node_setup.sh
+- [x] scripts/mint_nft.sh
+- [x] scripts/mobile_mining_node_setup.sh
+- [x] scripts/multi_factor_setup.sh
+- [x] scripts/multi_node_cluster_setup.sh
+- [x] scripts/network_diagnostics.sh
+- [x] scripts/network_harness.sh
+- [x] scripts/network_migration.sh
+- [x] scripts/network_partition_test.sh
+- [x] scripts/node_setup.sh
+- [x] scripts/optimization_node_setup.sh
+- [x] scripts/package_release.sh
+- [x] scripts/performance_regression.sh
+- [x] scripts/pki_setup.sh
+- [x] scripts/private_transactions.sh
+- [x] scripts/proposal_lifecycle.sh
+- [x] scripts/regulatory_node_setup.sh
+- [x] scripts/regulatory_report.sh
+- [x] scripts/release_sign_verify.sh
 
 **Stage 104**
 - [ ] scripts/restore_disaster_recovery.sh
