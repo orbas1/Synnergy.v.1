@@ -39,11 +39,17 @@ func TestLoanPoolProposalLifecycle(t *testing.T) {
 	if err := appMgr.Disburse(appID); err != nil {
 		t.Fatalf("app disburse: %v", err)
 	}
+	if err := appMgr.Disburse(appID); err == nil {
+		t.Fatalf("expected error on second disbursement")
+	}
 	appView, ok := appMgr.ApplicationInfo(appID)
 	if !ok || appView.ID != appID || appView.Votes != 1 {
 		t.Fatalf("unexpected application view")
 	}
 	if len(appMgr.ApplicationViews()) != 1 {
 		t.Fatalf("expected one application view")
+	}
+	if balance := lp.TreasuryBalance(); balance != 850 {
+		t.Fatalf("unexpected treasury balance: %d", balance)
 	}
 }

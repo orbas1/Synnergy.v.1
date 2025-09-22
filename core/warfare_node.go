@@ -308,7 +308,7 @@ func (w *WarfareNode) snapshotConsensus() ConsensusSnapshot {
 	if w.Node == nil || w.Node.Consensus == nil {
 		return ConsensusSnapshot{}
 	}
-	weights := w.Node.Consensus.Weights
+	weights := w.Node.Consensus.WeightsSnapshot()
 	return ConsensusSnapshot{PoW: weights.PoW, PoS: weights.PoS, PoH: weights.PoH}
 }
 

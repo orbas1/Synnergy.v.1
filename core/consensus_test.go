@@ -18,12 +18,61 @@ func TestAdjustWeightsAndAvailability(t *testing.T) {
 	sc := NewSynnergyConsensus()
 	sc.SetAvailability(true, false, true)
 	sc.AdjustWeights(0.5, 0.5)
-	if sc.Weights.PoS != 0 {
+	weights := sc.WeightsSnapshot()
+	if weights.PoS != 0 {
 		t.Fatalf("PoS weight should be zero when unavailable")
 	}
-	total := sc.Weights.PoW + sc.Weights.PoS + sc.Weights.PoH
+	total := weights.PoW + weights.PoS + weights.PoH
 	if math.Abs(total-1) > 1e-9 {
 		t.Fatalf("weights not normalized")
+	}
+}
+
+func TestSetAvailabilityRebalancesWeights(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	sc.SetWeights(ConsensusWeights{PoW: 0.6, PoS: 0.3, PoH: 0.1})
+	sc.SetAvailability(false, true, true)
+	weights := sc.WeightsSnapshot()
+	if weights.PoW != 0 {
+		t.Fatalf("PoW weight should drop to zero when unavailable")
+	}
+	if diff := math.Abs(weights.PoS - 0.75); diff > 1e-9 {
+		t.Fatalf("unexpected PoS weight: %f", weights.PoS)
+	}
+	if diff := math.Abs(weights.PoH - 0.25); diff > 1e-9 {
+		t.Fatalf("unexpected PoH weight: %f", weights.PoH)
+	}
+}
+
+func TestDisablePoWRewardsRescalesWeights(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	sc.SetWeights(ConsensusWeights{PoW: 0.4, PoS: 0.4, PoH: 0.2})
+	sc.SetPoWRewards(false)
+	weights := sc.WeightsSnapshot()
+	if weights.PoW != 0 {
+		t.Fatalf("PoW weight should be zero when rewards disabled")
+	}
+	if diff := math.Abs(weights.PoS - 2.0/3.0); diff > 1e-9 {
+		t.Fatalf("unexpected PoS weight: %f", weights.PoS)
+	}
+	if diff := math.Abs(weights.PoH - 1.0/3.0); diff > 1e-9 {
+		t.Fatalf("unexpected PoH weight: %f", weights.PoH)
+	}
+}
+
+func TestAvailabilityRestoresUniformWeightsWhenZero(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	sc.SetWeights(ConsensusWeights{})
+	sc.SetAvailability(true, true, false)
+	weights := sc.WeightsSnapshot()
+	if diff := math.Abs(weights.PoW - 0.5); diff > 1e-9 {
+		t.Fatalf("expected PoW weight 0.5, got %f", weights.PoW)
+	}
+	if diff := math.Abs(weights.PoS - 0.5); diff > 1e-9 {
+		t.Fatalf("expected PoS weight 0.5, got %f", weights.PoS)
+	}
+	if weights.PoH != 0 {
+		t.Fatalf("PoH should remain zero when unavailable")
 	}
 }
 

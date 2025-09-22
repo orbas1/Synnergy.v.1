@@ -1,6 +1,16 @@
 package core
 
-import "sync"
+import (
+	"errors"
+	"sync"
+)
+
+var (
+	errNetworkStopped = errors.New("network not running")
+	errNilTransaction = errors.New("transaction required")
+)
+
+const networkQueueSize = 256
 
 // Network manages communication between nodes and relay nodes. It also queues
 // transactions for asynchronous broadcasting and integrates biometric
@@ -39,7 +49,7 @@ func (n *Network) Start() {
 	if n.running {
 		return
 	}
-	n.queue = make(chan *Transaction, 100)
+	n.queue = make(chan *Transaction, networkQueueSize)
 	n.quit = make(chan struct{})
 	n.running = true
 	n.wg.Add(1)
@@ -53,17 +63,22 @@ func (n *Network) Stop() {
 		n.mu.Unlock()
 		return
 	}
-	close(n.quit)
+	quit := n.quit
+	n.running = false
+	n.quit = nil
 	n.mu.Unlock()
+	close(quit)
 	n.wg.Wait()
 	n.mu.Lock()
-	n.running = false
 	n.queue = nil
 	n.mu.Unlock()
 }
 
 // AddNode adds a regular node to the network.
 func (n *Network) AddNode(node *Node) {
+	if node == nil {
+		return
+	}
 	n.mu.Lock()
 	defer n.mu.Unlock()
 	n.nodes[node.ID] = node
@@ -71,6 +86,9 @@ func (n *Network) AddNode(node *Node) {
 
 // AddRelay adds a relay node used for extended propagation and redundancy.
 func (n *Network) AddRelay(node *Node) {
+	if node == nil {
+		return
+	}
 	n.mu.Lock()
 	defer n.mu.Unlock()
 	n.relays[node.ID] = node
@@ -92,24 +110,20 @@ func (n *Network) Peers() []string {
 
 // EnqueueTransaction places a transaction into the broadcast queue.
 func (n *Network) EnqueueTransaction(tx *Transaction) {
-	n.mu.RLock()
-	running := n.running
-	ch := n.queue
-	n.mu.RUnlock()
-	if running {
-		ch <- tx
-	}
+	_ = n.tryEnqueue(tx)
 }
 
 // Broadcast verifies biometric data, attaches it to the transaction, and enqueues
 // the transaction for network propagation. If biometric verification fails an
 // error is returned and the transaction is not broadcast.
 func (n *Network) Broadcast(tx *Transaction, userID string, biometric []byte, sig []byte) error {
+	if tx == nil {
+		return errNilTransaction
+	}
 	if err := tx.AttachBiometric(userID, biometric, sig, n.auth); err != nil {
 		return err
 	}
-	n.EnqueueTransaction(tx)
-	return nil
+	return n.tryEnqueue(tx)
 }
 
 // Subscribe registers a listener for the given topic and returns a receive-only
@@ -150,6 +164,26 @@ func (n *Network) processQueue() {
 		case <-n.quit:
 			return
 		}
+	}
+}
+
+func (n *Network) tryEnqueue(tx *Transaction) error {
+	if tx == nil {
+		return errNilTransaction
+	}
+	n.mu.RLock()
+	running := n.running
+	ch := n.queue
+	quit := n.quit
+	n.mu.RUnlock()
+	if !running || ch == nil {
+		return errNetworkStopped
+	}
+	select {
+	case ch <- tx:
+		return nil
+	case <-quit:
+		return errNetworkStopped
 	}
 }
 

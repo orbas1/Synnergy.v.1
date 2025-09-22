@@ -20,12 +20,12 @@ func (n *ConsensusSpecificNode) configure() {
 	switch n.Mode {
 	case ModePoW:
 		n.Consensus.SetAvailability(true, false, false)
-		n.Consensus.Weights = ConsensusWeights{PoW: 1}
+		n.Consensus.SetWeights(ConsensusWeights{PoW: 1})
 	case ModePoS:
 		n.Consensus.SetAvailability(false, true, false)
-		n.Consensus.Weights = ConsensusWeights{PoS: 1}
+		n.Consensus.SetWeights(ConsensusWeights{PoS: 1})
 	case ModePoH:
 		n.Consensus.SetAvailability(false, false, true)
-		n.Consensus.Weights = ConsensusWeights{PoH: 1}
+		n.Consensus.SetWeights(ConsensusWeights{PoH: 1})
 	}
 }

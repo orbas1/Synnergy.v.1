@@ -265,7 +265,7 @@ func (w *Watchtower) RunIntegritySweep(ctx context.Context, maxMempool int) ([]W
 		events = append(events, ev)
 	}
 	if node.Consensus != nil {
-		weights := node.Consensus.Weights
+		weights := node.Consensus.WeightsSnapshot()
 		payload := map[string]string{
 			"pow": formatFloat(weights.PoW),
 			"pos": formatFloat(weights.PoS),
