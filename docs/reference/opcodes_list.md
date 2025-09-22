@@ -716,3 +716,10 @@ and warfare nodes as well as UI integrations.
 | `core_enterprise_orchestrator_RegisterConsensusNetwork` | `0x0004F8` |
 | `core_enterprise_orchestrator_RegisterAuthorityNode` | `0x0004F9` |
 | `core_enterprise_orchestrator_SyncGasSchedule` | `0x0004FA` |
+| `core_enterprise_special_node_NewEnterpriseSpecialNode` | `0x0004FB` |
+| `core_enterprise_special_node_AttachPlugin` | `0x0004FC` |
+| `core_enterprise_special_node_DetachPlugin` | `0x0004FD` |
+| `core_enterprise_special_node_Snapshot` | `0x0004FE` |
+| `core_enterprise_special_node_BroadcastTransaction` | `0x0004FF` |
+| `core_enterprise_special_node_LedgerBalance` | `0x000500` |
+| `core_enterprise_special_node_UpdatePluginLabels` | `0x000501` |

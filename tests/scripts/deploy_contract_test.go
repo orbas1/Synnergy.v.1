@@ -21,12 +21,12 @@ func TestDeployContractNoArgs(t *testing.T) {
 
 // TestDeployContractMissingFile verifies script error for nonexistent contract file.
 func TestDeployContractMissingFile(t *testing.T) {
-	cmd := exec.Command("bash", "../../scripts/deploy_contract.sh", "nonexistent.wasm")
+	cmd := exec.Command("bash", "../../scripts/deploy_contract.sh", "--wasm", "nonexistent.wasm")
 	out, err := cmd.CombinedOutput()
 	if err == nil {
 		t.Fatalf("expected error for missing file")
 	}
-	if !strings.Contains(string(out), "contract file not found") {
+	if !strings.Contains(string(out), "WASM artifact not found") {
 		t.Fatalf("expected missing file message, got: %s", out)
 	}
 }
@@ -39,8 +39,8 @@ func TestDeployContractMissingBinary(t *testing.T) {
 	}
 	defer os.Remove(f.Name())
 
-	cmd := exec.Command("bash", "../../scripts/deploy_contract.sh", f.Name())
-	cmd.Env = append(os.Environ(), "BIN_PATH=/nonexistent/synnergy")
+	cmd := exec.Command("bash", "../../scripts/deploy_contract.sh", "--wasm", f.Name())
+	cmd.Env = append(os.Environ(), "SYN_CLI_BIN=/nonexistent/synnergy")
 	out, err := cmd.CombinedOutput()
 	if err == nil {
 		t.Fatalf("expected error for missing binary")

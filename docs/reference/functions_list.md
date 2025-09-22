@@ -809,6 +809,25 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/enterprise_orchestrator.go` | `137` | `func (o *EnterpriseOrchestrator) RegisterConsensusNetwork(ctx context.Context, source, target string) (int, error) {` |
 | `core/enterprise_orchestrator.go` | `155` | `func (o *EnterpriseOrchestrator) RegisterAuthorityNode(ctx context.Context, addr, role string) (*AuthorityNode, error) {` |
 | `core/enterprise_orchestrator.go` | `173` | `func (o *EnterpriseOrchestrator) SyncGasSchedule(ctx context.Context, schedule map[string]uint64) (EnterpriseDiagnostics, error) {` |
+| `core/enterprise_special_node.go` | `32` | `func ParseCombinedNodeRole(value string) (CombinedNodeRole, error) {` |
+| `core/enterprise_special_node.go` | `127` | `func NewEnterpriseSpecialNode(id nodes.Address) *EnterpriseSpecialNode {` |
+| `core/enterprise_special_node.go` | `143` | `func (e *EnterpriseSpecialNode) AttachPlugin(plugin EnterpriseNodePlugin) error {` |
+| `core/enterprise_special_node.go` | `178` | `func (e *EnterpriseSpecialNode) DetachPlugin(id string) bool {` |
+| `core/enterprise_special_node.go` | `191` | `func (e *EnterpriseSpecialNode) UpdatePluginLabels(id string, labels map[string]string) error {` |
+| `core/enterprise_special_node.go` | `211` | `func (e *EnterpriseSpecialNode) Plugins() []EnterpriseNodePlugin {` |
+| `core/enterprise_special_node.go` | `229` | `func (e *EnterpriseSpecialNode) Snapshot() EnterpriseCombinedSnapshot {` |
+| `core/enterprise_special_node.go` | `265` | `func (e *EnterpriseSpecialNode) BroadcastTransaction(tx *Transaction) (map[string]error, error) {` |
+| `core/enterprise_special_node.go` | `283` | `func (e *EnterpriseSpecialNode) LedgerBalance(addr string) uint64 {` |
+| `core/enterprise_special_node.go` | `299` | `func (e *EnterpriseSpecialNode) Events() []EnterpriseCombinedEvent {` |
+| `core/enterprise_special_node.go` | `310` | `func (e *EnterpriseSpecialNode) WatchEvents() (uint64, <-chan EnterpriseCombinedEvent) {` |
+| `core/enterprise_special_node.go` | `326` | `func (e *EnterpriseSpecialNode) StopWatching(id uint64) {` |
+| `core/enterprise_special_node.go` | `336` | `func (e *EnterpriseSpecialNode) SetEventLimit(limit int) {` |
+| `core/enterprise_special_node.go` | `398` | `func EnterpriseNodePluginFromNode(id string, role CombinedNodeRole, node *Node, labels map[string]string) EnterpriseNodePlugin {` |
+| `core/enterprise_special_node.go` | `440` | `func EnterpriseSpecialAttach(node *EnterpriseSpecialNode, plugin EnterpriseNodePlugin) error {` |
+| `core/enterprise_special_node.go` | `448` | `func EnterpriseSpecialDetach(node *EnterpriseSpecialNode, id string) bool {` |
+| `core/enterprise_special_node.go` | `456` | `func EnterpriseSpecialBroadcast(node *EnterpriseSpecialNode, tx *Transaction) (map[string]error, error) {` |
+| `core/enterprise_special_node.go` | `464` | `func EnterpriseSpecialSnapshot(node *EnterpriseSpecialNode) EnterpriseCombinedSnapshot {` |
+| `core/enterprise_special_node.go` | `472` | `func EnterpriseSpecialLedger(node *EnterpriseSpecialNode, addr string) uint64 {` |
 | `core/consensus_validator_management.go` | `17` | `func NewValidatorManager(minStake uint64) *ValidatorManager {` |
 | `core/consensus_validator_management.go` | `26` | `func (vm *ValidatorManager) Add(addr string, stake uint64) error {` |
 | `core/consensus_validator_management.go` | `38` | `func (vm *ValidatorManager) Remove(addr string) {` |

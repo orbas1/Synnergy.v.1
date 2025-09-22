@@ -19,16 +19,16 @@ func TestCrossChainManager(t *testing.T) {
 	if !ok || b.SourceChain != "chainA" || b.TargetChain != "chainB" {
 		t.Fatalf("unexpected bridge data: %+v", b)
 	}
-	if m.IsRelayerAuthorized("relayer1") {
-		t.Fatalf("relayer should not be globally authorized yet")
-	}
-	m.AuthorizeRelayer("relayer1")
 	if !m.IsRelayerAuthorized("relayer1") {
-		t.Fatalf("relayer should be authorized")
+		t.Fatalf("initial relayer should be authorized")
+	}
+	m.AuthorizeRelayer("relayer2")
+	if !m.IsRelayerAuthorized("relayer2") {
+		t.Fatalf("relayer2 should be authorized")
 	}
 	m.RevokeRelayer("relayer1")
 	if m.IsRelayerAuthorized("relayer1") {
-		t.Fatalf("relayer should be revoked")
+		t.Fatalf("relayer1 should be revoked")
 	}
 }
 

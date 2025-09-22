@@ -150,6 +150,12 @@ func (m *CrossChainManager) RegisterBridge(sourceChain, targetChain, relayerAddr
 	}
 
 	m.mu.Lock()
+	if relayerAddr != "" {
+		if _, exists := m.relayers[relayerAddr]; !exists {
+			m.relayers[relayerAddr] = struct{}{}
+			atomic.AddUint64(&m.metrics.authorizedRelay, 1)
+		}
+	}
 	m.bridges[id] = bridge
 	m.mu.Unlock()
 
@@ -157,13 +163,7 @@ func (m *CrossChainManager) RegisterBridge(sourceChain, targetChain, relayerAddr
 	if bridge.Active {
 		atomic.AddUint64(&m.metrics.active, 1)
 	}
-	if relayerAddr != "" {
-		atomic.AddUint64(&m.metrics.authorizedRelay, 1)
-	}
 	m.emit(BridgeEvent{Type: BridgeEventRegistered, Bridge: *bridge, Relayer: relayerAddr, Timestamp: now})
-	if relayerAddr != "" {
-		atomic.AddUint64(&m.metrics.authorizedRelay, 1)
-	}
 	return id
 }
 
