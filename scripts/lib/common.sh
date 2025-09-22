@@ -152,44 +152,49 @@ synnergy_cli_path() {
       printf '%s\n' "$SYN_CLI_BIN"
       return 0
     fi
-
-    log_error "SYN_CLI_BIN is not executable: $SYN_CLI_BIN" >&2
-=======
-    log_error "binary not found: $SYN_CLI_BIN"
-
+    log_error "SYN_CLI_BIN is not executable: $SYN_CLI_BIN"
     return 1
   fi
+
   local compiled="$PROJECT_ROOT/bin/synnergy"
   if [[ -x "$compiled" ]]; then
     printf '%s\n' "$compiled"
     return 0
   fi
-  printf '%s\n' 'go run ./cmd/synnergy'
-  return 0
+
+  if command -v synnergy >/dev/null 2>&1; then
+    printf '%s\n' "$(command -v synnergy)"
+    return 0
+  fi
+
+  local source_dir="$PROJECT_ROOT/cmd/synnergy"
+  if [[ -d "$source_dir" ]]; then
+    printf '%s\n' 'go run ./cmd/synnergy'
+    return 0
+  fi
+
+  log_warn "Synnergy CLI binary not found"
+  return 1
 }
 
 synnergy_cli() {
-  local bin
+  local path
+  if ! path="$(synnergy_cli_path)"; then
+    return 1
+  fi
 
-  if ! bin="$(synnergy_cli_path)"; then
-    return 1
+  if [[ "$DRY_RUN" == true ]]; then
+    log_info "[dry-run] synnergy ${*}"
+    return 0
   fi
-=======
-  local path_output
-  if ! path_output="$(synnergy_cli_path)"; then
-    if [[ -n "$path_output" ]]; then
-      printf '%s\n' "$path_output" >&2
-    fi
-    return 1
-  fi
-  bin="$path_output"
 
   local -a args=()
-  if [[ "$bin" == go* ]]; then
+  if [[ "$path" == go* ]]; then
     args=(go run ./cmd/synnergy "$@")
   else
-    args=("$bin" "$@")
+    args=("$path" "$@")
   fi
+
   retry 3 2 "synnergy ${*}" "${args[@]}"
 }
 

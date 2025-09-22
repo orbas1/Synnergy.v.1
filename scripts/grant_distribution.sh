@@ -1,17 +1,4 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
-usage() {
-  cat <<'USAGE'
-Usage: $(basename "$0") [options]
-Placeholder script. Implementation pending.
-USAGE
-}
-
-if [[ "${1:-}" == "--help" || "${1:-}" == "-h" ]]; then
-  usage
-  exit 0
-fi
-
-echo "$(basename "$0") is not yet implemented." >&2
-exit 1
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+exec "$SCRIPT_DIR/script_launcher.sh" "$(basename "$0")" "$@"
