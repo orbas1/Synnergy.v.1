@@ -6,10 +6,11 @@ import (
 	"testing"
 
 	"synnergy/internal/p2p"
+	"synnergy/internal/security"
 )
 
 func TestRunAddAndListPeers(t *testing.T) {
-	mgr := p2p.NewManager()
+	mgr := p2p.NewManager(security.NewDDoSMitigator(security.MitigationConfig{}))
 	if code := runWithManager(mgr, []string{"add-peer", "-id", "p1", "-addr", "127.0.0.1:1"}, &bytes.Buffer{}); code != 0 {
 		t.Fatalf("add-peer exit code %d", code)
 	}

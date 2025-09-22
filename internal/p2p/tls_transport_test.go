@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
 	"crypto/x509/pkix"
@@ -16,7 +17,7 @@ import (
 	"time"
 )
 
-func generateCert(t *testing.T) (tls.Certificate, *x509.CertPool) {
+func generateCert(t *testing.T) (tls.Certificate, *x509.CertPool, []byte) {
 	t.Helper()
 	priv, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 	if err != nil {
@@ -47,15 +48,22 @@ func generateCert(t *testing.T) (tls.Certificate, *x509.CertPool) {
 	if err != nil {
 		t.Fatalf("keypair: %v", err)
 	}
+	parsed, err := x509.ParseCertificate(der)
+	if err != nil {
+		t.Fatalf("parse cert: %v", err)
+	}
+	spki := sha256.Sum256(parsed.RawSubjectPublicKeyInfo)
 	pool := x509.NewCertPool()
 	pool.AppendCertsFromPEM(certPEM)
-	return cert, pool
+	return cert, pool, spki[:]
 }
 
 func TestTLSTransportRoundTrip(t *testing.T) {
-	cert, pool := generateCert(t)
+	cert, pool, spki := generateCert(t)
 	server := NewTLSTransport(cert, pool, true)
 	client := NewTLSTransport(cert, pool, false)
+	server.SetAllowedSPKI([][]byte{spki})
+	client.SetAllowedSPKI([][]byte{spki})
 	ctx := context.Background()
 	ln, err := server.Listen(ctx, "127.0.0.1:0")
 	if err != nil {
@@ -69,14 +77,13 @@ func TestTLSTransportRoundTrip(t *testing.T) {
 			t.Errorf("accept: %v", err)
 			return
 		}
+		defer conn.Close()
 		buf := make([]byte, 4)
 		if _, err := io.ReadFull(conn, buf); err != nil {
 			t.Errorf("read: %v", err)
-			conn.Close()
 			return
 		}
 		conn.Write(buf)
-		conn.Close()
 		close(done)
 	}()
 	conn, err := client.Dial(ctx, ln.Addr().String())
@@ -94,6 +101,5 @@ func TestTLSTransportRoundTrip(t *testing.T) {
 	if string(buf) != "ping" {
 		t.Fatalf("expected ping, got %s", string(buf))
 	}
-	conn.Close()
 	<-done
 }
