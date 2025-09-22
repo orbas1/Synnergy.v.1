@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 
@@ -50,7 +51,11 @@ func init() {
 				fmt.Println("no node")
 				return
 			}
-			b := csNode.MineBlock()
+			b, err := csNode.MineBlock(context.Background())
+			if err != nil {
+				fmt.Printf("mining error: %v\n", err)
+				return
+			}
 			if b != nil {
 				fmt.Printf("mined block %s with nonce %d\n", b.Hash, b.Nonce)
 			}

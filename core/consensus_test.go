@@ -4,6 +4,7 @@ import (
 	"context"
 	"math"
 	"testing"
+	"time"
 )
 
 func TestThreshold(t *testing.T) {
@@ -99,13 +100,54 @@ func TestValidateBlock(t *testing.T) {
 	tx := NewTransaction("a", "b", 1, 0, 0)
 	sb := NewSubBlock([]*Transaction{tx}, "val")
 	block := NewBlock([]*SubBlock{sb}, "")
-	sc.MineBlock(block, 1)
+	if err := sc.MineBlock(context.Background(), block, 1); err != nil {
+		t.Fatalf("mine block: %v", err)
+	}
 	if !sc.ValidateBlock(block) {
 		t.Fatalf("expected valid block")
 	}
 	block.SubBlocks[0].Transactions = nil
 	if sc.ValidateBlock(block) {
 		t.Fatalf("expected invalid block")
+	}
+}
+
+func TestMineBlockCancelledContext(t *testing.T) {
+	sc := NewSynnergyConsensus()
+	sc.PoWTimeout = 50 * time.Millisecond
+	tx := NewTransaction("a", "b", 1, 0, 0)
+	sb := NewSubBlock([]*Transaction{tx}, "val")
+	block := NewBlock([]*SubBlock{sb}, "")
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	if err := sc.MineBlock(ctx, block, 3); err == nil {
+		t.Fatalf("expected mining to honour cancellation")
+	}
+}
+
+func TestChooseChainPrefersWorkAndFinalization(t *testing.T) {
+	sc := NewSynnergyConsensus()
+
+	tx := NewTransaction("a", "b", 1, 0, 0)
+	sb := NewSubBlock([]*Transaction{tx}, "val")
+
+	// create base chain with lower work
+	lowBlock := NewBlock([]*SubBlock{sb}, "")
+	if err := sc.MineBlock(context.Background(), lowBlock, 1); err != nil {
+		t.Fatalf("mine low block: %v", err)
+	}
+	lowBlock.Finalized = true
+
+	// create competing chain with more work
+	highBlock := NewBlock([]*SubBlock{sb}, "")
+	if err := sc.MineBlock(context.Background(), highBlock, 3); err != nil {
+		t.Fatalf("mine high block: %v", err)
+	}
+	highBlock.Finalized = true
+
+	best := sc.ChooseChain([][]*Block{{lowBlock}, {highBlock}})
+	if best == nil || best[0].Hash != highBlock.Hash {
+		t.Fatalf("expected chain with greater work to be selected")
 	}
 }
 

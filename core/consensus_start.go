@@ -5,6 +5,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	ilog "synnergy/internal/log"
 	"synnergy/internal/telemetry"
 )
 
@@ -34,7 +35,9 @@ func (s *ConsensusService) Start(ctx context.Context, interval time.Duration) {
 		for {
 			select {
 			case <-ticker.C:
-				s.node.MineBlock()
+				if _, err := s.node.MineBlock(ctx); err != nil {
+					ilog.Info("consensus_mine_error", "err", err)
+				}
 			case <-s.quit:
 				return
 			case <-ctx.Done():

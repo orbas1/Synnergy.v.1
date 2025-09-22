@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"errors"
 
 	ilog "synnergy/internal/log"
@@ -29,7 +30,9 @@ func (n *Node) InitGenesis(wallets GenesisWallets) (GenesisStats, *Block, error)
 	n.Ledger.Credit(wallets.CreatorWallet, GenesisAllocation)
 	sb := NewSubBlock(nil, wallets.Genesis)
 	block := NewBlock([]*SubBlock{sb}, "")
-	n.Consensus.MineBlock(block, 1)
+	if err := n.Consensus.MineBlock(context.Background(), block, 1); err != nil {
+		return GenesisStats{}, nil, err
+	}
 	n.Blockchain = append(n.Blockchain, block)
 	if err := n.Ledger.AddBlock(block); err != nil {
 		return GenesisStats{}, nil, err

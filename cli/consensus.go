@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"strconv"
 
 	"github.com/spf13/cobra"
@@ -27,7 +28,10 @@ func init() {
 			}
 			sb := core.NewSubBlock([]*core.Transaction{}, "validator")
 			b := core.NewBlock([]*core.SubBlock{sb}, "")
-			consensus.MineBlock(b, uint8(diff))
+			if err := consensus.MineBlock(context.Background(), b, uint8(diff)); err != nil {
+				printOutput(map[string]any{"error": err.Error()})
+				return
+			}
 			ilog.Info("cli_mine", "nonce", b.Nonce)
 			gasPrint("MineBlock")
 			printOutput(map[string]any{"nonce": b.Nonce})

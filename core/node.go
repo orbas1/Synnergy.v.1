@@ -60,11 +60,16 @@ func (n *Node) ValidateTransaction(tx *Transaction) error {
 }
 
 // MineBlock packages the current mempool into a sub-block and mines a block.
-func (n *Node) MineBlock() *Block {
+// The context allows callers to control how long PoW attempts may run. When
+// mining fails the mempool is left untouched and an error is returned.
+func (n *Node) MineBlock(ctx context.Context) (*Block, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	n.mu.Lock()
 	defer n.mu.Unlock()
 	if len(n.Mempool) == 0 {
-		return nil
+		return nil, nil
 	}
 	prevHash := ""
 	if len(n.Blockchain) > 0 {
@@ -72,22 +77,28 @@ func (n *Node) MineBlock() *Block {
 	}
 	validator := n.Consensus.SelectValidator(prevHash, n.eligibleStakes())
 	if validator == "" {
-		return nil
+		return nil, errors.New("no eligible validator")
 	}
 	sb := NewSubBlock(n.Mempool, validator)
 	if !n.Consensus.ValidateSubBlock(sb) {
-		return nil
+		return nil, errors.New("sub-block validation failed")
 	}
-	n.Mempool = nil
 	block := NewBlock([]*SubBlock{sb}, prevHash)
-	n.Consensus.MineBlock(block, 3)
-	n.Consensus.FinalizeBlock(block, map[string]bool{validator: true}, n.Validators, 1)
+	if err := n.Consensus.MineBlock(ctx, block, 3); err != nil {
+		return nil, err
+	}
+	if !n.Consensus.FinalizeBlock(block, map[string]bool{validator: true}, n.Validators, 1) {
+		return nil, errors.New("block failed to finalize")
+	}
 	var totalFees uint64
 	for _, tx := range sb.Transactions {
 		totalFees += tx.Fee
-		_ = n.Ledger.ApplyTransaction(tx)
+		if err := n.Ledger.ApplyTransaction(tx); err != nil {
+			return nil, fmt.Errorf("apply transaction: %w", err)
+		}
 	}
 	n.Blockchain = append(n.Blockchain, block)
+	n.Mempool = nil
 
 	dist := DistributeFees(totalFees)
 	pool := AdjustForBlockUtilization(dist.ValidatorsMiners, len(sb.Transactions), n.MaxTxPerBlock)
@@ -96,7 +107,7 @@ func (n *Node) MineBlock() *Block {
 	shares := ShareProportional(pool, weights)
 	contract := NewFeeDistributionContract(n.Ledger)
 	contract.Distribute(shares)
-	return block
+	return block, nil
 }
 
 const MinStake uint64 = 1

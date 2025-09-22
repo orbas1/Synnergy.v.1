@@ -3,8 +3,11 @@ package core
 import (
 	"context"
 	"crypto/sha256"
+	"errors"
+	"fmt"
 	"math/big"
 	"strings"
+	"time"
 
 	ilog "synnergy/internal/log"
 )
@@ -38,6 +41,11 @@ type SynnergyConsensus struct {
 	// RegNode performs regulatory checks on transactions during
 	// consensus validation. When nil, regulatory checks are bypassed.
 	RegNode *RegulatoryNode
+
+	// PoWTimeout bounds the amount of time spent searching for a valid
+	// nonce before aborting the mining attempt. A zero value falls back
+	// to powDefaultTimeout.
+	PoWTimeout time.Duration
 }
 
 // NewSynnergyConsensus returns a new consensus engine with default parameters
@@ -54,6 +62,7 @@ func NewSynnergyConsensus() *SynnergyConsensus {
 		PoSAvailable: true,
 		PoHAvailable: true,
 		PoWRewards:   true,
+		PoWTimeout:   10 * time.Second,
 	}
 }
 
@@ -218,22 +227,63 @@ func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {
 	return true
 }
 
-// MineBlock performs a simple SHA-256 proof-of-work using the provided
-// difficulty, defined as the number of leading zeroes required in the block
-// hash.
-func (sc *SynnergyConsensus) MineBlock(b *Block, difficulty uint8) {
+var (
+	errMiningCancelled = errors.New("mining cancelled")
+	errMiningTimeout   = errors.New("mining timed out")
+)
+
+const powCheckInterval = 1 << 12
+const powDefaultTimeout = 10 * time.Second
+
+var maxPoWTarget = new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(1))
+
+// MineBlock performs a SHA-256 proof-of-work using the provided difficulty.
+// Difficulty is defined as the number of leading zeroes required in the block
+// hash. The search honours context cancellation and a configurable timeout so
+// callers can bound resource usage. A nil block or zero difficulty returns an
+// error.
+func (sc *SynnergyConsensus) MineBlock(ctx context.Context, b *Block, difficulty uint8) error {
+	if b == nil {
+		return fmt.Errorf("mine block: %w", ErrNilBlock)
+	}
+	if difficulty == 0 {
+		return fmt.Errorf("mine block: difficulty must be > 0")
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+
 	target := strings.Repeat("0", int(difficulty))
+	timeout := sc.PoWTimeout
+	if timeout <= 0 {
+		timeout = powDefaultTimeout
+	}
+	deadline := time.Now().Add(timeout)
+
 	var nonce uint64
 	for {
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("mine block: %w: %w", errMiningCancelled, ctx.Err())
+		default:
+		}
+
 		hash := b.HeaderHash(nonce)
 		if strings.HasPrefix(hash, target) {
 			b.Nonce = nonce
 			b.Hash = hash
 			ilog.Info("mine_block", "nonce", nonce)
-			return
+			return nil
 		}
-		nonce++
 
+		nonce++
+		if nonce == 0 { // overflowed
+			return fmt.Errorf("mine block: nonce space exhausted")
+		}
+
+		if nonce%powCheckInterval == 0 && time.Now().After(deadline) {
+			return fmt.Errorf("mine block: %w after %d iterations", errMiningTimeout, nonce)
+		}
 	}
 }
 
@@ -260,19 +310,84 @@ func (sc *SynnergyConsensus) FinalizeBlock(b *Block, votes map[string]bool, vm *
 	return false
 }
 
-// ChooseChain selects the longest chain from the candidates. This placeholder
-// fork-choice rule enables nodes to converge on a canonical history.
+// ChooseChain selects the highest scoring chain from the provided candidates.
+// Candidates that are discontinuous or contain nil blocks are ignored. Chain
+// quality is assessed using height, number of finalized blocks, and cumulative
+// proof-of-work to provide deterministic tie-breaking between competing forks.
 func (sc *SynnergyConsensus) ChooseChain(chains [][]*Block) []*Block {
 	var best []*Block
-	max := 0
-	for _, c := range chains {
-		if len(c) > max {
-			best = c
-			max = len(c)
+	bestScore := chainScore{work: big.NewInt(0)}
+	for _, chain := range chains {
+		if !isContinuousChain(chain) {
+			continue
+		}
+		score := computeChainScore(chain)
+		if best == nil || score.betterThan(bestScore) {
+			best = chain
+			bestScore = score
 		}
 	}
-	ilog.Info("fork_choice", "length", max)
+	ilog.Info("fork_choice", "length", bestScore.length, "finalized", bestScore.finalized, "work", bestScore.work.String())
 	return best
+}
+
+type chainScore struct {
+	length    int
+	finalized int
+	work      *big.Int
+}
+
+func (s chainScore) betterThan(other chainScore) bool {
+	if s.length != other.length {
+		return s.length > other.length
+	}
+	if s.finalized != other.finalized {
+		return s.finalized > other.finalized
+	}
+	if other.work == nil {
+		return true
+	}
+	return s.work.Cmp(other.work) > 0
+}
+
+func computeChainScore(chain []*Block) chainScore {
+	score := chainScore{length: len(chain), work: big.NewInt(0)}
+	for _, b := range chain {
+		if b == nil {
+			continue
+		}
+		if b.Finalized {
+			score.finalized++
+		}
+		if hash := strings.TrimSpace(b.Hash); hash != "" {
+			if val, ok := new(big.Int).SetString(hash, 16); ok {
+				work := new(big.Int).Sub(maxPoWTarget, val)
+				if work.Sign() > 0 {
+					score.work.Add(score.work, work)
+				}
+			}
+		}
+	}
+	return score
+}
+
+func isContinuousChain(chain []*Block) bool {
+	if len(chain) == 0 {
+		return false
+	}
+	for i := range chain {
+		if chain[i] == nil {
+			return false
+		}
+		if i == 0 {
+			continue
+		}
+		prev := chain[i-1]
+		if prev == nil || chain[i].PrevHash != prev.Hash {
+			return false
+		}
+	}
+	return true
 }
 
 func clamp(v, min, max float64) float64 {

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"sync"
 	"testing"
 )
@@ -15,7 +16,10 @@ func TestMineBlockFeeDistribution(t *testing.T) {
 	if err := node.AddTransaction(tx); err != nil {
 		t.Fatalf("add tx: %v", err)
 	}
-	block := node.MineBlock()
+	block, err := node.MineBlock(context.Background())
+	if err != nil {
+		t.Fatalf("mine block: %v", err)
+	}
 	if block == nil {
 		t.Fatalf("block not mined")
 	}

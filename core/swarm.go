@@ -1,6 +1,9 @@
 package core
 
-import "sync"
+import (
+	"context"
+	"sync"
+)
 
 // Swarm groups nodes to enable coordinated operations and simplified message
 // broadcasting among related participants.
@@ -64,7 +67,7 @@ func (s *Swarm) StartConsensus() []*Block {
 	members := s.Members()
 	blocks := make([]*Block, 0, len(members))
 	for _, n := range members {
-		if b := n.MineBlock(); b != nil {
+		if b, err := n.MineBlock(context.Background()); err == nil && b != nil {
 			blocks = append(blocks, b)
 		}
 	}

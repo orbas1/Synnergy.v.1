@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 
@@ -114,7 +115,10 @@ func init() {
 		Short: "Mine a block from the current mempool",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("NodeMine")
-			block := currentNode.MineBlock()
+			block, err := currentNode.MineBlock(context.Background())
+			if err != nil {
+				return err
+			}
 			if block == nil {
 				printOutput("no transactions to mine")
 				return nil
