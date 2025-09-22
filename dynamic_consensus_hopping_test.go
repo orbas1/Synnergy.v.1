@@ -3,6 +3,7 @@ package synnergy
 import (
 	"sync"
 	"testing"
+	"time"
 )
 
 // TestConsensusHopperInitial verifies that the hopper respects the initial
@@ -22,9 +23,17 @@ func TestConsensusHopperInitial(t *testing.T) {
 // consensus mode for each branch and records the last metrics supplied.
 func TestConsensusHopperEvaluate(t *testing.T) {
 	hopper := NewConsensusHopper(ConsensusPoW)
+	stake := NewStakingNode()
+	stake.Stake("validatorA", 120000)
+	stake.Stake("validatorB", 60000)
+	hopper.AttachStakingNode(stake)
 
-	// High TPS and low latency should choose PoS regardless of validators.
-	m1 := NetworkMetrics{TPS: 2000, LatencySec: 0.5, Validators: 5}
+	failover := NewFailoverManager("primary", 200*time.Millisecond)
+	failover.RegisterBackup("backup")
+	hopper.AttachFailoverManager(failover)
+
+	// High throughput, deep staking and stable failover should favour PoS.
+	m1 := NetworkMetrics{TPS: 1800, LatencySec: 0.6, Validators: 80, FinalityLagSec: 1.2, ForkRate: 0.01, QueueDepth: 200}
 	if mode := hopper.Evaluate(m1); mode != ConsensusPoS {
 		t.Fatalf("expected PoS, got %s", mode)
 	}
@@ -32,8 +41,8 @@ func TestConsensusHopperEvaluate(t *testing.T) {
 		t.Fatalf("last metrics mismatch: %+v vs %+v", last, m1)
 	}
 
-	// Few validators triggers PoH when TPS/latency aren't in the PoS range.
-	m2 := NetworkMetrics{TPS: 100, LatencySec: 2, Validators: 3}
+	// Validator scarcity with finality instability should switch to PoH.
+	m2 := NetworkMetrics{TPS: 600, LatencySec: 2.7, Validators: 6, FinalityLagSec: 4.5, ForkRate: 0.09, QueueDepth: 2200}
 	if mode := hopper.Evaluate(m2); mode != ConsensusPoH {
 		t.Fatalf("expected PoH, got %s", mode)
 	}
@@ -41,8 +50,21 @@ func TestConsensusHopperEvaluate(t *testing.T) {
 		t.Fatalf("last metrics mismatch: %+v vs %+v", last, m2)
 	}
 
-	// Default case falls back to PoW.
-	m3 := NetworkMetrics{TPS: 500, LatencySec: 1.5, Validators: 20}
+	// Simulate a recent failover promotion which should push the hopper back
+	// to PoW until the network settles.
+	timeout := 50 * time.Millisecond
+	unstableFailover := NewFailoverManager("primary", timeout)
+	unstableFailover.RegisterBackup("backup")
+	hopper.AttachFailoverManager(unstableFailover)
+	unstableFailover.mu.Lock()
+	unstableFailover.nodes["primary"] = time.Now().Add(-2 * timeout)
+	unstableFailover.mu.Unlock()
+	if active := unstableFailover.Active(); active != "backup" {
+		t.Fatalf("expected failover to promote backup, got %s", active)
+	}
+	unstableFailover.Heartbeat("backup")
+
+	m3 := NetworkMetrics{TPS: 800, LatencySec: 1.4, Validators: 40, FinalityLagSec: 2, ForkRate: 0.02, QueueDepth: 600}
 	if mode := hopper.Evaluate(m3); mode != ConsensusPoW {
 		t.Fatalf("expected PoW, got %s", mode)
 	}
@@ -58,9 +80,9 @@ func TestConsensusHopperEvaluate(t *testing.T) {
 func TestConsensusHopperConcurrency(t *testing.T) {
 	hopper := NewConsensusHopper(ConsensusPoW)
 	metrics := []NetworkMetrics{
-		{TPS: 2000, LatencySec: 0.4, Validators: 50}, // PoS
-		{TPS: 100, LatencySec: 3, Validators: 5},     // PoH
-		{TPS: 200, LatencySec: 2, Validators: 20},    // PoW
+		{TPS: 2000, LatencySec: 0.4, Validators: 50, FinalityLagSec: 1, ForkRate: 0.01, QueueDepth: 300}, // PoS
+		{TPS: 100, LatencySec: 3, Validators: 5, FinalityLagSec: 4.2, ForkRate: 0.08, QueueDepth: 2500},  // PoH
+		{TPS: 200, LatencySec: 2, Validators: 20, FinalityLagSec: 2.5, ForkRate: 0.03, QueueDepth: 1000}, // PoW
 	}
 
 	var wg sync.WaitGroup
