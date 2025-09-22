@@ -1,7 +1,9 @@
 package main
 
 import (
+	"io"
 	"os"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"github.com/subosito/gotenv"
@@ -34,11 +36,35 @@ func main() {
 	}
 
 	// Configure logging based on loaded configuration.
-	lvl, err := logrus.ParseLevel(cfg.LogLevel)
+	lvl, err := logrus.ParseLevel(cfg.Log.Level)
 	if err != nil {
 		logrus.Fatalf("invalid log level: %v", err)
 	}
 	logrus.SetLevel(lvl)
+	logrus.SetReportCaller(cfg.Log.IncludeCaller)
+
+	switch strings.ToLower(cfg.Log.Format) {
+	case "text":
+		logrus.SetFormatter(&logrus.TextFormatter{FullTimestamp: true})
+	default:
+		logrus.SetFormatter(&logrus.JSONFormatter{})
+	}
+
+	outputs := make([]io.Writer, 0, len(cfg.Log.Outputs))
+	for _, out := range cfg.Log.Outputs {
+		switch strings.ToLower(out) {
+		case "stderr":
+			outputs = append(outputs, os.Stderr)
+		case "stdout":
+			outputs = append(outputs, os.Stdout)
+		default:
+			outputs = append(outputs, os.Stdout)
+		}
+	}
+	if len(outputs) == 0 {
+		outputs = []io.Writer{os.Stdout}
+	}
+	logrus.SetOutput(io.MultiWriter(outputs...))
 
 	// Warm up caches for shared resources and ensure gas costs are registered.
 	synn.LoadGasTable()

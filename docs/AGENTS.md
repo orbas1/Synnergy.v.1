@@ -1894,25 +1894,25 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] internal/auth/rbac_test.go
 
 **Stage 86**
-- [ ] internal/config/config.go
-- [ ] internal/config/config_test.go
-- [ ] internal/config/default.go
-- [ ] internal/config/default_default_test.go
-- [ ] internal/config/default_dev.go
-- [ ] internal/config/default_dev_test.go
-- [ ] internal/config/default_prod.go
-- [ ] internal/config/default_prod_test.go
-- [ ] internal/config/default_test.go
-- [ ] internal/core/README.md
-- [ ] internal/crosschain/README.md
-- [ ] internal/errors/errors.go
-- [ ] internal/errors/errors_test.go
-- [ ] internal/governance/audit_log.go
-- [ ] internal/governance/audit_log_test.go
-- [ ] internal/governance/replay_protection.go
-- [ ] internal/governance/replay_protection_test.go
-- [ ] internal/log/log.go
-- [ ] internal/log/log_test.go
+- [x] internal/config/config.go – Enterprise configuration surface with defaults for CLI, VM, consensus and web orchestration.
+- [x] internal/config/config_test.go – Comprehensive coverage for env overrides, profiles, fingerprinting and validation.
+- [x] internal/config/default.go – Documented fallback aligned with staged enterprise defaults.
+- [x] internal/config/default_default_test.go – Confirms default profile resolves to developer workflow.
+- [x] internal/config/default_dev.go – Build-tagged development profile kept in sync with enterprise defaults.
+- [x] internal/config/default_dev_test.go – Verifies dev profile discovery via stage-aware loader.
+- [x] internal/config/default_prod.go – Production profile pointer retained for hardened deployments.
+- [x] internal/config/default_prod_test.go – Ensures prod config loads and enforces production environment.
+- [x] internal/config/default_test.go – Build tag wiring maintained for staging/test runs.
+- [x] internal/core/README.md – Expanded architecture guidance with CLI/VM/consensus integration notes.
+- [x] internal/crosschain/README.md – Documented interoperability workflow and gas harmonisation strategy.
+- [x] internal/errors/errors.go – Structured error stack with severity, correlation IDs and retry semantics.
+- [x] internal/errors/errors_test.go – Validates metadata rendering, status mapping and parsing helpers.
+- [x] internal/governance/audit_log.go – Fault-tolerant audit ledger with HMAC signing, retention and observers.
+- [x] internal/governance/audit_log_test.go – Tests hash chaining, retention enforcement and subscriber hooks.
+- [x] internal/governance/replay_protection.go – Sliding window replay guard with eviction policies and callbacks.
+- [x] internal/governance/replay_protection_test.go – Window expiry, eviction and duplicate signalling covered.
+- [x] internal/log/log.go – Context-aware structured logging with OTEL integration and multiple outputs.
+- [x] internal/log/log_test.go – JSON/text rendering, level filtering and singleton safety validated.
 
 **Stage 87**
 - [ ] internal/monitoring/alerting.go
