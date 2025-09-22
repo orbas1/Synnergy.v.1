@@ -15,6 +15,9 @@ Synnergy’s genesis event pre-allocates funds to well-known roles using determi
 
 Operational scripts such as `mainnet_setup.sh` exercise this model by generating distribution, reserve and treasury wallets and computing initial allocations before nodes are launched【F:scripts/mainnet_setup.sh†L25-L40】.
 
+## Stage 80 Treasury Integration
+The Synthron Treasury orchestrator initialises a dedicated wallet during bootstrap, credits it with the genesis allocation and registers it with consensus relayers and authority nodes so monetary policy actions are authenticated end-to-end. The wallet exposes mint, burn, transfer, operator governance and bridge flows through `synnergy coin telemetry`, giving operators a single entry point for treasury issuance with optional JSON diagnostics for governance pipelines【F:treasury/synthron_treasury.go†L41-L215】【F:cli/coin.go†L23-L130】. Telemetry snapshots include wallet address, minted and burned totals, circulating supply, operator roster, ledger height, subsystem health and a signed audit trail, ensuring stakeholders can audit treasury movements across CLI, web dashboards and automated tests while guarding against unauthorised actions and proving provenance for every signature【F:treasury/synthron_treasury.go†L214-L612】【F:docs/Whitepaper_detailed/Synthron Coin_test.go†L1-L108】【F:web/pages/index.js†L1-L260】.
+
 ## Interfaces and Tooling
 ### Command-Line Interface
 The `synnergy` CLI includes a `wallet` module for deterministic wallet creation. Operators can output an encrypted file and specify the encryption password at generation time, enabling scripted provisioning and secure backups【F:cli/wallet.go†L8-L34】.

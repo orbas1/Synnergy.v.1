@@ -161,6 +161,31 @@ func (l *Ledger) Mint(addr string, amount uint64) {
 	l.Credit(addr, amount)
 }
 
+// Burn removes funds from an address without crediting another account. It is
+// primarily used by the Synthron treasury to retire supply during economic
+// interventions. The method validates the address and amount, ensuring the
+// account holds sufficient balance before deducting the coins.
+func (l *Ledger) Burn(addr string, amount uint64) error {
+	if addr == "" {
+		return ErrEmptyAddress
+	}
+	if amount == 0 {
+		return errors.New("amount must be > 0")
+	}
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+
+	balance := l.balances[addr]
+	if balance < amount {
+		return errors.New("insufficient funds")
+	}
+
+	l.balances[addr] = balance - amount
+	l.updateUTXO(addr)
+	return nil
+}
+
 // Transfer moves funds from one address to another. A fee is deducted from the
 // sender. It validates the addresses and amount before applying the
 // transaction.

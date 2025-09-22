@@ -44,7 +44,9 @@ import (
 // role update operations so governance tooling prices admin-managed role
 // changes and authority term renewals. Stage 73 adds regulatory node approval,
 // flagging, log query and audit operations so compliance tooling surfaces predictable
-// gas costs.
+// gas costs. Stage 80 introduces Synthron treasury orchestration so monetary
+// policy controls expose deterministic costs for issuing, burning and reconciling
+// supply across the VM, consensus and authority layers.
 type GasTable map[string]uint64
 
 // GasMetadata captures descriptive information about opcodes so enterprise
@@ -300,4 +302,20 @@ func ResetGasTable() {
 	metadataCache = nil
 	metadataMu.Unlock()
 	gasOnce = sync.Once{}
+}
+
+// MissingOpcodes reports which names are absent from the opcode catalogue. The
+// helper is primarily used by diagnostics exposed through the CLI and function
+// web to ensure new runtime features are documented.
+func MissingOpcodes(names []string) []string {
+	missing := make([]string, 0, len(names))
+	for _, name := range names {
+		if SNVMOpcodeByName(name) == 0 {
+			missing = append(missing, name)
+		}
+	}
+	if len(missing) > 1 {
+		sort.Strings(missing)
+	}
+	return missing
 }

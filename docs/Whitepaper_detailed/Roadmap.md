@@ -94,6 +94,7 @@ The Synnergy Network is the flagship blockchain framework developed by **Neto So
 ### Key Deliverables
 - Governance contracts: `core.NewDAOManager`, `core.NewProposalManager`, `dao.go`, `dao_proposal.go`, `dao_quadratic_voting.go`, `dao_staking.go`, `dao_token.go`, `dao_access_control.go`, `staking_node.go`, `stake_penalty.go`, `loanpool.md`, `Tokenomics.md`.
 - Command suites: `synnergy governance`, `synnergy charity_pool`, `synnergy loanpool`.
+- Treasury orchestration: Synthron treasury service, CLI telemetry and web dashboards coordinating burn, issuance, operator governance and consensus bridges. Stage 80 delivers permissioned `AuthorizeOperator`/`RevokeOperator` flows, CLI flags for scripted governance, VM handlers for telemetry and a web control panel that lists active operators, renders gas coverage, surfaces subsystem health and exposes the signed audit trail while executing mint/burn/transfer routines through the shared API【F:treasury/synthron_treasury.go†L22-L612】【F:cli/coin.go†L23-L130】【F:web/pages/index.js†L1-L260】.
 - Policy documentation for staking rewards, halving schedules, authority node incentives and community grants.
 - Community support portals, contributor guides and a public RFC process.
 

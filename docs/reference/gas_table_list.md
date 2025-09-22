@@ -424,6 +424,15 @@
 | `EnterpriseConsensusSync` | `95` |
 | `EnterpriseNodeAudit` | `75` |
 | `EnterpriseWalletSeal` | `60` |
+| `SynthronCoin_AuthoritySeal` | `70` |
+| `SynthronCoin_AuthorizeOperator` | `40` |
+| `SynthronCoin_Burn` | `45` |
+| `SynthronCoin_ConsensusBridge` | `85` |
+| `SynthronCoin_Issue` | `90` |
+| `SynthronCoin_Reconcile` | `110` |
+| `SynthronCoin_RevokeOperator` | `35` |
+| `SynthronCoin_Telemetry` | `25` |
+| `SynthronCoin_Transfer` | `55` |
 | `NewEnvironmentalMonitoringNode` | `1` |
 | `NewEvent` | `1` |
 | `NewFailoverManager` | `1` |

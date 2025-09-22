@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"io"
 	"os"
 	"strings"
@@ -16,6 +17,7 @@ import (
 	"synnergy/internal/config"
 	security "synnergy/internal/security"
 	tokens "synnergy/internal/tokens"
+	"synnergy/treasury"
 )
 
 func main() {
@@ -155,6 +157,10 @@ func main() {
 	_ = tokens.NewSYN5000Token()
 	// Preload stage 36 NFT marketplace
 	_ = core.NewNFTMarketplace()
+
+	if _, err := treasury.DefaultSynthronTreasury(context.Background()); err != nil {
+		logrus.Fatalf("treasury init: %v", err)
+	}
 
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
 

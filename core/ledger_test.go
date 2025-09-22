@@ -55,3 +55,28 @@ func TestLedgerValidation(t *testing.T) {
 		t.Fatalf("expected ErrNilTransaction got %v", err)
 	}
 }
+
+func TestLedgerBurn(t *testing.T) {
+	l := NewLedger()
+	l.Credit("alice", 500)
+
+	if err := l.Burn("", 10); err != ErrEmptyAddress {
+		t.Fatalf("expected ErrEmptyAddress got %v", err)
+	}
+
+	if err := l.Burn("alice", 0); err == nil {
+		t.Fatalf("expected validation error for zero amount")
+	}
+
+	if err := l.Burn("alice", 600); err == nil {
+		t.Fatalf("expected insufficient funds error")
+	}
+
+	if err := l.Burn("alice", 200); err != nil {
+		t.Fatalf("burn failed: %v", err)
+	}
+
+	if bal := l.GetBalance("alice"); bal != 300 {
+		t.Fatalf("unexpected balance after burn: %d", bal)
+	}
+}

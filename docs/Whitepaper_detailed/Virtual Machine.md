@@ -45,6 +45,8 @@ The opcode catalogue acts as a connective tissue across the Synnergy Network. Th
 
 Because each opcode resolves to a handler within the registry, contracts orchestrate these disparate services without embedding network-specific logic. This modularity also allows Neto Solaris to introduce new capabilities simply by registering additional opcodes.
 
+Stage 80 expands the catalogue with dedicated Synthron Treasury entries so monetary policy automation can be priced, dispatched and audited through the VM. Treasury bootstrap routines register handlers for issuance, transfer, burn, reconciliation, authority sealing, operator governance, consensus bridging and telemetry, wiring the opcode registry to shared gas metadata and documentation coverage checks. Each handler feeds a signed audit trail and subsystem health telemetry so contracts invoking these opcodes inherit enterprise-grade provenance guarantees【F:treasury/synthron_treasury.go†L146-L612】【F:snvm._opcodes.go†L17-L35】【F:contracts_opcodes.go†L83-L108】.
+
 ## Lifecycle and Thread Safety
 The SVM is engineered for concurrent workloads. Internally, a read/write mutex guards lifecycle transitions so `Start` and `Stop` can be invoked repeatedly without race conditions. Each execution acquires a token from a buffered channel sized according to the chosen profile, ensuring that no more than the allowed number of contracts run simultaneously. This pattern delivers predictable throughput while preserving determinism across validator implementations.
 
@@ -94,8 +96,10 @@ These messages provide actionable insight, allowing operators to distinguish bet
 ## Observability and Auditability
 Enterprise deployments require deep insight into runtime behaviour. The SVM and its supporting utilities emit structured JSON logs through an internal logger and expose OpenTelemetry tracing hooks. Gas table loading and opcode execution can therefore be correlated across nodes, while sandbox timestamps and reset events provide an auditable trail for compliance reviews.
 
+Stage 80 augments these controls with `EnsureGasSchedule` and `MissingOpcodes`. Treasury bootstrap calls the helpers to register missing prices, enrich metadata and surface any undocumented handlers, and the resulting telemetry is exported to both CLI and dashboards so operators can halt rollouts until pricing guides match runtime behaviour【F:gas_table.go†L214-L282】【F:treasury/synthron_treasury.go†L214-L276】.
+
 ## Integration with Synnergy Network
-The contract registry relies on the SVM for every deployment and invocation. By abstracting execution behind the `VirtualMachine` interface, other modules—such as cross-chain bridges, data services and token registries—invoke contracts without needing to understand low-level execution details. The opcode table also binds many system functions, allowing the VM to orchestrate actions across the wider Synnergy Network in a uniform manner.
+The contract registry relies on the SVM for every deployment and invocation. By abstracting execution behind the `VirtualMachine` interface, other modules—such as cross-chain bridges, data services and token registries—invoke contracts without needing to understand low-level execution details. The opcode table also binds many system functions, allowing the VM to orchestrate actions across the wider Synnergy Network in a uniform manner. Stage 80’s treasury orchestrator registers VM call handlers for minting, burning, operator governance and consensus bridge setup so contracts and governance workflows can trigger monetary actions while the CLI and web dashboards remain perfectly aligned with VM semantics and permission checks【F:treasury/synthron_treasury.go†L174-L215】【F:cli/coin.go†L23-L130】.
 
 ## Security and Determinism
 Neto Solaris designs the SVM with several safeguards:

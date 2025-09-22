@@ -10,6 +10,9 @@ Tokens on Synnergy Network are implemented as Go modules that maintain their own
 - Enforce compliance through whitelists, blacklists and certification metadata.
 - Provide deterministic APIs for minting, transferring, burning and querying tokens.
 
+## Treasury Integration (Stage 80)
+The Stage 80 Synthron Treasury orchestrator provides a shared monetary control plane for all token classes. It initialises a dedicated treasury wallet, aligns consensus bridges and registers authority nodes before exposing issuance, burn, transfer and reconciliation routines that can be invoked from contracts, CLI or the function web【F:treasury/synthron_treasury.go†L41-L211】. Treasury telemetry surfaces minted and burned supply, ledger height, consensus coverage, operator roster and opcode documentation gaps so token administrators can audit impacts before deploying new instruments, and a chained, digitally signed audit log now proves every action’s provenance alongside subsystem health indicators for ledger, VM, consensus and authority services【F:treasury/synthron_treasury.go†L214-L612】. The CLI’s `synnergy coin telemetry` command allows scripted mint/burn/transfer operations alongside operator authorisation/revocation with JSON diagnostics that feed treasury governance or compliance workflows【F:cli/coin.go†L23-L130】, while web dashboards display the same metrics, health signals and signed digests with form-driven actions for operational transparency【F:web/pages/index.js†L1-L260】. Ledger-level burn support guarantees deterministic supply reductions for treasury-managed tokens without introducing synthetic transfers【F:core/ledger.go†L150-L187】.
+
 ## Monetary and Financial Instruments
 ### SYN10 – Central Bank Digital Currency
 `syn10.go` embeds a base ledger and protects issuer metadata and exchange

@@ -2601,6 +2601,7 @@ Synthron coin utilities
 * [synnergy coin price](#synnergy-coin-price)	 - Calculate initial price from economic factors
 * [synnergy coin reward](#synnergy-coin-reward)	 - Show block reward at a given height
 * [synnergy coin supply](#synnergy-coin-supply)	 - Show circulating and remaining supply
+* [synnergy coin telemetry](#synnergy-coin-telemetry)	 - Treasury diagnostics and governance controls
 
 
 ## synnergy coin alpha
@@ -21194,3 +21195,34 @@ npm start
 ```
 
 Tests and lint checks can be run with `npm test` and `npm run lint` respectively.
+
+
+## synnergy coin telemetry
+
+Treasury diagnostics and governance controls
+
+```
+synnergy coin telemetry [flags]
+```
+
+### Options
+
+```
+      --authorize-operator strings   grant treasury operator access (repeatable)
+      --bridge string                register a consensus bridge using source:target syntax
+      --burn string                  burn coins using addr:amount syntax
+      --issue string                 issue coins using addr:amount syntax
+      --operator string              execute privileged actions as the specified operator
+      --revoke-operator strings      revoke treasury operator access (repeatable)
+      --transfer string              transfer coins using addr:amount syntax
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output results in JSON
+```
+
+### SEE ALSO
+
+* [synnergy coin](#synnergy-coin)	 - Synthron coin utilities

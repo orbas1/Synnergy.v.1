@@ -14,6 +14,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
   - [Multi-node Devnet](#multi-node-devnet)
 - [CLI Modules](#cli-modules)
 - [Stage 78 Enterprise Diagnostics](#stage-78-enterprise-diagnostics)
+- [Stage 80 Treasury Orchestration](#stage-80-treasury-orchestration)
 - [Production Deployment](#production-deployment)
   - [Docker Compose](#docker-compose)
   - [Kubernetes (Helm)](#kubernetes-helm)
@@ -49,6 +50,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
 - **Enterprise orchestrator** – Stage 78 introduces `core.NewEnterpriseOrchestrator` and the `synnergy orchestrator` CLI to unify VM readiness, consensus relayers, wallet bootstrap, authority registry state and gas documentation with telemetry for CLI and web dashboards.
+- **Treasury orchestration** – Stage 80 adds the `treasury/synthron_treasury.go` singleton that aligns the ledger, heavy VM, treasury wallet, consensus relayers and authority registry, registers gas metadata for mint, transfer, burn, reconciliation, operator governance and telemetry opcodes, and streams diagnostics to both the CLI and web control panel with JSON exports and form-driven controls for automation and operations. The orchestrator now maintains a tamper-evident, digitally signed audit trail with component health indicators so compliance teams can verify every monetary action across CLI, VM and browser workflows【F:treasury/synthron_treasury.go†L41-L612】【F:cli/coin.go†L23-L130】【F:web/pages/index.js†L1-L260】.
 - **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
 - **Resilient node primitives** – forensic nodes prune over-capacity logs, full node modes are mutex-protected, gateway endpoints require a running node, and failover managers can remove stale peers.
 - **Thread-safe mempools and plasma bridge safeguards** – node mempools are mutex-protected for concurrent submissions and Plasma bridge operations surface explicit paused errors.
@@ -102,6 +104,7 @@ pkg/          Reusable libraries and experimental modules
    - DAO managers (`core.NewDAOManager`, `core.NewProposalManager`, …)
    - Wallet, watchtower and warfare nodes (`core.NewWallet`, `core.NewWatchtowerNode`, `core.NewWarfareNode`)
    - Token constructors in `internal/tokens` (`tokens.NewSYN223Token`, etc.)
+   - `treasury.DefaultSynthronTreasury` to warm the Stage 80 treasury orchestrator so CLI and web telemetry share the same singleton state across mint, burn, transfer and bridge flows【F:cmd/synnergy/main.go†L86-L164】.
 7. Finally, invoke `cli.Execute()` to dispatch Cobra commands.
 
 Enterprise deployments rely on the defensive modules initialised above:
@@ -245,6 +248,13 @@ Stage 78 upgrades the runtime with a hardened enterprise orchestrator that valid
 ```
 
 Diagnostics confirm VM mode and concurrency, consensus network registration, wallet provenance, authority node totals, and whether Stage 78 opcodes are documented with enterprise-grade gas costs. Results surface through the updated Next.js API (`web/pages/api/orchestrator.js`) and dashboard widgets on the control panel home page, ensuring parity between CLI automation and browser operations. Stress, situational and real-world tests under `core/enterprise_orchestrator_test.go` and `cli/orchestrator_test.go` assert fault tolerance, security controls and regulatory alignment, keeping performance predictable even under high-throughput workloads.
+
+## Stage 80 Treasury Orchestration
+Stage 80 extends these diagnostics with a Synthron Treasury singleton that aligns the ledger, heavy VM, treasury wallet, consensus bridges and authority registry under one control plane. On first use, the orchestrator starts the heavy VM profile, seeds the treasury wallet, authorises consensus relayers, registers authority nodes and synchronises gas schedules for mint, transfer, burn, reconciliation, authority seal, operator governance, bridge and telemetry opcodes so monetary policy actions remain documented and priceable across upgrades【F:treasury/synthron_treasury.go†L41-L523】.
+
+Operators access the treasury through the enhanced `synnergy coin telemetry` command, which emits JSON diagnostics and optionally performs mint, burn, transfer, operator authorisation/revocation and consensus bridge registration with address:amount or source:target flags. Telemetry reports minted and burned totals, circulating supply, ledger height, consensus coverage, authority counts, operator roster and missing opcode documentation, allowing governance teams to enforce compliance gates before approving releases【F:cli/coin.go†L23-L130】【F:treasury/synthron_treasury.go†L214-L523】.
+
+The function web mirrors the same data by proxying the CLI via `/api/treasury`, rendering Stage 80 cards on the dashboard alongside the enterprise orchestrator so browser users can monitor supply, authority quorum, operator governance and documentation coverage while executing mint, burn, transfer and governance actions from form-driven controls【F:web/pages/api/treasury.js†L1-L23】【F:web/pages/index.js†L1-L210】. Ledger burn semantics ensure supply retirement is deterministic and auditable, and dedicated documentation tests stress concurrent issuance, operator rotation and authority registration to verify telemetry consistency under load【F:core/ledger.go†L150-L187】【F:docs/Whitepaper_detailed/Synthron Coin_test.go†L1-L96】.
 
 
 ## Production Deployment

@@ -14,7 +14,7 @@ The `cross_chain_bridge.go` and `cross_chain_transactions.go` components provide
 Services defined in `ai.go` perform fraud scoring, base‑fee optimisation, and volume forecasting. Deployed models evaluate real‑time mempool activity so decentralised exchanges and lending pools can automatically adjust collateralisation or pause execution during suspicious spikes.
 
 ### Treasury and compliance automation
-Modules like `regulatory_management.go`, `regulatory_node.go`, and smart‑contract templates in `smart-contracts/solidity` codify treasury limits, sanction lists, and tax rules. Automated checks on every transfer ensure corporate treasuries remain compliant across jurisdictions while enabling programmable disbursements and escrow services.
+Modules like `regulatory_management.go`, `regulatory_node.go`, and smart‑contract templates in `smart-contracts/solidity` codify treasury limits, sanction lists, and tax rules. Stage 80 adds the `treasury/synthron_treasury.go` orchestrator, which coordinates ledger, VM, consensus and authority registries so mint, burn, transfer and reconciliation flows are auditable across CLI and web dashboards with tamper-evident signatures and subsystem health indicators【F:treasury/synthron_treasury.go†L41-L612】. Automated checks on every transfer ensure corporate treasuries remain compliant across jurisdictions while enabling programmable disbursements and escrow services, and treasury operators can execute policy updates via `synnergy coin telemetry` with JSON diagnostics, operator governance flags and deterministic, signed event feeds for automation【F:cli/coin.go†L23-L130】【F:treasury/synthron_treasury.go†L214-L612】.
 
 ## Identity and Access Management
 ### Verified digital identities
@@ -120,6 +120,9 @@ Regulatory data exchanged through bridges allows jurisdictions to maintain overs
 
 ### Command‑line and GUI interfaces
 The `cli` utilities, React‑based `GUI` packages, and Next.js `web` dashboards allow engineers and non‑technical stakeholders to provision nodes, deploy contracts, and monitor activity through authenticated channels.
+
+### Treasury telemetry dashboards
+Stage 80 integrates `/api/treasury` into the web control panel, invoking the CLI telemetry command to render minted/burned supply, ledger height, consensus bridges, authority counts, operator roster, gas coverage, subsystem health and the signed audit trail directly in the browser. Operators gain real-time insight into monetary policy without shell access while executing governed mint, burn, transfer and operator management actions via form-driven controls backed by the CLI API; automation pipelines can continue to rely on the same CLI for scripted workflows with matching digests for compliance【F:web/pages/api/treasury.js†L1-L23】【F:web/pages/index.js†L1-L260】.
 
 ### Faucets and test harnesses
 `faucet.go`, the extensive `tests/` directory, and deployment scripts under `deploy/` enable reproducible integration tests and streamlined CI/CD workflows across Kubernetes, Terraform, and Docker environments.

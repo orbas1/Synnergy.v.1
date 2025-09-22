@@ -1,19 +1,131 @@
 package cli
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
+	"sync"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
+	"synnergy/treasury"
 )
 
-var coinJSON bool
+var (
+	coinJSON     bool
+	treasuryOnce sync.Once
+	treasuryInst *treasury.SynthronTreasury
+	treasuryErr  error
+)
 
 func init() {
 	coinCmd := &cobra.Command{Use: "coin", Short: "Synthron coin utilities"}
 	coinCmd.PersistentFlags().BoolVar(&coinJSON, "json", false, "output as JSON")
+
+	telemetryCmd := &cobra.Command{
+		Use:   "telemetry",
+		Short: "Report treasury diagnostics and optionally orchestrate actions",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ctx := cmd.Context()
+			operator, _ := cmd.Flags().GetString("operator")
+			if operator != "" {
+				ctx = treasury.WithOperator(ctx, operator)
+			}
+
+			treas, err := getSynthronTreasury(ctx)
+			if err != nil {
+				return err
+			}
+
+			authorize, _ := cmd.Flags().GetStringSlice("authorize-operator")
+			for _, addr := range authorize {
+				addr = strings.TrimSpace(addr)
+				if addr == "" {
+					continue
+				}
+				if err := treas.AuthorizeOperator(ctx, addr); err != nil {
+					return err
+				}
+			}
+
+			revoke, _ := cmd.Flags().GetStringSlice("revoke-operator")
+			for _, addr := range revoke {
+				addr = strings.TrimSpace(addr)
+				if addr == "" {
+					continue
+				}
+				if err := treas.RevokeOperator(ctx, addr); err != nil {
+					return err
+				}
+			}
+
+			issueArg, _ := cmd.Flags().GetString("issue")
+			if issueArg != "" {
+				addr, amount, err := parseAddressAmount(issueArg)
+				if err != nil {
+					return err
+				}
+				if _, err := treas.Issue(ctx, addr, amount); err != nil {
+					return err
+				}
+			}
+
+			burnArg, _ := cmd.Flags().GetString("burn")
+			if burnArg != "" {
+				addr, amount, err := parseAddressAmount(burnArg)
+				if err != nil {
+					return err
+				}
+				if err := treas.Burn(ctx, addr, amount); err != nil {
+					return err
+				}
+			}
+
+			transferArg, _ := cmd.Flags().GetString("transfer")
+			if transferArg != "" {
+				addr, amount, err := parseAddressAmount(transferArg)
+				if err != nil {
+					return err
+				}
+				if err := treas.Transfer(ctx, nil, addr, amount, 0); err != nil {
+					return err
+				}
+			}
+
+			bridgeArg, _ := cmd.Flags().GetString("bridge")
+			if bridgeArg != "" {
+				parts := strings.SplitN(bridgeArg, ":", 2)
+				if len(parts) != 2 {
+					return fmt.Errorf("invalid bridge format, expected source:target")
+				}
+				if _, err := treas.RegisterConsensusLink(ctx, parts[0], parts[1]); err != nil {
+					return err
+				}
+			}
+
+			diag := treas.Diagnostics(ctx)
+			if coinJSON {
+				enc := json.NewEncoder(cmd.OutOrStdout())
+				enc.SetIndent("", "  ")
+				return enc.Encode(diag)
+			}
+			fmt.Fprint(cmd.OutOrStdout(), treasury.SynthronTreasurySummary(diag))
+			fmt.Fprintf(cmd.OutOrStdout(), "component health: vm=%s ledger=%s wallet=%s consensus=%s authorities=%s\n", diag.Health.VM, diag.Health.Ledger, diag.Health.Wallet, diag.Health.Consensus, diag.Health.Authorities)
+			if len(diag.InsertedOpcodes) > 0 {
+				fmt.Fprintf(cmd.OutOrStdout(), "inserted opcodes: %v\n", diag.InsertedOpcodes)
+			}
+			return nil
+		},
+	}
+	telemetryCmd.Flags().String("issue", "", "issue coins using addr:amount syntax")
+	telemetryCmd.Flags().String("burn", "", "burn coins using addr:amount syntax")
+	telemetryCmd.Flags().String("transfer", "", "transfer coins using addr:amount syntax")
+	telemetryCmd.Flags().String("bridge", "", "register a consensus bridge using source:target syntax")
+	telemetryCmd.Flags().String("operator", "", "execute privileged actions as the specified operator")
+	telemetryCmd.Flags().StringSlice("authorize-operator", nil, "grant treasury operator access (repeatable)")
+	telemetryCmd.Flags().StringSlice("revoke-operator", nil, "revoke treasury operator access (repeatable)")
 
 	infoCmd := &cobra.Command{
 		Use:   "info",
@@ -144,8 +256,27 @@ func init() {
 		},
 	}
 
-	coinCmd.AddCommand(infoCmd, rewardCmd, supplyCmd, priceCmd, alphaCmd, minstakeCmd)
+	coinCmd.AddCommand(infoCmd, rewardCmd, supplyCmd, priceCmd, alphaCmd, minstakeCmd, telemetryCmd)
 	rootCmd.AddCommand(coinCmd)
+}
+
+func getSynthronTreasury(ctx context.Context) (*treasury.SynthronTreasury, error) {
+	treasuryOnce.Do(func() {
+		treasuryInst, treasuryErr = treasury.DefaultSynthronTreasury(ctx)
+	})
+	return treasuryInst, treasuryErr
+}
+
+func parseAddressAmount(input string) (string, uint64, error) {
+	parts := strings.SplitN(input, ":", 2)
+	if len(parts) != 2 {
+		return "", 0, fmt.Errorf("invalid format, expected addr:amount")
+	}
+	amount, err := strconv.ParseUint(parts[1], 10, 64)
+	if err != nil {
+		return "", 0, fmt.Errorf("invalid amount: %w", err)
+	}
+	return parts[0], amount, nil
 }
 
 func coinOutput(v interface{}, plain string) error {

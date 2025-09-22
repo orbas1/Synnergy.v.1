@@ -106,6 +106,7 @@ The toolkit also includes backup utilities like `backup_ledger.sh` for timestamp
 - **Auditability** – Archive nodes and historical archives provide immutable records, supporting regulatory audits and forensic analysis.
 - **Event Logging** – The `AuditManager` and lightweight `AuditLog` capture chronological records of node events for later review【F:core/audit_management.go†L9-L45】【F:internal/governance/audit_log.go†L1-L24】.
 - **Receipt Retention** – A thread‑safe `ReceiptStore` preserves transaction outcomes, enabling compliance checks and dispute resolution【F:core/transaction_control.go†L173-L203】.
+- **Treasury Operator Ledger** – Stage 80 records operator authorisations and revocations within the Synthron treasury telemetry, exposing the history, subsystem health and signed audit digests through CLI JSON payloads and the function web so governance teams can audit who has the ability to mint, burn or bridge funds at any moment with cryptographic assurance【F:treasury/synthron_treasury.go†L214-L612】【F:cli/coin.go†L23-L130】【F:web/pages/index.js†L1-L260】.
 
 Planned smart contracts (e.g., GDPR‑compliant storage, versioned archives and SLA enforcement) extend these protections to specialised jurisdictions and enterprise use cases.
 

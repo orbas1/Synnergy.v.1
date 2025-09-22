@@ -10,7 +10,7 @@ Within the Synnergy Network by **Neto Solaris**, the ledger is the authoritative
 
 ### Accounts and Balances
 - The ledger maintains a map of addresses to their token balances.
-- Balances change through credits, mints, and transfers. Each mutation is synchronised via mutexes to ensure thread-safe updates.
+- Balances change through credits, mints, burns and transfers. Each mutation is synchronised via mutexes to ensure thread-safe updates, and burn operations validate balances before retiring supply to keep account histories deterministic【F:core/ledger.go†L150-L187】.
 
 ### Unspent Transaction Outputs (UTXOs)
 - For auditability, the ledger derives a UTXO set from balances. Every balance change generates a new UTXO, enabling deterministic reconstruction of account state.
@@ -76,6 +76,11 @@ Within the Synnergy Network by **Neto Solaris**, the ledger is the authoritative
 ## Integration with Consensus and Cross-Chain Features
 - Consensus algorithms determine which mined block becomes canonical, distributing rewards and adjusting stake weights accordingly.
 - Cross-chain bridges lock assets on origin chains and credit recipients once proofs are validated, making the ledger the settlement layer for cross-network transfers.
+
+## Stage 80 Treasury Integration
+- The Synthron Treasury orchestrator binds the ledger to the virtual machine, consensus network manager, wallet service and authority registry. On first access it starts the heavy VM profile, seeds the treasury wallet with genesis allocations, registers consensus relayers and authority nodes, and ensures all monetary opcodes carry documented gas costs before returning control【F:treasury/synthron_treasury.go†L41-L211】.
+- Runtime diagnostics capture minted and burned totals, circulating supply, ledger height, consensus bridge counts, operator roster and missing opcode documentation. These metrics now include subsystem health and a chained, digitally signed audit log that prove every ledger mutation, flowing into both CLI and web dashboards via `synnergy coin telemetry` and `/api/treasury` so operators receive real-time insight with cryptographic provenance【F:treasury/synthron_treasury.go†L214-L612】【F:cli/coin.go†L23-L130】【F:web/pages/api/treasury.js†L1-L23】.
+- Treasury commands can mint, burn, transfer, authorise/revoke operators or bridge funds while emitting events chained into the signed audit log. Concurrency tests exercise parallel issuance, operator rotation and authority updates to confirm the ledger remains consistent under stress and that telemetry streams—including health status and digests—continue without interruption across CLI and UI integrations【F:docs/Whitepaper_detailed/Synthron Coin_test.go†L1-L108】【F:web/pages/index.js†L1-L260】.
 
 ## Maintenance and Tooling
 - Command-line utilities enable operators to query balances, inspect blocks, mint or transfer tokens, and manage snapshots.

@@ -23,3 +23,5 @@ This directory contains architecture overviews for major module groups. Each fil
 15. [Deployment and Containerization](docker_architecture.md)
 
 There are **15** distinct module groups.
+
+Stage 80 introduces the Synthron Treasury orchestration layer, which spans multiple architecture domains by wiring ledger, VM, wallet, consensus and authority services into a single control plane. The orchestration service aligns gas schedules, registers treasury opcodes (including operator governance), exposes telemetry through the CLI and function web, and ensures enterprise dashboards share the same mint/burn, circulation, operator and compliance insights with form-driven controls for governed actions【F:treasury/synthron_treasury.go†L41-L523】【F:cli/coin.go†L23-L130】【F:web/pages/index.js†L1-L210】.

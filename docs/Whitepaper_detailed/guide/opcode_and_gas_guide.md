@@ -2949,3 +2949,8 @@ pricing but ensures resources are isolated so gas accounting remains
 predictable across replicas.
 
 Stage 22 registers opcodes for querying node health so the Node Operations Dashboard can estimate gas costs before execution.
+
+
+### Stage 80 Treasury Updates
+
+Stage 80 expands the opcode catalogue with Synthron Treasury governance routines. `SynthronCoin_AuthorizeOperator` and `SynthronCoin_RevokeOperator` register alongside mint, burn, transfer, reconciliation and telemetry handlers so permissioned operators can be priced and audited through the same gas schedule【F:treasury/synthron_treasury.go†L146-L215】【F:gas_table.go†L214-L282】. The CLI exposes these flows through `synnergy coin telemetry`, which adds `--operator`, `--authorize-operator` and `--revoke-operator` flags so governance automation can grant or remove privileges with JSON diagnostics for dashboards and scripts【F:cli/coin.go†L23-L130】. The function web renders the same telemetry, operator roster and gas coverage via `/api/treasury`, ensuring browser operators share parity with CLI and contract integrations【F:web/pages/index.js†L1-L210】.
