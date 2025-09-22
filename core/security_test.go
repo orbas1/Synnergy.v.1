@@ -53,7 +53,15 @@ func TestEligibleStakesExcludesSlashed(t *testing.T) {
 
 func TestSubBlockSignature(t *testing.T) {
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "val")
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	if err := RegisterValidatorWallet(w); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	defer UnregisterValidator(w.Address)
+	sb := NewSubBlock([]*Transaction{tx}, w.Address)
 	if !sb.VerifySignature() {
 		t.Fatalf("signature verification failed")
 	}

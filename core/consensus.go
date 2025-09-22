@@ -1,6 +1,16 @@
 package core
 
 import (
+
+	"bytes"
+	"context"
+	"crypto/ecdsa"
+	"crypto/sha256"
+	"math/big"
+	"sort"
+	"sync"
+	"time"
+
         "context"
         "crypto/sha256"
         "fmt"
@@ -9,6 +19,7 @@ import (
         "sort"
         "sync"
         "time"
+
 
 	ilog "synnergy/internal/log"
 )
@@ -53,22 +64,25 @@ type SynnergyConsensus struct {
 	// RegNode performs regulatory checks on transactions during
 	// consensus validation. When nil, regulatory checks are bypassed.
 	RegNode *RegulatoryNode
+
+	validatorPubKeys map[string][]byte
 }
 
 // NewSynnergyConsensus returns a new consensus engine with default parameters
 // derived from the Synnergy specification.
 func NewSynnergyConsensus() *SynnergyConsensus {
 	return &SynnergyConsensus{
-		Weights:      ConsensusWeights{PoW: 0.40, PoS: 0.30, PoH: 0.30},
-		Alpha:        0.5,
-		Beta:         0.5,
-		Gamma:        0.1,
-		Dmax:         1,
-		Smax:         1,
-		PoWAvailable: true,
-		PoSAvailable: true,
-		PoHAvailable: true,
-		PoWRewards:   true,
+		Weights:          ConsensusWeights{PoW: 0.40, PoS: 0.30, PoH: 0.30},
+		Alpha:            0.5,
+		Beta:             0.5,
+		Gamma:            0.1,
+		Dmax:             1,
+		Smax:             1,
+		PoWAvailable:     true,
+		PoSAvailable:     true,
+		PoHAvailable:     true,
+		PoWRewards:       true,
+		validatorPubKeys: make(map[string][]byte),
 	}
 }
 
@@ -77,6 +91,18 @@ func NewSynnergyConsensus() *SynnergyConsensus {
 func (sc *SynnergyConsensus) SetRegulatoryNode(rn *RegulatoryNode) {
 	sc.mu.Lock()
 	sc.RegNode = rn
+	sc.mu.Unlock()
+}
+
+// RegisterValidatorPublicKey records the validator's public key so sub-blocks
+// can be authenticated across the network. The stored key is compared with any
+// key provided in sub-blocks to detect spoofed identities.
+func (sc *SynnergyConsensus) RegisterValidatorPublicKey(addr string, pub *ecdsa.PublicKey) {
+	if addr == "" || pub == nil {
+		return
+	}
+	sc.mu.Lock()
+	sc.validatorPubKeys[addr] = encodePublicKey(pub)
 	sc.mu.Unlock()
 }
 
@@ -247,6 +273,17 @@ func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {
 	}
 	if err := sb.Validate(); err != nil {
 		return false
+	}
+	if !sb.System {
+		sc.mu.RLock()
+		expected := sc.validatorPubKeys[sb.Validator]
+		sc.mu.RUnlock()
+		if len(expected) == 0 {
+			return false
+		}
+		if !bytes.Equal(expected, sb.ValidatorKey) {
+			return false
+		}
 	}
 	regNode := sc.getRegNode()
 	if regNode == nil {

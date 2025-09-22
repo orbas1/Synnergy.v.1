@@ -11,7 +11,15 @@ import (
 
 func TestSubBlockCreationAndVerification(t *testing.T) {
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "val")
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	if err := RegisterValidatorWallet(w); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	defer UnregisterValidator(w.Address)
+	sb := NewSubBlock([]*Transaction{tx}, w.Address)
 	if err := sb.Validate(); err != nil {
 		t.Fatalf("validate: %v", err)
 	}
@@ -19,7 +27,15 @@ func TestSubBlockCreationAndVerification(t *testing.T) {
 
 func TestBlockHeaderHash(t *testing.T) {
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "v1")
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	if err := RegisterValidatorWallet(w); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	defer UnregisterValidator(w.Address)
+	sb := NewSubBlock([]*Transaction{tx}, w.Address)
 	b := NewBlock([]*SubBlock{sb}, "prevhash")
 	nonce := uint64(7)
 	got := b.HeaderHash(nonce)
@@ -40,7 +56,15 @@ func TestBlockHeaderHash(t *testing.T) {
 
 func TestSubBlockValidateRejectsDuplicateTransactions(t *testing.T) {
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx, tx}, "val")
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	if err := RegisterValidatorWallet(w); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	defer UnregisterValidator(w.Address)
+	sb := NewSubBlock([]*Transaction{tx, tx}, w.Address)
 	if err := sb.Validate(); err == nil || !strings.Contains(err.Error(), "duplicate") {
 		t.Fatalf("expected duplicate transaction error, got %v", err)
 	}
@@ -48,7 +72,15 @@ func TestSubBlockValidateRejectsDuplicateTransactions(t *testing.T) {
 
 func TestBlockValidateRejectsFutureTimestamp(t *testing.T) {
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "v1")
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	if err := RegisterValidatorWallet(w); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	defer UnregisterValidator(w.Address)
+	sb := NewSubBlock([]*Transaction{tx}, w.Address)
 	b := NewBlock([]*SubBlock{sb}, "prevhash")
 	b.Timestamp = time.Now().Add(6 * time.Minute).Unix()
 	b.Nonce = 1
@@ -60,7 +92,15 @@ func TestBlockValidateRejectsFutureTimestamp(t *testing.T) {
 
 func TestBlockValidateRejectsSubBlockAfterBlockTimestamp(t *testing.T) {
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "v1")
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	if err := RegisterValidatorWallet(w); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	defer UnregisterValidator(w.Address)
+	sb := NewSubBlock([]*Transaction{tx}, w.Address)
 	b := NewBlock([]*SubBlock{sb}, "prevhash")
 	b.Timestamp = sb.Timestamp - 10
 	b.Nonce = 1
@@ -72,7 +112,15 @@ func TestBlockValidateRejectsSubBlockAfterBlockTimestamp(t *testing.T) {
 
 func TestBlockValidateRequiresHash(t *testing.T) {
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "v1")
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	if err := RegisterValidatorWallet(w); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	defer UnregisterValidator(w.Address)
+	sb := NewSubBlock([]*Transaction{tx}, w.Address)
 	b := NewBlock([]*SubBlock{sb}, "prevhash")
 	b.Nonce = 1
 	if err := b.Validate(); err == nil || !strings.Contains(err.Error(), "hash required") {
@@ -82,7 +130,15 @@ func TestBlockValidateRequiresHash(t *testing.T) {
 
 func TestBlockValidateDetectsHashMismatch(t *testing.T) {
 	tx := NewTransaction("a", "b", 1, 0, 0)
-	sb := NewSubBlock([]*Transaction{tx}, "v1")
+	w, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet: %v", err)
+	}
+	if err := RegisterValidatorWallet(w); err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	defer UnregisterValidator(w.Address)
+	sb := NewSubBlock([]*Transaction{tx}, w.Address)
 	b := NewBlock([]*SubBlock{sb}, "prevhash")
 	b.Nonce = 1
 	b.Hash = "bad"

@@ -38,6 +38,9 @@ func init() {
 			}
 			tx := core.NewTransaction(args[1], args[2], amt, fee, nonce)
 			sb := core.NewSubBlock([]*core.Transaction{tx}, args[0])
+			if err := core.SignSubBlock(sb); err != nil {
+				return fmt.Errorf("sign sub-block: %w", err)
+			}
 			sbList = append(sbList, sb)
 			fmt.Println(sb.PohHash)
 			return nil
