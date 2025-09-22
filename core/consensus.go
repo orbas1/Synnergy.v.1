@@ -4,7 +4,8 @@ import (
 	"context"
 	"crypto/sha256"
 	"math/big"
-	"strings"
+	"sort"
+	"time"
 
 	ilog "synnergy/internal/log"
 )
@@ -167,32 +168,40 @@ func (sc *SynnergyConsensus) SelectValidator(seed string, stakes map[string]uint
 		ilog.Info("select_validator", "result", "")
 		return ""
 	}
-	var total, max uint64
-	for _, s := range stakes {
-		total += s
-		if s > max {
-			max = s
-		}
+	type candidate struct {
+		addr  string
+		stake uint64
 	}
-	if len(stakes) > 1 && max*2 > total {
+	candidates := make([]candidate, 0, len(stakes))
+	var total uint64
+	for addr, stake := range stakes {
+		if stake == 0 {
+			continue
+		}
+		candidates = append(candidates, candidate{addr: addr, stake: stake})
+		total += stake
+	}
+	if total == 0 {
 		ilog.Info("select_validator", "result", "")
 		return ""
 	}
-	var bestAddr string
-	var bestScore *big.Int
-	for addr, stake := range stakes {
-		h := sha256.Sum256([]byte(seed + addr))
-		score := new(big.Int).SetBytes(h[:])
-		if stake > 0 {
-			score.Div(score, new(big.Int).SetUint64(stake))
-		}
-		if bestAddr == "" || score.Cmp(bestScore) < 0 {
-			bestAddr = addr
-			bestScore = score
+	sort.Slice(candidates, func(i, j int) bool {
+		return candidates[i].addr < candidates[j].addr
+	})
+	h := sha256.Sum256([]byte(seed))
+	entropy := new(big.Int).SetBytes(h[:])
+	pick := new(big.Int).Mod(entropy, new(big.Int).SetUint64(total)).Uint64()
+	var cumulative uint64
+	for _, cand := range candidates {
+		cumulative += cand.stake
+		if pick < cumulative {
+			ilog.Info("select_validator", "result", cand.addr, "stake", cand.stake, "total", total)
+			return cand.addr
 		}
 	}
-	ilog.Info("select_validator", "result", bestAddr)
-	return bestAddr
+	chosen := candidates[len(candidates)-1].addr
+	ilog.Info("select_validator", "result", chosen, "stake", candidates[len(candidates)-1].stake, "total", total)
+	return chosen
 }
 
 // ValidateSubBlock performs simple PoS and PoH validation on a sub-block.
@@ -222,18 +231,34 @@ func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {
 // difficulty, defined as the number of leading zeroes required in the block
 // hash.
 func (sc *SynnergyConsensus) MineBlock(b *Block, difficulty uint8) {
-	target := strings.Repeat("0", int(difficulty))
+	const maxDifficultyBits = 64 // clamp work so the stub miner cannot hang indefinitely
+	bits := int(difficulty) * 4
+	if bits > maxDifficultyBits {
+		bits = maxDifficultyBits
+	}
+	shift := 256 - bits
+	if shift < 1 {
+		shift = 1
+	}
+	target := new(big.Int).Lsh(big.NewInt(1), uint(shift))
+	target.Sub(target, big.NewInt(1))
+	start := time.Now()
 	var nonce uint64
 	for {
 		hash := b.HeaderHash(nonce)
-		if strings.HasPrefix(hash, target) {
+		hashInt, ok := new(big.Int).SetString(hash, 16)
+		if ok && hashInt.Cmp(target) <= 0 {
 			b.Nonce = nonce
 			b.Hash = hash
-			ilog.Info("mine_block", "nonce", nonce)
+			ilog.Info("mine_block", "nonce", nonce, "difficulty_bits", bits)
 			return
 		}
 		nonce++
-
+		if nonce == 0 || time.Since(start) > time.Second {
+			// Refresh the timestamp to alter the work target and avoid infinite loops.
+			b.Timestamp = time.Now().Unix()
+			start = time.Now()
+		}
 	}
 }
 
@@ -241,37 +266,83 @@ func (sc *SynnergyConsensus) MineBlock(b *Block, difficulty uint8) {
 // thirds of votes are affirmative the block is marked finalized and validators
 // contributing sub-blocks receive a stake reward via the provided manager.
 func (sc *SynnergyConsensus) FinalizeBlock(b *Block, votes map[string]bool, vm *ValidatorManager, reward uint64) bool {
-	yes := 0
-	for _, v := range votes {
-		if v {
-			yes++
+	if b == nil || vm == nil {
+		return false
+	}
+	eligible := vm.Eligible()
+	if len(eligible) == 0 {
+		return false
+	}
+	var totalStake uint64
+	for _, stake := range eligible {
+		totalStake += stake
+	}
+	if totalStake == 0 {
+		return false
+	}
+	var participatingStake uint64
+	var affirmativeStake uint64
+	for addr, approve := range votes {
+		stake, ok := eligible[addr]
+		if !ok || stake == 0 {
+			continue
+		}
+		participatingStake += stake
+		if approve {
+			affirmativeStake += stake
 		}
 	}
-	if yes*3 >= len(votes)*2 {
-		b.Finalized = true
-		if vm != nil && reward > 0 {
-			for _, sb := range b.SubBlocks {
-				vm.Reward(context.Background(), sb.Validator, reward)
+	if participatingStake*3 < totalStake*2 {
+		ilog.Info("finalize_block", "hash", b.Hash, "result", "insufficient_participation", "participating", participatingStake, "total", totalStake)
+		return false
+	}
+	if affirmativeStake*3 < totalStake*2 {
+		ilog.Info("finalize_block", "hash", b.Hash, "result", "insufficient_affirmative", "yes", affirmativeStake, "total", totalStake)
+		return false
+	}
+	b.Finalized = true
+	if reward > 0 {
+		for _, sb := range b.SubBlocks {
+			if sb == nil {
+				continue
 			}
+			vm.Reward(context.Background(), sb.Validator, reward)
 		}
-		ilog.Info("finalize_block", "hash", b.Hash)
-		return true
 	}
-	return false
+	ilog.Info("finalize_block", "hash", b.Hash, "yes_stake", affirmativeStake, "total_stake", totalStake)
+	return true
 }
 
 // ChooseChain selects the longest chain from the candidates. This placeholder
 // fork-choice rule enables nodes to converge on a canonical history.
 func (sc *SynnergyConsensus) ChooseChain(chains [][]*Block) []*Block {
 	var best []*Block
-	max := 0
+	var bestScore uint64
+	var bestFinalized int
 	for _, c := range chains {
-		if len(c) > max {
+		var score uint64
+		finalized := 0
+		for _, blk := range c {
+			if blk == nil {
+				continue
+			}
+			weight := uint64(len(blk.SubBlocks))
+			if weight == 0 {
+				weight = 1
+			}
+			score += weight
+			if blk.Finalized {
+				finalized++
+				score += weight * 10
+			}
+		}
+		if best == nil || finalized > bestFinalized || (finalized == bestFinalized && (score > bestScore || (score == bestScore && len(c) > len(best)))) {
 			best = c
-			max = len(c)
+			bestScore = score
+			bestFinalized = finalized
 		}
 	}
-	ilog.Info("fork_choice", "length", max)
+	ilog.Info("fork_choice", "score", bestScore, "finalized", bestFinalized)
 	return best
 }
 
