@@ -95,4 +95,7 @@ func TestDataResourceImportAndInfo(t *testing.T) {
 	if _, err := execCommand("data", "resource", "get", "inline"); err == nil {
 		t.Fatalf("expected inline resource removed")
 	}
+	if _, err := execCommand("data", "--json", "resource", "info", "asset"); err != nil {
+		t.Fatalf("asset should remain after prune: %v", err)
+	}
 }

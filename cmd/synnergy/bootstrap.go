@@ -238,6 +238,12 @@ var requiredGasOperations = []string{
 	"KademliaGet",
 	"KademliaClosest",
 	"KademliaDistance",
+	// Stage 78 enterprise orchestrator operations
+	"EnterpriseBootstrap",
+	"EnterpriseConsensusSync",
+	"EnterpriseWalletSeal",
+	"EnterpriseNodeAudit",
+	"EnterpriseAuthorityElect",
 	// Stage 79 ledgers and governance enhancements
 	"Ledger_StreamReplication",
 	"Ledger_PrimaryElection",

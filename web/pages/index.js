@@ -107,14 +107,29 @@ export default function Home() {
               {orchestrator.vmConcurrency})
             </p>
             <p>
-              <strong>Consensus networks:</strong> {orchestrator.consensusNetworks}
+              <strong>Consensus networks:</strong> {orchestrator.consensusNetworks} (relayers {""}
+              {orchestrator.consensusRelayers || 0})
             </p>
             <p>
               <strong>Authority nodes:</strong> {orchestrator.authorityNodes}
             </p>
+            {orchestrator.authorityRoles && (
+              <p>
+                <strong>Authority roles:</strong>{" "}
+                {Object.entries(orchestrator.authorityRoles)
+                  .map(([role, count]) => `${role}:${count}`)
+                  .join(", ") || "n/a"}
+              </p>
+            )}
             <p>
-              <strong>Wallet:</strong> {orchestrator.walletAddress}
+              <strong>Wallet:</strong> {orchestrator.walletAddress} (sealed {""}
+              {orchestrator.walletSealed ? "yes" : "no"})
             </p>
+            {orchestrator.gasLastSyncedAt && (
+              <p>
+                <strong>Gas last synced:</strong> {orchestrator.gasLastSyncedAt}
+              </p>
+            )}
             <p>
               <strong>Ledger height:</strong> {orchestrator.ledgerHeight}
             </p>

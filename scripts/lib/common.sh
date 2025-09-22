@@ -147,9 +147,13 @@ retry() {
 }
 
 synnergy_cli_path() {
-  if [[ -n "${SYN_CLI_BIN:-}" && -x "$SYN_CLI_BIN" ]]; then
-    printf '%s\n' "$SYN_CLI_BIN"
-    return 0
+  if [[ -n "${SYN_CLI_BIN:-}" ]]; then
+    if [[ -x "$SYN_CLI_BIN" ]]; then
+      printf '%s\n' "$SYN_CLI_BIN"
+      return 0
+    fi
+    log_error "SYN_CLI_BIN is not executable: $SYN_CLI_BIN" >&2
+    return 1
   fi
   local compiled="$PROJECT_ROOT/bin/synnergy"
   if [[ -x "$compiled" ]]; then
@@ -162,7 +166,9 @@ synnergy_cli_path() {
 
 synnergy_cli() {
   local bin
-  bin="$(synnergy_cli_path)"
+  if ! bin="$(synnergy_cli_path)"; then
+    return 1
+  fi
   local -a args=()
   if [[ "$bin" == go* ]]; then
     args=(go run ./cmd/synnergy "$@")

@@ -2,6 +2,19 @@
 
 This document describes how to configure a Synnergy node using the YAML files in `cmd/config/`. The configuration loader merges `default.yaml` with an optional environment specific file identified by the `SYNN_ENV` variable. Applications should call `config.LoadFromEnv()` which implements this behaviour. All values can be overridden by environment variables thanks to Viper's `AutomaticEnv` integration and the project `.env` file.
 
+## Stage 82 Enhancements
+
+Stage 82 hardens configuration handling across the CLI, virtual machine and web
+interfaces. The new `configureLogging` helper validates log levels, formats and
+output targets before the runtime starts, preventing misconfigured nodes from
+silently discarding telemetry. `registerEnterpriseGasMetadata` loads the
+documented gas schedule, enforces the Stage 78 enterprise opcodes and attaches
+human-readable metadata so CLI automation, the JavaScript control panel and the
+function web all present identical gas pricing. These checks execute during the
+bootstrap sequence that powers `synnergy orchestrator bootstrap`, ensuring wallet
+sealing, consensus relayer registration and ledger audits operate against a
+validated configuration stack.
+
 ## Loading Sequence
 
 1. `default.yaml` is loaded first and establishes sane defaults for development.

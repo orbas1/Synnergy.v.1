@@ -17,6 +17,7 @@ var (
 	orchestratorInst *core.EnterpriseOrchestrator
 	orchestratorErr  error
 	orchestratorJSON bool
+	orchestratorMu   sync.RWMutex
 )
 
 func init() {
@@ -43,9 +44,15 @@ func init() {
 			}
 			fmt.Fprintf(cmd.OutOrStdout(), "Orchestrator status at %s\n", diag.Timestamp.Format(time.RFC3339))
 			fmt.Fprintf(cmd.OutOrStdout(), "  VM: %s (running=%t, concurrency=%d)\n", diag.VMMode, diag.VMRunning, diag.VMConcurrency)
-			fmt.Fprintf(cmd.OutOrStdout(), "  Consensus networks: %d\n", diag.ConsensusNetworks)
+			fmt.Fprintf(cmd.OutOrStdout(), "  Consensus networks: %d (relayers=%d)\n", diag.ConsensusNetworks, diag.ConsensusRelayers)
 			fmt.Fprintf(cmd.OutOrStdout(), "  Authority nodes: %d\n", diag.AuthorityNodes)
-			fmt.Fprintf(cmd.OutOrStdout(), "  Wallet address: %s\n", diag.WalletAddress)
+			if len(diag.AuthorityRoles) > 0 {
+				fmt.Fprintf(cmd.OutOrStdout(), "  Authority roles: %v\n", diag.AuthorityRoles)
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "  Wallet address: %s (sealed=%t)\n", diag.WalletAddress, diag.WalletSealed)
+			if !diag.GasLastSyncedAt.IsZero() {
+				fmt.Fprintf(cmd.OutOrStdout(), "  Gas schedule synced: %s\n", diag.GasLastSyncedAt.Format(time.RFC3339))
+			}
 			if len(diag.InsertedOpcodes) > 0 {
 				fmt.Fprintf(cmd.OutOrStdout(), "  Newly documented opcodes: %v\n", diag.InsertedOpcodes)
 			}
@@ -81,10 +88,33 @@ func init() {
 
 	orchestratorCmd.AddCommand(statusCmd)
 	orchestratorCmd.AddCommand(syncCmd)
+	orchestratorCmd.AddCommand(&cobra.Command{
+		Use:   "bootstrap",
+		Short: "Run EnterpriseBootstrap to verify readiness",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			orch, err := getEnterpriseOrchestrator(cmd.Context())
+			if err != nil {
+				return err
+			}
+			diag, err := orch.EnterpriseBootstrap(cmd.Context())
+			if err != nil {
+				return err
+			}
+			fmt.Fprintf(cmd.OutOrStdout(), "Bootstrap complete: wallet=%s sealed=%t consensus=%d authority=%d\n", diag.WalletAddress, diag.WalletSealed, diag.ConsensusNetworks, diag.AuthorityNodes)
+			return nil
+		},
+	})
 	rootCmd.AddCommand(orchestratorCmd)
 }
 
 func getEnterpriseOrchestrator(ctx context.Context) (*core.EnterpriseOrchestrator, error) {
+	orchestratorMu.RLock()
+	inst := orchestratorInst
+	err := orchestratorErr
+	orchestratorMu.RUnlock()
+	if inst != nil || err != nil {
+		return inst, err
+	}
 	orchestratorOnce.Do(func() {
 		useCtx := ctx
 		if useCtx == nil {
@@ -93,7 +123,23 @@ func getEnterpriseOrchestrator(ctx context.Context) (*core.EnterpriseOrchestrato
 		var cancel context.CancelFunc
 		useCtx, cancel = context.WithTimeout(useCtx, 5*time.Second)
 		defer cancel()
-		orchestratorInst, orchestratorErr = core.NewEnterpriseOrchestrator(useCtx)
+		inst, err := core.NewEnterpriseOrchestrator(useCtx)
+		orchestratorMu.Lock()
+		orchestratorInst = inst
+		orchestratorErr = err
+		orchestratorMu.Unlock()
 	})
+	orchestratorMu.RLock()
+	defer orchestratorMu.RUnlock()
 	return orchestratorInst, orchestratorErr
+}
+
+// InjectEnterpriseOrchestrator allows the main package to provide a pre-warmed
+// orchestrator instance so CLI and web integrations reuse the same diagnostics
+// pool.
+func InjectEnterpriseOrchestrator(inst *core.EnterpriseOrchestrator) {
+	orchestratorMu.Lock()
+	orchestratorInst = inst
+	orchestratorErr = nil
+	orchestratorMu.Unlock()
 }

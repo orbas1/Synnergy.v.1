@@ -5,6 +5,18 @@ This guide explains how to prepare a development or testing environment for the
 system requirements, building from source, configuration management and
 starting a small multi-service network suitable for enterprise evaluation.
 
+## Stage 82 Bootstrap Flow
+
+After building the CLI, run `synnergy orchestrator bootstrap` to initialise the
+heavy VM, synchronise consensus relayers, seal the orchestrator wallet and audit
+the ledger. The command outputs JSON diagnostics containing wallet seal status,
+authority role distribution, consensus relayer count and the most recent gas
+sync time. These values feed the JavaScript control panel and can be asserted in
+automation scripts before nodes are allowed to process transactions. Logging
+configuration is validated via `configureLogging` and the global gas schedule is
+registered through `registerEnterpriseGasMetadata`, ensuring the CLI, virtual
+machine and web tooling share the same pricing model from the very first run.
+
 ## 1. Prerequisites
 
 Before compiling the CLI ensure the following software is installed:

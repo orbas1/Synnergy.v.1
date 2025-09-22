@@ -2,6 +2,18 @@
 
 This guide describes the node implementations available in the Synnergy project. Each node is a focused Go module that exposes a small API and can be composed with other components to build complex behaviour.
 
+## Stage 82 Bootstrap Changes
+
+Stage 82 ensures node lifecycles participate in the enterprise bootstrap flow.
+When `synnergy orchestrator bootstrap` runs it starts the shared VM, seals the
+wallet, performs a ledger audit and re-registers the orchestrator as an authority
+node before any mining, staking or custody services initialise. The CLI and web
+dashboard now expose the orchestrator's consensus relayer count and authority role
+distribution, giving operators immediate visibility into node registration
+health. Gas metadata for node operations—mining, staking, logistics, watchtower
+and warfare—remains synchronised across documentation and runtime through the new
+`registerEnterpriseGasMetadata` helper.
+
 ## Mining Node
 
 The `MiningNode` simulates proof-of-work mining. It can start or stop hashing, submit block hashes, and attempt synchronous mining with adjustable difficulty. The node keeps minimal state so it can be used in tests and simulations.

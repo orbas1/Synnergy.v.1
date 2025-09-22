@@ -5,6 +5,21 @@ Proof‑of‑Stake (PoS) and Proof‑of‑History (PoH). The weights assigned to
 mechanism adjust dynamically according to network conditions so the chain can
 favour security, throughput or decentralisation as required.
 
+## Stage 82 Diagnostics
+
+Stage 82 introduces orchestration helpers that ensure consensus readiness before
+operators submit transactions. `EnterpriseConsensusSync` is now exposed through
+the `synnergy orchestrator bootstrap` command: if no cross-consensus network is
+registered, the orchestrator wallet authorises itself and provisions a default
+bridge so relayers can begin work immediately. The command also surfaces the
+number of authorised relayers via `consensusRelayers` in the CLI and web JSON
+payloads, making it easy to alert on missing relayer keys. `EnterpriseAuthorityElect`
+re-validates that the orchestrator wallet retains an authority seat, while
+`EnterpriseNodeAudit` touches the ledger to confirm read access before any PoW or
+PoS rounds execute. These diagnostics feed the JavaScript control panel so
+operators can pause consensus hopping if relayers fall below an enterprise
+threshold.
+
 ## Core Concepts
 
 The implementation lives in `core/consensus.go` and related files. Key data

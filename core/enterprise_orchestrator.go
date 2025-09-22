@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 	"sync"
@@ -41,12 +42,16 @@ type EnterpriseDiagnostics struct {
 	VMMode            string            `json:"vmMode"`
 	VMConcurrency     int               `json:"vmConcurrency"`
 	ConsensusNetworks int               `json:"consensusNetworks"`
+	ConsensusRelayers int               `json:"consensusRelayers"`
 	AuthorityNodes    int               `json:"authorityNodes"`
+	AuthorityRoles    map[string]int    `json:"authorityRoles"`
 	WalletAddress     string            `json:"walletAddress"`
+	WalletSealed      bool              `json:"walletSealed"`
 	LedgerHeight      int               `json:"ledgerHeight"`
 	GasCoverage       map[string]uint64 `json:"gasCoverage"`
 	MissingOpcodes    []string          `json:"missingOpcodes"`
 	InsertedOpcodes   []string          `json:"insertedOpcodes,omitempty"`
+	GasLastSyncedAt   time.Time         `json:"gasLastSyncedAt"`
 }
 
 // EnterpriseOrchestrator coordinates Stage 78 subsystems so enterprise operators
@@ -61,6 +66,7 @@ type EnterpriseOrchestrator struct {
 	gas               map[string]uint64
 	last              EnterpriseDiagnostics
 	pendingInsertions []string
+	lastSync          time.Time
 }
 
 // NewEnterpriseOrchestrator boots a heavy VM, authorises a consensus relayer,
@@ -106,6 +112,7 @@ func NewEnterpriseOrchestrator(ctx context.Context, opts ...EnterpriseOption) (*
 		return nil, fmt.Errorf("ensure gas schedule: %w", err)
 	}
 	orchestrator.pendingInsertions = inserted
+	orchestrator.lastSync = time.Now().UTC()
 
 	orchestrator.consensus.AuthorizeRelayer(orchestrator.wallet.Address)
 	if !orchestrator.registry.IsAuthorityNode(orchestrator.wallet.Address) {
@@ -167,6 +174,105 @@ func (o *EnterpriseOrchestrator) RegisterAuthorityNode(ctx context.Context, addr
 	return node, nil
 }
 
+// EnterpriseBootstrap ensures every Stage 78 subsystem is initialised and returns
+// an updated diagnostics snapshot. It is safe to invoke multiple times.
+func (o *EnterpriseOrchestrator) EnterpriseBootstrap(ctx context.Context) (EnterpriseDiagnostics, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if err := o.vm.Start(); err != nil {
+		return EnterpriseDiagnostics{}, fmt.Errorf("vm start: %w", err)
+	}
+	if _, err := o.EnterpriseWalletSeal(); err != nil {
+		return EnterpriseDiagnostics{}, err
+	}
+	if err := o.EnterpriseConsensusSync(ctx); err != nil {
+		return EnterpriseDiagnostics{}, err
+	}
+	if _, err := o.EnterpriseAuthorityElect(ctx, "orchestrator"); err != nil {
+		return EnterpriseDiagnostics{}, err
+	}
+	if err := o.EnterpriseNodeAudit(ctx); err != nil {
+		return EnterpriseDiagnostics{}, err
+	}
+	return o.refreshDiagnostics(ctx), nil
+}
+
+// EnterpriseConsensusSync ensures at least one consensus bridging network is
+// configured using the orchestrator wallet as the authorised relayer.
+func (o *EnterpriseOrchestrator) EnterpriseConsensusSync(ctx context.Context) error {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if len(o.consensus.ListNetworks()) > 0 {
+		return nil
+	}
+	addr, err := o.EnterpriseWalletSeal()
+	if err != nil {
+		return err
+	}
+	if _, err := o.consensus.RegisterNetwork("ProofOfStake", "Synnergy-PBFT", addr); err != nil {
+		return fmt.Errorf("register consensus network: %w", err)
+	}
+	o.refreshDiagnostics(ctx)
+	return nil
+}
+
+// EnterpriseWalletSeal validates that the orchestrator wallet is available and
+// returns its address.
+func (o *EnterpriseOrchestrator) EnterpriseWalletSeal() (string, error) {
+	if o.wallet == nil {
+		return "", errors.New("wallet unavailable")
+	}
+	if o.wallet.Address == "" {
+		return "", errors.New("wallet address not initialised")
+	}
+	return o.wallet.Address, nil
+}
+
+// EnterpriseAuthorityElect ensures the orchestrator wallet is registered as an
+// authority node under the provided role.
+func (o *EnterpriseOrchestrator) EnterpriseAuthorityElect(ctx context.Context, role string) (*AuthorityNode, error) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	addr, err := o.EnterpriseWalletSeal()
+	if err != nil {
+		return nil, err
+	}
+	if role == "" {
+		role = "orchestrator"
+	}
+	if o.registry.IsAuthorityNode(addr) {
+		node, infoErr := o.registry.Info(addr)
+		if infoErr != nil {
+			return nil, infoErr
+		}
+		o.refreshDiagnostics(ctx)
+		return node, nil
+	}
+	node, err := o.registry.Register(addr, role)
+	if err != nil {
+		return nil, err
+	}
+	o.refreshDiagnostics(ctx)
+	return node, nil
+}
+
+// EnterpriseNodeAudit touches the ledger to confirm read access is healthy and
+// refreshes diagnostics for monitoring pipelines.
+func (o *EnterpriseOrchestrator) EnterpriseNodeAudit(ctx context.Context) error {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if o.ledger == nil {
+		return errors.New("ledger unavailable")
+	}
+	_, _ = o.ledger.Head()
+	o.refreshDiagnostics(ctx)
+	return nil
+}
+
 // SyncGasSchedule merges schedule with the orchestrator baseline and ensures the
 // global gas table is updated. Diagnostics are returned so callers can verify
 // pricing as part of automation pipelines.
@@ -186,6 +292,7 @@ func (o *EnterpriseOrchestrator) SyncGasSchedule(ctx context.Context, schedule m
 		}
 		o.mu.Lock()
 		o.pendingInsertions = inserted
+		o.lastSync = time.Now().UTC()
 		o.mu.Unlock()
 	}
 	return o.refreshDiagnostics(ctx), nil
@@ -200,15 +307,30 @@ func (o *EnterpriseOrchestrator) refreshDiagnostics(ctx context.Context) Enterpr
 	_, span := telemetry.Tracer("core.enterprise").Start(ctx, "EnterpriseOrchestrator.refreshDiagnostics")
 	defer span.End()
 
+	networks := o.consensus.ListNetworks()
+	relayers := o.consensus.AuthorizedRelayers()
+	nodes := o.registry.List()
+
+	walletAddress := ""
+	walletSealed := false
+	if o.wallet != nil {
+		walletAddress = o.wallet.Address
+		walletSealed = walletAddress != ""
+	}
+
 	diag := EnterpriseDiagnostics{
 		Timestamp:         time.Now().UTC(),
 		VMRunning:         o.vm.Status(),
 		VMMode:            o.vm.Mode().String(),
 		VMConcurrency:     o.vm.Concurrency(),
-		ConsensusNetworks: len(o.consensus.ListNetworks()),
-		AuthorityNodes:    len(o.registry.List()),
-		WalletAddress:     o.wallet.Address,
+		ConsensusNetworks: len(networks),
+		ConsensusRelayers: len(relayers),
+		AuthorityNodes:    len(nodes),
+		AuthorityRoles:    make(map[string]int, len(nodes)),
+		WalletAddress:     walletAddress,
+		WalletSealed:      walletSealed,
 		GasCoverage:       make(map[string]uint64, len(o.gas)),
+		GasLastSyncedAt:   o.lastSync,
 	}
 	height, _ := o.ledger.Head()
 	diag.LedgerHeight = height
@@ -223,6 +345,14 @@ func (o *EnterpriseOrchestrator) refreshDiagnostics(ctx context.Context) Enterpr
 	}
 	sort.Strings(missing)
 	diag.MissingOpcodes = missing
+
+	for _, node := range nodes {
+		role := node.Role
+		if role == "" {
+			role = "unspecified"
+		}
+		diag.AuthorityRoles[role]++
+	}
 
 	o.mu.Lock()
 	if len(o.pendingInsertions) > 0 {

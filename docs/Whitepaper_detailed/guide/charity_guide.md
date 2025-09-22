@@ -5,6 +5,31 @@ charitable organisations. Funds are deposited into a shared pool and, on a
 regular cycle, distributed to the charities that receive the most support from
 token holders.
 
+## Stage 82 Enterprise Integration
+
+Stage 82 connects the charity workflow to the enterprise bootstrap sequence so
+philanthropic campaigns inherit the same guarantees as the core ledger. The new
+`synnergy orchestrator bootstrap` command spins up the heavy virtual machine,
+seals the orchestrator wallet, registers consensus relayers and performs a
+ledger audit before any charity transactions are processed. The JavaScript
+control panel now surfaces the orchestrator's wallet seal status, consensus
+relayer count, authority role distribution and the most recent gas synchronisation
+timestamp so operators can verify compliance before routing donations. These
+diagnostics are available programmatically through `/api/orchestrator`, allowing
+charity dashboards to pause disbursements if the VM, consensus mesh or wallet
+ever fall out of alignment.
+
+Security and privacy controls were also expanded. The runtime now registers
+charity opcodes with descriptive gas metadata which feeds both the CLI and web
+interfaces, ensuring predictable fees for registration, voting and donation
+transactions. VM execution hooks log failed opcode executions with context so
+incident responders can isolate faulty automation without restarting the node.
+All CLI commands inherit the hardened logging configuration introduced in Stage
+82: log destinations and formats are validated at startup, the wallet subsystem
+is sealed against missing key material and the consensus relayer whitelist is
+persisted, ensuring that charity votes and deposits traverse an authenticated
+infrastructure path.
+
 ## Features
 
 - **Deposits** – Any address can transfer tokens into the pool account
