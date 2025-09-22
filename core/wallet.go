@@ -74,7 +74,11 @@ func (w *Wallet) Sign(tx *Transaction) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	sig := append(r.Bytes(), s.Bytes()...)
+	sig := make([]byte, 64)
+	rb := r.Bytes()
+	sb := s.Bytes()
+	copy(sig[32-len(rb):32], rb)
+	copy(sig[64-len(sb):], sb)
 	tx.Signature = sig
 	return sig, nil
 }
