@@ -1,5 +1,10 @@
 package synnergy
 
+import (
+	"fmt"
+	"hash/fnv"
+)
+
 // ContractOpcode defines a mapping between a function name and its opcode.
 type ContractOpcode struct {
 	Name string
@@ -1405,6 +1410,10 @@ var ContractOpcodes = []ContractOpcode{
 	{"MultiSig_Execute", 0x200004},
 }
 
+func init() {
+	ensureUniqueContractOpcodes()
+}
+
 var (
 	OpInitContracts    = opcodeByName("InitContracts")
 	OpPauseContract    = opcodeByName("PauseContract")
@@ -1432,4 +1441,41 @@ func opcodeByName(name string) uint32 {
 		}
 	}
 	return 0
+}
+
+func ensureUniqueContractOpcodes() {
+	seen := make(map[uint32]string, len(ContractOpcodes))
+	for i := range ContractOpcodes {
+		name := ContractOpcodes[i].Name
+		code := ContractOpcodes[i].Code
+		if code == 0 {
+			code = deriveDeterministicOpcode(name, seen)
+			ContractOpcodes[i].Code = code
+		} else if prevName, ok := seen[code]; ok && prevName != name {
+			newCode := deriveDeterministicOpcode(name, seen)
+			ContractOpcodes[i].Code = newCode
+			code = newCode
+		}
+		seen[code] = name
+	}
+}
+
+func deriveDeterministicOpcode(name string, used map[uint32]string) uint32 {
+	if used == nil {
+		used = make(map[uint32]string)
+	}
+	for attempt := 0; ; attempt++ {
+		h := fnv.New32a()
+		_, _ = h.Write([]byte(name))
+		if attempt > 0 {
+			_, _ = h.Write([]byte(fmt.Sprintf("#%d", attempt)))
+		}
+		code := h.Sum32()
+		if code == 0 {
+			continue
+		}
+		if _, exists := used[code]; !exists {
+			return code
+		}
+	}
 }

@@ -66,3 +66,16 @@ func TestContractOpcodesUnique(t *testing.T) {
 		seen[op] = struct{}{}
 	}
 }
+
+func TestContractOpcodeCatalogueUnique(t *testing.T) {
+	seen := make(map[uint32]string, len(ContractOpcodes))
+	for _, op := range ContractOpcodes {
+		if op.Code == 0 {
+			t.Fatalf("opcode %s must be non-zero", op.Name)
+		}
+		if prev, ok := seen[op.Code]; ok && prev != op.Name {
+			t.Fatalf("opcode %#x reused by %s and %s", op.Code, prev, op.Name)
+		}
+		seen[op.Code] = op.Name
+	}
+}

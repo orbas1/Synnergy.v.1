@@ -59,14 +59,16 @@ func TestAIContractRegistry(t *testing.T) {
 	ledger.balances["owner"] = 1_000
 	reg := NewContractRegistry(vm, ledger)
 	aiReg := NewAIContractRegistry(reg)
-	addr, err := aiReg.DeployAIContract([]byte{0x01}, "model", "", 5, "owner")
+	deployGas := GasCost("DeployAIContract")
+	addr, err := aiReg.DeployAIContract([]byte{0x01}, "abcd1234", "", deployGas, "owner")
 	if err != nil {
 		t.Fatalf("deploy: %v", err)
 	}
-	if h, ok := aiReg.ModelHash(addr); !ok || h != "model" {
+	if h, ok := aiReg.ModelHash(addr); !ok || h != "abcd1234" {
 		t.Fatalf("model hash mismatch")
 	}
-	if _, _, err := aiReg.InvokeAIContract(addr, []byte("in"), 5); err != nil {
+	invokeGas := GasCost("InvokeAIContract")
+	if _, _, err := aiReg.InvokeAIContract(addr, []byte("in"), invokeGas); err != nil {
 		t.Fatalf("invoke: %v", err)
 	}
 }
