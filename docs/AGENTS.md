@@ -1951,26 +1951,26 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] internal/nodes/extra/forensic_node_test.go
 
 **Stage 88**
-- [ ] internal/nodes/extra/geospatial.go
-- [ ] internal/nodes/extra/geospatial_test.go
-- [ ] internal/nodes/extra/historical_node.go
-- [ ] internal/nodes/extra/historical_node_test.go
-- [ ] internal/nodes/extra/holographic_node.go
-- [ ] internal/nodes/extra/holographic_node_test.go
-- [ ] internal/nodes/extra/index.go
-- [ ] internal/nodes/extra/index_test.go
-- [ ] internal/nodes/extra/military_nodes/index.go
-- [ ] internal/nodes/extra/military_nodes/index_test.go
-- [ ] internal/nodes/extra/optimization_nodes/index.go
-- [ ] internal/nodes/extra/optimization_nodes/index_test.go
-- [ ] internal/nodes/extra/optimization_nodes/optimization.go
-- [ ] internal/nodes/extra/optimization_nodes/optimization_test.go
-- [ ] internal/nodes/extra/watchtower/index.go
-- [ ] internal/nodes/extra/watchtower/index_test.go
-- [ ] internal/nodes/forensic_node.go
-- [ ] internal/nodes/forensic_node_test.go
-- [ ] internal/nodes/geospatial.go
-- [ ] internal/nodes/geospatial_test.go
+- [x] internal/nodes/extra/geospatial.go — Configurable retention + CLI-ready helpers
+- [x] internal/nodes/extra/geospatial_test.go — Option application exercised
+- [x] internal/nodes/extra/historical_node.go — Archive policy + summary validation utilities
+- [x] internal/nodes/extra/historical_node_test.go — Policy + validation unit tests
+- [x] internal/nodes/extra/holographic_node.go — LRU retention + frame accounting
+- [x] internal/nodes/extra/holographic_node_test.go — Retention + retrieval scenarios
+- [x] internal/nodes/extra/index.go — Concurrency-safe registry & metrics tracking
+- [x] internal/nodes/extra/index_test.go — Registry lifecycle coverage
+- [x] internal/nodes/extra/military_nodes/index.go — Secure warfare node with bounded audits
+- [x] internal/nodes/extra/military_nodes/index_test.go — Command/logistics retention tests
+- [x] internal/nodes/extra/optimization_nodes/index.go — Rich metrics + replica targets
+- [x] internal/nodes/extra/optimization_nodes/index_test.go — Interface compliance checks
+- [x] internal/nodes/extra/optimization_nodes/optimization.go — Adaptive scaling strategy
+- [x] internal/nodes/extra/optimization_nodes/optimization_test.go — Scale up/down assertions
+- [x] internal/nodes/extra/watchtower/index.go — Expanded metrics + guard rails
+- [x] internal/nodes/extra/watchtower/index_test.go — Validation tests for metrics bounds
+- [x] internal/nodes/forensic_node.go — Bounded storage + telemetry stats API
+- [x] internal/nodes/forensic_node_test.go — Retention + validation suite
+- [x] internal/nodes/geospatial.go — Validation, retention, summary analytics
+- [x] internal/nodes/geospatial_test.go — Latest/summary/range test coverage
 
 **Stage 89**
 - [ ] internal/nodes/historical_node.go
@@ -4413,26 +4413,26 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 | 87 | internal/nodes/experimental_node_test.go | [ ] |
 | 87 | internal/nodes/extra/forensic_node.go | [ ] |
 | 87 | internal/nodes/extra/forensic_node_test.go | [ ] |
-| 88 | internal/nodes/extra/geospatial.go | [ ] |
-| 88 | internal/nodes/extra/geospatial_test.go | [ ] |
-| 88 | internal/nodes/extra/historical_node.go | [ ] |
-| 88 | internal/nodes/extra/historical_node_test.go | [ ] |
-| 88 | internal/nodes/extra/holographic_node.go | [ ] |
-| 88 | internal/nodes/extra/holographic_node_test.go | [ ] |
-| 88 | internal/nodes/extra/index.go | [ ] |
-| 88 | internal/nodes/extra/index_test.go | [ ] |
-| 88 | internal/nodes/extra/military_nodes/index.go | [ ] |
-| 88 | internal/nodes/extra/military_nodes/index_test.go | [ ] |
-| 88 | internal/nodes/extra/optimization_nodes/index.go | [ ] |
-| 88 | internal/nodes/extra/optimization_nodes/index_test.go | [ ] |
-| 88 | internal/nodes/extra/optimization_nodes/optimization.go | [ ] |
-| 88 | internal/nodes/extra/optimization_nodes/optimization_test.go | [ ] |
-| 88 | internal/nodes/extra/watchtower/index.go | [ ] |
-| 88 | internal/nodes/extra/watchtower/index_test.go | [ ] |
-| 88 | internal/nodes/forensic_node.go | [ ] |
-| 88 | internal/nodes/forensic_node_test.go | [ ] |
-| 88 | internal/nodes/geospatial.go | [ ] |
-| 88 | internal/nodes/geospatial_test.go | [ ] |
+| 88 | internal/nodes/extra/geospatial.go | [x] | CLI/tooling configs + retention aware API |
+| 88 | internal/nodes/extra/geospatial_test.go | [x] | option helpers covered by unit tests |
+| 88 | internal/nodes/extra/historical_node.go | [x] | archival policies + summary validation |
+| 88 | internal/nodes/extra/historical_node_test.go | [x] | policy + validation suite |
+| 88 | internal/nodes/extra/holographic_node.go | [x] | frame retention + LRU eviction |
+| 88 | internal/nodes/extra/holographic_node_test.go | [x] | retention + retrieval tests |
+| 88 | internal/nodes/extra/index.go | [x] | registry with lifecycle metrics |
+| 88 | internal/nodes/extra/index_test.go | [x] | registry behaviour validated |
+| 88 | internal/nodes/extra/military_nodes/index.go | [x] | secure node with bounded audit logs |
+| 88 | internal/nodes/extra/military_nodes/index_test.go | [x] | logistics + command retention tests |
+| 88 | internal/nodes/extra/optimization_nodes/index.go | [x] | richer metrics + target replicas |
+| 88 | internal/nodes/extra/optimization_nodes/index_test.go | [x] | interface compliance check |
+| 88 | internal/nodes/extra/optimization_nodes/optimization.go | [x] | adaptive scaling strategy |
+| 88 | internal/nodes/extra/optimization_nodes/optimization_test.go | [x] | scale up/down decision tests |
+| 88 | internal/nodes/extra/watchtower/index.go | [x] | expanded metrics + validation |
+| 88 | internal/nodes/extra/watchtower/index_test.go | [x] | metrics guard rails verified |
+| 88 | internal/nodes/forensic_node.go | [x] | bounded buffers + stats API |
+| 88 | internal/nodes/forensic_node_test.go | [x] | retention + validation coverage |
+| 88 | internal/nodes/geospatial.go | [x] | retention, validation, summaries |
+| 88 | internal/nodes/geospatial_test.go | [x] | latest/summary/range coverage |
 | 89 | internal/nodes/historical_node.go | [ ] |
 | 89 | internal/nodes/historical_node_test.go | [ ] |
 | 89 | internal/nodes/holographic_node.go | [ ] |

@@ -2,6 +2,7 @@ package watchtower
 
 import (
 	"context"
+	"errors"
 	"time"
 )
 
@@ -11,7 +12,7 @@ type BaseNode interface {
 	ID() string
 }
 
-// Metrics captures a snapshot of node health statistics.  Values are intended
+// Metrics captures a snapshot of node health statistics. Values are intended
 // to be lightweight and easily serialisable for remote reporting.
 type Metrics struct {
 	CPUUsage        float64   // Percentage of CPU utilised by the node process
@@ -19,9 +20,21 @@ type Metrics struct {
 	PeerCount       int       // Number of peers currently connected
 	LastBlockHeight uint64    // Height of the most recently observed block
 	Timestamp       time.Time // Time the metrics were captured
+	JitterMS        float64   // Network jitter in milliseconds
+	Downtime        time.Duration
+	Alerts          []string
 }
 
-// WatchtowerNode defines the operations exposed by a watchtower node.  These
+// ForkEvent captures details of a detected fork.
+type ForkEvent struct {
+	Height     uint64
+	Hash       string
+	Detected   time.Time
+	Resolved   bool
+	ResolvedAt time.Time
+}
+
+// WatchtowerNode defines the operations exposed by a watchtower node. These
 // nodes observe the network, report forks and make system health metrics
 // available to operators.
 type WatchtowerNode interface {
@@ -38,4 +51,15 @@ type WatchtowerNode interface {
 
 	// Metrics returns the latest snapshot of system health data.
 	Metrics() Metrics
+}
+
+// ValidateMetrics verifies basic invariants for watchtower metrics.
+func ValidateMetrics(m Metrics) error {
+	if m.CPUUsage < 0 || m.CPUUsage > 100 {
+		return errors.New("cpu usage must be between 0 and 100 percent")
+	}
+	if m.PeerCount < 0 {
+		return errors.New("peer count cannot be negative")
+	}
+	return nil
 }
