@@ -1,7 +1,6 @@
 package cli
 
 import (
-	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -14,7 +13,7 @@ var benefitRegistry = core.NewBenefitRegistry()
 func init() {
 	cmd := &cobra.Command{
 		Use:   "syn3900",
-		Short: "Manage SYN3900 government benefits",
+		Short: "Manage SYN3900 benefits",
 	}
 
 	registerCmd := &cobra.Command{
@@ -22,18 +21,42 @@ func init() {
 		Args:  cobra.ExactArgs(3),
 		Short: "Register a new benefit",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if args[0] == "" || args[1] == "" {
-				return fmt.Errorf("recipient and program required")
+			recipient := args[0]
+			program := args[1]
+			if recipient == "" {
+				return fmt.Errorf("recipient required")
 			}
-			amt, err := strconv.ParseUint(args[2], 10, 64)
-			if err != nil || amt == 0 {
+			if program == "" {
+				return fmt.Errorf("program required")
+			}
+			amount, err := strconv.ParseUint(args[2], 10, 64)
+			if err != nil || amount == 0 {
 				return fmt.Errorf("invalid amount")
 			}
-			id := benefitRegistry.RegisterBenefit(args[0], args[1], amt)
-			fmt.Fprintln(cmd.OutOrStdout(), id)
+			approverSpec, _ := cmd.Flags().GetString("approver")
+			var approverAddr string
+			if approverSpec != "" {
+				path, password, err := parseWalletDescriptor(approverSpec)
+				if err != nil {
+					return err
+				}
+				wallet, err := loadWallet(path, password)
+				if err != nil {
+					return err
+				}
+				approverAddr = wallet.Address
+			}
+			id, err := benefitRegistry.RegisterBenefitWithApprover(recipient, program, amount, approverAddr)
+			if err != nil {
+				return err
+			}
+			gasPrint("RegisterBenefit")
+			cmd.Println(id)
 			return nil
 		},
 	}
+	registerCmd.Flags().String("approver", "", "wallet descriptor path:password for initial approval")
+	cmd.AddCommand(registerCmd)
 
 	claimCmd := &cobra.Command{
 		Use:   "claim <id>",
@@ -44,13 +67,46 @@ func init() {
 			if err != nil {
 				return fmt.Errorf("invalid id")
 			}
-			if err := benefitRegistry.Claim(id); err != nil {
+			wallet, err := walletFromFlags(cmd)
+			if err != nil {
 				return err
 			}
+			if err := benefitRegistry.ClaimWithWallet(id, wallet.Address); err != nil {
+				return err
+			}
+			gasPrint("ClaimBenefit")
 			cmd.Println("claimed")
 			return nil
 		},
 	}
+	claimCmd.Flags().String("wallet", "", "wallet path for recipient or approver")
+	claimCmd.Flags().String("password", "", "wallet password")
+	cmd.AddCommand(claimCmd)
+
+	approveCmd := &cobra.Command{
+		Use:   "approve <id>",
+		Args:  cobra.ExactArgs(1),
+		Short: "Approve an additional wallet",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid id")
+			}
+			wallet, err := walletFromFlags(cmd)
+			if err != nil {
+				return err
+			}
+			if err := benefitRegistry.Approve(id, wallet.Address); err != nil {
+				return err
+			}
+			gasPrint("ApproveBenefitWallet")
+			cmd.Println("approved")
+			return nil
+		},
+	}
+	approveCmd.Flags().String("wallet", "", "wallet path")
+	approveCmd.Flags().String("password", "", "wallet password")
+	cmd.AddCommand(approveCmd)
 
 	getCmd := &cobra.Command{
 		Use:   "get <id>",
@@ -61,16 +117,63 @@ func init() {
 			if err != nil {
 				return fmt.Errorf("invalid id")
 			}
-			b, ok := benefitRegistry.GetBenefit(id)
+			benefit, ok := benefitRegistry.GetBenefit(id)
 			if !ok {
-				return fmt.Errorf("not found")
+				return fmt.Errorf("benefit not found")
 			}
-			data, _ := json.MarshalIndent(b, "", "  ")
-			cmd.Println(string(data))
-			return nil
+			return printJSON(cmd, benefit)
 		},
 	}
+	cmd.AddCommand(getCmd)
 
-	cmd.AddCommand(registerCmd, claimCmd, getCmd)
+	listCmd := &cobra.Command{
+		Use:   "list",
+		Short: "List benefits",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			benefits := benefitRegistry.ListBenefits()
+			return printJSON(cmd, benefits)
+		},
+	}
+	cmd.AddCommand(listCmd)
+
+	statusCmd := &cobra.Command{
+		Use:   "status",
+		Short: "Summarise benefit lifecycle counts",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			counts := benefitRegistry.StatusSummary()
+			out := struct {
+				Total    int `json:"total"`
+				Pending  int `json:"pending"`
+				Approved int `json:"approved"`
+				Claimed  int `json:"claimed"`
+			}{
+				Total:    counts["total"],
+				Pending:  counts[string(core.BenefitStatusPending)],
+				Approved: counts[string(core.BenefitStatusApproved)],
+				Claimed:  counts[string(core.BenefitStatusClaimed)],
+			}
+			return printJSON(cmd, out)
+		},
+	}
+	cmd.AddCommand(statusCmd)
+
+	auditCmd := &cobra.Command{
+		Use:   "audit <id>",
+		Args:  cobra.ExactArgs(1),
+		Short: "Show benefit audit events",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			id, err := strconv.ParseUint(args[0], 10, 64)
+			if err != nil {
+				return fmt.Errorf("invalid id")
+			}
+			events, err := benefitRegistry.AuditTrail(id)
+			if err != nil {
+				return err
+			}
+			return printJSON(cmd, events)
+		},
+	}
+	cmd.AddCommand(auditCmd)
+
 	rootCmd.AddCommand(cmd)
 }

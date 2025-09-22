@@ -47,6 +47,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Resource-managed CLI** – connection pool commands can release individual peers and `contractopcodes` reports gas costs for contract operations.
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
+- **Enterprise asset governance** – Stage 74 hardens SYN500 utility quotas, SYN700 IP licensing and SYN800 tangible asset custody with signed audit trails, concurrency-safe registries, gas-priced CLI commands and web control panel output.
 - **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
 - **Resilient node primitives** – forensic nodes prune over-capacity logs, full node modes are mutex-protected, gateway endpoints require a running node, and failover managers can remove stale peers.
 - **Thread-safe mempools and plasma bridge safeguards** – node mempools are mutex-protected for concurrent submissions and Plasma bridge operations surface explicit paused errors.
@@ -158,6 +159,9 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `audit log|list` | Record and query audit events via `core.NewAuditManager` |
 | `audit_node start|log|list` | Operate a bootstrap audit node for network-wide logs |
 | `authority register|vote|list` | Manage the authority node registry (`core.NewAuthorityNodeRegistry`) |
+| `syn500 create|grant|use|snapshot|audit|revoke` | Manage SYN500 service tiers with hashed audits and gas metrics |
+| `syn700 register|license|royalty|transfer|info|list|royalties` | Govern SYN700 IP assets with expiry-aware licensing |
+| `syn800_token register|update|custodian|info|snapshot|history` | Track SYN800 tangible assets with valuation history |
 | `authority_apply submit|vote|finalize|list` | Handle authority node applications (`core.NewAuthorityApplicationManager`) |
 | `bankinst register|remove|list|is --pub --sig` | Manage institutional bank participants with signed requests (`core.NewBankInstitutionalNode`) |
 | `banknodes types` | Display supported bank node categories |

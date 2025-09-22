@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
+	synn "synnergy"
 	"synnergy/core"
 )
 
@@ -26,10 +27,16 @@ func init() {
 			if err != nil {
 				return fmt.Errorf("invalid valuation")
 			}
-			if _, err := assetRegistry.Register(args[0], args[1], val, args[3], args[4], args[5]); err != nil {
+			asset, err := assetRegistry.Register(args[0], args[1], val, args[3], args[4], args[5])
+			if err != nil {
 				return err
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), "asset registered")
+			printOutput(map[string]any{
+				"status": "asset registered",
+				"id":     asset.ID,
+				"value":  asset.Valuation,
+				"gas":    synn.GasCost("RegisterTangibleAsset"),
+			})
 			return nil
 		},
 	}
@@ -46,7 +53,30 @@ func init() {
 			if err := assetRegistry.UpdateValuation(args[0], val); err != nil {
 				return err
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), "valuation updated")
+			printOutput(map[string]any{
+				"status": "valuation updated",
+				"id":     args[0],
+				"value":  val,
+				"gas":    synn.GasCost("UpdateAssetValuation"),
+			})
+			return nil
+		},
+	}
+
+	custodianCmd := &cobra.Command{
+		Use:   "custodian <id> <address>",
+		Args:  cobra.ExactArgs(2),
+		Short: "Assign asset custodian",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if err := assetRegistry.AssignCustodian(args[0], args[1]); err != nil {
+				return err
+			}
+			printOutput(map[string]any{
+				"status":    "custodian assigned",
+				"id":        args[0],
+				"custodian": args[1],
+				"gas":       synn.GasCost("AssignAssetCustodian"),
+			})
 			return nil
 		},
 	}
@@ -57,14 +87,45 @@ func init() {
 		Short: "Display asset information",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if a, ok := assetRegistry.Get(args[0]); ok {
-				b, _ := json.MarshalIndent(a, "", "  ")
-				fmt.Fprintln(cmd.OutOrStdout(), string(b))
+				snap := map[string]any{}
+				b, _ := json.Marshal(a)
+				_ = json.Unmarshal(b, &snap)
+				snap["gas"] = synn.GasCost("DescribeTangibleAsset")
+				printOutput(snap)
 				return nil
 			}
 			return fmt.Errorf("asset not found")
 		},
 	}
 
-	cmd.AddCommand(registerCmd, updateCmd, infoCmd)
+	snapshotCmd := &cobra.Command{
+		Use:   "snapshot",
+		Short: "List assets sorted by valuation",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			assets := assetRegistry.Snapshot()
+			printOutput(map[string]any{
+				"assets": assets,
+				"gas":    synn.GasCost("AssetSnapshot"),
+			})
+			return nil
+		},
+	}
+
+	historyCmd := &cobra.Command{
+		Use:   "history",
+		Short: "Display recent asset updates",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			limit, _ := cmd.Flags().GetInt("limit")
+			entries := assetRegistry.History(limit)
+			printOutput(map[string]any{
+				"entries": entries,
+				"gas":     synn.GasCost("AssetHistory"),
+			})
+			return nil
+		},
+	}
+	historyCmd.Flags().Int("limit", 5, "number of entries to return")
+
+	cmd.AddCommand(registerCmd, updateCmd, custodianCmd, infoCmd, snapshotCmd, historyCmd)
 	rootCmd.AddCommand(cmd)
 }

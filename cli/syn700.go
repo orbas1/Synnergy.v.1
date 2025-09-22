@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
 
 	"github.com/spf13/cobra"
+	synn "synnergy"
 	"synnergy/core"
 )
 
@@ -22,10 +24,34 @@ func init() {
 		Args:  cobra.ExactArgs(5),
 		Short: "Register an IP asset",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if _, err := ipRegistry.Register(args[0], args[1], args[2], args[3], args[4]); err != nil {
+			asset, err := ipRegistry.Register(args[0], args[1], args[2], args[3], args[4])
+			if err != nil {
 				return err
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), "registered")
+			printOutput(map[string]any{
+				"status": "registered",
+				"id":     asset.TokenID,
+				"owner":  asset.Owner,
+				"gas":    synn.GasCost("RegisterIPAsset"),
+			})
+			return nil
+		},
+	}
+
+	transferCmd := &cobra.Command{
+		Use:   "transfer <id> <newOwner>",
+		Args:  cobra.ExactArgs(2),
+		Short: "Transfer ownership",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if err := ipRegistry.Transfer(args[0], args[1]); err != nil {
+				return err
+			}
+			printOutput(map[string]any{
+				"status": "transferred",
+				"id":     args[0],
+				"owner":  args[1],
+				"gas":    synn.GasCost("TransferIPAsset"),
+			})
 			return nil
 		},
 	}
@@ -39,13 +65,29 @@ func init() {
 			if err != nil {
 				return fmt.Errorf("invalid royalty")
 			}
-			if err := ipRegistry.CreateLicense(args[0], args[1], args[2], args[3], royalty); err != nil {
+			expiryStr, _ := cmd.Flags().GetString("expiry")
+			if expiryStr == "" {
+				return fmt.Errorf("expiry required")
+			}
+			exp, err := time.Parse(time.RFC3339, expiryStr)
+			if err != nil {
+				return fmt.Errorf("invalid expiry")
+			}
+			if err := ipRegistry.CreateLicense(args[0], args[1], args[2], args[3], royalty, exp); err != nil {
 				return err
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), "license created")
+			printOutput(map[string]any{
+				"status":  "license created",
+				"token":   args[0],
+				"license": args[1],
+				"expires": exp,
+				"gas":     synn.GasCost("CreateIPLicense"),
+			})
 			return nil
 		},
 	}
+	licenseCmd.Flags().String("expiry", "", "RFC3339 expiry timestamp")
+	_ = licenseCmd.MarkFlagRequired("expiry")
 
 	royaltyCmd := &cobra.Command{
 		Use:   "royalty <tokenID> <licID> <licensee> <amount>",
@@ -59,7 +101,13 @@ func init() {
 			if err := ipRegistry.RecordRoyalty(args[0], args[1], args[2], amt); err != nil {
 				return err
 			}
-			fmt.Fprintln(cmd.OutOrStdout(), "royalty recorded")
+			printOutput(map[string]any{
+				"status":  "royalty recorded",
+				"token":   args[0],
+				"license": args[1],
+				"amount":  amt,
+				"gas":     synn.GasCost("RecordIPRoyalty"),
+			})
 			return nil
 		},
 	}
@@ -70,14 +118,49 @@ func init() {
 		Short: "Show token info",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if t, ok := ipRegistry.Get(args[0]); ok {
-				b, _ := json.MarshalIndent(t, "", "  ")
-				fmt.Fprintln(cmd.OutOrStdout(), string(b))
+				snap := map[string]any{}
+				b, _ := json.Marshal(t)
+				_ = json.Unmarshal(b, &snap)
+				snap["gas"] = synn.GasCost("DescribeIPAsset")
+				printOutput(snap)
 				return nil
 			}
 			return fmt.Errorf("token not found")
 		},
 	}
 
-	cmd.AddCommand(registerCmd, licenseCmd, royaltyCmd, infoCmd)
+	listCmd := &cobra.Command{
+		Use:   "list",
+		Short: "List registered IP assets",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			ids := ipRegistry.List()
+			printOutput(map[string]any{
+				"ids": ids,
+				"gas": synn.GasCost("ListIPAssets"),
+			})
+			return nil
+		},
+	}
+
+	summaryCmd := &cobra.Command{
+		Use:   "royalties <tokenID> <licenseID>",
+		Args:  cobra.ExactArgs(2),
+		Short: "Summarise royalties for a license",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			total, err := ipRegistry.RoyaltySummary(args[0], args[1])
+			if err != nil {
+				return err
+			}
+			printOutput(map[string]any{
+				"token":   args[0],
+				"license": args[1],
+				"total":   total,
+				"gas":     synn.GasCost("SummariseIPRoyalties"),
+			})
+			return nil
+		},
+	}
+
+	cmd.AddCommand(registerCmd, transferCmd, licenseCmd, royaltyCmd, infoCmd, listCmd, summaryCmd)
 	rootCmd.AddCommand(cmd)
 }

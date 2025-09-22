@@ -18275,8 +18275,11 @@ SYN500 utility token
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy syn500 create](#synnergy-syn500-create)	 - Create a SYN500 token
-* [synnergy syn500 grant](#synnergy-syn500-grant)	 - Grant a usage tier
-* [synnergy syn500 use](#synnergy-syn500-use)	 - Record usage
+* [synnergy syn500 grant](#synnergy-syn500-grant)	 - Grant or update a usage tier
+* [synnergy syn500 use](#synnergy-syn500-use)	 - Record usage with hashed audit entries
+* [synnergy syn500 snapshot](#synnergy-syn500-snapshot)	 - Emit the current grant map
+* [synnergy syn500 audit](#synnergy-syn500-audit)	 - List recent usage entries
+* [synnergy syn500 revoke](#synnergy-syn500-revoke)	 - Revoke a usage tier
 
 
 ## synnergy syn500 create
@@ -18321,7 +18324,7 @@ synnergy syn500 grant <addr> [flags]
 
 ```
   -h, --help       help for grant
-      --max uint   max usage
+      --max uint   max usage units
       --tier int   service tier
 ```
 
@@ -18347,7 +18350,9 @@ synnergy syn500 use <addr> [flags]
 ### Options
 
 ```
-  -h, --help   help for use
+      --amount uint   usage units (default 1)
+  -h, --help          help for use
+      --note string   audit note for traceability
 ```
 
 ### Options inherited from parent commands

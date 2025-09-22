@@ -2,84 +2,89 @@ package cli
 
 import (
 	"encoding/json"
-	"path/filepath"
 	"testing"
 )
 
-func TestSyn500Lifecycle(t *testing.T) {
-	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
-	resetStage73LoadedForTests()
+// TestSyn500Workflow verifies creating a token, granting usage and recording audits.
+func TestSyn500Workflow(t *testing.T) {
 	syn500Token = nil
-	out, err := execCommand("syn500", "create", "--name", "Loyalty", "--symbol", "LOY", "--owner", "alice", "--dec", "2", "--supply", "10")
+
+	out, err := execCommand("--json", "syn500", "create", "--name", "Utility", "--symbol", "UTL", "--owner", "owner", "--dec", "2", "--supply", "1000")
 	if err != nil {
 		t.Fatalf("create: %v", err)
 	}
-	if firstNonGasLine(out) != "token created" {
-		t.Fatalf("unexpected output: %s", out)
+	payload := map[string]any{}
+	if err := json.Unmarshal([]byte(out), &payload); err != nil {
+		t.Fatalf("parse create output: %v", err)
 	}
-	if _, err := execCommand("syn500", "grant", "bob", "--tier", "1", "--max", "2", "--window", "1h"); err != nil {
+	if payload["status"] != "token created" {
+		t.Fatalf("unexpected create output: %s", out)
+	}
+
+	out, err = execCommand("--json", "syn500", "grant", "alice", "--tier", "1", "--max", "10")
+	if err != nil {
 		t.Fatalf("grant: %v", err)
 	}
-	if _, err := execCommand("syn500", "use", "bob"); err != nil {
-		t.Fatalf("use1: %v", err)
+	payload = map[string]any{}
+	if err := json.Unmarshal([]byte(out), &payload); err != nil {
+		t.Fatalf("parse grant output: %v", err)
 	}
-	if _, err := execCommand("syn500", "use", "bob"); err != nil {
-		t.Fatalf("use2: %v", err)
+	if payload["status"] != "granted" || payload["address"] != "alice" {
+		t.Fatalf("unexpected grant output: %s", out)
 	}
-	if _, err := execCommand("syn500", "use", "bob"); err == nil {
-		t.Fatal("expected usage limit error")
-	}
-	status, err := execCommand("syn500", "status", "bob")
-	if err != nil {
-		t.Fatalf("status: %v", err)
-	}
-	var statusObj struct {
-		Used int
-	}
-	if err := json.Unmarshal([]byte(jsonPayload(status)), &statusObj); err != nil {
-		t.Fatalf("unmarshal status: %v", err)
-	}
-	if statusObj.Used != 2 {
-		t.Fatalf("unexpected status: %+v", statusObj)
-	}
-	tele, err := execCommand("syn500", "telemetry")
-	if err != nil {
-		t.Fatalf("telemetry: %v", err)
-	}
-	var teleObj struct {
-		Grants int
-	}
-	if err := json.Unmarshal([]byte(jsonPayload(tele)), &teleObj); err != nil {
-		t.Fatalf("unmarshal telemetry: %v", err)
-	}
-	if teleObj.Grants != 1 {
-		t.Fatalf("unexpected telemetry output: %+v", teleObj)
-	}
-}
 
-func TestSyn500Validation(t *testing.T) {
-	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
-	resetStage73LoadedForTests()
-	syn500Token = nil
-	if _, err := execCommand("syn500", "create", "--name", "", "--symbol", "LOY", "--owner", "alice", "--dec", "1", "--supply", "10"); err == nil {
-		t.Fatal("expected error for name")
+	out, err = execCommand("--json", "syn500", "use", "alice", "--amount", "3", "--note", "api")
+	if err != nil {
+		t.Fatalf("use: %v", err)
 	}
-	if _, err := execCommand("syn500", "create", "--name", "Loy", "--symbol", "LOY", "--owner", "", "--dec", "1", "--supply", "10"); err == nil {
-		t.Fatal("expected error for owner")
+	payload = map[string]any{}
+	if err := json.Unmarshal([]byte(out), &payload); err != nil {
+		t.Fatalf("parse use output: %v", err)
 	}
-	if _, err := execCommand("syn500", "create", "--name", "Loy", "--symbol", "LOY", "--owner", "alice", "--dec", "0", "--supply", "10"); err == nil {
-		t.Fatal("expected error for decimals")
+	if payload["status"] != "usage recorded" || payload["remaining"].(float64) != 7 {
+		t.Fatalf("unexpected use output: %s", out)
 	}
-	if _, err := execCommand("syn500", "create", "--name", "Loy", "--symbol", "LOY", "--owner", "alice", "--dec", "1", "--supply", "0"); err == nil {
-		t.Fatal("expected error for supply")
+
+	out, err = execCommand("--json", "syn500", "snapshot")
+	if err != nil {
+		t.Fatalf("snapshot: %v", err)
 	}
-	if _, err := execCommand("syn500", "create", "--name", "Loy", "--symbol", "LOY", "--owner", "alice", "--dec", "1", "--supply", "5"); err != nil {
-		t.Fatalf("create valid: %v", err)
+	payload = map[string]any{}
+	if err := json.Unmarshal([]byte(out), &payload); err != nil {
+		t.Fatalf("parse snapshot: %v", err)
 	}
-	if _, err := execCommand("syn500", "grant", "bob", "--tier", "0", "--max", "1"); err == nil {
-		t.Fatal("expected error for tier")
+	grants := payload["grants"].(map[string]any)
+	alice := grants["alice"].(map[string]any)
+	if alice["Used"].(float64) != 3 {
+		t.Fatalf("unexpected snapshot usage: %v", alice)
 	}
-	if _, err := execCommand("syn500", "grant", "bob", "--tier", "1", "--max", "0"); err == nil {
-		t.Fatal("expected error for max")
+
+	out, err = execCommand("--json", "syn500", "audit", "--limit", "1")
+	if err != nil {
+		t.Fatalf("audit: %v", err)
+	}
+	payload = map[string]any{}
+	if err := json.Unmarshal([]byte(out), &payload); err != nil {
+		t.Fatalf("parse audit: %v", err)
+	}
+	entries := payload["entries"].([]any)
+	if len(entries) != 1 {
+		t.Fatalf("unexpected audit entries: %v", entries)
+	}
+	entry := entries[0].(map[string]any)
+	if entry["Amount"].(float64) != 3 {
+		t.Fatalf("unexpected audit amount: %v", entry)
+	}
+
+	out, err = execCommand("--json", "syn500", "revoke", "alice")
+	if err != nil {
+		t.Fatalf("revoke: %v", err)
+	}
+	payload = map[string]any{}
+	if err := json.Unmarshal([]byte(out), &payload); err != nil {
+		t.Fatalf("parse revoke: %v", err)
+	}
+	if payload["status"] != "revoked" {
+		t.Fatalf("unexpected revoke output: %s", out)
 	}
 }

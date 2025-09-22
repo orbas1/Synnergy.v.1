@@ -111,10 +111,10 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/dao_token.go` | `44` | `func (l *DAOTokenLedger) Transfer(daoID, from, to string, amount uint64) error {` |
 | `core/dao_token.go` | `63` | `func (l *DAOTokenLedger) Balance(daoID, addr string) uint64 {` |
 | `core/dao_token.go` | `74` | `func (l *DAOTokenLedger) Burn(daoID, admin, addr string, amount uint64) error {` |
-| `core/syn5000.go` | `27` | `func NewSYN5000Token(name, symbol string, decimals uint8) *SYN5000Token {` |
-| `core/syn5000.go` | `32` | `func (t *SYN5000Token) PlaceBet(bettor string, amount uint64, odds float64, game string) uint64 {` |
-| `core/syn5000.go` | `40` | `func (t *SYN5000Token) ResolveBet(betID uint64, win bool) (uint64, error) {` |
-| `core/syn5000.go` | `57` | `func (t *SYN5000Token) GetBet(betID uint64) (*BetRecord, bool) {` |
+| `core/syn5000.go` | `231` | `func NewSYN5000Token(name, symbol string, decimals uint8, opts ...SYN5000Option) *SYN5000Token {` |
+| `core/syn5000.go` | `276` | `func (t *SYN5000Token) PlaceBet(bettor string, amount uint64, odds float64, game string) (uint64, error) {` |
+| `core/syn5000.go` | `394` | `func (t *SYN5000Token) ResolveBet(betID uint64, win bool) (uint64, error) {` |
+| `core/syn5000.go` | `446` | `func (t *SYN5000Token) GetBet(betID uint64) (*BetRecord, bool) {` |
 | `node_ext/holographic_node.go` | `17` | `func NewHolographicNode(id string) *HolographicNode {` |
 | `node_ext/holographic_node.go` | `25` | `func (n *HolographicNode) ID() string { return n.id }` |
 | `node_ext/holographic_node.go` | `29` | `func (n *HolographicNode) Start() error { return nil }` |
@@ -468,11 +468,14 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/identity_verification.go` | `61` | `func (s *IdentityService) Info(addr string) (IdentityInfo, bool) {` |
 | `core/identity_verification.go` | `69` | `func (s *IdentityService) Logs(addr string) []VerificationLog {` |
 | `core/authority_apply_test.go` | `8` | `func TestAuthorityApplication(t *testing.T) {` |
-| `core/syn700.go` | `42` | `func NewIPRegistry() *IPRegistry {` |
-| `core/syn700.go` | `47` | `func (r *IPRegistry) Register(tokenID, title, desc, creator, owner string) (*IPTokens, error) {` |
-| `core/syn700.go` | `57` | `func (r *IPRegistry) CreateLicense(tokenID, licID, licType, licensee string, royalty uint64) error {` |
-| `core/syn700.go` | `70` | `func (r *IPRegistry) RecordRoyalty(tokenID, licID, licensee string, amount uint64) error {` |
-| `core/syn700.go` | `83` | `func (r *IPRegistry) Get(tokenID string) (*IPTokens, bool) {` |
+| `core/syn700.go` | `56` | `func NewIPRegistry() *IPRegistry {` |
+| `core/syn700.go` | `61` | `func (r *IPRegistry) Register(tokenID, title, desc, creator, owner string) (*IPTokens, error) {` |
+| `core/syn700.go` | `78` | `func (r *IPRegistry) Transfer(tokenID, newOwner string) error {` |
+| `core/syn700.go` | `94` | `func (r *IPRegistry) CreateLicense(tokenID, licID, licType, licensee string, royalty uint64, expires time.Time) error {` |
+| `core/syn700.go` | `115` | `func (r *IPRegistry) RecordRoyalty(tokenID, licID, licensee string, amount uint64) error {` |
+| `core/syn700.go` | `140` | `func (r *IPRegistry) RoyaltySummary(tokenID, licID string) (uint64, error) {` |
+| `core/syn700.go` | `160` | `func (r *IPRegistry) Get(tokenID string) (*IPTokens, bool) {` |
+| `core/syn700.go` | `178` | `func (r *IPRegistry) List() []string {` |
 | `core/address_zero.go` | `9` | `func IsZeroAddress(addr string) bool {` |
 | `core/consensus_test.go` | `8` | `func TestThreshold(t *testing.T) {` |
 | `core/consensus_test.go` | `15` | `func TestAdjustWeightsAndAvailability(t *testing.T) {` |
@@ -738,10 +741,13 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/consensus_specific_node.go` | `10` | `func NewConsensusSpecificNode(mode ConsensusMode, id, addr string, ledger *Ledger) *ConsensusSpecificNode {` |
 | `core/consensus_specific_node.go` | `19` | `func (n *ConsensusSpecificNode) configure() {` |
 | `core/syn1700_token_test.go` | `5` | `func TestEventTickets(t *testing.T) {` |
-| `core/syn800_token.go` | `25` | `func NewAssetRegistry() *AssetRegistry {` |
-| `core/syn800_token.go` | `30` | `func (r *AssetRegistry) Register(id, desc string, valuation uint64, loc, typ, cert string) (*AssetMetadata, error) {` |
-| `core/syn800_token.go` | `40` | `func (r *AssetRegistry) UpdateValuation(id string, valuation uint64) error {` |
-| `core/syn800_token.go` | `51` | `func (r *AssetRegistry) Get(id string) (*AssetMetadata, bool) {` |
+| `core/syn800_token.go` | `37` | `func NewAssetRegistry() *AssetRegistry {` |
+| `core/syn800_token.go` | `42` | `func (r *AssetRegistry) Register(id, desc string, valuation uint64, loc, typ, cert string) (*AssetMetadata, error) {` |
+| `core/syn800_token.go` | `60` | `func (r *AssetRegistry) AssignCustodian(id, custodian string) error {` |
+| `core/syn800_token.go` | `77` | `func (r *AssetRegistry) UpdateValuation(id string, valuation uint64) error {` |
+| `core/syn800_token.go` | `94` | `func (r *AssetRegistry) Get(id string) (*AssetMetadata, bool) {` |
+| `core/syn800_token.go` | `106` | `func (r *AssetRegistry) Snapshot() []AssetMetadata {` |
+| `core/syn800_token.go` | `119` | `func (r *AssetRegistry) History(n int) []AssetMetadata {` |
 | `core/compliance_management.go` | `17` | `func NewComplianceManager() *ComplianceManager {` |
 | `core/compliance_management.go` | `27` | `func (m *ComplianceManager) Suspend(addr string) error {` |
 | `core/compliance_management.go` | `43` | `func (m *ComplianceManager) Resume(addr string) error {` |
@@ -909,9 +915,13 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/node.go` | `117` | `func (n *Node) ReportDoubleSign(addr string) {` |
 | `core/node.go` | `122` | `func (n *Node) ReportDowntime(addr string) {` |
 | `core/node.go` | `127` | `func (n *Node) Rehabilitate(addr string) {` |
-| `core/syn500.go` | `23` | `func NewSYN500Token(name, symbol, owner string, decimals uint8, supply uint64) *SYN500Token {` |
-| `core/syn500.go` | `28` | `func (t *SYN500Token) Grant(addr string, tier int, max uint64) {` |
-| `core/syn500.go` | `33` | `func (t *SYN500Token) Use(addr string) error {` |
+| `core/syn500.go` | `55` | `func NewSYN500Token(name, symbol, owner string, decimals uint8, supply uint64) *SYN500Token {` |
+| `core/syn500.go` | `69` | `func (t *SYN500Token) Grant(addr string, tier int, max uint64) error {` |
+| `core/syn500.go` | `92` | `func (t *SYN500Token) Revoke(addr string) {` |
+| `core/syn500.go` | `99` | `func (t *SYN500Token) Usage(addr string) (ServiceTier, bool) {` |
+| `core/syn500.go` | `111` | `func (t *SYN500Token) Use(addr string, amount uint64, note string) (UsageAudit, error) {` |
+| `core/syn500.go` | `144` | `func (t *SYN500Token) Snapshot() map[string]any {` |
+| `core/syn500.go` | `165` | `func (t *SYN500Token) AuditTrail(limit int) []UsageAudit {` |
 | `core/ai_enhanced_contract_test.go` | `5` | `func TestAIContractRegistry(t *testing.T) {` |
 | `core/syn2100_test.go` | `8` | `func TestTradeFinanceToken(t *testing.T) {` |
 | `core/syn3700_token.go` | `23` | `func NewSYN3700Token(name, symbol string) *SYN3700Token {` |

@@ -35,22 +35,22 @@ Every Synnergy token embeds the concurrency‑safe `BaseToken` type, which offer
 - **CLI usage** – `synnergy syn131 create --id <id> --name <name> --symbol <symbol> --owner <owner> [--valuation <val>]` issues a token; `synnergy syn131 value <id> <val>` updates valuation and `synnergy syn131 get <id>` retrieves details.
 
 ### 3.3 SYN500 – Utility Tokens
-`NewSYN500Token` issues tiered service credits; `Grant` assigns usage quotas and `Use` consumes them with limit enforcement【F:core/syn500.go†L5-L43】.
+`NewSYN500Token` issues tiered service credits. `Grant` now validates tiers, clamps limits and records changes in a concurrency-safe map, while `Use` logs each consumption with a SHA-256 digest so downstream services can verify audit integrity. Snapshots and `AuditTrail` export machine-readable summaries for the CLI and web control panel【F:core/syn500.go†L5-L178】.
 - **Data structures** – `ServiceTier` tracks tier, maximum allotment and usage counters inside the token’s `Grants` map.
 - **Core operations** – `Grant` allocates quotas, `Use` deducts consumption and revocation is handled by deleting the grant entry.
 - **Enterprise applications** – ideal for API usage plans or software subscriptions where credits must be allocated and depleted safely across many accounts.
 
 ### 3.4 SYN700 – Intellectual Property Tokens
-`IPRegistry` registers creative works, attaches licences and logs royalty payments for each licence holder【F:core/syn700.go†L8-L80】.
-- **Data structures** – `IPTokens` hold metadata plus licence and royalty collections; `License` and `RoyaltyPayment` record contractual terms and payouts.
-- **Core operations** – `Register`, `CreateLicense`, `RecordRoyalty`, and `Get` keep perpetual histories of ownership and revenue shares.
-- **Enterprise applications** – publishers can automate licensing agreements, royalty splits and compliance reporting for large content libraries.
+`IPRegistry` registers creative works, validates ownership transfers, attaches expiry-bound licences and logs royalty payments for each licence holder【F:core/syn700.go†L10-L186】.
+- **Data structures** – `IPTokens` hold metadata plus licence and royalty collections; `License` embeds royalty rates, creation timestamps and expirations to enforce contract windows.
+- **Core operations** – `Register`, `Transfer`, `CreateLicense`, `RecordRoyalty`, `RoyaltySummary`, `Get` and `List` provide concurrency-safe access and aggregate revenue views for compliance teams.
+- **Enterprise applications** – publishers can automate licensing agreements, royalty splits and audits while CLI and web tooling expose JSON for reporting and regulatory attestations.
 
 ### 3.5 SYN800 – Real-World Asset Tokens
-`AssetRegistry` stores valuation, location and certification metadata for asset-backed instruments and supports valuation updates【F:core/syn800_token.go†L8-L48】.
-- **Data structures** – `AssetMetadata` records description, valuation, location, asset type and certification information with timestamps.
-- **Core operations** – `Register`, `UpdateValuation`, and `Get` maintain provenance and audit trails for collateralised goods.
-- **Enterprise applications** – banks and custodians can digitise vault contents or warehouse receipts with chain-of-custody guarantees.
+`AssetRegistry` stores valuation, location and certification metadata for asset-backed instruments, tracks custodianship and maintains a chronological history of updates【F:core/syn800_token.go†L11-L131】.
+- **Data structures** – `AssetMetadata` records description, valuation, location, asset type, certification information and assigned custodian with UTC timestamps.
+- **Core operations** – `Register`, `AssignCustodian`, `UpdateValuation`, `Get`, `Snapshot`, and `History` maintain provenance, generate sorted views for dashboards and expose change logs for auditors.
+- **Enterprise applications** – banks and custodians can digitise vault contents or warehouse receipts with verifiable chain-of-custody and valuation traceability across CLI, docs and the web console.
 
 ### 3.6 SYN1300 – Supply Chain Tokens
 `SupplyChainRegistry` captures location and status events so logistics stakeholders can register assets and append provenance updates【F:core/syn1300.go†L8-L56】.

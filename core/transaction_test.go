@@ -4,7 +4,10 @@ import (
 	"crypto/ed25519"
 	"crypto/rand"
 	"crypto/sha256"
+	"errors"
+	"math"
 	"testing"
+	"time"
 )
 
 func TestNewTransactionAndHash(t *testing.T) {
@@ -54,5 +57,84 @@ func TestAttachBiometric(t *testing.T) {
 	}
 	if err := tx.AttachBiometric(user, bio, sig, nil); err == nil {
 		t.Fatalf("expected error when service nil")
+	}
+}
+
+func TestTransactionProgramAffectsHash(t *testing.T) {
+	tx := NewTransaction("a", "b", 1, 1, 0)
+	original := tx.ID
+	tx.Program = []Instruction{{Op: OpPush, Value: 5}}
+	tx.ID = tx.Hash()
+	if tx.ID == original {
+		t.Fatal("expected hash to change when program is attached")
+	}
+	prev := tx.ID
+	tx.Program[0].Value = 6
+	tx.ID = tx.Hash()
+	if tx.ID == prev {
+		t.Fatal("expected program mutation to alter hash")
+	}
+}
+
+func TestTransactionClone(t *testing.T) {
+	tx := NewTransaction("from", "to", 5, 1, 2)
+	tx.Signature = []byte{1, 2, 3}
+	tx.BiometricHash = []byte{4, 5, 6}
+	tx.Program = []Instruction{{Op: OpPush, Value: 3}}
+	clone := tx.Clone()
+	if clone == tx {
+		t.Fatal("expected clone to allocate new struct")
+	}
+	if clone.ID != clone.Hash() {
+		t.Fatalf("clone hash mismatch: %s", clone.ID)
+	}
+	clone.Signature[0] = 9
+	if tx.Signature[0] == 9 {
+		t.Fatal("signature not deep copied")
+	}
+	clone.Program[0].Value = 99
+	if tx.Program[0].Value == 99 {
+		t.Fatal("program not deep copied")
+	}
+}
+
+func TestTransactionValidateBasic(t *testing.T) {
+	tx := NewTransaction("from", "to", 5, 1, 2)
+	cfg := DefaultTransactionValidationConfig()
+	cfg.Now = time.Unix(tx.Timestamp, 0)
+	if err := tx.ValidateBasic(cfg); err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	bad := tx.Clone()
+	bad.Amount = 0
+	if err := bad.ValidateBasic(cfg); !errors.Is(err, ErrZeroAmount) {
+		t.Fatalf("expected zero amount error got %v", err)
+	}
+
+	bad = tx.Clone()
+	bad.From = ""
+	if err := bad.ValidateBasic(cfg); !errors.Is(err, ErrEmptyAddress) {
+		t.Fatalf("expected empty address error got %v", err)
+	}
+
+	bad = tx.Clone()
+	bad.Timestamp = time.Unix(tx.Timestamp, 0).Add(2 * DefaultMaxClockSkew).Unix()
+	if err := bad.ValidateBasic(cfg); !errors.Is(err, ErrTransactionClockSkew) {
+		t.Fatalf("expected clock skew error got %v", err)
+	}
+
+	bad = tx.Clone()
+	bad.Program = []Instruction{{Op: OpAdd, Value: 5}}
+	bad.ID = bad.Hash()
+	if err := bad.ValidateBasic(cfg); err == nil {
+		t.Fatal("expected invalid program error")
+	}
+}
+
+func TestTransactionTotalCostOverflow(t *testing.T) {
+	tx := &Transaction{Amount: math.MaxUint64, Fee: 1, ID: "", From: "a", To: "b", Timestamp: time.Now().Unix()}
+	if _, err := tx.TotalCost(); !errors.Is(err, ErrTransactionOverflow) {
+		t.Fatalf("expected overflow error got %v", err)
 	}
 }

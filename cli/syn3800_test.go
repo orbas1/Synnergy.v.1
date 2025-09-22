@@ -42,7 +42,7 @@ func TestSyn3800Lifecycle(t *testing.T) {
 	if err := json.Unmarshal([]byte(jsonPayload(data)), &grant); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
-	if grant.Released != 40 || grant.Status != string(core.GrantStatusActive) {
+	if grant.Released != 40 || !strings.EqualFold(grant.Status, "active") {
 		t.Fatalf("unexpected grant: %+v", grant)
 	}
 	second, secondPath := createWalletFile(t, "pw2")
@@ -56,7 +56,7 @@ func TestSyn3800Lifecycle(t *testing.T) {
 	if err != nil {
 		t.Fatalf("audit: %v", err)
 	}
-	var events []core.GrantEvent
+	var events []map[string]any
 	if err := json.Unmarshal([]byte(jsonPayload(auditJSON)), &events); err != nil {
 		t.Fatalf("audit unmarshal: %v", err)
 	}
@@ -64,8 +64,9 @@ func TestSyn3800Lifecycle(t *testing.T) {
 		t.Fatalf("expected audit events, got %d", len(events))
 	}
 	// ensure CLI uses uppercase symbol for tokens by verifying release signer address recorded
-	if events[len(events)-1].Amount != 60 {
-		t.Fatalf("expected final disbursement of 60, got %+v", events[len(events)-1])
+	final := events[len(events)-1]
+	if amt, ok := final["Amount"].(float64); !ok || amt != 60 {
+		t.Fatalf("expected final disbursement of 60, got %+v", final)
 	}
 	// use second wallet variable to silence unused warning
 	if second.Address == "" || authorizer.Address == "" {

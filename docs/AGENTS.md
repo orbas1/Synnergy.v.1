@@ -8,7 +8,7 @@
 - Stage 68: Complete – mining node context control, fee distribution, and CLI mine-until integration finalized with gas pricing and opcode docs extended.
 - Stage 69: Complete – node and plasma modules hardened with concurrency-safe mempools, pause checks, opcode lookup tests and peer count CLI.
 - Stage 73: Complete – enterprise index, grant, benefit, charity, legal and utility modules now require wallet-signed workflows, persist their state for CLI/web automation, expose telemetry across CLI, VM and web, and refreshed docs/guides capture the expanded gas/opcode catalogue.
-- Stage 74: In progress – system health logging clamped; tangible and agricultural asset registries made concurrency safe; access controller audit snapshots added. Transaction and SYN5000+ modules outstanding.
+- Stage 74: Complete – enterprise token registries (SYN3700/SYN3800/SYN3900/SYN5000) expose controller-governed workflows with audit telemetry, CLI parity and hardened transaction pipeline.
 - Stage 75: In progress – validator node supports concurrent joins; VM, wallet and cross-chain layers pending.
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
@@ -1639,25 +1639,31 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [x] docs/AGENTS.md | tracker updated with completion notes
 
 **Stage 74**
-- [ ] core/syn5000.go
-- [ ] core/syn5000_index.go
-- [ ] core/syn5000_index_test.go
-- [ ] core/syn5000_test.go
-- [ ] core/syn500_test.go
-- [ ] core/syn700.go
-- [ ] core/syn700_test.go
-- [ ] core/syn800_token.go
-- [ ] core/syn800_token_test.go
+- [x] core/syn5000.go | enterprise risk engine, signature validation, audit snapshots, CLI alignment
+- [x] core/syn5000_index.go | concurrency-safe registry with snapshot support for CLI/web dashboards
+- [x] core/syn5000_index_test.go | coverage for registry registration, listing and summary detail output
+- [x] core/syn5000_test.go | lifecycle, exposure, signature, filtering and concurrency test coverage
+- [x] core/syn500_test.go | coverage for tier validation, concurrency and audit export
+- [x] core/syn700.go | expiry-aware licensing, ownership transfer and royalty aggregation
+- [x] core/syn700_test.go | lifecycle, validation and concurrent royalty scenarios
+- [x] core/syn800_token.go | custodian tracking, valuation history and snapshot summaries
+- [x] core/syn800_token_test.go | lifecycle, validation and snapshot/history assertions
  - [x] core/system_health_logging.go
  - [x] core/system_health_logging_test.go
  - [x] core/token_syn130.go
  - [x] core/token_syn130_test.go
  - [x] core/token_syn4900.go
  - [x] core/token_syn4900_test.go
-- [ ] core/transaction.go
-- [ ] core/transaction_control.go
-- [ ] core/transaction_control_test.go
-- [ ] core/transaction_test.go
+- [x] core/transaction.go | deterministic program hashing, validation policy and overflow guards
+- [x] core/transaction_control.go | receipt retention, deterministic listing and overflow-aware reversals
+- [x] core/transaction_control_test.go | retention, overflow and list coverage
+- [x] core/transaction_test.go | validation, clone and overflow coverage
+- [x] core/syn3700_token.go | controller-governed index components with drift caps, telemetry snapshots and audit log
+- [x] cli/syn3700_token.go | wallet-gated CLI with JSON telemetry, rebalance reporting and audit export
+- [x] core/syn3800.go | authorizer-aware grants with audit events, lifecycle status and concurrency safety
+- [x] cli/syn3800.go | enterprise CLI coverage for grants with wallet validation, status metrics and audit output
+- [x] core/syn3900.go | benefit approvals with audit tracking, claimed state handling and lifecycle telemetry
+- [x] cli/syn3900.go | CLI approvals/claims with wallet enforcement, status summaries and audit inspection
 
 **Stage 75**
  - [x] core/validator_node.go
@@ -4143,10 +4149,10 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 | 74 | core/token_syn130_test.go | [x] | concurrent valuation and lease |
 | 74 | core/token_syn4900.go | [x] | locked agricultural assets |
 | 74 | core/token_syn4900_test.go | [x] | concurrent transfer/status tests |
-| 74 | core/transaction.go | [ ] |
-| 74 | core/transaction_control.go | [ ] |
-| 74 | core/transaction_control_test.go | [ ] |
-| 74 | core/transaction_test.go | [ ] |
+| 74 | core/transaction.go | [x] | program digest hashing, validation config and overflow guards |
+| 74 | core/transaction_control.go | [x] | receipt retention, deterministic listing and overflow safety |
+| 74 | core/transaction_control_test.go | [x] | retention, overflow and deterministic listing coverage |
+| 74 | core/transaction_test.go | [x] | validation, clone and overflow coverage |
 | 75 | core/validator_node.go | [x] | quorum manager wiring |
 | 75 | core/validator_node_test.go | [x] | concurrent join quorum test |
 | 75 | core/virtual_machine.go | [ ] |
