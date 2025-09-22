@@ -5,9 +5,14 @@ import (
 	"sync"
 )
 
+var (
+	ErrCapExceeded        = errors.New("tokens: cap exceeded")
+	ErrInsufficientSupply = errors.New("tokens: insufficient supply")
+)
+
 // SYN3800Token enforces a capped supply with mint and burn operations.
 type SYN3800Token struct {
-	mu     sync.Mutex
+	mu     sync.RWMutex
 	cap    uint64
 	supply uint64
 }
@@ -19,10 +24,13 @@ func NewSYN3800Token(cap uint64) *SYN3800Token {
 
 // Mint increases the supply if the cap allows it.
 func (t *SYN3800Token) Mint(amount uint64) error {
+	if amount == 0 {
+		return ErrInvalidAmount
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if t.supply+amount > t.cap {
-		return errors.New("cap exceeded")
+		return ErrCapExceeded
 	}
 	t.supply += amount
 	return nil
@@ -30,10 +38,13 @@ func (t *SYN3800Token) Mint(amount uint64) error {
 
 // Burn reduces the supply.
 func (t *SYN3800Token) Burn(amount uint64) error {
+	if amount == 0 {
+		return ErrInvalidAmount
+	}
 	t.mu.Lock()
 	defer t.mu.Unlock()
 	if t.supply < amount {
-		return errors.New("insufficient supply")
+		return ErrInsufficientSupply
 	}
 	t.supply -= amount
 	return nil
@@ -41,7 +52,35 @@ func (t *SYN3800Token) Burn(amount uint64) error {
 
 // Supply reports the current circulating supply.
 func (t *SYN3800Token) Supply() uint64 {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+	return t.supply
+}
+
+// Cap returns the maximum supply.
+func (t *SYN3800Token) Cap() uint64 {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+	return t.cap
+}
+
+// Remaining returns the capacity left before hitting the cap.
+func (t *SYN3800Token) Remaining() uint64 {
+	t.mu.RLock()
+	defer t.mu.RUnlock()
+	if t.cap <= t.supply {
+		return 0
+	}
+	return t.cap - t.supply
+}
+
+// SetCap updates the maximum supply if the new value is not below the current supply.
+func (t *SYN3800Token) SetCap(newCap uint64) error {
 	t.mu.Lock()
 	defer t.mu.Unlock()
-	return t.supply
+	if newCap < t.supply {
+		return ErrCapExceeded
+	}
+	t.cap = newCap
+	return nil
 }
