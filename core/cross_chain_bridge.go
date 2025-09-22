@@ -1,9 +1,17 @@
 package core
 
 import (
-	"errors"
-	"fmt"
-	"sync"
+        "crypto/sha256"
+        "encoding/base64"
+        "encoding/hex"
+        "encoding/json"
+        "errors"
+        "fmt"
+        "sort"
+        "strconv"
+        "strings"
+        "sync"
+        "time"
 )
 
 // AssetBridge defines a token bridge between two chains with a relayer whitelist.
@@ -16,23 +24,58 @@ type AssetBridge struct {
 
 // BridgeTransferRecord records a cross-chain transfer locked on this chain.
 type BridgeTransferRecord struct {
-	ID       int
-	BridgeID int
-	From     string
-	To       string
-	Amount   uint64
-	TokenID  string
-	Claimed  bool
+        ID       int
+        BridgeID int
+        From     string
+        To       string
+        Amount   uint64
+        TokenID  string
+        Claimed  bool
+        ClaimedAt     time.Time
+        ProofChecksum string
+        RelayTx       string
+        Signers       []string
 }
 
 // BridgeManager manages bridges and transfer records.
 type BridgeManager struct {
-	mu             sync.RWMutex
-	bridges        map[int]*AssetBridge
-	transfers      map[int]*BridgeTransferRecord
-	nextBridgeID   int
-	nextTransferID int
-	ledger         *Ledger
+        mu             sync.RWMutex
+        bridges        map[int]*AssetBridge
+        transfers      map[int]*BridgeTransferRecord
+        nextBridgeID   int
+        nextTransferID int
+        ledger         *Ledger
+}
+
+var ErrInvalidBridgeProof = errors.New("invalid bridge proof")
+
+const (
+        bridgeProofTTL     = 10 * time.Minute
+        minProofSignatures = 1
+)
+
+type bridgeClaimProof struct {
+        TransferID int      `json:"transfer_id"`
+        BridgeID   int      `json:"bridge_id"`
+        Recipient  string   `json:"recipient"`
+        Amount     uint64   `json:"amount"`
+        TokenID    string   `json:"token_id"`
+        SourceTx   string   `json:"source_tx"`
+        Signers    []string `json:"signers"`
+        Checksum   string   `json:"checksum"`
+        Timestamp  int64    `json:"timestamp"`
+}
+
+type bridgeTransferClaimProof struct {
+        TransferID string   `json:"transfer_id"`
+        BridgeID   string   `json:"bridge_id"`
+        Recipient  string   `json:"recipient"`
+        Amount     uint64   `json:"amount"`
+        TokenID    string   `json:"token_id"`
+        SourceTx   string   `json:"source_tx"`
+        Signers    []string `json:"signers"`
+        Checksum   string   `json:"checksum"`
+        Timestamp  int64    `json:"timestamp"`
 }
 
 // NewBridgeManager creates a new manager using the provided ledger for balance operations.
@@ -152,28 +195,40 @@ func (m *BridgeManager) Deposit(bridgeID int, from, to string, amount uint64, to
 // Claim releases locked assets to the recipient using a proof placeholder.
 // The relayer must be authorized for the bridge that locked the funds.
 func (m *BridgeManager) Claim(transferID int, relayer, proof string) error {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	t, ok := m.transfers[transferID]
-	if !ok {
-		return errors.New("transfer not found")
-	}
-	b, ok := m.bridges[t.BridgeID]
-	if !ok {
-		return errors.New("bridge not found")
-	}
-	if _, authorized := b.Relayers[relayer]; !authorized {
-		return errors.New("relayer not authorized")
-	}
-	if t.Claimed {
-		return errors.New("transfer already claimed")
-	}
-	if m.ledger == nil {
-		return errors.New("ledger not configured")
-	}
-	m.ledger.Credit(t.To, t.Amount)
-	t.Claimed = true
-	return nil
+        m.mu.Lock()
+        defer m.mu.Unlock()
+        t, ok := m.transfers[transferID]
+        if !ok {
+                return errors.New("transfer not found")
+        }
+        b, ok := m.bridges[t.BridgeID]
+        if !ok {
+                return errors.New("bridge not found")
+        }
+        if _, authorized := b.Relayers[relayer]; !authorized {
+                return errors.New("relayer not authorized")
+        }
+        if t.Claimed {
+                return errors.New("transfer already claimed")
+        }
+        payload := bridgeClaimProof{}
+        if err := decodeProofPayload(proof, &payload); err != nil {
+                return err
+        }
+        checksum, signers, err := payload.validate(t, relayer, b.Relayers)
+        if err != nil {
+                return err
+        }
+        if m.ledger == nil {
+                return errors.New("ledger not configured")
+        }
+        m.ledger.Credit(t.To, t.Amount)
+        t.Claimed = true
+        t.ClaimedAt = time.Now()
+        t.ProofChecksum = checksum
+        t.RelayTx = payload.SourceTx
+        t.Signers = append([]string(nil), signers...)
+        return nil
 }
 
 // GetTransfer returns a transfer record by ID.
@@ -200,13 +255,17 @@ func (m *BridgeManager) ListTransfers() []*BridgeTransferRecord {
 
 // BridgeTransfer represents a transfer record used by BridgeTransferManager with string IDs.
 type BridgeTransfer struct {
-	ID       string
-	BridgeID string
-	From     string
-	To       string
-	Amount   uint64
-	TokenID  string
-	Status   string
+        ID       string
+        BridgeID string
+        From     string
+        To       string
+        Amount   uint64
+        TokenID  string
+        Status   string
+        ProofChecksum string
+        ReleasedAt    time.Time
+        SourceTx      string
+        Signers       []string
 }
 
 // BridgeTransferManager manages cross-chain transfer records with string identifiers.
@@ -242,17 +301,29 @@ func (m *BridgeTransferManager) Deposit(bridgeID, from, to string, amount uint64
 
 // Claim releases assets when provided with a valid proof.
 func (m *BridgeTransferManager) Claim(id, proof string) error {
-	m.mu.Lock()
-	defer m.mu.Unlock()
-	t, ok := m.transfers[id]
-	if !ok {
-		return fmt.Errorf("transfer %s not found", id)
-	}
-	if t.Status != "locked" {
-		return fmt.Errorf("transfer %s already claimed", id)
-	}
-	t.Status = "released"
-	return nil
+        m.mu.Lock()
+        defer m.mu.Unlock()
+        t, ok := m.transfers[id]
+        if !ok {
+                return fmt.Errorf("transfer %s not found", id)
+        }
+        if t.Status != "locked" {
+                return fmt.Errorf("transfer %s already claimed", id)
+        }
+        payload := bridgeTransferClaimProof{}
+        if err := decodeProofPayload(proof, &payload); err != nil {
+                return err
+        }
+        checksum, signers, err := payload.validate(t)
+        if err != nil {
+                return err
+        }
+        t.Status = "released"
+        t.ProofChecksum = checksum
+        t.Signers = append([]string(nil), signers...)
+        t.SourceTx = payload.SourceTx
+        t.ReleasedAt = time.Now()
+        return nil
 }
 
 // GetTransfer retrieves a transfer by ID.
@@ -265,11 +336,172 @@ func (m *BridgeTransferManager) GetTransfer(id string) (*BridgeTransfer, bool) {
 
 // ListTransfers lists all transfer records.
 func (m *BridgeTransferManager) ListTransfers() []*BridgeTransfer {
-	m.mu.RLock()
-	defer m.mu.RUnlock()
-	out := make([]*BridgeTransfer, 0, len(m.transfers))
-	for _, t := range m.transfers {
-		out = append(out, t)
-	}
-	return out
+        m.mu.RLock()
+        defer m.mu.RUnlock()
+        out := make([]*BridgeTransfer, 0, len(m.transfers))
+        for _, t := range m.transfers {
+                out = append(out, t)
+        }
+        return out
+}
+
+func decodeProofPayload(proof string, target interface{}) error {
+        raw := strings.TrimSpace(proof)
+        if raw == "" {
+                return fmt.Errorf("%w: proof payload empty", ErrInvalidBridgeProof)
+        }
+        var data []byte
+        if decoded, err := base64.StdEncoding.DecodeString(raw); err == nil {
+                data = decoded
+        } else {
+                if !strings.HasPrefix(raw, "{") {
+                        return fmt.Errorf("%w: invalid encoding", ErrInvalidBridgeProof)
+                }
+                data = []byte(raw)
+        }
+        if err := json.Unmarshal(data, target); err != nil {
+                return fmt.Errorf("%w: %v", ErrInvalidBridgeProof, err)
+        }
+        return nil
+}
+
+func computeClaimChecksum(parts ...string) string {
+        sanitized := make([]string, len(parts))
+        for i, part := range parts {
+                sanitized[i] = strings.TrimSpace(part)
+        }
+        sum := sha256.Sum256([]byte(strings.Join(sanitized, "|")))
+        return hex.EncodeToString(sum[:])
+}
+
+func normaliseSigners(signers []string) ([]string, error) {
+        if len(signers) < minProofSignatures {
+                return nil, fmt.Errorf("%w: insufficient signatures", ErrInvalidBridgeProof)
+        }
+        seen := make(map[string]struct{}, len(signers))
+        for _, signer := range signers {
+                signer = strings.TrimSpace(signer)
+                if signer == "" {
+                        return nil, fmt.Errorf("%w: signer cannot be empty", ErrInvalidBridgeProof)
+                }
+                seen[signer] = struct{}{}
+        }
+        out := make([]string, 0, len(seen))
+        for signer := range seen {
+                out = append(out, signer)
+        }
+        sort.Strings(out)
+        return out, nil
+}
+
+func (p *bridgeClaimProof) expectedChecksum(record *BridgeTransferRecord) string {
+        return computeClaimChecksum(
+                strconv.Itoa(p.TransferID),
+                strconv.Itoa(p.BridgeID),
+                p.SourceTx,
+                record.To,
+                strconv.FormatUint(record.Amount, 10),
+                record.TokenID,
+        )
+}
+
+func (p *bridgeClaimProof) validate(record *BridgeTransferRecord, relayer string, authorized map[string]struct{}) (string, []string, error) {
+        if p.TransferID != record.ID {
+                return "", nil, fmt.Errorf("%w: transfer id mismatch", ErrInvalidBridgeProof)
+        }
+        if p.BridgeID != record.BridgeID {
+                return "", nil, fmt.Errorf("%w: bridge id mismatch", ErrInvalidBridgeProof)
+        }
+        if strings.TrimSpace(p.Recipient) != record.To {
+                return "", nil, fmt.Errorf("%w: recipient mismatch", ErrInvalidBridgeProof)
+        }
+        if p.Amount != record.Amount {
+                return "", nil, fmt.Errorf("%w: amount mismatch", ErrInvalidBridgeProof)
+        }
+        if strings.TrimSpace(p.TokenID) != record.TokenID {
+                return "", nil, fmt.Errorf("%w: token id mismatch", ErrInvalidBridgeProof)
+        }
+        if strings.TrimSpace(p.SourceTx) == "" {
+                return "", nil, fmt.Errorf("%w: source_tx required", ErrInvalidBridgeProof)
+        }
+        signers, err := normaliseSigners(p.Signers)
+        if err != nil {
+                return "", nil, err
+        }
+        hasRelayer := false
+        for _, signer := range signers {
+                if signer == relayer {
+                        hasRelayer = true
+                }
+                if _, ok := authorized[signer]; !ok {
+                        return "", nil, fmt.Errorf("%w: signer %s not authorized", ErrInvalidBridgeProof, signer)
+                }
+        }
+        if !hasRelayer {
+                return "", nil, fmt.Errorf("%w: relayer signature required", ErrInvalidBridgeProof)
+        }
+        if p.Timestamp == 0 {
+                return "", nil, fmt.Errorf("%w: timestamp required", ErrInvalidBridgeProof)
+        }
+        proofTime := time.Unix(p.Timestamp, 0)
+        now := time.Now()
+        if proofTime.After(now.Add(bridgeProofTTL)) || now.Sub(proofTime) > bridgeProofTTL {
+                return "", nil, fmt.Errorf("%w: proof expired", ErrInvalidBridgeProof)
+        }
+        checksum := p.expectedChecksum(record)
+        if !strings.EqualFold(strings.TrimSpace(p.Checksum), checksum) {
+                return "", nil, fmt.Errorf("%w: checksum mismatch", ErrInvalidBridgeProof)
+        }
+        p.Signers = signers
+        return checksum, signers, nil
+}
+
+func (p *bridgeTransferClaimProof) expectedChecksum(record *BridgeTransfer) string {
+        return computeClaimChecksum(
+                p.TransferID,
+                p.BridgeID,
+                p.SourceTx,
+                record.To,
+                strconv.FormatUint(record.Amount, 10),
+                record.TokenID,
+        )
+}
+
+func (p *bridgeTransferClaimProof) validate(record *BridgeTransfer) (string, []string, error) {
+        if p.TransferID != record.ID {
+                return "", nil, fmt.Errorf("%w: transfer id mismatch", ErrInvalidBridgeProof)
+        }
+        if p.BridgeID != record.BridgeID {
+                return "", nil, fmt.Errorf("%w: bridge id mismatch", ErrInvalidBridgeProof)
+        }
+        if strings.TrimSpace(p.Recipient) != record.To {
+                return "", nil, fmt.Errorf("%w: recipient mismatch", ErrInvalidBridgeProof)
+        }
+        if p.Amount != record.Amount {
+                return "", nil, fmt.Errorf("%w: amount mismatch", ErrInvalidBridgeProof)
+        }
+        if strings.TrimSpace(p.TokenID) != record.TokenID {
+                return "", nil, fmt.Errorf("%w: token id mismatch", ErrInvalidBridgeProof)
+        }
+        if strings.TrimSpace(p.SourceTx) == "" {
+                return "", nil, fmt.Errorf("%w: source_tx required", ErrInvalidBridgeProof)
+        }
+        signers, err := normaliseSigners(p.Signers)
+        if err != nil {
+                return "", nil, err
+        }
+        if p.Timestamp == 0 {
+                return "", nil, fmt.Errorf("%w: timestamp required", ErrInvalidBridgeProof)
+        }
+        proofTime := time.Unix(p.Timestamp, 0)
+        now := time.Now()
+        if proofTime.After(now.Add(bridgeProofTTL)) || now.Sub(proofTime) > bridgeProofTTL {
+                return "", nil, fmt.Errorf("%w: proof expired", ErrInvalidBridgeProof)
+        }
+        checksum := p.expectedChecksum(record)
+        if !strings.EqualFold(strings.TrimSpace(p.Checksum), checksum) {
+                return "", nil, fmt.Errorf("%w: checksum mismatch", ErrInvalidBridgeProof)
+        }
+        p.Signers = signers
+        return checksum, signers, nil
 }
