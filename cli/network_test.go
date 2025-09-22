@@ -46,7 +46,7 @@ func TestNetworkCLIPeersAndBroadcast(t *testing.T) {
 		t.Fatalf("expected peer in output: %s", out)
 	}
 
-	ch := network.Subscribe("topic")
+	ch, cancel := network.Subscribe("topic")
 	if _, err := execNetCLI("network", "broadcast", "topic", "hi"); err != nil {
 		t.Fatalf("broadcast failed: %v", err)
 	}
@@ -59,6 +59,7 @@ func TestNetworkCLIPeersAndBroadcast(t *testing.T) {
 		t.Fatal("no message received")
 	}
 
+	cancel()
 	network.Stop()
 }
 

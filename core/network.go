@@ -1,6 +1,10 @@
 package core
 
-import "sync"
+import (
+	"encoding/json"
+	"errors"
+	"sync"
+)
 
 // Network manages communication between nodes and relay nodes. It also queues
 // transactions for asynchronous broadcasting and integrates biometric
@@ -14,7 +18,8 @@ type Network struct {
 	queue   chan *Transaction
 	running bool
 	quit    chan struct{}
-	subs    map[string][]chan []byte // topic -> subscriber channels
+	subs    map[string]map[*subscription]struct{}
+	events  chan BroadcastEvent
 	wg      sync.WaitGroup
 }
 
@@ -26,7 +31,8 @@ func NewNetwork(auth *BiometricService) *Network {
 		nodes:  make(map[string]*Node),
 		relays: make(map[string]*Node),
 		auth:   auth,
-		subs:   make(map[string][]chan []byte),
+		subs:   make(map[string]map[*subscription]struct{}),
+		events: make(chan BroadcastEvent, 256),
 	}
 	n.Start()
 	return n
@@ -91,13 +97,19 @@ func (n *Network) Peers() []string {
 }
 
 // EnqueueTransaction places a transaction into the broadcast queue.
-func (n *Network) EnqueueTransaction(tx *Transaction) {
+func (n *Network) EnqueueTransaction(tx *Transaction) error {
 	n.mu.RLock()
 	running := n.running
 	ch := n.queue
 	n.mu.RUnlock()
-	if running {
-		ch <- tx
+	if !running || ch == nil {
+		return errors.New("network not running")
+	}
+	select {
+	case ch <- tx:
+		return nil
+	default:
+		return errors.New("broadcast queue full")
 	}
 }
 
@@ -108,31 +120,49 @@ func (n *Network) Broadcast(tx *Transaction, userID string, biometric []byte, si
 	if err := tx.AttachBiometric(userID, biometric, sig, n.auth); err != nil {
 		return err
 	}
-	n.EnqueueTransaction(tx)
-	return nil
+	return n.EnqueueTransaction(tx)
 }
 
 // Subscribe registers a listener for the given topic and returns a receive-only
 // channel. Each call creates an independent buffered channel.
-func (n *Network) Subscribe(topic string) <-chan []byte {
-	ch := make(chan []byte, 1)
+func (n *Network) Subscribe(topic string) (<-chan []byte, func()) {
+	sub := newSubscription()
 	n.mu.Lock()
-	n.subs[topic] = append(n.subs[topic], ch)
+	if _, ok := n.subs[topic]; !ok {
+		n.subs[topic] = make(map[*subscription]struct{})
+	}
+	n.subs[topic][sub] = struct{}{}
 	n.mu.Unlock()
-	return ch
+
+	var once sync.Once
+	cancel := func() {
+		once.Do(func() {
+			n.mu.Lock()
+			if subs, ok := n.subs[topic]; ok {
+				delete(subs, sub)
+				if len(subs) == 0 {
+					delete(n.subs, topic)
+				}
+			}
+			n.mu.Unlock()
+			sub.close()
+		})
+	}
+
+	return sub.channel(), cancel
 }
 
 // Publish broadcasts arbitrary data to all subscribers of the provided topic.
 // Messages are delivered on a best-effort basis.
 func (n *Network) Publish(topic string, data []byte) {
 	n.mu.RLock()
-	subs := append([]chan []byte(nil), n.subs[topic]...)
+	subs := make([]*subscription, 0, len(n.subs[topic]))
+	for sub := range n.subs[topic] {
+		subs = append(subs, sub)
+	}
 	n.mu.RUnlock()
-	for _, ch := range subs {
-		select {
-		case ch <- append([]byte(nil), data...):
-		default:
-		}
+	for _, sub := range subs {
+		sub.send(data)
 	}
 }
 
@@ -166,9 +196,84 @@ func (n *Network) broadcast(tx *Transaction) {
 	}
 	n.mu.RUnlock()
 	for _, node := range nodes {
-		_ = node.AddTransaction(tx)
+		err := node.AddTransaction(tx)
+		n.emitBroadcastEvent(tx, node.ID, "node", err)
 	}
 	for _, node := range relays {
-		_ = node.AddTransaction(tx)
+		err := node.AddTransaction(tx)
+		n.emitBroadcastEvent(tx, node.ID, "relay", err)
 	}
+}
+
+// BroadcastEvent captures the outcome of attempting to deliver a transaction to
+// a network participant.
+type BroadcastEvent struct {
+	TransactionID string `json:"transaction_id"`
+	Target        string `json:"target"`
+	Role          string `json:"role"`
+	Success       bool   `json:"success"`
+	Error         string `json:"error,omitempty"`
+}
+
+// BroadcastEvents returns a read-only channel that streams broadcast telemetry.
+func (n *Network) BroadcastEvents() <-chan BroadcastEvent {
+	return n.events
+}
+
+func (n *Network) emitBroadcastEvent(tx *Transaction, target string, role string, err error) {
+	event := BroadcastEvent{
+		TransactionID: tx.ID,
+		Target:        target,
+		Role:          role,
+		Success:       err == nil,
+	}
+	if err != nil {
+		event.Error = err.Error()
+	}
+	select {
+	case n.events <- event:
+	default:
+	}
+	payload, marshalErr := json.Marshal(event)
+	if marshalErr != nil {
+		return
+	}
+	n.Publish("network:broadcast", payload)
+}
+
+type subscription struct {
+	ch     chan []byte
+	mu     sync.Mutex
+	closed bool
+}
+
+func newSubscription() *subscription {
+	return &subscription{ch: make(chan []byte, 1)}
+}
+
+func (s *subscription) channel() <-chan []byte {
+	return s.ch
+}
+
+func (s *subscription) send(data []byte) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.closed {
+		return
+	}
+	select {
+	case s.ch <- append([]byte(nil), data...):
+	default:
+	}
+}
+
+func (s *subscription) close() {
+	s.mu.Lock()
+	if s.closed {
+		s.mu.Unlock()
+		return
+	}
+	s.closed = true
+	close(s.ch)
+	s.mu.Unlock()
 }

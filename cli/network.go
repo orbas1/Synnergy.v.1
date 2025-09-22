@@ -63,7 +63,8 @@ func init() {
 		Short: "Subscribe and print messages for a topic",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			gasPrint("NetworkSubscribe")
-			ch := network.Subscribe(args[0])
+			ch, cancel := network.Subscribe(args[0])
+			defer cancel()
 			ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 			defer stop()
 			for {

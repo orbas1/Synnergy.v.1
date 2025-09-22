@@ -564,8 +564,8 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/network.go` | `17` | `func NewNetwork(auth *BiometricService) *Network {` |
 | `core/network.go` | `29` | `func (n *Network) AddNode(node *Node) { n.nodes[node.ID] = node }` |
 | `core/network.go` | `32` | `func (n *Network) AddRelay(node *Node) { n.relays[node.ID] = node }` |
-| `core/network.go` | `35` | `func (n *Network) EnqueueTransaction(tx *Transaction) { n.queue <- tx }` |
-| `core/network.go` | `40` | `func (n *Network) Broadcast(tx *Transaction, userID string, biometric []byte) error {` |
+| `core/network.go` | `35` | `func (n *Network) EnqueueTransaction(tx *Transaction) error {` |
+| `core/network.go` | `40` | `func (n *Network) Broadcast(tx *Transaction, userID string, biometric []byte, sig []byte) error {` |
 | `core/network.go` | `51` | `func (n *Network) processQueue() {` |
 | `core/network.go` | `58` | `func (n *Network) broadcast(tx *Transaction) {` |
 | `core/bank_institutional_node.go` | `19` | `func NewBankInstitutionalNode(id, addr string, ledger *Ledger) *BankInstitutionalNode {` |
