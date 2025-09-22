@@ -6,16 +6,12 @@ import (
 	"strconv"
 
 	"github.com/spf13/cobra"
-	"synnergy/core"
 	ierr "synnergy/internal/errors"
 )
 
-var (
-	contractMgr = core.NewContractManager(contractRegistry)
-)
-
 func init() {
-	contractVM.Start()
+	ensureContractComponents()
+	_ = contractVM.Start()
 	cmd := &cobra.Command{
 		Use:   "contract-mgr",
 		Short: "Administrative contract management",

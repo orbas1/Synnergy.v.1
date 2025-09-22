@@ -95,11 +95,12 @@ func (rt *runtime) Shutdown() {
 
 func (rt *runtime) preloadModules() error {
 	// Shared registries
-	_ = core.NewAuthorityNodeRegistry()
+	validators := core.NewValidatorManager(core.MinStake)
+	_ = core.NewAuthorityNodeRegistry(rt.ledger, validators, 1)
 	_ = core.NewProposalManager()
 	daoMgr := core.NewDAOManager()
-	_ = core.NewDAOStaking(daoMgr)
-	_ = core.NewDAOTokenLedger(daoMgr)
+	_ = core.NewDAOStaking(daoMgr, rt.ledger)
+	_ = core.NewDAOTokenLedger(daoMgr, rt.ledger)
 
 	// Banking and custodial flows use the shared ledger
 	_ = core.NewBankInstitutionalNode("init", "init", rt.ledger)
@@ -113,7 +114,7 @@ func (rt *runtime) preloadModules() error {
 	_ = core.NewCrossChainTxManager(rt.ledger)
 
 	// Contract registry coupled to the bootstrap VM
-	_ = core.NewContractRegistry(rt.vm)
+	_ = core.NewContractRegistry(rt.vm, rt.ledger)
 
 	// Sandbox and security services
 	_ = core.NewSandboxManager()

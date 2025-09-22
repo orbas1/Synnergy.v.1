@@ -11,7 +11,9 @@ import (
 
 // TestAuthorityRegister verifies authority node registration through the CLI.
 func TestAuthorityRegister(t *testing.T) {
-	authorityReg = core.NewAuthorityNodeRegistry()
+	ledger = core.NewLedger()
+	authorityValidators = core.NewValidatorManager(core.MinStake)
+	authorityReg = core.NewAuthorityNodeRegistry(ledger, authorityValidators, 1)
 
 	rootCmd.SetOut(new(bytes.Buffer))
 	rootCmd.SetArgs([]string{"authority", "register", "addr1", "validator"})
@@ -26,7 +28,9 @@ func TestAuthorityRegister(t *testing.T) {
 
 // TestAuthorityVote verifies signature-based voting through the CLI.
 func TestAuthorityVote(t *testing.T) {
-	authorityReg = core.NewAuthorityNodeRegistry()
+	ledger = core.NewLedger()
+	authorityValidators = core.NewValidatorManager(core.MinStake)
+	authorityReg = core.NewAuthorityNodeRegistry(ledger, authorityValidators, 1)
 	// register candidate
 	rootCmd.SetOut(new(bytes.Buffer))
 	rootCmd.SetArgs([]string{"authority", "register", "addr1", "validator"})
@@ -38,6 +42,7 @@ func TestAuthorityVote(t *testing.T) {
 	voter := hex.EncodeToString(pub)
 	sig := ed25519.Sign(priv, []byte("addr1"))
 	sigHex := hex.EncodeToString(sig)
+	ledger.Mint(voter, 10)
 	rootCmd.SetOut(new(bytes.Buffer))
 	rootCmd.SetArgs([]string{"authority", "vote", voter, "addr1", "--pub", voter, "--sig", sigHex})
 	if err := rootCmd.Execute(); err != nil {

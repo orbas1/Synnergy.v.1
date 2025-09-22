@@ -49,9 +49,12 @@ The returned hash becomes the on‑chain address used in subsequent operations.
 Contracts are registered through the `ContractRegistry`. Deployment requires the WASM bytecode, optional manifest, gas limit and owner address【F:contracts.go†L57-L79】.
 
 ```go
-registry := synnergy.NewContractRegistry(vm)
-addr, err := registry.Deploy(wasm, manifestJSON, gasLimit, owner)
+coreLedger := core.NewLedger()
+ledger := coreledger.Wrap(coreLedger)
+addr, err := synnergy.NewContractRegistry(vm, ledger).Deploy(wasm, manifestJSON, gasLimit, owner)
 ```
+
+Ensure the owner wallet holds at least `gasLimit` units before deployment so the ledger can charge the contract fee. When using the provided adapter (`synnergy/adapters/coreledger`), the registry persists metadata back to the shared core ledger.
 
 For command‑line workflows, the provided script wraps this functionality:
 

@@ -16,7 +16,9 @@ import (
 // TestDAOStakingStakeJSON verifies staking with JSON output and signature verification.
 func TestDAOStakingStakeJSON(t *testing.T) {
 	daoMgr = core.NewDAOManager()
-	daoStaking = core.NewDAOStaking(daoMgr)
+	ledger = core.NewLedger()
+	ledger.Mint("addr1", 100)
+	daoStaking = core.NewDAOStaking(daoMgr, ledger)
 	daoMgr.AuthorizeRelayer("addr1")
 	dao, err := daoMgr.Create("dao", "addr1")
 	if err != nil {

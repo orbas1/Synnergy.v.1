@@ -109,13 +109,14 @@ Wallet creation and identity attestation are handled by `core/wallet.go` and `id
 Operational scripts such as `scripts/wallet_init.sh`, `scripts/wallet_key_rotation.sh`, `scripts/wallet_multisig_setup.sh` and `scripts/wallet_offline_sign.sh` automate provisioning, key rotation, multisignature coordination and offline signing. For regulated environments `scripts/idwallet_register.sh` captures KYC data and ties wallets to verified identities.
 
 ## 9. Deploy Smart Contracts
-The runtime embeds a virtual machine (`core.NewSNVM`) and contract registry (`core.NewContractRegistry`). Contracts reside under `smart-contracts/` (WebAssembly templates) and `smart-contracts/solidity/` (reference Solidity implementations).  Typical lifecycle:
+The runtime embeds a virtual machine (`core.NewSNVM`) and contract registry (`core.NewContractRegistry` backed by a shared ledger). Contracts reside under `smart-contracts/` (WebAssembly templates) and `smart-contracts/solidity/` (reference Solidity implementations).  Typical lifecycle:
 ```bash
 ./synnergy contracts compile <src.wasm> --out build/          # compile contract
-./synnergy contracts deploy build/src.wasm --from <addr>      # deploy to chain
+./synnergy contracts deploy --wasm build/src.wasm --owner <addr> --gas 200000
 ./synnergy contracts invoke <addr> <method> [args]            # execute entrypoint
 ./synnergy contracts query <addr> <state-key>                 # read contract state
 ```
+Fund the deploying wallet before running `contracts deploy`; the CLI deducts the declared gas limit from the ledger and routes it to the contract fee collector.
 Gas usage is deterministically priced through `synnergy.LoadGasTable()` and `synnergy.RegisterGasCost()` calls executed during start‑up.  Pre‑deployment checks are orchestrated via:
 
 - `scripts/contract_static_analysis.sh` – run `gosec` and `wasm-verify` across sources

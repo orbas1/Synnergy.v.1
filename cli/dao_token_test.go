@@ -16,7 +16,9 @@ import (
 // TestDAOTokenMintJSON verifies mint command JSON output and signature.
 func TestDAOTokenMintJSON(t *testing.T) {
 	daoMgr = core.NewDAOManager()
-	daoTokenLedger = core.NewDAOTokenLedger(daoMgr)
+	ledger = core.NewLedger()
+	ledger.Mint("admin", 100)
+	daoTokenLedger = core.NewDAOTokenLedger(daoMgr, ledger)
 
 	daoMgr.AuthorizeRelayer("admin")
 	dao, err := daoMgr.Create("d1", "admin")

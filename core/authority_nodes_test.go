@@ -7,7 +7,7 @@ import (
 )
 
 func TestAuthorityNodeRegistry(t *testing.T) {
-	reg := NewAuthorityNodeRegistry()
+	reg := NewAuthorityNodeRegistry(nil, NewValidatorManager(MinStake), 0)
 	if _, err := reg.Register("addr1", "validator"); err != nil {
 		t.Fatalf("register: %v", err)
 	}
@@ -31,7 +31,7 @@ func TestAuthorityNodeRegistry(t *testing.T) {
 }
 
 func TestAuthorityNodeJSONAndRemoveVote(t *testing.T) {
-	reg := NewAuthorityNodeRegistry()
+	reg := NewAuthorityNodeRegistry(nil, NewValidatorManager(MinStake), 0)
 	node, err := reg.Register("addr1", "validator")
 	if err != nil {
 		t.Fatalf("register: %v", err)

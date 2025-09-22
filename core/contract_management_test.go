@@ -8,7 +8,9 @@ import (
 func TestContractManager(t *testing.T) {
 	vm := NewSimpleVM()
 	_ = vm.Start()
-	reg := NewContractRegistry(vm)
+	ledger := NewLedger()
+	ledger.Credit("owner", 1_000)
+	reg := NewContractRegistry(vm, ledger)
 	addr, err := reg.Deploy([]byte{0x01}, "", 5, "owner")
 	if err != nil {
 		t.Fatalf("deploy: %v", err)

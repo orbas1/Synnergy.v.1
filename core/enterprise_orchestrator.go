@@ -88,12 +88,15 @@ func NewEnterpriseOrchestrator(ctx context.Context, opts ...EnterpriseOption) (*
 		return nil, fmt.Errorf("wallet init: %w", err)
 	}
 
+	ledger := NewLedger()
+	validators := NewValidatorManager(MinStake)
+
 	orchestrator := &EnterpriseOrchestrator{
 		vm:        vm,
 		consensus: NewConsensusNetworkManager(),
 		wallet:    wallet,
-		registry:  NewAuthorityNodeRegistry(),
-		ledger:    NewLedger(),
+		registry:  NewAuthorityNodeRegistry(ledger, validators, 1),
+		ledger:    ledger,
 		gas: map[string]uint64{
 			"EnterpriseBootstrap":      120,
 			"EnterpriseConsensusSync":  95,

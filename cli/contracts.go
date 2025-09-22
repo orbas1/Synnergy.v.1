@@ -12,10 +12,21 @@ import (
 
 var (
 	contractVM       = core.NewSimpleVM()
-	contractRegistry = core.NewContractRegistry(contractVM)
+	contractRegistry *core.ContractRegistry
+	contractMgr      *core.ContractManager
 )
 
+func ensureContractComponents() {
+	if contractRegistry == nil {
+		contractRegistry = core.NewContractRegistry(contractVM, ledger)
+	}
+	if contractMgr == nil {
+		contractMgr = core.NewContractManager(contractRegistry)
+	}
+}
+
 func init() {
+	ensureContractComponents()
 	// start VM to allow contract execution
 	_ = contractVM.Start()
 
@@ -51,6 +62,9 @@ func init() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if wasmPath == "" {
 				return fmt.Errorf("--wasm required")
+			}
+			if owner == "" {
+				return fmt.Errorf("--owner required")
 			}
 			wasm, err := os.ReadFile(wasmPath)
 			if err != nil {
@@ -130,6 +144,9 @@ func init() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if templateName == "" {
 				return fmt.Errorf("--name required")
+			}
+			if templateOwner == "" {
+				return fmt.Errorf("--owner required")
 			}
 			path := filepath.Join("smart-contracts", templateName+".wasm")
 			wasm, err := os.ReadFile(path)

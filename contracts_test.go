@@ -1,13 +1,21 @@
-package synnergy
+package synnergy_test
 
-import "testing"
+import (
+	"testing"
+
+	synnergy "synnergy"
+	"synnergy/adapters/coreledger"
+	"synnergy/core"
+)
 
 func TestContractRegistry(t *testing.T) {
-	vm := NewSimpleVM()
+	vm := synnergy.NewSimpleVM()
 	if err := vm.Start(); err != nil {
 		t.Fatalf("start: %v", err)
 	}
-	reg := NewContractRegistry(vm)
+	ledger := core.NewLedger()
+	ledger.Credit("owner", 100)
+	reg := synnergy.NewContractRegistry(vm, coreledger.Wrap(ledger))
 	wasm := []byte{0x00, 0x61}
 	addr, err := reg.Deploy(wasm, "", 10, "owner")
 	if err != nil {

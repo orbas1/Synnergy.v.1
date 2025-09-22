@@ -9,7 +9,7 @@ import (
 	"synnergy/core"
 )
 
-var daoTokenLedger = core.NewDAOTokenLedger(daoMgr)
+var daoTokenLedger = core.NewDAOTokenLedger(daoMgr, ledger)
 
 func init() {
 	tokenCmd := &cobra.Command{

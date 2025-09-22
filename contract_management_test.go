@@ -1,16 +1,25 @@
-package synnergy
+package synnergy_test
 
-import "testing"
+import (
+	"testing"
+
+	synnergy "synnergy"
+	"synnergy/adapters/coreledger"
+	"synnergy/core"
+)
 
 func TestContractManager(t *testing.T) {
-	vm := NewSimpleVM()
+	vm := synnergy.NewSimpleVM()
 	_ = vm.Start()
-	reg := NewContractRegistry(vm)
+	ledger := core.NewLedger()
+	ledger.Credit("owner", 50)
+	ledger.Credit("new", 50)
+	reg := synnergy.NewContractRegistry(vm, coreledger.Wrap(ledger))
 	addr, err := reg.Deploy([]byte{0x01}, "", 5, "owner")
 	if err != nil {
 		t.Fatalf("deploy: %v", err)
 	}
-	mgr := NewContractManager(reg)
+	mgr := synnergy.NewContractManager(reg)
 	if err := mgr.Pause(addr); err != nil {
 		t.Fatalf("pause: %v", err)
 	}

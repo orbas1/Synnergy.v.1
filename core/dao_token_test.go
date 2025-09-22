@@ -18,7 +18,9 @@ func TestDAOTokenLedger(t *testing.T) {
 		t.Fatalf("join bob: %v", err)
 	}
 
-	l := NewDAOTokenLedger(mgr)
+	ledger := NewLedger()
+	ledger.Mint("admin", 100)
+	l := NewDAOTokenLedger(mgr, ledger)
 
 	if err := l.Mint(dao.ID, "alice", "alice", 10); err == nil {
 		t.Fatalf("expected unauthorized mint")

@@ -9,7 +9,9 @@ import (
 func TestAIContractRegistry(t *testing.T) {
 	vm := NewSimpleVM()
 	_ = vm.Start()
-	base := NewContractRegistry(vm)
+	ledger := NewLedger()
+	ledger.Credit("owner", 1_000_000)
+	base := NewContractRegistry(vm, ledger)
 	aiReg := NewAIContractRegistry(base)
 	deployGas := synnergy.GasCost("DeployAIContract")
 	addr, err := aiReg.DeployAIContract([]byte{0x01}, "modelhash", "", deployGas, "owner")
