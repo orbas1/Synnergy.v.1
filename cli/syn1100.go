@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"bytes"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -10,6 +11,9 @@ import (
 var syn1100 = tokens.NewSYN1100Token()
 
 func init() {
+	if err := syn1100.SetEncryptionKey(bytes.Repeat([]byte{0x42}, 32)); err != nil {
+		panic(err)
+	}
 	cmd := &cobra.Command{
 		Use:   "syn1100",
 		Short: "Healthcare record token",

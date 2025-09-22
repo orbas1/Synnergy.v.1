@@ -1,6 +1,7 @@
 package tokens
 
 import (
+	"bytes"
 	"encoding/hex"
 	"errors"
 	"math/big"
@@ -142,6 +143,9 @@ func TestRegistryInfoList(t *testing.T) {
 
 func TestSYN1100Access(t *testing.T) {
 	store := NewSYN1100Token()
+	if err := store.SetEncryptionKey(bytes.Repeat([]byte{0x33}, 32)); err != nil {
+		t.Fatalf("set key: %v", err)
+	}
 	data, _ := hex.DecodeString("abcd")
 	if err := store.AddRecord(1, "alice", data); err != nil {
 		t.Fatalf("add record: %v", err)

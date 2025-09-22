@@ -13,6 +13,7 @@
 | `AddListing` | `1` |
 | `AddMember` | `1` |
 | `AddNode` | `1` |
+| `Node_Attest` | `18` |
 | `AddOffset` | `1` |
 | `AddPeer` | `1` |
 | `AddRecord` | `1` |
@@ -41,6 +42,7 @@
 | `AttachBiometric` | `1` |
 | `AuthorityApplyVote` | `5` |
 | `AuthorityVote` | `5` |
+| `Authority_Attestation` | `25` |
 | `Audit_Events` | `20` |
 | `Audit_Log` | `100` |
 | `Authenticate` | `1` |
@@ -77,6 +79,7 @@
 | `CheckLedger` | `1` |
 | `CirculatingSupply` | `1` |
 | `Claim` | `1` |
+| `CLI_CommandManifest` | `8` |
 | `CloseChannel` | `1` |
 | `CloseConnection` | `1` |
 | `CloseDeal` | `500` |
@@ -85,6 +88,8 @@
 | `CompileWASM` | `1` |
 | `CompressLedger` | `25` |
 | `Connect` | `1` |
+| `Consensus_AttestValidator` | `30` |
+| `Consensus_StateDigest` | `20` |
 | `Content` | `1` |
 | `ContractInfo` | `100` |
 | `ConvertToPrivate` | `1` |
@@ -271,6 +276,9 @@
 | `LedgerMint` | `1` |
 | `LedgerPool` | `1` |
 | `LedgerTransfer` | `1` |
+| `Ledger_PrimaryElection` | `40` |
+| `Ledger_PrivacyEnvelope` | `15` |
+| `Ledger_StreamReplication` | `35` |
 | `LedgerUTXO` | `1` |
 | `LightAddHeader` | `1` |
 | `LightHeaders` | `1` |
@@ -327,6 +335,7 @@
 | `LoanpoolApplyVote` | `1` |
 | `LoanpoolCancel` | `1` |
 | `LoanpoolDisburse` | `1` |
+| `Loanpool_ComplianceDisburse` | `25` |
 | `LoanpoolExtend` | `1` |
 | `LoanpoolGet` | `1` |
 | `LoanpoolList` | `1` |
@@ -422,6 +431,7 @@
 | `EnterpriseConsensusSync` | `95` |
 | `EnterpriseNodeAudit` | `75` |
 | `EnterpriseWalletSeal` | `60` |
+| `Wallet_PrivacyEnvelope` | `12` |
 | `NewEnvironmentalMonitoringNode` | `1` |
 | `NewEvent` | `1` |
 | `NewFailoverManager` | `1` |

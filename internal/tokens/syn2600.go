@@ -9,14 +9,16 @@ import (
 
 // InvestorTokenMeta defines metadata for SYN2600 investor tokens.
 type InvestorTokenMeta struct {
-	ID       string
-	Asset    string
-	Owner    string
-	Shares   uint64
-	IssuedAt time.Time
-	Expiry   time.Time
-	Active   bool
-	Returns  []ReturnRecord
+	ID        string
+	Asset     string
+	Owner     string
+	Shares    uint64
+	IssuedAt  time.Time
+	Expiry    time.Time
+	Active    bool
+	Returns   []ReturnRecord
+	Metadata  map[string]string
+	RiskScore float64
 }
 
 // ReturnRecord logs a distribution paid to the investor.
@@ -63,6 +65,7 @@ func (r *InvestorRegistry) Issue(asset, owner string, shares uint64, expiry time
 		IssuedAt: time.Now(),
 		Expiry:   expiry,
 		Active:   true,
+		Metadata: make(map[string]string),
 	}
 	r.tokens[id] = tok
 	return tok, nil
@@ -112,6 +115,54 @@ func (r *InvestorRegistry) Deactivate(tokenID string) error {
 	return nil
 }
 
+// Activate re-enables a previously deactivated token if the expiry permits.
+func (r *InvestorRegistry) Activate(tokenID string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	tok, ok := r.tokens[tokenID]
+	if !ok {
+		return errors.New("token not found")
+	}
+	if time.Now().After(tok.Expiry) {
+		return errors.New("token expired")
+	}
+	tok.Active = true
+	return nil
+}
+
+// ExtendExpiry extends the expiry date when governance approves.
+func (r *InvestorRegistry) ExtendExpiry(tokenID string, newExpiry time.Time) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	tok, ok := r.tokens[tokenID]
+	if !ok {
+		return errors.New("token not found")
+	}
+	if newExpiry.Before(tok.Expiry) {
+		return errors.New("new expiry must be after current expiry")
+	}
+	tok.Expiry = newExpiry
+	return nil
+}
+
+// UpdateMetadata updates structured metadata for the token.
+func (r *InvestorRegistry) UpdateMetadata(tokenID string, meta map[string]string, risk float64) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	tok, ok := r.tokens[tokenID]
+	if !ok {
+		return errors.New("token not found")
+	}
+	if tok.Metadata == nil {
+		tok.Metadata = make(map[string]string)
+	}
+	for k, v := range meta {
+		tok.Metadata[k] = v
+	}
+	tok.RiskScore = risk
+	return nil
+}
+
 // Get retrieves a token by identifier.
 func (r *InvestorRegistry) Get(tokenID string) (*InvestorTokenMeta, bool) {
 	r.mu.RLock()
@@ -134,6 +185,21 @@ func (r *InvestorRegistry) List() []*InvestorTokenMeta {
 		cp := *tok
 		cp.Returns = append([]ReturnRecord(nil), tok.Returns...)
 		res = append(res, &cp)
+	}
+	return res
+}
+
+// FilterByAsset returns active tokens for the specified asset.
+func (r *InvestorRegistry) FilterByAsset(asset string) []*InvestorTokenMeta {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	res := make([]*InvestorTokenMeta, 0)
+	for _, tok := range r.tokens {
+		if tok.Asset == asset {
+			cp := *tok
+			cp.Returns = append([]ReturnRecord(nil), tok.Returns...)
+			res = append(res, &cp)
+		}
 	}
 	return res
 }

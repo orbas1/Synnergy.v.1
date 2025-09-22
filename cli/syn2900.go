@@ -40,6 +40,9 @@ func init() {
 			if err != nil {
 				return err
 			}
+			if limit == 0 {
+				limit = payout
+			}
 			p, err := insuranceRegistry.IssuePolicy(holder, coverage, premium, payout, deductible, limit, start, end)
 			if err != nil {
 				return err

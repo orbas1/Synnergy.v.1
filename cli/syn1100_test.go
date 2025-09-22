@@ -11,6 +11,9 @@ import (
 // TestSyn1100AddRequiresFlags ensures add fails when flags are missing.
 func TestSyn1100AddRequiresFlags(t *testing.T) {
 	syn1100 = tokens.NewSYN1100Token()
+	if err := syn1100.SetEncryptionKey(bytes.Repeat([]byte{0x24}, 32)); err != nil {
+		t.Fatalf("set key: %v", err)
+	}
 
 	cmd := RootCmd()
 	cmd.SetArgs([]string{"syn1100", "add", "--id", "1", "--owner", "alice"})
@@ -22,6 +25,9 @@ func TestSyn1100AddRequiresFlags(t *testing.T) {
 // TestSyn1100Workflow verifies record access control operations.
 func TestSyn1100Workflow(t *testing.T) {
 	syn1100 = tokens.NewSYN1100Token()
+	if err := syn1100.SetEncryptionKey(bytes.Repeat([]byte{0x25}, 32)); err != nil {
+		t.Fatalf("set key: %v", err)
+	}
 
 	cmd := RootCmd()
 	buf := new(bytes.Buffer)

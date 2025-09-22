@@ -147,6 +147,7 @@ func (m *CrossChainManager) RegisterBridge(sourceChain, targetChain, relayerAddr
 	}
 	if relayerAddr != "" {
 		bridge.Relayers[relayerAddr] = struct{}{}
+		atomic.AddUint64(&m.metrics.authorizedRelay, 1)
 	}
 
 	m.mu.Lock()

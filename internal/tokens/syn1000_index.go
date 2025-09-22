@@ -68,3 +68,30 @@ func (i *SYN1000Index) TotalValue(id TokenID) (*big.Rat, error) {
 	}
 	return t.TotalReserveValue(), nil
 }
+
+// CoverageRatio returns the collateralisation ratio for the token.
+func (i *SYN1000Index) CoverageRatio(id TokenID) (*big.Rat, error) {
+	t, err := i.Token(id)
+	if err != nil {
+		return nil, err
+	}
+	return t.CoverageRatio(), nil
+}
+
+// StressTest validates reserve sufficiency for a prospective redemption.
+func (i *SYN1000Index) StressTest(id TokenID, amount uint64) (bool, error) {
+	t, err := i.Token(id)
+	if err != nil {
+		return false, err
+	}
+	return t.StressTestRedemption(amount), nil
+}
+
+// ReserveSnapshot proxies the underlying token snapshot for API consumers.
+func (i *SYN1000Index) ReserveSnapshot(id TokenID) ([]ReserveReport, error) {
+	t, err := i.Token(id)
+	if err != nil {
+		return nil, err
+	}
+	return t.SnapshotReserves(), nil
+}

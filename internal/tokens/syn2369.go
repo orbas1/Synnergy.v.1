@@ -15,6 +15,7 @@ type VirtualItem struct {
 	Description string
 	Attributes  map[string]string
 	CreatedAt   time.Time
+	Archived    bool
 }
 
 // ItemRegistry manages virtual items.
@@ -22,11 +23,12 @@ type ItemRegistry struct {
 	mu      sync.RWMutex
 	items   map[string]*VirtualItem
 	counter uint64
+	events  map[string][]ItemEvent
 }
 
 // NewItemRegistry creates an empty registry.
 func NewItemRegistry() *ItemRegistry {
-	return &ItemRegistry{items: make(map[string]*VirtualItem)}
+	return &ItemRegistry{items: make(map[string]*VirtualItem), events: make(map[string][]ItemEvent)}
 }
 
 // CreateItem registers a new virtual item.
@@ -40,6 +42,7 @@ func (r *ItemRegistry) CreateItem(owner, name, desc string, attrs map[string]str
 		item.Attributes[k] = v
 	}
 	r.items[id] = item
+	r.appendEvent(id, ItemEvent{Type: "create", Actor: owner, Timestamp: item.CreatedAt, Metadata: attrs})
 	return item
 }
 
@@ -52,6 +55,7 @@ func (r *ItemRegistry) TransferItem(itemID, newOwner string) error {
 		return errors.New("item not found")
 	}
 	it.Owner = newOwner
+	r.appendEvent(itemID, ItemEvent{Type: "transfer", Actor: newOwner, Timestamp: time.Now()})
 	return nil
 }
 
@@ -66,6 +70,20 @@ func (r *ItemRegistry) UpdateAttributes(itemID string, attrs map[string]string) 
 	for k, v := range attrs {
 		it.Attributes[k] = v
 	}
+	r.appendEvent(itemID, ItemEvent{Type: "update", Actor: it.Owner, Timestamp: time.Now(), Metadata: attrs})
+	return nil
+}
+
+// ArchiveItem marks an item as inactive without deleting its history.
+func (r *ItemRegistry) ArchiveItem(itemID, actor string) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	it, ok := r.items[itemID]
+	if !ok {
+		return errors.New("item not found")
+	}
+	it.Archived = true
+	r.appendEvent(itemID, ItemEvent{Type: "archive", Actor: actor, Timestamp: time.Now()})
 	return nil
 }
 
@@ -99,4 +117,41 @@ func (r *ItemRegistry) ListItems() []*VirtualItem {
 		res = append(res, &cp)
 	}
 	return res
+}
+
+// ItemEvent captures lifecycle transitions for compliance and analytics.
+type ItemEvent struct {
+	Type      string
+	Actor     string
+	Metadata  map[string]string
+	Timestamp time.Time
+}
+
+func (r *ItemRegistry) appendEvent(itemID string, evt ItemEvent) {
+	if evt.Metadata != nil {
+		cp := make(map[string]string, len(evt.Metadata))
+		for k, v := range evt.Metadata {
+			cp[k] = v
+		}
+		evt.Metadata = cp
+	}
+	r.events[itemID] = append(r.events[itemID], evt)
+}
+
+// Events returns the chronological event log for an item.
+func (r *ItemRegistry) Events(itemID string, limit int) ([]ItemEvent, bool) {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	events, ok := r.events[itemID]
+	if !ok {
+		return nil, false
+	}
+	if limit <= 0 || limit >= len(events) {
+		out := make([]ItemEvent, len(events))
+		copy(out, events)
+		return out, true
+	}
+	out := make([]ItemEvent, limit)
+	copy(out, events[len(events)-limit:])
+	return out, true
 }

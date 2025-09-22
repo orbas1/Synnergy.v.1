@@ -23,7 +23,10 @@ func TestZeroTrustDataChannelsFlow(t *testing.T) {
 	if _, err := ztEngine.Receive("ch", 0); err != nil {
 		t.Fatalf("receive: %v", err)
 	}
-	_, pub, _ := ed25519.GenerateKey(nil)
+	pub := make([]byte, ed25519.PublicKeySize)
+	for i := range pub {
+		pub[i] = byte(i)
+	}
 	if err := ztEngine.AuthorizePeer("ch", "ally", hex.EncodeToString(pub)); err != nil {
 		t.Fatalf("authorize: %v", err)
 	}
