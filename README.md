@@ -152,10 +152,20 @@ export SYN_CONFIG=configs/dev.yaml
 ```
 
 ### Multi-node Devnet
-Launch a disposable development network with multiple nodes:
+Stage 100 ships a hardened bootstrapper that provisions wallets, the
+virtual-machine sandbox and the adaptive consensus engine before joining a
+swarm of nodes. The script logs every CLI invocation and persists wallets to
+`var/devnet/wallets` by default.
+
 ```bash
-scripts/devnet_start.sh 3   # spawns 3 nodes
+# Spin up a 4-node swarm, initialise a heavy VM profile and bias consensus weights.
+scripts/devnet_start.sh --count 4 --vm-mode heavy --demand 0.65 --stake 0.55
+
+# Dry-run mode prints the exact CLI calls without executing them.
+scripts/devnet_start.sh --count 2 --dry-run
 ```
+Logs are written to `scripts/logs/devnet_start.log`. Override the target
+directory or wallet password via `--wallet-dir` and `--wallet-password`.
 
 ## CLI Modules
 Run `./synnergy --help` for the full command tree. Common modules include:
@@ -168,6 +178,10 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `staking_node start|status|stop` | Control the staking service |
 | `contracts compile|deploy|invoke|list|info` | WASM smart contract lifecycle through `core.NewContractRegistry` |
 | `system_health snapshot|log` | Emit metrics and structured logs |
+
+| `data feed create|apply|snapshot|get|delete` | Persist structured data feeds with JSON manifests |
+| `data resource import|info|list|usage|put|prune` | Manage binary resources with retention metadata and manifest-driven sync |
+=======
 | `orchestrator status|sync [--json]` | Aggregate VM, consensus, wallet and authority diagnostics via `core.NewEnterpriseOrchestrator` |
 | `data monitor status` | Report network data distribution metrics |
 | `audit log|list` | Record and query audit events via `core.NewAuditManager` |
@@ -190,6 +204,37 @@ Additional modules cover DAO governance, cross-chain bridges, regulatory nodes, 
 
 Helper scripts under `cmd/scripts` honour a `SYN_CLI` environment variable to locate the compiled binary and enable `set -euo pipefail` for safer automation.
 
+
+### Data Governance Automation
+
+Stage 100 introduces a hardened data-governance toolchain that couples new CLI primitives with operational scripts:
+
+- `scripts/data_operations.sh` applies JSON feed manifests through `synnergy data feed apply`, exports snapshots and prunes stale keys so downstream analytics stay consistent.
+- `scripts/data_resource_manage.sh` imports binary resources from declarative manifests, triggers CLI audits for the referenced keys and can prune any catalogue entry not listed.
+- `scripts/data_retention_policy_check.sh` validates resource freshness by comparing `synnergy data resource info` timestamps against manifest-defined retention windows and can fail CI/CD pipelines when violations occur.
+
+All commands persist state beneath `~/.synnergy/data` (override with `SYN_DATA_DIR`), enabling repeatable governance workflows across CLI invocations, automation scripts and the web tooling described in `docs/guides/cli_quickstart.md` and the whitepaper appendices.
+
+### Operational Automation
+
+New Stage 100 scripts extend the operational toolkit so container builds,
+runtime orchestration and smoke tests share the same CLI flows as production
+nodes:
+
+- `scripts/devnet_start.sh` spins up a wallet-backed swarm, adjusts consensus
+  weights and announces readiness on the network pub/sub bus.
+- `scripts/docker_build.sh` wraps `docker build` with retries, environment
+  overrides and optional pushes to private registries.
+- `scripts/docker_compose_up.sh` launches the reference stack with structured
+  logging, profile selection and post-start health checks.
+- `scripts/e2e_network_tests.sh` exercises the VM, consensus engine and swarm
+  membership end-to-end, validating that thresholds and weight adjustments stay
+  within safe bounds.
+
+Each helper honours the shared `--dry-run`, `--timeout` and `--log-file`
+switches provided by `scripts/lib/common.sh` so workflows are deterministic
+across CI, staging and developer laptops.
+=======
 ## Stage 78 Enterprise Diagnostics
 Stage 78 upgrades the runtime with a hardened enterprise orchestrator that validates end-to-end readiness across the virtual machine, consensus mesh, wallets, node registries and gas documentation. The orchestrator powers the `synnergy orchestrator` CLI and exports JSON suitable for the function web dashboards so operators can embed live diagnostics into existing tooling.
 
@@ -201,13 +246,18 @@ Stage 78 upgrades the runtime with a hardened enterprise orchestrator that valid
 
 Diagnostics confirm VM mode and concurrency, consensus network registration, wallet provenance, authority node totals, and whether Stage 78 opcodes are documented with enterprise-grade gas costs. Results surface through the updated Next.js API (`web/pages/api/orchestrator.js`) and dashboard widgets on the control panel home page, ensuring parity between CLI automation and browser operations. Stress, situational and real-world tests under `core/enterprise_orchestrator_test.go` and `cli/orchestrator_test.go` assert fault tolerance, security controls and regulatory alignment, keeping performance predictable even under high-throughput workloads.
 
+
 ## Production Deployment
 
 ### Docker Compose
 ```bash
-docker compose -f docker/docker-compose.yml up --build
+scripts/docker_build.sh --tag synnergy/devnet:latest
+scripts/docker_compose_up.sh --project synnergy-dev --profile gui
 ```
-The compose file builds the `cmd/synnergy` Docker image and launches an example node.
+`docker_build.sh` keeps retry logs under `scripts/logs/` and can tag/push to
+private registries. `docker_compose_up.sh` streams Compose output and records
+service health summaries so CI pipelines can assert readiness without parsing
+raw logs.
 
 ### Kubernetes (Helm)
 ```bash
@@ -256,6 +306,7 @@ See [SECURITY.md](SECURITY.md) for policies, and use `scripts/aml_kyc_process.sh
 go test ./...
 make test                 # convenience wrapper
 scripts/run_tests.sh          # execute full suite including integration tests
+scripts/e2e_network_tests.sh  # stage 100 smoke test for VM/consensus/network
 npm test --prefix GUI/storage-marketplace            # run storage marketplace tests
 npm test --prefix GUI/system-analytics-dashboard     # run dashboard tests
 ```
