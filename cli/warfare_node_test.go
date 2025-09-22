@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/ed25519"
 	"encoding/hex"
+	"sort"
 	"testing"
 	"time"
 
@@ -22,6 +23,7 @@ func TestParseMetadataDeterministic(t *testing.T) {
 	for k := range m {
 		keys = append(keys, k)
 	}
+	sort.Strings(keys)
 	if keys[0] != "priority" {
 		t.Fatalf("expected deterministic ordering, got %v", keys)
 	}

@@ -29,25 +29,27 @@ type UTXO struct {
 // restart. The WAL path is optional; if empty the ledger operates purely in
 // memory.
 type Ledger struct {
-	mu       sync.RWMutex
-	balances map[string]uint64
-	blocks   []*Block
-	walPath  string
-	utxos    map[string][]*UTXO
-	mempool  []*Transaction
-	nextUTXO uint64
-	frozen   map[string]uint64
+	mu        sync.RWMutex
+	balances  map[string]uint64
+	blocks    []*Block
+	walPath   string
+	utxos     map[string][]*UTXO
+	mempool   []*Transaction
+	nextUTXO  uint64
+	frozen    map[string]uint64
+	contracts map[string]LedgerContract
 }
 
 // NewLedger creates a new ledger. If a path is supplied it will replay any
 // existing WAL file to restore previous blocks.
 func NewLedger(path ...string) *Ledger {
 	l := &Ledger{
-		balances: make(map[string]uint64),
-		blocks:   []*Block{},
-		utxos:    make(map[string][]*UTXO),
-		mempool:  []*Transaction{},
-		frozen:   make(map[string]uint64),
+		balances:  make(map[string]uint64),
+		blocks:    []*Block{},
+		utxos:     make(map[string][]*UTXO),
+		mempool:   []*Transaction{},
+		frozen:    make(map[string]uint64),
+		contracts: make(map[string]LedgerContract),
 	}
 	if len(path) > 0 {
 		l.walPath = path[0]
@@ -75,6 +77,49 @@ func (l *Ledger) replayWAL() {
 		}
 		l.blocks = append(l.blocks, &b)
 	}
+}
+
+// LedgerContract stores metadata about deployed smart contracts.
+type LedgerContract struct {
+	Address  string `json:"address"`
+	Owner    string `json:"owner"`
+	Manifest string `json:"manifest"`
+	GasLimit uint64 `json:"gas_limit"`
+	WASM     []byte `json:"wasm"`
+}
+
+// RegisterContract persists contract metadata on the ledger. The WASM bytecode
+// is defensively copied to avoid callers mutating the stored instance.
+func (l *Ledger) RegisterContract(rec LedgerContract) {
+	if rec.Address == "" {
+		return
+	}
+	stored := make([]byte, len(rec.WASM))
+	copy(stored, rec.WASM)
+	rec.WASM = stored
+
+	l.mu.Lock()
+	defer l.mu.Unlock()
+	l.contracts[rec.Address] = rec
+}
+
+// Contracts returns a copy of the registered contracts.
+func (l *Ledger) Contracts() []LedgerContract {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	out := make([]LedgerContract, 0, len(l.contracts))
+	for _, rec := range l.contracts {
+		wasm := make([]byte, len(rec.WASM))
+		copy(wasm, rec.WASM)
+		out = append(out, LedgerContract{
+			Address:  rec.Address,
+			Owner:    rec.Owner,
+			Manifest: rec.Manifest,
+			GasLimit: rec.GasLimit,
+			WASM:     wasm,
+		})
+	}
+	return out
 }
 
 // appendWAL writes a block to the WAL if a path is configured.

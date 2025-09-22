@@ -12,11 +12,12 @@ type DAOTokenLedger struct {
 	mu       sync.RWMutex
 	balances map[string]map[string]uint64 // daoID -> addr -> balance
 	daoMgr   *DAOManager
+	ledger   *Ledger
 }
 
 // NewDAOTokenLedger returns an initialised ledger bound to a DAO manager.
-func NewDAOTokenLedger(mgr *DAOManager) *DAOTokenLedger {
-	return &DAOTokenLedger{balances: make(map[string]map[string]uint64), daoMgr: mgr}
+func NewDAOTokenLedger(mgr *DAOManager, ledger *Ledger) *DAOTokenLedger {
+	return &DAOTokenLedger{balances: make(map[string]map[string]uint64), daoMgr: mgr, ledger: ledger}
 }
 
 // Mint creates tokens for a DAO member. Only a DAO admin can mint tokens.
@@ -30,6 +31,11 @@ func (l *DAOTokenLedger) Mint(daoID, admin, addr string, amount uint64) error {
 	}
 	if !dao.IsMember(addr) {
 		return errMemberMissing
+	}
+	if l.ledger != nil && amount > 0 {
+		if err := l.ledger.Transfer(admin, addr, amount, 0); err != nil {
+			return err
+		}
 	}
 	l.mu.Lock()
 	if l.balances[daoID] == nil {
@@ -48,6 +54,11 @@ func (l *DAOTokenLedger) Transfer(daoID, from, to string, amount uint64) error {
 	}
 	if !dao.IsMember(from) || !dao.IsMember(to) {
 		return errMemberMissing
+	}
+	if l.ledger != nil && amount > 0 {
+		if err := l.ledger.Transfer(from, to, amount, 0); err != nil {
+			return err
+		}
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -83,11 +94,19 @@ func (l *DAOTokenLedger) Burn(daoID, admin, addr string, amount uint64) error {
 		return errMemberMissing
 	}
 	l.mu.Lock()
-	defer l.mu.Unlock()
 	bal := l.balances[daoID][addr]
 	if bal < amount {
+		l.mu.Unlock()
 		return errors.New("insufficient balance")
 	}
 	l.balances[daoID][addr] = bal - amount
+	if l.ledger != nil && amount > 0 {
+		if err := l.ledger.Transfer(addr, admin, amount, 0); err != nil {
+			l.balances[daoID][addr] = bal
+			l.mu.Unlock()
+			return err
+		}
+	}
+	l.mu.Unlock()
 	return nil
 }

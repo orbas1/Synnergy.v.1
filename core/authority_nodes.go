@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"crypto/ed25519"
 	"encoding/hex"
 	"encoding/json"
@@ -35,13 +36,19 @@ func (n *AuthorityNode) MarshalJSON() ([]byte, error) {
 
 // AuthorityNodeRegistry manages authority nodes and voting.
 type AuthorityNodeRegistry struct {
-	mu    sync.RWMutex
-	index *AuthorityNodeIndex
+	mu         sync.RWMutex
+	index      *AuthorityNodeIndex
+	ledger     *Ledger
+	validators *ValidatorManager
+	minBalance uint64
 }
 
-// NewAuthorityNodeRegistry creates a new registry.
-func NewAuthorityNodeRegistry() *AuthorityNodeRegistry {
-	return &AuthorityNodeRegistry{index: NewAuthorityNodeIndex()}
+// NewAuthorityNodeRegistry creates a new registry bound to an optional ledger
+// and validator manager. When provided the ledger is used to validate voter
+// balances and the validator manager is kept in sync with vote totals so block
+// production weight reflects governance support.
+func NewAuthorityNodeRegistry(ledger *Ledger, validators *ValidatorManager, minBalance uint64) *AuthorityNodeRegistry {
+	return &AuthorityNodeRegistry{index: NewAuthorityNodeIndex(), ledger: ledger, validators: validators, minBalance: minBalance}
 }
 
 // Register adds a candidate as an authority node.
@@ -53,6 +60,9 @@ func (r *AuthorityNodeRegistry) Register(addr, role string) (*AuthorityNode, err
 	}
 	node := &AuthorityNode{Address: addr, Role: role, Votes: make(map[string]bool)}
 	r.index.Add(node)
+	if r.validators != nil {
+		_ = r.validators.Add(context.Background(), addr, MinStake)
+	}
 	return node, nil
 }
 
@@ -65,6 +75,11 @@ func (r *AuthorityNodeRegistry) Vote(voterAddr, candidateAddr string, sig []byte
 	if !ed25519.Verify(pubKey, []byte(candidateAddr), sig) {
 		return errors.New("invalid signature")
 	}
+	if r.ledger != nil && r.minBalance > 0 {
+		if r.ledger.GetBalance(voterAddr) < r.minBalance {
+			return errors.New("insufficient voting balance")
+		}
+	}
 
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -73,6 +88,7 @@ func (r *AuthorityNodeRegistry) Vote(voterAddr, candidateAddr string, sig []byte
 		return errors.New("candidate not found")
 	}
 	node.Votes[voterAddr] = true
+	r.updateValidatorStake(node)
 	return nil
 }
 
@@ -82,6 +98,7 @@ func (r *AuthorityNodeRegistry) RemoveVote(voterAddr, candidateAddr string) {
 	defer r.mu.Unlock()
 	if node, ok := r.index.Get(candidateAddr); ok {
 		delete(node.Votes, voterAddr)
+		r.updateValidatorStake(node)
 	}
 }
 
@@ -136,4 +153,15 @@ func (r *AuthorityNodeRegistry) Deregister(addr string) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.index.Remove(addr)
+	if r.validators != nil {
+		r.validators.Remove(context.Background(), addr)
+	}
+}
+
+func (r *AuthorityNodeRegistry) updateValidatorStake(node *AuthorityNode) {
+	if r.validators == nil {
+		return
+	}
+	stake := MinStake + uint64(len(node.Votes))
+	_ = r.validators.Add(context.Background(), node.Address, stake)
 }

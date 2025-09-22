@@ -9,7 +9,7 @@ import (
 )
 
 func TestAuthorityApplication(t *testing.T) {
-	reg := NewAuthorityNodeRegistry()
+	reg := NewAuthorityNodeRegistry(nil, NewValidatorManager(MinStake), 0)
 	mgr := NewAuthorityApplicationManager(reg, time.Hour)
 	id := mgr.Submit("cand1", "validator", "test")
 
@@ -30,7 +30,7 @@ func TestAuthorityApplication(t *testing.T) {
 }
 
 func TestAuthorityApplicationJSON(t *testing.T) {
-	reg := NewAuthorityNodeRegistry()
+	reg := NewAuthorityNodeRegistry(nil, NewValidatorManager(MinStake), 0)
 	mgr := NewAuthorityApplicationManager(reg, time.Hour)
 	id := mgr.Submit("cand1", "validator", "test")
 	if id == "" {

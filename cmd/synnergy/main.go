@@ -19,6 +19,8 @@ import (
 	"synnergy/cli"
 	"synnergy/core"
 	"synnergy/internal/config"
+	"synnergy/internal/security"
+	"synnergy/internal/tokens"
 )
 
 func main() {
@@ -57,6 +59,59 @@ func main() {
 	if err := registerEnterpriseGasMetadata(); err != nil {
 		logrus.Fatalf("gas metadata: %v", err)
 	}
+
+	// Preload stage 3 modules so CLI commands can operate without extra setup.
+	_ = core.NewAuthorityNodeRegistry(core.NewLedger(), core.NewValidatorManager(core.MinStake), 1)
+	_ = core.NewBankInstitutionalNode("init", "init", core.NewLedger())
+
+	// Preload stage 8 modules to expose contract and cross-chain managers via CLI.
+	vm := core.NewSimpleVM()
+	_ = vm.Start()
+	_ = core.NewContractRegistry(vm, core.NewLedger())
+	_ = core.NewBridgeRegistry()
+	_ = core.NewBridgeTransferManager()
+	_ = core.NewChainConnectionManager()
+	_ = core.NewProtocolRegistry()
+	_ = core.NewCrossChainTxManager(core.NewLedger())
+
+	// Preload stage 11 modules for VM sandbox management.
+	_ = core.NewSandboxManager()
+
+	// Preload stage 9 modules so DAO-related CLI commands are ready for use.
+	daoMgr := core.NewDAOManager()
+	_ = core.NewProposalManager()
+	daoLedger := core.NewLedger()
+	_ = core.NewDAOStaking(daoMgr, daoLedger)
+	_ = core.NewDAOTokenLedger(daoMgr, daoLedger)
+	_ = core.NewConsensusNetworkManager()
+	_ = core.NewCustodialNode("cli-custodian", "cli-custodian", core.NewLedger())
+
+	// Preload stage 12 modules to expose wallet, warfare, watchtower and data distribution monitoring
+	// functionality via the CLI.
+	if _, err := core.NewWallet(); err != nil {
+		logrus.Debugf("wallet init error: %v", err)
+	}
+	_ = core.NewWarfareNode(core.NewNode("cli-war", "cli-war", core.NewLedger()))
+	_ = core.NewWatchtowerNode("cli-watchtower", nil)
+	// Stage 59 modules for content registry and secrets management
+	_ = core.NewContentNetworkNode("cli-content", "cli")
+	_ = security.NewSecretsManager()
+
+	// Preload stage 13 modules for secure channels and compliance checks.
+	_ = core.NewZeroTrustEngine()
+	_ = core.NewRegulatoryNode("cli-regnode", core.NewRegulatoryManager())
+
+	// Preload stage 20 token extensions for CLI and opcode availability.
+	_ = tokens.NewSYN223Token("cli", "S223", "cli", 0)
+	_ = tokens.NewSYN2700Token()
+	_ = tokens.NewSYN3200Token(1)
+	_ = tokens.NewSYN3600Token()
+	_ = tokens.NewSYN3800Token(0)
+	_ = tokens.NewSYN3900Token()
+	_ = tokens.NewSYN500Token()
+	_ = tokens.NewSYN5000Token()
+	// Preload stage 36 NFT marketplace
+	_ = core.NewNFTMarketplace()
 
 	orch, err := core.NewEnterpriseOrchestrator(ctx)
 	if err != nil {
@@ -143,11 +198,43 @@ func registerEnterpriseGasMetadata() error {
 		"EnterpriseSpecialLedger":    30,
 	}
 	if inserted, err := synn.EnsureGasSchedule(enterpriseSpecialGas); err != nil {
+
+		return fmt.Errorf("stage 79 gas sync failed: %w", err)
+=======
 		return fmt.Errorf("enterprise special gas sync failed: %w", err)
 	} else if len(inserted) > 0 {
 		logrus.Infof("registered %d enterprise special opcodes", len(inserted))
 	}
 
+
+	categories := []struct {
+		category    string
+		description string
+		names       []string
+	}{
+		{"consensus", "Core consensus lifecycle operations", []string{"MineBlock"}},
+		{"dao", "DAO creation and authority renewal", []string{"CreateDAO", "UpdateMemberRole", "RenewAuthorityTerm"}},
+		{"cross-chain", "Stage 24 cross-chain operations", []string{"RegisterBridge", "BridgeDeposit", "BridgeClaim", "OpenConnection", "CloseConnection", "LockMint", "BurnRelease"}},
+		{"node", "Stage 25 node and infrastructure operations", []string{"SetMode", "Stake", "Unstake", "Optimize", "SecureCommand", "TrackLogistics", "ShareTactical", "ReportFork", "Metrics"}},
+		{"templates", "Stage 29 contract templates", []string{"DeployTokenFaucetTemplate", "DeployStorageMarketTemplate", "DeployDAOGovernanceTemplate", "DeployNFTMintingTemplate", "DeployAIModelMarketTemplate"}},
+		{"marketplace", "Stage 34 marketplace settlement", []string{"DeploySmartContract", "TradeContract"}},
+		{"storage", "Stage 35 storage marketplace operations", []string{"CreateListing", "ListListings", "GetListing", "OpenDeal", "CloseDeal", "ListDeals", "GetDeal", "Storage_Pin", "Storage_Retrieve", "IPFS_Add", "IPFS_Get", "IPFS_Unpin"}},
+		{"nft", "Stage 36 NFT marketplace operations", []string{"MintNFT", "ListNFT", "BuyNFT"}},
+		{"dex", "Stage 39 liquidity view operations", []string{"Liquidity_Pool", "Liquidity_Pools"}},
+		{"wallet", "Wallet lifecycle operations", []string{"NewWallet", "Sign", "VerifySignature"}},
+		{"content", "Stage 59 content registry operations", []string{"RegisterContentNode", "UploadContent", "RetrieveContent", "ListContentNodes"}},
+		{"monetary", "Stage 40 monetary policy queries", []string{"BlockReward", "CirculatingSupply", "RemainingSupply", "InitialPrice", "AlphaFactor", "MinimumStake"}},
+		{"p2p", "Stage 67 Kademlia routing operations", []string{"KademliaStore", "KademliaGet", "KademliaClosest", "KademliaDistance"}},
+		{"orchestrator", "Stage 78 enterprise orchestrator operations", []string{"EnterpriseBootstrap", "EnterpriseConsensusSync", "EnterpriseWalletSeal", "EnterpriseNodeAudit", "EnterpriseAuthorityElect"}},
+		{"enterprise", "Stage 79 enterprise combined node operations", []string{"EnterpriseSpecialAttach", "EnterpriseSpecialDetach", "EnterpriseSpecialBroadcast", "EnterpriseSpecialSnapshot", "EnterpriseSpecialLedger"}},
+	}
+
+	register := func(category, description string, names ...string) error {
+		for _, name := range names {
+			cost := synn.GasCost(name)
+			if err := synn.RegisterGasMetadata(name, cost, category, description); err != nil {
+				return fmt.Errorf("register gas metadata %s: %w", name, err)
+=======
 	type category struct {
 		name        string
 		description string
@@ -189,7 +276,17 @@ func registerEnterpriseGasMetadata() error {
 				return fmt.Errorf("register gas metadata %s: %w", op, err)
 			}
 		}
+		return nil
 	}
+
+
+	for _, entry := range categories {
+		if err := register(entry.category, entry.description, entry.names...); err != nil {
+			return err
+		}
+	}
+
+=======
 
 	logrus.Debug("gas table loaded")
 	return nil

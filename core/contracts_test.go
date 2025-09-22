@@ -7,7 +7,9 @@ func TestContractRegistry(t *testing.T) {
 	if err := vm.Start(); err != nil {
 		t.Fatalf("start: %v", err)
 	}
-	reg := NewContractRegistry(vm)
+	ledger := NewLedger()
+	ledger.Credit("owner", 1_000)
+	reg := NewContractRegistry(vm, ledger)
 	wasm := []byte{0x00, 0x61}
 	addr, err := reg.Deploy(wasm, "", 10, "owner")
 	if err != nil {

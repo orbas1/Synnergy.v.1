@@ -19,13 +19,13 @@ type SmartContractMarketplace struct {
 }
 
 // NewSmartContractMarketplace initialises a marketplace backed by the provided
-// virtual machine. The VM is started if necessary so contracts can be executed
-// immediately after deployment.
-func NewSmartContractMarketplace(vm VirtualMachine) *SmartContractMarketplace {
+// virtual machine and ledger. The VM is started if necessary so contracts can be
+// executed immediately after deployment.
+func NewSmartContractMarketplace(vm VirtualMachine, ledger *Ledger) *SmartContractMarketplace {
 	if !vm.Status() {
 		_ = vm.Start()
 	}
-	reg := NewContractRegistry(vm)
+	reg := NewContractRegistry(vm, ledger)
 	return &SmartContractMarketplace{registry: reg, manager: NewContractManager(reg)}
 }
 

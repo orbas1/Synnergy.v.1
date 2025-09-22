@@ -9,7 +9,7 @@ import (
 	"synnergy/core"
 )
 
-var daoStaking = core.NewDAOStaking(daoMgr)
+var daoStaking = core.NewDAOStaking(daoMgr, ledger)
 
 func init() {
 	stakingCmd := &cobra.Command{

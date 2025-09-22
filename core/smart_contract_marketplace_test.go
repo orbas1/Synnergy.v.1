@@ -14,9 +14,12 @@ func TestSmartContractMarketplaceDeployAndTrade(t *testing.T) {
 	if err := vm.Start(); err != nil {
 		t.Fatalf("vm start: %v", err)
 	}
-	m := NewSmartContractMarketplace(vm)
-
 	gas := synn.GasCost("DeploySmartContract")
+	ledger := NewLedger()
+	ledger.Credit("alice", gas*2)
+
+	m := NewSmartContractMarketplace(vm, ledger)
+
 	addr, err := m.DeployContract(context.Background(), []byte{0x00}, "", gas, "alice")
 	if err != nil {
 		t.Fatalf("deploy: %v", err)

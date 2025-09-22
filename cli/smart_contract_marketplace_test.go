@@ -5,12 +5,16 @@ import (
 	"os"
 	"testing"
 
+	synn "synnergy"
 	"synnergy/core"
 )
 
 // TestSmartContractMarketplaceDeployJSON deploys and trades a contract verifying JSON output.
 func TestSmartContractMarketplaceDeployJSON(t *testing.T) {
-	marketplace = core.NewSmartContractMarketplace(core.NewSimpleVM())
+	ledger = core.NewLedger()
+	marketplace = core.NewSmartContractMarketplace(core.NewSimpleVM(), ledger)
+	gas := synn.GasCost("DeploySmartContract")
+	ledger.Credit("alice", gas*2)
 
 	tmp, err := os.CreateTemp(t.TempDir(), "scm-*.wasm")
 	if err != nil {

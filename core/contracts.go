@@ -30,17 +30,41 @@ type VirtualMachine interface {
 // ContractRegistry stores deployed contracts and offers helper methods for
 // deployment and invocation. It is safe for concurrent use.
 type ContractRegistry struct {
-	mu        sync.RWMutex
-	contracts map[string]*Contract
-	vm        VirtualMachine
+	mu           sync.RWMutex
+	contracts    map[string]*Contract
+	vm           VirtualMachine
+	ledger       *Ledger
+	feeCollector string
+}
+
+func contractFeeCollectorAddress() string {
+	hash := sha256.Sum256([]byte("contract_fee_pool"))
+	return hex.EncodeToString(hash[:])
 }
 
 // NewContractRegistry initialises an empty registry backed by the provided VM.
-func NewContractRegistry(vm VirtualMachine) *ContractRegistry {
-	return &ContractRegistry{
-		contracts: make(map[string]*Contract),
-		vm:        vm,
+// If a ledger is provided any persisted contracts are preloaded into memory.
+func NewContractRegistry(vm VirtualMachine, ledger *Ledger) *ContractRegistry {
+	reg := &ContractRegistry{
+		contracts:    make(map[string]*Contract),
+		vm:           vm,
+		ledger:       ledger,
+		feeCollector: contractFeeCollectorAddress(),
 	}
+	if ledger != nil {
+		for _, rec := range ledger.Contracts() {
+			wasm := make([]byte, len(rec.WASM))
+			copy(wasm, rec.WASM)
+			reg.contracts[rec.Address] = &Contract{
+				Address:  rec.Address,
+				Owner:    rec.Owner,
+				WASM:     wasm,
+				Manifest: rec.Manifest,
+				GasLimit: rec.GasLimit,
+			}
+		}
+	}
+	return reg
 }
 
 // CompileWASM returns the input bytecode and its sha256 hash. In the full
@@ -64,9 +88,24 @@ func (r *ContractRegistry) Deploy(wasm []byte, manifest string, gasLimit uint64,
 	hash := sha256.Sum256(wasm)
 	addr := hex.EncodeToString(hash[:])
 
+	r.mu.RLock()
+	_, exists := r.contracts[addr]
+	r.mu.RUnlock()
+	if exists {
+		return "", errors.New("contract already deployed")
+	}
+	if r.ledger != nil && gasLimit > 0 {
+		if err := r.ledger.Transfer(owner, r.feeCollector, gasLimit, 0); err != nil {
+			return "", err
+		}
+	}
+
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	if _, exists := r.contracts[addr]; exists {
+		if r.ledger != nil && gasLimit > 0 {
+			_ = r.ledger.Transfer(r.feeCollector, owner, gasLimit, 0)
+		}
 		return "", errors.New("contract already deployed")
 	}
 	r.contracts[addr] = &Contract{
@@ -76,12 +115,29 @@ func (r *ContractRegistry) Deploy(wasm []byte, manifest string, gasLimit uint64,
 		Manifest: manifest,
 		GasLimit: gasLimit,
 	}
+	if r.ledger != nil {
+		stored := make([]byte, len(wasm))
+		copy(stored, wasm)
+		r.ledger.RegisterContract(LedgerContract{
+			Address:  addr,
+			Owner:    owner,
+			Manifest: manifest,
+			GasLimit: gasLimit,
+			WASM:     stored,
+		})
+	}
 	return addr, nil
 }
 
 // Invoke executes a method on the specified contract via the configured VM.
 // It returns the output bytes and the gas consumed.
 func (r *ContractRegistry) Invoke(addr, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {
+	return r.InvokeFrom(addr, "", method, args, gasLimit)
+}
+
+// InvokeFrom executes a method on the specified contract, charging gas to the
+// supplied caller. When caller is empty the contract owner is billed.
+func (r *ContractRegistry) InvokeFrom(addr, caller, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {
 	r.mu.RLock()
 	c, ok := r.contracts[addr]
 	r.mu.RUnlock()
@@ -91,10 +147,33 @@ func (r *ContractRegistry) Invoke(addr, method string, args []byte, gasLimit uin
 	if c.Paused {
 		return nil, 0, errors.New("contract paused")
 	}
-	if gasLimit == 0 || gasLimit > c.GasLimit {
-		gasLimit = c.GasLimit
+	limit := gasLimit
+	if limit == 0 || limit > c.GasLimit {
+		limit = c.GasLimit
 	}
-	return r.vm.Execute(c.WASM, method, args, gasLimit)
+	payer := caller
+	if payer == "" {
+		payer = c.Owner
+	}
+	if r.ledger != nil && limit > 0 {
+		if err := r.ledger.Transfer(payer, r.feeCollector, limit, 0); err != nil {
+			return nil, 0, err
+		}
+	}
+	out, used, err := r.vm.Execute(c.WASM, method, args, limit)
+	if err != nil {
+		if r.ledger != nil && limit > 0 {
+			_ = r.ledger.Transfer(r.feeCollector, payer, limit, 0)
+		}
+		return out, used, err
+	}
+	if r.ledger != nil && used < limit {
+		refund := limit - used
+		if refund > 0 {
+			_ = r.ledger.Transfer(r.feeCollector, payer, refund, 0)
+		}
+	}
+	return out, used, nil
 }
 
 // List returns all deployed contracts.
