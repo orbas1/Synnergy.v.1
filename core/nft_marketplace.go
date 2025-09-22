@@ -31,7 +31,7 @@ func NewNFTMarketplace() *NFTMarketplace {
 // Mint creates a new NFT owned by the given address. A gas limit must be
 // supplied and is validated against the registered cost.
 func (m *NFTMarketplace) Mint(ctx context.Context, id, owner, metadata string, price, gasLimit uint64) (*NFT, error) {
-	ctx, span := telemetry.Tracer().Start(ctx, "NFTMarketplace.Mint")
+	ctx, span := telemetry.Tracer("core.nft_market").Start(ctx, "NFTMarketplace.Mint")
 	defer span.End()
 
 	required := synn.GasCost("MintNFT")
@@ -63,7 +63,7 @@ func (m *NFTMarketplace) List(id string) (*NFT, error) {
 // Buy transfers ownership of the NFT to the new owner. The buyer must supply a
 // gas limit that meets the registered cost.
 func (m *NFTMarketplace) Buy(ctx context.Context, id, newOwner string, gasLimit uint64) error {
-	ctx, span := telemetry.Tracer().Start(ctx, "NFTMarketplace.Buy")
+	ctx, span := telemetry.Tracer("core.nft_market").Start(ctx, "NFTMarketplace.Buy")
 	defer span.End()
 
 	required := synn.GasCost("BuyNFT")

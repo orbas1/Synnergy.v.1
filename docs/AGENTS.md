@@ -2022,26 +2022,30 @@ Stage 79 complete: runtime bootstrap aligned CLI, VM, consensus, ledger and wall
 - [x] internal/security/key_management_test.go — lifecycle and deterministic entropy tests.
 - [x] internal/security/patch_manager.go — signed patch governance with metadata export and legacy compatibility.
 
-**Stage 91**
-- [ ] internal/security/patch_manager_test.go
-- [ ] internal/security/rate_limiter.go
-- [ ] internal/security/rate_limiter_test.go
-- [ ] internal/security/secrets_manager.go
-- [ ] internal/security/secrets_manager_test.go
-- [ ] internal/telemetry/telemetry.go
-- [ ] internal/telemetry/telemetry_test.go
-- [ ] internal/tokens/README.md
-- [ ] internal/tokens/advanced_tokens_test.go
-- [ ] internal/tokens/base.go
-- [ ] internal/tokens/base_benchmark_test.go
-- [ ] internal/tokens/base_test.go
-- [ ] internal/tokens/dao_tokens_test.go
-- [ ] internal/tokens/index.go
-- [ ] internal/tokens/index_test.go
-- [ ] internal/tokens/standard_tokens_concurrency_test.go
-- [ ] internal/tokens/syn10.go
-- [ ] internal/tokens/syn1000.go
-- [ ] internal/tokens/syn1000_index.go
+**Stage 91 ✅** – Security, telemetry and token subsystems elevated to enterprise-grade workflows with full CLI/web integration.
+- [x] internal/security/patch_manager_test.go — signature validation, validator overrides and concurrency coverage.
+- [x] internal/security/rate_limiter.go — per-identity token bucket with telemetry emission and dynamic configuration.
+- [x] internal/security/rate_limiter_test.go — deterministic burst/telemetry assertions and concurrent identity checks.
+- [x] internal/security/secrets_manager.go — envelope encryption, TTL handling, rotation support and metadata snapshots.
+- [x] internal/security/secrets_manager_test.go — lifecycle, expiry, rotation and deletion validation under deterministic clock.
+- [x] internal/telemetry/telemetry.go — global tracer configuration plus in-memory rate-limit recorder with snapshots.
+- [x] internal/telemetry/telemetry_test.go — sink ring buffer behaviour, global overrides and span sanity checks.
+- [x] internal/tokens/README.md — documented enterprise token, registry and CLI capabilities.
+- [x] internal/tokens/advanced_tokens_test.go — reserve, insurance and governance suites aligned with new primitives.
+- [x] internal/tokens/base.go — event hooks, supply caps, snapshot helpers and hardened validation.
+- [x] internal/tokens/base_benchmark_test.go — baseline transfer benchmark retained against enhanced core.
+- [x] internal/tokens/base_test.go — hooks, snapshots, cap enforcement and regression coverage.
+- [x] internal/tokens/dao_tokens_test.go — regression suite confirmed against upgraded base primitives.
+- [x] internal/tokens/index.go — observable registry with sorted snapshots and removal support.
+- [x] internal/tokens/index_test.go — observer assertions and registry lifecycle validation.
+- [x] internal/tokens/standard_tokens_concurrency_test.go — concurrency checks validated against enhanced locking.
+- [x] internal/tokens/syn10.go — issuer management, exchange-rate history and info snapshots.
+- [x] internal/tokens/syn1000.go — reserve validation, collateralisation ratio and defensive breakdown snapshots.
+- [x] internal/tokens/syn1000_index.go — watcher-backed index with collateralisation queries and reserve removal helpers.
+- [x] gas_table.go — enterprise metadata catalogue powering CLI/VM/web gas alignment with runtime registration helpers.
+- [x] cli/gas.go — Stage 91 table renderer with JSON metadata output and unit coverage for the gas catalogue.
+- [x] virtual_machine.go — opcode-aware gas resolver with customisable hooks and tests validating dynamic pricing.
+- [x] README.md, docs/reference/gas_table_list.md, docs/guides/cli_quickstart.md — documentation updated for metadata-driven gas workflows and CLI guidance.
 
 **Stage 92**
 - [ ] internal/tokens/syn1000_index_test.go

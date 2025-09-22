@@ -19,7 +19,7 @@ func NewContractManager(reg *ContractRegistry) *ContractManager {
 
 // Transfer changes the owner of a contract.
 func (m *ContractManager) Transfer(ctx context.Context, addr, newOwner string) error {
-	ctx, span := telemetry.Tracer().Start(ctx, "ContractManager.Transfer")
+	ctx, span := telemetry.Tracer("core.contracts").Start(ctx, "ContractManager.Transfer")
 	defer span.End()
 
 	c, ok := m.registry.Get(addr)
@@ -34,7 +34,7 @@ func (m *ContractManager) Transfer(ctx context.Context, addr, newOwner string) e
 
 // Pause disables contract execution.
 func (m *ContractManager) Pause(ctx context.Context, addr string) error {
-	ctx, span := telemetry.Tracer().Start(ctx, "ContractManager.Pause")
+	ctx, span := telemetry.Tracer("core.contracts").Start(ctx, "ContractManager.Pause")
 	defer span.End()
 
 	c, ok := m.registry.Get(addr)
@@ -49,7 +49,7 @@ func (m *ContractManager) Pause(ctx context.Context, addr string) error {
 
 // Resume enables execution for a paused contract.
 func (m *ContractManager) Resume(ctx context.Context, addr string) error {
-	ctx, span := telemetry.Tracer().Start(ctx, "ContractManager.Resume")
+	ctx, span := telemetry.Tracer("core.contracts").Start(ctx, "ContractManager.Resume")
 	defer span.End()
 
 	c, ok := m.registry.Get(addr)
@@ -64,7 +64,7 @@ func (m *ContractManager) Resume(ctx context.Context, addr string) error {
 
 // Upgrade replaces contract bytecode and optional gas limit.
 func (m *ContractManager) Upgrade(ctx context.Context, addr string, wasm []byte, gasLimit uint64) error {
-	ctx, span := telemetry.Tracer().Start(ctx, "ContractManager.Upgrade")
+	ctx, span := telemetry.Tracer("core.contracts").Start(ctx, "ContractManager.Upgrade")
 	defer span.End()
 
 	if len(wasm) == 0 {
@@ -85,7 +85,7 @@ func (m *ContractManager) Upgrade(ctx context.Context, addr string, wasm []byte,
 
 // Info returns contract metadata including owner and paused status.
 func (m *ContractManager) Info(ctx context.Context, addr string) (*Contract, error) {
-	ctx, span := telemetry.Tracer().Start(ctx, "ContractManager.Info")
+	ctx, span := telemetry.Tracer("core.contracts").Start(ctx, "ContractManager.Info")
 	defer span.End()
 
 	c, ok := m.registry.Get(addr)

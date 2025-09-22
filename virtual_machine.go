@@ -24,6 +24,11 @@ const (
 // opcode. Input bytes are transformed and returned as new output.
 type opcodeHandler func([]byte) ([]byte, error)
 
+// GasResolverFunc resolves the opcode name and gas cost for a numeric opcode.
+// It allows the VM to integrate with the global gas catalogue while still
+// supporting custom execution environments in tests.
+type GasResolverFunc func(code uint32) (string, uint64)
+
 // SimpleVM is a lightweight execution engine used by the contract registry. It
 // interprets 24-bit opcodes from bytecode and dispatches them to handlers. The
 // VM includes simple bottleneck management through a concurrency limiter and
@@ -35,6 +40,34 @@ type SimpleVM struct {
 	limiter  chan struct{}
 	handlers map[uint32]opcodeHandler
 	defaultH opcodeHandler
+	gas      GasResolverFunc
+}
+
+var (
+	opcodeOnce sync.Once
+	opcodeIdx  map[uint32]string
+)
+
+func opcodeIndex() map[uint32]string {
+	opcodeOnce.Do(func() {
+		opcodeIdx = make(map[uint32]string, len(SNVMOpcodes)+len(ContractOpcodes))
+		for _, op := range SNVMOpcodes {
+			opcodeIdx[op.Code] = op.Name
+		}
+		for _, op := range ContractOpcodes {
+			if _, exists := opcodeIdx[op.Code]; !exists {
+				opcodeIdx[op.Code] = op.Name
+			}
+		}
+	})
+	return opcodeIdx
+}
+
+func defaultGasResolver(code uint32) (string, uint64) {
+	if name, ok := opcodeIndex()[code]; ok {
+		return name, GasCost(name)
+	}
+	return fmt.Sprintf("0x%06X", code), DefaultGasCost
 }
 
 // NewSimpleVM creates a new stopped virtual machine instance. An optional
@@ -74,8 +107,22 @@ func NewSimpleVM(modes ...VMMode) *SimpleVM {
 		limiter:  make(chan struct{}, capacity),
 		handlers: handlers,
 		defaultH: defaultH,
+		gas:      defaultGasResolver,
 	}
 	return vm
+}
+
+// SetGasResolver overrides the gas resolver used to price opcodes during
+// execution. Providing nil restores the default resolver that integrates with
+// the global gas catalogue.
+func (vm *SimpleVM) SetGasResolver(resolver GasResolverFunc) {
+	vm.mu.Lock()
+	defer vm.mu.Unlock()
+	if resolver == nil {
+		vm.gas = defaultGasResolver
+		return
+	}
+	vm.gas = resolver
 }
 
 // Start marks the VM as running. It is safe to call multiple times.
@@ -125,8 +172,16 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	if !vm.Status() {
+
+	vm.mu.RLock()
+	running := vm.running
+	resolver := vm.gas
+	vm.mu.RUnlock()
+	if !running {
 		return nil, 0, errors.New("vm not running")
+	}
+	if resolver == nil {
+		resolver = defaultGasResolver
 	}
 
 	// Bottleneck management: limit concurrent executions according to VM
@@ -144,16 +199,8 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 		return nil, 0, errors.New("bytecode required")
 	}
 
-	opCount := uint64((len(wasm) + 2) / 3) // number of 24-bit opcodes
-	gasUsed := opCount
-	if gasUsed == 0 {
-		gasUsed = 1
-	}
-	if gasUsed > gasLimit {
-		return nil, gasLimit, errors.New("gas limit exceeded")
-	}
-
 	out := args
+	var gasUsed uint64
 	for i := 0; i < len(wasm); i += 3 {
 		if err := ctx.Err(); err != nil {
 			return nil, gasUsed, err
@@ -167,6 +214,13 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 			b2 = wasm[i+2]
 		}
 		opcode := uint32(b0)<<16 | uint32(b1)<<8 | uint32(b2)
+		_, cost := resolver(opcode)
+		if cost == 0 {
+			cost = DefaultGasCost
+		}
+		if gasUsed+cost > gasLimit {
+			return nil, gasUsed, errors.New("gas limit exceeded")
+		}
 		handler, ok := vm.handlers[opcode]
 		if !ok {
 			handler = vm.defaultH
@@ -176,6 +230,7 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 		if err != nil {
 			return nil, gasUsed, fmt.Errorf("opcode 0x%06x failed: %w", opcode, err)
 		}
+		gasUsed += cost
 	}
 
 	// simulate execution delay to keep behaviour deterministic

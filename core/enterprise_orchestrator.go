@@ -138,7 +138,7 @@ func (o *EnterpriseOrchestrator) RegisterConsensusNetwork(ctx context.Context, s
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	_, span := telemetry.Tracer().Start(ctx, "EnterpriseOrchestrator.RegisterConsensusNetwork")
+	_, span := telemetry.Tracer("core.enterprise").Start(ctx, "EnterpriseOrchestrator.RegisterConsensusNetwork")
 	defer span.End()
 
 	id, err := o.consensus.RegisterNetwork(source, target, o.wallet.Address)
@@ -197,7 +197,7 @@ func (o *EnterpriseOrchestrator) refreshDiagnostics(ctx context.Context) Enterpr
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	_, span := telemetry.Tracer().Start(ctx, "EnterpriseOrchestrator.refreshDiagnostics")
+	_, span := telemetry.Tracer("core.enterprise").Start(ctx, "EnterpriseOrchestrator.refreshDiagnostics")
 	defer span.End()
 
 	diag := EnterpriseDiagnostics{

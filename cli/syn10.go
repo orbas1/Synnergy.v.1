@@ -47,7 +47,10 @@ func init() {
 			}
 			var rate float64
 			fmt.Sscanf(args[0], "%f", &rate)
-			syn10.SetExchangeRate(rate)
+			if err := syn10.SetExchangeRate(rate, "cli"); err != nil {
+				printOutput(map[string]string{"error": err.Error()})
+				return
+			}
 			printOutput(map[string]string{"status": "rate updated"})
 		},
 	}

@@ -48,7 +48,10 @@ func init() {
 				printOutput(map[string]string{"error": "invalid amount"})
 				return
 			}
-			syn1000.AddReserve(args[0], amt)
+			if err := syn1000.AddReserve(args[0], amt); err != nil {
+				printOutput(map[string]string{"error": err.Error()})
+				return
+			}
 			printOutput(map[string]string{"status": "reserve added"})
 		},
 	}
@@ -68,7 +71,10 @@ func init() {
 				printOutput(map[string]string{"error": "invalid price"})
 				return
 			}
-			syn1000.SetReservePrice(args[0], price)
+			if err := syn1000.SetReservePrice(args[0], price); err != nil {
+				printOutput(map[string]string{"error": err.Error()})
+				return
+			}
 			printOutput(map[string]string{"status": "price updated"})
 		},
 	}
