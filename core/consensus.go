@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"math/big"
 	"sort"
+	"sync"
 	"time"
 
 	ilog "synnergy/internal/log"
@@ -21,6 +22,8 @@ type ConsensusWeights struct {
 // SynnergyConsensus encapsulates the consensus algorithms and their dynamic
 // weighting.
 type SynnergyConsensus struct {
+	mu sync.RWMutex
+
 	Weights ConsensusWeights
 	Alpha   float64
 	Beta    float64
@@ -61,13 +64,19 @@ func NewSynnergyConsensus() *SynnergyConsensus {
 // SetRegulatoryNode attaches a regulatory node so that sub-block validation
 // includes regulatory transaction checks.
 func (sc *SynnergyConsensus) SetRegulatoryNode(rn *RegulatoryNode) {
+	sc.mu.Lock()
 	sc.RegNode = rn
+	sc.mu.Unlock()
 }
 
 // Threshold computes the switching threshold based on network demand (D) and
 // stake concentration (S).
 func (sc *SynnergyConsensus) Threshold(D, S float64) float64 {
-	return sc.Alpha*D + sc.Beta*S
+	sc.mu.RLock()
+	alpha := sc.Alpha
+	beta := sc.Beta
+	sc.mu.RUnlock()
+	return alpha*D + beta*S
 }
 
 // AdjustWeights modifies the internal consensus weightings based on current
@@ -75,59 +84,69 @@ func (sc *SynnergyConsensus) Threshold(D, S float64) float64 {
 // normalized so that the weights always sum to one and never drop below 7.5%
 // unless network conditions force them lower.
 func (sc *SynnergyConsensus) AdjustWeights(D, S float64) {
+	sc.mu.Lock()
 	if sc.Dmax == 0 {
 		sc.Dmax = 1
 	}
 	if sc.Smax == 0 {
 		sc.Smax = 1
 	}
-	sc.Weights.PoW = clamp(sc.Weights.PoW+sc.Gamma*((D/sc.Dmax)-sc.Weights.PoW), 0.075, 1)
-	sc.Weights.PoS = clamp(sc.Weights.PoS+sc.Gamma*((S/sc.Smax)-sc.Weights.PoS), 0.075, 1)
+	weights := sc.Weights
+	weights.PoW = clamp(weights.PoW+sc.Gamma*((D/sc.Dmax)-weights.PoW), 0.075, 1)
+	weights.PoS = clamp(weights.PoS+sc.Gamma*((S/sc.Smax)-weights.PoS), 0.075, 1)
 	loadInv := 1 - (D / sc.Dmax)
-	sc.Weights.PoH = clamp(sc.Weights.PoH+sc.Gamma*(loadInv-sc.Weights.PoH), 0.075, 1)
+	weights.PoH = clamp(weights.PoH+sc.Gamma*(loadInv-weights.PoH), 0.075, 1)
 
 	if !sc.PoWAvailable || !sc.PoWRewards {
-		sc.Weights.PoW = 0
+		weights.PoW = 0
 	}
 	if !sc.PoSAvailable {
-		sc.Weights.PoS = 0
+		weights.PoS = 0
 	}
 	if !sc.PoHAvailable {
-		sc.Weights.PoH = 0
+		weights.PoH = 0
 	}
 
-	total := sc.Weights.PoW + sc.Weights.PoS + sc.Weights.PoH
-	if total == 0 {
-		return
-	}
-	sc.Weights.PoW /= total
-	sc.Weights.PoS /= total
-	sc.Weights.PoH /= total
-	ilog.Info("adjust_weights", "pow", sc.Weights.PoW, "pos", sc.Weights.PoS, "poh", sc.Weights.PoH)
+	weights = normalizeWeights(weights)
+	sc.Weights = weights
+	sc.mu.Unlock()
+	ilog.Info("adjust_weights", "pow", weights.PoW, "pos", weights.PoS, "poh", weights.PoH)
 }
 
 // Tload computes the network-load component of the transition threshold.
 func (sc *SynnergyConsensus) Tload(D float64) float64 {
-	if sc.Dmax == 0 {
+	sc.mu.RLock()
+	dmax := sc.Dmax
+	alpha := sc.Alpha
+	sc.mu.RUnlock()
+	if dmax == 0 {
 		return 0
 	}
-	return sc.Alpha * (D / sc.Dmax)
+	return alpha * (D / dmax)
 }
 
 // Tsecurity computes the security-threat component of the transition threshold.
 func (sc *SynnergyConsensus) Tsecurity(threat float64) float64 {
-	if sc.Smax == 0 {
+	sc.mu.RLock()
+	smax := sc.Smax
+	beta := sc.Beta
+	sc.mu.RUnlock()
+	if smax == 0 {
 		return 0
 	}
-	return sc.Beta * (threat / sc.Smax)
+	return beta * (threat / smax)
 }
 
 // Tstake computes the stake-concentration component of the transition threshold.
 func (sc *SynnergyConsensus) Tstake(S float64) float64 {
-	if sc.Smax == 0 {
+	sc.mu.RLock()
+	smax := sc.Smax
+	gamma := sc.Gamma
+	sc.mu.RUnlock()
+	if smax == 0 {
 		return 0
 	}
-	return sc.Gamma * (S / sc.Smax)
+	return gamma * (S / smax)
 }
 
 // TransitionThreshold combines load, security and stake factors to determine
@@ -147,15 +166,19 @@ func (sc *SynnergyConsensus) DifficultyAdjust(oldDifficulty, actualTime, expecte
 
 // SetAvailability toggles the availability flags for consensus methods.
 func (sc *SynnergyConsensus) SetAvailability(pow, pos, poh bool) {
+	sc.mu.Lock()
 	sc.PoWAvailable = pow
 	sc.PoSAvailable = pos
 	sc.PoHAvailable = poh
+	sc.mu.Unlock()
 	ilog.Info("set_availability", "pow", pow, "pos", pos, "poh", poh)
 }
 
 // SetPoWRewards indicates whether mining rewards remain for PoW miners.
 func (sc *SynnergyConsensus) SetPoWRewards(enabled bool) {
+	sc.mu.Lock()
 	sc.PoWRewards = enabled
+	sc.mu.Unlock()
 	ilog.Info("set_pow_rewards", "enabled", enabled)
 }
 
@@ -214,12 +237,13 @@ func (sc *SynnergyConsensus) ValidateSubBlock(sb *SubBlock) bool {
 	if err := sb.Validate(); err != nil {
 		return false
 	}
-	if sc.RegNode == nil {
+	regNode := sc.getRegNode()
+	if regNode == nil {
 		// No regulatory node configured; bypass compliance checks.
 		return true
 	}
 	for _, tx := range sb.Transactions {
-		if err := sc.RegNode.ApproveTransaction(*tx); err != nil {
+		if err := regNode.ApproveTransaction(*tx); err != nil {
 			ilog.Info("regulatory_reject", "tx", tx.ID, "err", err)
 			return false
 		}
@@ -357,6 +381,20 @@ func clamp(v, min, max float64) float64 {
 
 }
 
+// WeightsSnapshot returns the current consensus weight distribution.
+func (sc *SynnergyConsensus) WeightsSnapshot() ConsensusWeights {
+	sc.mu.RLock()
+	defer sc.mu.RUnlock()
+	return sc.Weights
+}
+
+// SetWeights overrides the consensus weights, normalising the provided values.
+func (sc *SynnergyConsensus) SetWeights(w ConsensusWeights) {
+	sc.mu.Lock()
+	sc.Weights = normalizeWeights(w)
+	sc.mu.Unlock()
+}
+
 // ValidateBlock checks that a block and its sub-blocks are well-formed.
 // It delegates to the block's internal validation routine.
 func (sc *SynnergyConsensus) ValidateBlock(b *Block) bool {
@@ -364,4 +402,31 @@ func (sc *SynnergyConsensus) ValidateBlock(b *Block) bool {
 		return false
 	}
 	return b.Validate() == nil
+}
+
+func (sc *SynnergyConsensus) getRegNode() *RegulatoryNode {
+	sc.mu.RLock()
+	defer sc.mu.RUnlock()
+	return sc.RegNode
+}
+
+func normalizeWeights(w ConsensusWeights) ConsensusWeights {
+	if w.PoW < 0 {
+		w.PoW = 0
+	}
+	if w.PoS < 0 {
+		w.PoS = 0
+	}
+	if w.PoH < 0 {
+		w.PoH = 0
+	}
+	total := w.PoW + w.PoS + w.PoH
+	if total == 0 {
+		return ConsensusWeights{}
+	}
+	return ConsensusWeights{
+		PoW: w.PoW / total,
+		PoS: w.PoS / total,
+		PoH: w.PoH / total,
+	}
 }

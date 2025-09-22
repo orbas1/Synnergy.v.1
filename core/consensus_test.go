@@ -18,10 +18,11 @@ func TestAdjustWeightsAndAvailability(t *testing.T) {
 	sc := NewSynnergyConsensus()
 	sc.SetAvailability(true, false, true)
 	sc.AdjustWeights(0.5, 0.5)
-	if sc.Weights.PoS != 0 {
+	weights := sc.WeightsSnapshot()
+	if weights.PoS != 0 {
 		t.Fatalf("PoS weight should be zero when unavailable")
 	}
-	total := sc.Weights.PoW + sc.Weights.PoS + sc.Weights.PoH
+	total := weights.PoW + weights.PoS + weights.PoH
 	if math.Abs(total-1) > 1e-9 {
 		t.Fatalf("weights not normalized")
 	}
