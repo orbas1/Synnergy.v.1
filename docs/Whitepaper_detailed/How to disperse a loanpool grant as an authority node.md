@@ -19,6 +19,8 @@ Before attempting any payout, the operator must:
 3. **Verify treasury capacity** – administrators can inspect current balances and counts with `LoanPoolManager.Stats` before disbursement【F:core/loanpool_management.go†L31-L44】.
 4. **Confirm pool availability** – use `loanmgr pause`/`resume` to control proposal intake during maintenance windows【F:cli/loanpool_management.go†L19-L29】.
 
+Stage 79 further streamlines preparation: running `synnergy orchestrator bootstrap --authority treasury=governor` invokes `core.EnterpriseOrchestrator.BootstrapNetwork`, registering the authority address, sealing the workflow with the orchestrator wallet and enabling ledger replication so loan disbursements are synchronised across nodes before treasury actions execute.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】 Startup loads the Stage 79 gas schedule, keeping CLI confirmations aligned with documentation, and the control panel exposes the same bootstrap flow for teams operating through the browser interface.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】 Comprehensive bootstrap tests cover unit, situational, stress, functional and real-world scenarios, ensuring authority operations remain fault tolerant while meeting regulatory obligations.【F:core/enterprise_orchestrator_test.go†L73-L178】
+
 ## 4. Review Proposal Status
 Disbursement is only permitted for proposals that have been approved and not yet paid. Run the proposal processing step to update approval flags:
 

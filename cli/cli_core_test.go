@@ -63,25 +63,47 @@ func resetFlagSet(fs *pflag.FlagSet) {
 }
 
 func jsonPayload(out string) string {
-	lines := strings.Split(out, "\n")
 	start := -1
 	end := -1
-	for i, line := range lines {
-		trimmed := strings.TrimSpace(line)
-		if start == -1 && (strings.HasPrefix(trimmed, "{") || strings.HasPrefix(trimmed, "[")) {
-			start = i
+	depth := 0
+	inString := false
+	escape := false
+	for i, r := range out {
+		if inString {
+			if escape {
+				escape = false
+				continue
+			}
+			if r == '\\' {
+				escape = true
+				continue
+			}
+			if r == '"' {
+				inString = false
+			}
+			continue
 		}
-		if strings.HasSuffix(trimmed, "}") || strings.HasSuffix(trimmed, "]") {
-			end = i
+		switch r {
+		case '"':
+			inString = true
+		case '{', '[':
+			if depth == 0 {
+				start = i
+			}
+			depth++
+		case '}', ']':
+			if depth > 0 {
+				depth--
+				if depth == 0 {
+					end = i + 1
+				}
+			}
 		}
 	}
-	if start == -1 {
-		return out
+	if start == -1 || end == -1 || start >= end {
+		return strings.TrimSpace(out)
 	}
-	if end == -1 {
-		end = len(lines) - 1
-	}
-	return strings.TrimSpace(strings.Join(lines[start:end+1], "\n"))
+	return strings.TrimSpace(out[start:end])
 }
 
 func firstNonGasLine(out string) string {

@@ -29,6 +29,9 @@ contracts on the network.
 - **Network access** – a node endpoint configured with sufficient permissions
   to accept deployment transactions.
 
+### Stage 79 Bootstrap Support
+Before deploying, operators can run `synnergy orchestrator bootstrap` to guarantee the heavy VM profile is started, consensus relayers are registered and ledger replication is active. The command invokes `core.EnterpriseOrchestrator.BootstrapNetwork`, sealing the bootstrap with the orchestrator wallet and wiring governance roles so contract calls immediately inherit enterprise-grade security guarantees.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】 Startup ensures the Stage 79 gas schedule is loaded beside Stage 78 costs, keeping deployment budgets predictable across automation, while the control panel exposes the same workflow for GUI-based operations.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】 Tests exercise unit, situational, stress and real-world bootstrap scenarios to confirm the environment remains deterministic before and after contract deployment.【F:core/enterprise_orchestrator_test.go†L73-L178】
+
 ## Step‑by‑Step Deployment
 
 ### 1. Compile the contract

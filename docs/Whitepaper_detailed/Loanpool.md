@@ -7,6 +7,8 @@ compliance, voting, and disbursement logic directly in code, the Loanpool
 provides transparent credit issuance and stimulates sustainable economic growth
 across the ecosystem.
 
+Stage 79’s orchestrator bootstrap ensures treasury authorities and replication services are active before credit programmes commence. Executing `synnergy orchestrator bootstrap --authority treasury=governor --replicate` invokes `core.EnterpriseOrchestrator.BootstrapNetwork`, which signs the bootstrap, registers governance roles, starts ledger replication and returns diagnostics confirming readiness for loan reviews and disbursements.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】 Startup synchronises Stage 79 gas costs with documentation, and the control panel mirrors the workflow so CLI, dashboards and browser consoles stay aligned on pricing and operational health.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】 Bootstrap tests cover unit, situational, stress, functional and real-world scenarios to keep Loanpool disbursements deterministic and compliant under heavy demand.【F:core/enterprise_orchestrator_test.go†L73-L178】
+
 ## Architecture Overview
 Loanpool functionality is implemented in a set of core modules:
 

@@ -161,9 +161,6 @@ func (m *CrossChainManager) RegisterBridge(sourceChain, targetChain, relayerAddr
 		atomic.AddUint64(&m.metrics.authorizedRelay, 1)
 	}
 	m.emit(BridgeEvent{Type: BridgeEventRegistered, Bridge: *bridge, Relayer: relayerAddr, Timestamp: now})
-	if relayerAddr != "" {
-		atomic.AddUint64(&m.metrics.authorizedRelay, 1)
-	}
 	return id
 }
 

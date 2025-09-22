@@ -49,6 +49,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
 - **Enterprise orchestrator** – Stage 78 introduces `core.NewEnterpriseOrchestrator` and the `synnergy orchestrator` CLI to unify VM readiness, consensus relayers, wallet bootstrap, authority registry state and gas documentation with telemetry for CLI and web dashboards.
+- **Stage 79 enterprise bootstrap** – `core.EnterpriseOrchestrator.BootstrapNetwork` signs node provisioning, registers authorities, enables replication and emits diagnostics consumed by `synnergy orchestrator bootstrap` and the web control panel for one-click provisioning workflows.【F:core/enterprise_orchestrator.go†L48-L209】【F:cli/orchestrator.go†L9-L117】【F:web/pages/api/bootstrap.js†L1-L45】【F:web/pages/index.js†L1-L214】
 - **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
 - **Resilient node primitives** – forensic nodes prune over-capacity logs, full node modes are mutex-protected, gateway endpoints require a running node, and failover managers can remove stale peers.
 - **Thread-safe mempools and plasma bridge safeguards** – node mempools are mutex-protected for concurrent submissions and Plasma bridge operations surface explicit paused errors.
@@ -95,7 +96,7 @@ pkg/          Reusable libraries and experimental modules
 2. Resolve configuration path from `SYN_CONFIG` or `config.DefaultConfigPath`.
 3. Parse YAML via `config.Load` and configure logging.
 4. Initialise tracer provider (`otel.SetTracerProvider`).
-5. Warm caches by calling `synnergy.LoadGasTable()`, synchronising the Stage 78 enterprise schedule with `synnergy.EnsureGasSchedule()` and registering contextual metadata with `synnergy.RegisterGasMetadata()` for core operations like `MineBlock`, `OpenConnection`, `MintNFT` and the enterprise orchestrator opcodes.
+5. Warm caches by calling `synnergy.LoadGasTable()`, synchronising the Stage 78 and Stage 79 enterprise schedules with `synnergy.EnsureGasSchedule()` and registering contextual metadata with `synnergy.RegisterGasMetadata()` for core operations like `MineBlock`, `OpenConnection`, `MintNFT`, enterprise bootstrap flows and orchestrator opcodes.【F:cmd/synnergy/main.go†L63-L106】
 6. Pre-load modules used by the CLI:
    - `core.NewNetwork` for pub‑sub networking
    - `core.NewContractRegistry` backed by `core.NewSimpleVM`
@@ -183,6 +184,7 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `data resource import|info|list|usage|put|prune` | Manage binary resources with retention metadata and manifest-driven sync |
 =======
 | `orchestrator status|sync [--json]` | Aggregate VM, consensus, wallet and authority diagnostics via `core.NewEnterpriseOrchestrator` |
+| `orchestrator bootstrap [--node-id --address --authority]` | Provision nodes with consensus links, replication and authority registration via `core.EnterpriseOrchestrator.BootstrapNetwork` |
 | `data monitor status` | Report network data distribution metrics |
 | `audit log|list` | Record and query audit events via `core.NewAuditManager` |
 | `audit_node start|log|list` | Operate a bootstrap audit node for network-wide logs |
@@ -245,6 +247,9 @@ Stage 78 upgrades the runtime with a hardened enterprise orchestrator that valid
 ```
 
 Diagnostics confirm VM mode and concurrency, consensus network registration, wallet provenance, authority node totals, and whether Stage 78 opcodes are documented with enterprise-grade gas costs. Results surface through the updated Next.js API (`web/pages/api/orchestrator.js`) and dashboard widgets on the control panel home page, ensuring parity between CLI automation and browser operations. Stress, situational and real-world tests under `core/enterprise_orchestrator_test.go` and `cli/orchestrator_test.go` assert fault tolerance, security controls and regulatory alignment, keeping performance predictable even under high-throughput workloads.
+
+## Stage 79 Enterprise Bootstrap
+Stage 79 extends the orchestrator with a `BootstrapNetwork` workflow that seals bootstrap signatures, attaches regulatory consensus checks, enables ledger replication and emits enriched diagnostics so operators can validate readiness from automation, the CLI or the web control panel.【F:core/enterprise_orchestrator.go†L71-L209】【F:core/enterprise_orchestrator_test.go†L73-L178】 The CLI exposes the flow through `synnergy orchestrator bootstrap`, supporting authority registration, optional replication toggles and address-role mappings for permissioned governance.【F:cli/orchestrator.go†L58-L117】【F:cli/orchestrator_test.go†L35-L63】 Startup now loads the Stage 79 gas schedule alongside Stage 78 so enterprise telemetry and budgets remain accurate across deployments.【F:cmd/synnergy/main.go†L63-L106】 The function web adds a dedicated bootstrap panel that posts to `/api/bootstrap`, invoking the same CLI command to keep browser operations, automation scripts and manual workflows in sync.【F:web/pages/api/bootstrap.js†L1-L45】【F:web/pages/index.js†L1-L214】 Tests cover unit, situational, stress, functional and real-world scenarios to ensure the orchestrator maintains strong encryption guarantees, regulatory compliance and high-throughput resilience while scaling new nodes.【F:core/enterprise_orchestrator_test.go†L73-L178】
 
 
 ## Production Deployment

@@ -3,6 +3,8 @@
 ## Introduction
 Within the Synnergy network engineered by **Neto Solaris**, the ledger is the canonical record of all value exchange and state transitions. It fuses block history, account balances, and unspent transaction outputs (UTXOs) into a cohesive state machine that every service in the ecosystem relies upon.
 
+Stage 79 extends the orchestrator so ledger replication and diagnostics come online before workloads execute. Issuing `synnergy orchestrator bootstrap --replicate` invokes `core.EnterpriseOrchestrator.BootstrapNetwork`, which starts the replicator, records ledger height and emits a signed bootstrap signature for audit trails, giving operators immediate insight into ledger health.【F:core/enterprise_orchestrator.go†L71-L209】【F:cli/orchestrator.go†L58-L117】 Startup synchronises Stage 79 gas metadata, while the control panel mirrors the same workflow, keeping CLI automation, dashboards and GUI operators aligned on pricing and readiness.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】 Bootstrap tests cover unit, situational, stress, functional and real-world flows to maintain deterministic ledger behaviour even under heavy load.【F:core/enterprise_orchestrator_test.go†L73-L178】
+
 ## Architectural Overview
 ### Data Model
 The ledger exposes a write‑ahead log (WAL) backed structure that persists blocks while tracking balances, UTXO sets, a mempool, and frozen accounts【F:core/ledger.go†L11-L33】. Each state mutation is gated by mutexes to guarantee thread‑safety across concurrent operations【F:core/ledger.go†L24-L33】.

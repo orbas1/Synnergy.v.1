@@ -8,6 +8,8 @@ Neto Solaris provides a powerful framework for authoring, deploying and managing
 - Familiarity with WebAssembly (WASM) and smart contract concepts.
 - Access to a test node or sandbox environment for validation.
 
+Stage 79 automation can initialise the runtime before contract compilation. Execute `synnergy orchestrator bootstrap --node-id contract-lab --consensus Synnergy-PBFT --authority devops=operator` to call `core.EnterpriseOrchestrator.BootstrapNetwork`, which signs the bootstrap, enables ledger replication and registers governance roles so deployment environments match production expectations.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】 Startup synchronises Stage 79 gas metadata and the control panel exposes the same workflow, ensuring CLI pipelines, browser-based tooling and auditors use the same diagnostics and pricing when promoting contracts from staging to production.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】【F:core/enterprise_orchestrator_test.go†L73-L178】
+
 ## Choosing a Contract Language
 
 The Synnergy virtual machine supports multiple high‑level languages that compile to the network’s opcode set. Supported options include WASM, Go, JavaScript, Solidity, Rust, Python and Yul【F:contract_language_compatibility.go†L5-L16】. Use the language best aligned with your team’s expertise and project requirements.

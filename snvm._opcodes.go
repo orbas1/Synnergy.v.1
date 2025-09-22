@@ -1288,6 +1288,7 @@ var SNVMOpcodes = []SNVMOpcode{
 	{"core_enterprise_orchestrator_RegisterConsensusNetwork", 0x0004F8},
 	{"core_enterprise_orchestrator_RegisterAuthorityNode", 0x0004F9},
 	{"core_enterprise_orchestrator_SyncGasSchedule", 0x0004FA},
+	{"core_enterprise_orchestrator_BootstrapNetwork", 0x0004FB},
 }
 
 // SNVMOpcodeByName returns the opcode for a given function identifier.

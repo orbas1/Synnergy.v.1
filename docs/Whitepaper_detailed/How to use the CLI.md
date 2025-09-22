@@ -62,6 +62,9 @@ synnergy authority deregister node1
 ```
 `authority_apply` manages candidacy, voting, and finalisation, while `authority` maintains the active registry.
 
+### Stage 79 Enterprise Bootstrap
+Use `synnergy orchestrator bootstrap --node-id node79 --consensus Synnergy-PBFT --governance SYN-Gov --authority treasury=governor` to automate node provisioning. The command invokes `core.EnterpriseOrchestrator.BootstrapNetwork`, emitting a signed bootstrap signature, registering authority roles, enabling ledger replication and returning diagnostics so subsequent modules start from a trusted baseline.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】【F:core/enterprise_orchestrator_test.go†L73-L178】 Stage 79 gas costs are synchronised during startup and the web control panel mirrors the same workflow, keeping CLI automation, browser operators and documentation aligned on pricing and readiness signals.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】
+
 ### 3.4 Banking Integration
 Institutions can register participation and query supported node types:
 ```bash

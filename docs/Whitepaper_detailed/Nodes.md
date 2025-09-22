@@ -7,6 +7,8 @@ transactions, maintain ledger state, enforce compliance, and surface network
 intelligence. The architecture emphasizes modularity so that each node type can
 be deployed independently or combined to serve bespoke operational roles.
 
+Stage 79 enhances node provisioning with an orchestrated bootstrap flow. Administrators can run `synnergy orchestrator bootstrap --node-id node79 --authority ops=governor --replicate` to invoke `core.EnterpriseOrchestrator.BootstrapNetwork`, which signs the bootstrap, registers authority roles, starts replication and surfaces diagnostics confirming VM status, consensus networks, authority counts and replication activity prior to deploying additional node types.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】 Startup synchronises Stage 79 gas metadata and the control panel exposes the same workflow, aligning CLI automation, dashboards and GUI operators on cost visibility and readiness signals.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】 Bootstrap tests cover unit, situational, stress, functional and real-world cases, ensuring new node deployments maintain strong encryption, privacy and regulatory compliance even under heavy throughput.【F:core/enterprise_orchestrator_test.go†L73-L178】
+
 ## Core Node Architecture
 Every node instance embeds several core subsystems:
 

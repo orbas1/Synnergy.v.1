@@ -10,6 +10,18 @@ export default function Home() {
   const [orchestrator, setOrchestrator] = useState(null);
   const [orchError, setOrchError] = useState("");
   const [orchLoading, setOrchLoading] = useState(true);
+  const [bootstrapForm, setBootstrapForm] = useState({
+    nodeId: "web-node",
+    address: "",
+    consensus: "Synnergy-PBFT",
+    governance: "SYN-Gov",
+    replicate: true,
+    regulator: true,
+    authorities: "",
+  });
+  const [bootstrapResult, setBootstrapResult] = useState(null);
+  const [bootstrapError, setBootstrapError] = useState("");
+  const [bootstrapLoading, setBootstrapLoading] = useState(false);
 
   useEffect(() => {
     fetch("/api/commands")
@@ -38,6 +50,14 @@ export default function Home() {
     setInputs((prev) => ({ ...prev, [name]: value }));
   };
 
+  const updateBootstrap = (name, value) => {
+    setBootstrapForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const toggleBootstrap = (name) => {
+    setBootstrapForm((prev) => ({ ...prev, [name]: !prev[name] }));
+  };
+
   const run = async () => {
     const args = [];
     for (const f of flags) {
@@ -59,6 +79,54 @@ export default function Home() {
     });
     const data = await res.json();
     setOutput(data.output || data.error);
+  };
+
+  const runBootstrap = () => {
+    setBootstrapLoading(true);
+    setBootstrapError("");
+    setBootstrapResult(null);
+    const authorities = bootstrapForm.authorities
+      ? bootstrapForm.authorities
+          .split(",")
+          .map((v) => v.trim())
+          .filter((v) => v.length > 0)
+      : [];
+    fetch("/api/bootstrap", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nodeId: bootstrapForm.nodeId,
+        address: bootstrapForm.address,
+        consensus: bootstrapForm.consensus,
+        governance: bootstrapForm.governance,
+        replicate: bootstrapForm.replicate,
+        regulator: bootstrapForm.regulator,
+        authorities,
+      }),
+    })
+      .then(async (res) => {
+        const text = await res.text();
+        if (!res.ok) {
+          try {
+            const parsed = JSON.parse(text);
+            throw new Error(parsed.error || "Bootstrap failed");
+          } catch (err) {
+            throw new Error(text || "Bootstrap failed");
+          }
+        }
+        try {
+          return JSON.parse(text);
+        } catch (err) {
+          return { raw: text };
+        }
+      })
+      .then((data) => {
+        setBootstrapResult(data);
+      })
+      .catch((err) => {
+        setBootstrapError(err.message);
+      })
+      .finally(() => setBootstrapLoading(false));
   };
 
   const refreshOrchestrator = () => {
@@ -113,6 +181,12 @@ export default function Home() {
               <strong>Authority nodes:</strong> {orchestrator.authorityNodes}
             </p>
             <p>
+              <strong>Bootstrap nodes:</strong> {orchestrator.bootstrapNodes}
+            </p>
+            <p>
+              <strong>Replication:</strong> {orchestrator.replicationActive ? "active" : "paused"}
+            </p>
+            <p>
               <strong>Wallet:</strong> {orchestrator.walletAddress}
             </p>
             <p>
@@ -126,6 +200,87 @@ export default function Home() {
               <p>Opcode documentation is complete.</p>
             )}
           </div>
+        )}
+      </section>
+      <section style={{ marginTop: 20, marginBottom: 20 }}>
+        <h2>Stage 79 Enterprise Bootstrap</h2>
+        <p>
+          Provision a ledger-backed node with authority, consensus, replication and privacy controls
+          without leaving the control panel.
+        </p>
+        <div style={{ display: "grid", gap: 8, maxWidth: 600 }}>
+          <label>
+            Node ID
+            <input
+              type="text"
+              value={bootstrapForm.nodeId}
+              onChange={(e) => updateBootstrap("nodeId", e.target.value)}
+              style={{ marginLeft: 10 }}
+            />
+          </label>
+          <label>
+            Address
+            <input
+              type="text"
+              value={bootstrapForm.address}
+              onChange={(e) => updateBootstrap("address", e.target.value)}
+              style={{ marginLeft: 10 }}
+              placeholder="host:port"
+            />
+          </label>
+          <label>
+            Consensus profile
+            <input
+              type="text"
+              value={bootstrapForm.consensus}
+              onChange={(e) => updateBootstrap("consensus", e.target.value)}
+              style={{ marginLeft: 10 }}
+            />
+          </label>
+          <label>
+            Governance profile
+            <input
+              type="text"
+              value={bootstrapForm.governance}
+              onChange={(e) => updateBootstrap("governance", e.target.value)}
+              style={{ marginLeft: 10 }}
+            />
+          </label>
+          <label>
+            Authorities (comma separated address=role)
+            <input
+              type="text"
+              value={bootstrapForm.authorities}
+              onChange={(e) => updateBootstrap("authorities", e.target.value)}
+              style={{ marginLeft: 10 }}
+              placeholder="authority1=ops,authority2=audit"
+            />
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={bootstrapForm.replicate}
+              onChange={() => toggleBootstrap("replicate")}
+            />
+            Enable ledger replication
+          </label>
+          <label>
+            <input
+              type="checkbox"
+              checked={bootstrapForm.regulator}
+              onChange={() => toggleBootstrap("regulator")}
+            />
+            Attach regulatory validation
+          </label>
+        </div>
+        <button style={{ marginTop: 10 }} onClick={runBootstrap} disabled={bootstrapLoading}>
+          {bootstrapLoading ? "Bootstrapping..." : "Run bootstrap"}
+        </button>
+        {bootstrapError && <p style={{ color: "red" }}>{bootstrapError}</p>}
+        {bootstrapResult && (
+          <pre style={{ marginTop: 10 }}>
+            {JSON.stringify(bootstrapResult, null, 2)}
+          </pre>
         )}
       </section>
       <select value={selected} onChange={(e) => setSelected(e.target.value)}>

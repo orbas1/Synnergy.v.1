@@ -860,8 +860,12 @@ func newResourceCommand() *cobra.Command {
 			}
 			allowed := make(map[string]struct{}, len(entries))
 			for _, entry := range entries {
-				if err := resourcesStore.put(entry.Key, entry.Payload, entry.Labels, entry.Source); err != nil {
-					return err
+				if entry.HasPayload {
+					if err := resourcesStore.put(entry.Key, entry.Payload, entry.Labels, entry.Source); err != nil {
+						return err
+					}
+				} else if !prune {
+					return fmt.Errorf("entry %s missing data, base64 or path", entry.Key)
 				}
 				allowed[entry.Key] = struct{}{}
 			}
@@ -911,10 +915,11 @@ func newResourceCommand() *cobra.Command {
 }
 
 type resourceManifestEntry struct {
-	Key     string
-	Payload []byte
-	Labels  []string
-	Source  string
+	Key        string
+	Payload    []byte
+	Labels     []string
+	Source     string
+	HasPayload bool
 }
 
 func readResourceManifest(path string) ([]resourceManifestEntry, error) {
@@ -935,7 +940,10 @@ func readResourceManifest(path string) ([]resourceManifestEntry, error) {
 		}
 		labels := extractLabels(item)
 		source, _ := item["source"].(string)
-		var payload []byte
+		var (
+			payload    []byte
+			hasPayload bool
+		)
 		switch {
 		case item["path"] != nil:
 			pathVal, _ := item["path"].(string)
@@ -951,6 +959,7 @@ func readResourceManifest(path string) ([]resourceManifestEntry, error) {
 				return nil, err
 			}
 			payload = b
+			hasPayload = true
 		case item["base64"] != nil:
 			enc, _ := item["base64"].(string)
 			b, err := base64.StdEncoding.DecodeString(enc)
@@ -958,12 +967,12 @@ func readResourceManifest(path string) ([]resourceManifestEntry, error) {
 				return nil, err
 			}
 			payload = b
+			hasPayload = true
 		case item["data"] != nil:
 			payload = []byte(fmt.Sprint(item["data"]))
-		default:
-			return nil, fmt.Errorf("entry %s missing data, base64 or path", key)
+			hasPayload = true
 		}
-		entries = append(entries, resourceManifestEntry{Key: key, Payload: payload, Labels: labels, Source: source})
+		entries = append(entries, resourceManifestEntry{Key: key, Payload: payload, Labels: labels, Source: source, HasPayload: hasPayload})
 	}
 	return entries, nil
 }

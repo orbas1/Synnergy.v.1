@@ -80,6 +80,18 @@ func main() {
 	} else if len(inserted) > 0 {
 		logrus.Infof("registered %d stage 78 opcodes", len(inserted))
 	}
+	stage79Gas := map[string]uint64{
+		"EnterpriseNetworkBootstrap":       150,
+		"EnterpriseLedgerReplication":      45,
+		"EnterpriseGovernanceSeal":         90,
+		"EnterprisePrivacyChannel":         70,
+		"EnterpriseInteroperabilityBridge": 110,
+	}
+	if inserted, err := synn.EnsureGasSchedule(stage79Gas); err != nil {
+		logrus.Fatalf("stage 79 gas sync failed: %v", err)
+	} else if len(inserted) > 0 {
+		logrus.Infof("registered %d stage 79 opcodes", len(inserted))
+	}
 	register := func(category, description string, names ...string) {
 		for _, name := range names {
 			cost := synn.GasCost(name)
@@ -102,6 +114,7 @@ func main() {
 	register("monetary", "Stage 40 monetary policy queries", "BlockReward", "CirculatingSupply", "RemainingSupply", "InitialPrice", "AlphaFactor", "MinimumStake")
 	register("p2p", "Stage 67 Kademlia routing operations", "KademliaStore", "KademliaGet", "KademliaClosest", "KademliaDistance")
 	register("orchestrator", "Stage 78 enterprise orchestrator operations", "EnterpriseBootstrap", "EnterpriseConsensusSync", "EnterpriseWalletSeal", "EnterpriseNodeAudit", "EnterpriseAuthorityElect")
+	register("orchestrator", "Stage 79 enterprise bootstrap operations", "EnterpriseNetworkBootstrap", "EnterpriseLedgerReplication", "EnterpriseGovernanceSeal", "EnterprisePrivacyChannel", "EnterpriseInteroperabilityBridge")
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.

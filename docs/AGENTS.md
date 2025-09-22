@@ -8,7 +8,7 @@
 - Stage 68: Complete – mining node context control, fee distribution, and CLI mine-until integration finalized with gas pricing and opcode docs extended.
 - Stage 69: Complete – node and plasma modules hardened with concurrency-safe mempools, pause checks, opcode lookup tests and peer count CLI.
 - Stage 73: Complete – enterprise index, grant, benefit, charity, legal and utility modules now require wallet-signed workflows, persist their state for CLI/web automation, expose telemetry across CLI, VM and web, and refreshed docs/guides capture the expanded gas/opcode catalogue.
-- Stage 79: Complete – runtime bootstrap, manifest-driven tooling, ledger replication opcodes and enterprise Stage 79 documentation shipped across CLI, VM, consensus, wallet and web control plane.
+- Stage 79: Complete – runtime bootstrap, manifest-driven tooling, ledger replication opcodes and enterprise Stage 79 documentation shipped across CLI, VM, consensus, wallet and web control plane with regression-safe CLI JSON extraction and deployment scripting hardened for deterministic tests.
 - Stage 74: In progress – system health logging clamped; tangible and agricultural asset registries made concurrency safe; access controller audit snapshots added. Transaction and SYN5000+ modules outstanding.
 
 - Stage 75: Complete – warfare/watchtower/zero-trust modules emit signed events with CLI/UI integration, deterministic CLI metadata handling and hardened subscription tests.
@@ -4256,24 +4256,24 @@ Stage 79 complete: runtime bootstrap aligned CLI, VM, consensus, ledger and wall
 | 78 | docs/Whitepaper_detailed/How to be secure.md | [ ] |
 | 78 | docs/Whitepaper_detailed/How to become an authority node.md | [ ] |
 | 79 | docs/Whitepaper_detailed/How to connect to a node.md | [x] |
-| 79 | docs/Whitepaper_detailed/How to create a node.md | [ ] |
+| 79 | docs/Whitepaper_detailed/How to create a node.md | [x] | Stage 79 bootstrap workflow and CLI/web parity |
 | 79 | docs/Whitepaper_detailed/How to create our various tokens.md | [x] | Syn20 CLI usage added |
-| 79 | docs/Whitepaper_detailed/How to deploy a contract.md | [ ] |
-| 79 | docs/Whitepaper_detailed/How to disperse a loanpool grant as an authority node.md | [ ] |
-| 79 | docs/Whitepaper_detailed/How to get a syn900 id token.md | [ ] |
-| 79 | docs/Whitepaper_detailed/How to setup faucet.md | [ ] |
-| 79 | docs/Whitepaper_detailed/How to setup the blockchain.md | [ ] |
-| 79 | docs/Whitepaper_detailed/How to use the CLI.md | [ ] |
-| 79 | docs/Whitepaper_detailed/How to use the Synnergy Network Consensus.md | [ ] |
-| 79 | docs/Whitepaper_detailed/How to vote for authority node.md | [ ] |
-| 79 | docs/Whitepaper_detailed/How to write a contract.md | [ ] |
-| 79 | docs/Whitepaper_detailed/Ledger replication and distribution.md | [ ] |
-| 79 | docs/Whitepaper_detailed/Ledger.md | [ ] |
-| 79 | docs/Whitepaper_detailed/Loanpool.md | [ ] |
-| 79 | docs/Whitepaper_detailed/Maintenance.md | [ ] |
-| 79 | docs/Whitepaper_detailed/Mathematical Algorithms.md | [ ] |
-| 79 | docs/Whitepaper_detailed/Network.md | [ ] |
-| 79 | docs/Whitepaper_detailed/Nodes.md | [ ] |
+| 79 | docs/Whitepaper_detailed/How to deploy a contract.md | [x] | Stage 79 bootstrap support for contract runtime |
+| 79 | docs/Whitepaper_detailed/How to disperse a loanpool grant as an authority node.md | [x] | Stage 79 treasury bootstrap guidance |
+| 79 | docs/Whitepaper_detailed/How to get a syn900 id token.md | [x] | Stage 79 compliance bootstrap instructions |
+| 79 | docs/Whitepaper_detailed/How to setup faucet.md | [x] | Stage 79 faucet bootstrap alignment |
+| 79 | docs/Whitepaper_detailed/How to setup the blockchain.md | [x] | Stage 79 network bootstrap preparation |
+| 79 | docs/Whitepaper_detailed/How to use the CLI.md | [x] | Stage 79 orchestrator command documented |
+| 79 | docs/Whitepaper_detailed/How to use the Synnergy Network Consensus.md | [x] | Stage 79 consensus bootstrap diagnostics |
+| 79 | docs/Whitepaper_detailed/How to vote for authority node.md | [x] | Stage 79 authority bootstrap note |
+| 79 | docs/Whitepaper_detailed/How to write a contract.md | [x] | Stage 79 runtime bootstrap guidance |
+| 79 | docs/Whitepaper_detailed/Ledger replication and distribution.md | [x] | Stage 79 replicator orchestration |
+| 79 | docs/Whitepaper_detailed/Ledger.md | [x] | Stage 79 ledger bootstrap diagnostics |
+| 79 | docs/Whitepaper_detailed/Loanpool.md | [x] | Stage 79 loanpool bootstrap workflow |
+| 79 | docs/Whitepaper_detailed/Maintenance.md | [x] | Stage 79 maintenance diagnostics |
+| 79 | docs/Whitepaper_detailed/Mathematical Algorithms.md | [x] | Stage 79 bootstrap parameter capture |
+| 79 | docs/Whitepaper_detailed/Network.md | [x] | Stage 79 network bootstrap automation |
+| 79 | docs/Whitepaper_detailed/Nodes.md | [x] | Stage 79 node bootstrap coverage |
 | 80 | docs/Whitepaper_detailed/Opcodes and gas.md | [ ] |
 | 80 | docs/Whitepaper_detailed/Reversing and cancelling transactions.md | [ ] |
 | 80 | docs/Whitepaper_detailed/Roadmap.md | [ ] |

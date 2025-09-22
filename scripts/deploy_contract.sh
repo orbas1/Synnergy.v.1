@@ -39,6 +39,10 @@ load_env_file "${SYN_ENV_FILE:-}"
 parse_common_flags "$@"
 set -- "${POSITIONAL_ARGS[@]}"
 
+if [[ -z "${SYN_CLI_BIN:-}" && -n "${BIN_PATH:-}" ]]; then
+  SYN_CLI_BIN="$BIN_PATH"
+fi
+
 WASM=""
 RIC=""
 OWNER=""
@@ -68,6 +72,11 @@ while [[ $# -gt 0 ]]; do
       shift 2
       ;;
     *)
+      if [[ -z "$WASM" && "$1" != -* ]]; then
+        WASM="$1"
+        shift
+        continue
+      fi
       log_error "Unknown argument: $1"
       usage
       exit 1
@@ -82,7 +91,7 @@ if [[ -z "$WASM" ]]; then
 fi
 
 if [[ ! -f "$WASM" ]]; then
-  log_error "WASM artifact not found: $WASM"
+  log_error "contract file not found: $WASM"
   exit 1
 fi
 
@@ -93,6 +102,11 @@ fi
 
 if ! [[ "$GAS" =~ ^[0-9]+$ ]]; then
   log_error "Gas value must be numeric"
+  exit 1
+fi
+
+if [[ -n "${SYN_CLI_BIN:-}" && ! -x "$SYN_CLI_BIN" ]]; then
+  log_error "binary not found: $SYN_CLI_BIN"
   exit 1
 fi
 

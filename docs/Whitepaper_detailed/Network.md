@@ -3,6 +3,8 @@
 ## Overview
 Neto Solaris operates the Synnergy Network, an extensible blockchain infrastructure where heterogeneous nodes exchange data through a biometric‑aware communication layer. The network service manages peer discovery, transaction routing and a lightweight pub‑sub bus while providing life‑cycle controls to other components and the command line.
 
+Stage 79 integrates orchestration so network services can be bootstrapped with replication, authority registration and consensus diagnostics in a single command. Executing `synnergy orchestrator bootstrap --node-id control-plane --consensus Synnergy-PBFT --replicate` runs `core.EnterpriseOrchestrator.BootstrapNetwork`, emitting a signed bootstrap signature and reporting VM status, consensus networks, authority counts and replication activity for operational review.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】 Startup synchronises Stage 79 gas metadata, and the control panel mirrors this workflow so CLI automation, dashboards and browser tooling remain aligned on pricing and readiness across maintenance windows or scaling events.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】 Bootstrap tests spanning unit, situational, stress, functional and real-world cases ensure the network retains strong encryption, privacy and regulatory compliance under enterprise workloads.【F:core/enterprise_orchestrator_test.go†L73-L178】
+
 ## Architecture
 The `Network` struct coordinates standard nodes and relay nodes. It maintains a broadcast queue, biometric authentication service and subscriber registry, launching a background processing loop on creation so that transaction propagation begins immediately.
 

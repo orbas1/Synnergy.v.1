@@ -18,6 +18,9 @@ In addition to the Go implementation, the faucet model is available in Rust and 
 
 The `synnergy` command-line interface exposes subcommands to manage the faucet. Initialisation sets the starting balance, the per-request amount, and the cooldown duration. Subsequent subcommands allow token requests, balance inspection, and configuration updates【F:cli/faucet.go†L14-L83】. For repetitive development tasks, the repository bundles a helper script that wraps the request command and provides basic argument validation【F:cmd/scripts/faucet_fund.sh†L1-L7】.
 
+### Stage 79 Bootstrap Alignment
+Before funding the faucet, operators can execute `synnergy orchestrator bootstrap --node-id faucet-gateway --authority faucet=operator` to invoke `core.EnterpriseOrchestrator.BootstrapNetwork`. The workflow signs the bootstrap request, registers the faucet authority, starts ledger replication and returns diagnostics confirming consensus connectivity so token requests remain resilient under load.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】【F:core/enterprise_orchestrator_test.go†L73-L178】 Startup synchronises Stage 79 gas costs alongside Stage 78 and the function web mirrors the same bootstrap flow, ensuring CLI scripts, automated pipelines and browser-based operators observe identical pricing and availability guarantees.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】
+
 ### Programmatic Usage
 
 Services may embed the faucet directly using the Go APIs. A faucet instance tracks balance, dispense policy and last request time in a mutex-protected structure:

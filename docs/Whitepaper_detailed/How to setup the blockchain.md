@@ -21,6 +21,9 @@ The Synnergy framework is a modular, high‑performance blockchain built in Go. 
 
 Execute `scripts/install_dependencies.sh` to bootstrap these packages on a clean system.
 
+### Stage 79 Bootstrap Preparation
+Before compiling or joining peers, issue `synnergy orchestrator bootstrap --node-id control-plane --consensus Synnergy-PBFT --governance SYN-Gov --authority bootstrap=operator`. The command calls `core.EnterpriseOrchestrator.BootstrapNetwork`, producing a signed bootstrap signature, registering authority roles, starting ledger replication and confirming consensus connectivity so subsequent provisioning steps inherit a consistent baseline across CLI, automation and browser tooling.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】 Startup synchronises Stage 79 gas costs alongside Stage 78 values for accurate budgeting and the orchestrator test suite validates unit, situational, stress, functional and real-world bootstrap scenarios to maintain resilience, encryption strength and regulatory compliance during network bring-up.【F:cmd/synnergy/main.go†L63-L106】【F:core/enterprise_orchestrator_test.go†L73-L178】
+
 ## 2. Obtain the Source
 ```bash
 git clone https://example.com/Synnergy.v.1.git

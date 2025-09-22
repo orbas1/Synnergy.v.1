@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"encoding/hex"
 	"fmt"
 	"sort"
 	"sync"
@@ -13,6 +14,35 @@ import (
 
 // EnterpriseOption configures the enterprise orchestrator at construction time.
 type EnterpriseOption func(*EnterpriseOrchestrator)
+
+// EnterpriseBootstrapConfig captures orchestration preferences for Stage 79
+// enterprise bootstrap flows. Operators can declare consensus and governance
+// profiles, request ledger replication and provide additional authority nodes
+// that must be registered atomically with the orchestrator wallet.
+type EnterpriseBootstrapConfig struct {
+	NodeID            string
+	Address           string
+	ConsensusProfile  string
+	GovernanceProfile string
+	EnableReplication bool
+	EnableRegulator   bool
+	Authorities       map[string]string
+}
+
+// EnterpriseBootstrapResult summarises the outcome of a bootstrap invocation.
+// It includes diagnostics so CLI, web and automation clients can surface a
+// consistent view of ledger height, consensus reachability and authority
+// membership immediately after orchestration.
+type EnterpriseBootstrapResult struct {
+	NodeID             string                `json:"nodeId"`
+	Address            string                `json:"address"`
+	ConsensusNetworkID int                   `json:"consensusNetworkId"`
+	AuthorityNodes     []string              `json:"authorityNodes"`
+	ReplicationEnabled bool                  `json:"replicationEnabled"`
+	WalletAddress      string                `json:"walletAddress"`
+	BootstrapSignature string                `json:"bootstrapSignature"`
+	Diagnostics        EnterpriseDiagnostics `json:"diagnostics"`
+}
 
 // WithGasSchedule allows callers to augment the default opcode gas schedule
 // enforced by the orchestrator. Costs provided here are merged with the
@@ -44,6 +74,8 @@ type EnterpriseDiagnostics struct {
 	AuthorityNodes    int               `json:"authorityNodes"`
 	WalletAddress     string            `json:"walletAddress"`
 	LedgerHeight      int               `json:"ledgerHeight"`
+	BootstrapNodes    int               `json:"bootstrapNodes"`
+	ReplicationActive bool              `json:"replicationActive"`
 	GasCoverage       map[string]uint64 `json:"gasCoverage"`
 	MissingOpcodes    []string          `json:"missingOpcodes"`
 	InsertedOpcodes   []string          `json:"insertedOpcodes,omitempty"`
@@ -58,6 +90,8 @@ type EnterpriseOrchestrator struct {
 	wallet            *Wallet
 	registry          *AuthorityNodeRegistry
 	ledger            *Ledger
+	replicators       []*Replicator
+	nodes             map[string]*Node
 	gas               map[string]uint64
 	last              EnterpriseDiagnostics
 	pendingInsertions []string
@@ -83,11 +117,13 @@ func NewEnterpriseOrchestrator(ctx context.Context, opts ...EnterpriseOption) (*
 	}
 
 	orchestrator := &EnterpriseOrchestrator{
-		vm:        vm,
-		consensus: NewConsensusNetworkManager(),
-		wallet:    wallet,
-		registry:  NewAuthorityNodeRegistry(),
-		ledger:    NewLedger(),
+		vm:          vm,
+		consensus:   NewConsensusNetworkManager(),
+		wallet:      wallet,
+		registry:    NewAuthorityNodeRegistry(),
+		ledger:      NewLedger(),
+		replicators: []*Replicator{},
+		nodes:       make(map[string]*Node),
 		gas: map[string]uint64{
 			"EnterpriseBootstrap":      120,
 			"EnterpriseConsensusSync":  95,
@@ -167,6 +203,114 @@ func (o *EnterpriseOrchestrator) RegisterAuthorityNode(ctx context.Context, addr
 	return node, nil
 }
 
+// BootstrapNetwork provisions a new enterprise-ready node, wiring it into the
+// consensus mesh, registering authorities and enabling ledger replication in a
+// single transaction. The orchestrator wallet signs the bootstrap to provide a
+// verifiable audit trail for governance and regulatory systems.
+func (o *EnterpriseOrchestrator) BootstrapNetwork(ctx context.Context, cfg EnterpriseBootstrapConfig) (EnterpriseBootstrapResult, error) {
+	if cfg.NodeID == "" {
+		return EnterpriseBootstrapResult{}, fmt.Errorf("bootstrap: node id required")
+	}
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if cfg.Address == "" {
+		cfg.Address = cfg.NodeID
+	}
+
+	_, span := telemetry.Tracer("core.enterprise").Start(ctx, "EnterpriseOrchestrator.BootstrapNetwork")
+	defer span.End()
+
+	if !o.vm.Status() {
+		if err := o.vm.Start(); err != nil {
+			span.RecordError(err)
+			return EnterpriseBootstrapResult{}, fmt.Errorf("start vm: %w", err)
+		}
+	}
+
+	node := NewNode(cfg.NodeID, cfg.Address, o.ledger)
+	if cfg.EnableRegulator {
+		regulator := NewRegulatoryNode("bootstrap-regulator", NewRegulatoryManager())
+		node.Consensus.SetRegulatoryNode(regulator)
+	}
+
+	var replicator *Replicator
+	if cfg.EnableReplication {
+		replicator = NewReplicator(o.ledger)
+		replicator.Start()
+		if _, hash := o.ledger.Head(); hash != "" {
+			replicator.ReplicateBlock(hash)
+		} else {
+			replicator.ReplicateBlock("genesis")
+		}
+		o.mu.Lock()
+		o.replicators = append(o.replicators, replicator)
+		o.mu.Unlock()
+	}
+
+	source := cfg.ConsensusProfile
+	if source == "" {
+		source = "Synnergy-PBFT"
+	}
+	target := cfg.GovernanceProfile
+	if target == "" {
+		target = "Synnergy-PBFT"
+	}
+	consensusID, err := o.consensus.RegisterNetwork(source, target, o.wallet.Address)
+	if err != nil {
+		span.RecordError(err)
+		return EnterpriseBootstrapResult{}, err
+	}
+
+	authorityMap := make(map[string]string, len(cfg.Authorities)+1)
+	authorityMap[o.wallet.Address] = "orchestrator"
+	for addr, role := range cfg.Authorities {
+		if addr == "" {
+			continue
+		}
+		authorityMap[addr] = role
+	}
+
+	registered := make([]string, 0, len(authorityMap))
+	for addr, role := range authorityMap {
+		if addr == o.wallet.Address {
+			registered = append(registered, addr)
+			continue
+		}
+		if !o.registry.IsAuthorityNode(addr) {
+			if _, err := o.registry.Register(addr, role); err != nil {
+				span.RecordError(err)
+				return EnterpriseBootstrapResult{}, err
+			}
+		}
+		registered = append(registered, addr)
+	}
+	sort.Strings(registered)
+
+	o.mu.Lock()
+	o.nodes[cfg.NodeID] = node
+	o.mu.Unlock()
+
+	signature, err := o.wallet.SignMessage([]byte("bootstrap:" + cfg.NodeID + ":" + cfg.Address))
+	if err != nil {
+		span.RecordError(err)
+		return EnterpriseBootstrapResult{}, fmt.Errorf("sign bootstrap: %w", err)
+	}
+
+	diag := o.refreshDiagnostics(ctx)
+	result := EnterpriseBootstrapResult{
+		NodeID:             cfg.NodeID,
+		Address:            cfg.Address,
+		ConsensusNetworkID: consensusID,
+		AuthorityNodes:     registered,
+		ReplicationEnabled: cfg.EnableReplication && replicator != nil,
+		WalletAddress:      o.wallet.Address,
+		BootstrapSignature: hex.EncodeToString(signature),
+		Diagnostics:        diag,
+	}
+	return result, nil
+}
+
 // SyncGasSchedule merges schedule with the orchestrator baseline and ensures the
 // global gas table is updated. Diagnostics are returned so callers can verify
 // pricing as part of automation pipelines.
@@ -209,6 +353,17 @@ func (o *EnterpriseOrchestrator) refreshDiagnostics(ctx context.Context) Enterpr
 		AuthorityNodes:    len(o.registry.List()),
 		WalletAddress:     o.wallet.Address,
 		GasCoverage:       make(map[string]uint64, len(o.gas)),
+	}
+	o.mu.RLock()
+	diag.BootstrapNodes = len(o.nodes)
+	replicators := make([]*Replicator, len(o.replicators))
+	copy(replicators, o.replicators)
+	o.mu.RUnlock()
+	for _, rep := range replicators {
+		if rep != nil && rep.Status() {
+			diag.ReplicationActive = true
+			break
+		}
 	}
 	height, _ := o.ledger.Head()
 	diag.LedgerHeight = height

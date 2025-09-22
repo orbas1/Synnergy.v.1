@@ -85,6 +85,9 @@ synnergy authority is node1
 ```
 Financial institutions can also register via banking commands before linking their nodes to the network【F:docs/Whitepaper_detailed/How to use the CLI.md†L14-L18】.
 
+### Stage 79 Bootstrap Workflow
+Stage 79 introduces an automated bootstrap flow that signs node provisioning, enables ledger replication and registers governance roles in a single transaction. Invoke `synnergy orchestrator bootstrap --node-id node79 --address 10.1.0.5:30303 --authority treasury=governor` to call `core.EnterpriseOrchestrator.BootstrapNetwork`, which seals the request with the orchestrator wallet, attaches regulatory consensus checks and starts replication so the node is ready for high-throughput workloads.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】【F:core/enterprise_orchestrator_test.go†L73-L178】 The startup routine synchronises Stage 79 gas costs alongside Stage 78 values, ensuring dashboards and automation can account for bootstrap fees, and the control panel exposes the same workflow through its enterprise bootstrap form for parity between CLI and web operations.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】
+
 ## Configuration and Deployment
 For containerised environments, customise the provided Kubernetes manifest. It exposes both peer‑to‑peer and RPC interfaces and mounts a configuration file into the container【F:deploy/k8s/node.yaml†L1-L54】. Apply the manifest with `kubectl apply -f deploy/k8s/node.yaml` after adjusting resource limits and environment variables to your infrastructure.
 

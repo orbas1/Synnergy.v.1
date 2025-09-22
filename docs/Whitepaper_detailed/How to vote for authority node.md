@@ -24,6 +24,8 @@ weight‑based electorate sampler for committee formation【F:core/authority_nod
 3. **Wallet Access** – voters and candidates require funded addresses capable of
    signing governance actions.
 
+Stage 79 bootstrap automation lets governance teams enrol authority roles and ledger replication ahead of ballots. Execute `synnergy orchestrator bootstrap --authority council=governor --replicate` to call `core.EnterpriseOrchestrator.BootstrapNetwork`, which signs the bootstrap, registers the authority mapping, enables replication and reports diagnostics so voters can confirm quorum and infrastructure readiness before casting votes.【F:cli/orchestrator.go†L58-L117】【F:core/enterprise_orchestrator.go†L71-L209】【F:core/enterprise_orchestrator_test.go†L73-L178】 Startup also synchronises Stage 79 gas costs with documentation, and the control panel offers the same workflow to keep browser operators and CLI automation aligned on pricing and state.【F:cmd/synnergy/main.go†L63-L106】【F:web/pages/index.js†L1-L214】【F:web/pages/api/bootstrap.js†L1-L45】
+
 ## 3. Voting on Applications
 During the application phase, votes determine whether a candidate is admitted to
 the registry.
