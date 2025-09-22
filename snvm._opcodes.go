@@ -1283,11 +1283,18 @@ var SNVMOpcodes = []SNVMOpcode{
 	{"core_bank_nodes_index_Get", 0x0004F3},
 	{"core_bank_nodes_index_Remove", 0x0004F4},
 	{"core_bank_nodes_index_List", 0x0004F5},
-	{"core_enterprise_orchestrator_NewEnterpriseOrchestrator", 0x0004F6},
-	{"core_enterprise_orchestrator_Diagnostics", 0x0004F7},
-	{"core_enterprise_orchestrator_RegisterConsensusNetwork", 0x0004F8},
-	{"core_enterprise_orchestrator_RegisterAuthorityNode", 0x0004F9},
-	{"core_enterprise_orchestrator_SyncGasSchedule", 0x0004FA},
+        {"core_enterprise_orchestrator_NewEnterpriseOrchestrator", 0x0004F6},
+        {"core_enterprise_orchestrator_Diagnostics", 0x0004F7},
+        {"core_enterprise_orchestrator_RegisterConsensusNetwork", 0x0004F8},
+        {"core_enterprise_orchestrator_RegisterAuthorityNode", 0x0004F9},
+        {"core_enterprise_orchestrator_SyncGasSchedule", 0x0004FA},
+        {"core_enterprise_special_node_NewEnterpriseSpecialNode", 0x0004FB},
+        {"core_enterprise_special_node_AttachPlugin", 0x0004FC},
+        {"core_enterprise_special_node_DetachPlugin", 0x0004FD},
+        {"core_enterprise_special_node_Snapshot", 0x0004FE},
+        {"core_enterprise_special_node_BroadcastTransaction", 0x0004FF},
+        {"core_enterprise_special_node_LedgerBalance", 0x000500},
+        {"core_enterprise_special_node_UpdatePluginLabels", 0x000501},
 }
 
 // SNVMOpcodeByName returns the opcode for a given function identifier.

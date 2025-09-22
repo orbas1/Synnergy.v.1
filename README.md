@@ -48,7 +48,12 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Resource-managed CLI** – connection pool commands can release individual peers and `contractopcodes` reports gas costs for contract operations.
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
+
 - **Enterprise orchestrator** – Stage 78 introduces `core.NewEnterpriseOrchestrator` and the `synnergy orchestrator` CLI to unify VM readiness, consensus relayers, wallet bootstrap, authority registry state and gas documentation with telemetry for CLI and web dashboards. Stage 82 adds the `synnergy orchestrator bootstrap` command, shared orchestrator injection for CLI/web tooling, richer diagnostics (wallet seal, relayer count, authority roles, gas sync time) and execution hooks that log opcode failures for fault-tolerant recovery.
+=======
+- **Enterprise orchestrator** – Stage 78 introduces `core.NewEnterpriseOrchestrator` and the `synnergy orchestrator` CLI to unify VM readiness, consensus relayers, wallet bootstrap, authority registry state and gas documentation with telemetry for CLI and web dashboards.
+- **Enterprise special node** – Stage 79 bundles heterogeneous infrastructure via `core.NewEnterpriseSpecialNode`, exposing `synnergy enterprise-special` commands, deterministic Stage 79 gas schedule entries and matching opcodes for attach, broadcast, snapshot and ledger aggregation flows.
+
 - **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
 - **Resilient node primitives** – forensic nodes prune over-capacity logs, full node modes are mutex-protected, gateway endpoints require a running node, and failover managers can remove stale peers.
 - **Thread-safe mempools and plasma bridge safeguards** – node mempools are mutex-protected for concurrent submissions and Plasma bridge operations surface explicit paused errors.
@@ -91,6 +96,7 @@ pkg/          Reusable libraries and experimental modules
 
 ## Bootstrap Sequence
 `cmd/synnergy/main.go` orchestrates start-up:
+
 1. Load environment variables with `gotenv.Load()` and create an interrupt-aware context via `signal.NotifyContext`.
 2. Initialise a tracer provider (`otel.SetTracerProvider`) so all modules can emit spans safely.
 3. Load configuration with `config.Load` and validate log destinations, formats and levels via `configureLogging`.
@@ -99,6 +105,20 @@ pkg/          Reusable libraries and experimental modules
 6. Execute `registerEnterpriseGasMetadata()` to ensure the Stage 78 enterprise schedule is enforced and that every documented opcode has descriptive metadata for the CLI and web dashboards.
 7. Instantiate `core.NewEnterpriseOrchestrator`, run `EnterpriseBootstrap` to verify VM, consensus, wallet, ledger and authority readiness, then inject the orchestrator into the CLI for reuse by the JavaScript control panel.
 8. Finally, invoke `cli.Execute()` to dispatch Cobra commands.
+=======
+1. Load environment variables with `gotenv.Load()`.
+2. Resolve configuration path from `SYN_CONFIG` or `config.DefaultConfigPath`.
+3. Parse YAML via `config.Load` and configure logging.
+4. Initialise tracer provider (`otel.SetTracerProvider`).
+5. Warm caches by calling `synnergy.LoadGasTable()`, synchronising the Stage 78 enterprise schedule with `synnergy.EnsureGasSchedule()` and registering contextual metadata with `synnergy.RegisterGasMetadata()` for core operations like `MineBlock`, `OpenConnection`, `MintNFT` and the enterprise orchestrator opcodes. Stage 79 extends this bootstrap to the enterprise special node gas schedule so combined-node attach, broadcast, snapshot and ledger queries remain deterministic across the CLI and GUI.
+6. Pre-load modules used by the CLI:
+   - `core.NewNetwork` for pub‑sub networking
+   - `core.NewContractRegistry` backed by `core.NewSimpleVM`
+   - DAO managers (`core.NewDAOManager`, `core.NewProposalManager`, …)
+   - Wallet, watchtower and warfare nodes (`core.NewWallet`, `core.NewWatchtowerNode`, `core.NewWarfareNode`)
+   - Token constructors in `internal/tokens` (`tokens.NewSYN223Token`, etc.)
+7. Finally, invoke `cli.Execute()` to dispatch Cobra commands.
+
 
 Enterprise deployments rely on the defensive modules initialised above:
 
@@ -252,6 +272,17 @@ Stress, situational and real-world tests under `core/enterprise_orchestrator_tes
 and `cli/orchestrator_test.go` assert fault tolerance, security controls and
 regulatory alignment, while VM execution hooks log opcode failures with gas
 context to aid debugging during high-throughput workloads.
+
+## Stage 79 Enterprise Special Node
+Stage 79 introduces the enterprise special node – a combined control surface that plugs multiple node roles into a single enterprise endpoint. The `core.NewEnterpriseSpecialNode` constructor ensures the Stage 79 gas schedule is synchronised and exposes helpers such as `EnterpriseSpecialAttach`, `EnterpriseSpecialBroadcast`, `EnterpriseSpecialSnapshot` and `EnterpriseSpecialLedger` so VM opcodes, the CLI and the GUI reference the same deterministic operations.
+
+```bash
+./synnergy enterprise-special attach --id node-a --role consensus --seed-balance 500
+./synnergy enterprise-special status --json
+./synnergy enterprise-special broadcast --from node-a --to treasury --amount 25 --fee 1
+```
+
+The `synnergy enterprise-special` CLI supports attaching synthetic or external plugins, broadcasting transactions, inspecting combined snapshots, streaming lifecycle events and updating plugin metadata. Tests under `core/enterprise_special_node_test.go` and `cli/enterprise_special_node_test.go` validate snapshot aggregation, broadcast fan-out, event replay and CLI registration. Gas and opcode references are documented in [`docs/reference/gas_table_list.md`](docs/reference/gas_table_list.md) and [`docs/reference/opcodes_list.md`](docs/reference/opcodes_list.md), keeping enterprise automation aligned with runtime behaviour.
 
 
 ## Production Deployment

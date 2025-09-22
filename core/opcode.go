@@ -1625,11 +1625,17 @@ var catalogue = []struct {
 	{"EnvNode_Stop", 0x1E0005},
 	{"EnvNode_ListSensors", 0x1E0006},
 	// Archival Witness Node (0x1F)
-	{"NewArchivalWitnessNode", 0x1F0001},
-	{"Witness_NotarizeTx", 0x1F0002},
-	{"Witness_NotarizeBlock", 0x1F0003},
-	{"Witness_GetTx", 0x1F0004},
-	{"Witness_GetBlock", 0x1F0005},
+        {"NewArchivalWitnessNode", 0x1F0001},
+        {"Witness_NotarizeTx", 0x1F0002},
+        {"Witness_NotarizeBlock", 0x1F0003},
+        {"Witness_GetTx", 0x1F0004},
+        {"Witness_GetBlock", 0x1F0005},
+        // Enterprise Special Node (0x21)
+        {"EnterpriseSpecialAttach", 0x210001},
+        {"EnterpriseSpecialDetach", 0x210002},
+        {"EnterpriseSpecialBroadcast", 0x210003},
+        {"EnterpriseSpecialSnapshot", 0x210004},
+        {"EnterpriseSpecialLedger", 0x210005},
 }
 
 // init normalises the opcode catalogue, assigning sequential identifiers per

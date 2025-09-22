@@ -85,8 +85,8 @@ func TestDataResourceImportAndInfo(t *testing.T) {
 		t.Fatalf("unexpected detail: %#v", detail)
 	}
 
-	prunedManifest := filepath.Join(dataDir, "resources_prune.json")
-	if err := os.WriteFile(prunedManifest, []byte(`[{"key":"asset"}]`), 0o600); err != nil {
+        prunedManifest := filepath.Join(dataDir, "resources_prune.json")
+        if err := os.WriteFile(prunedManifest, []byte(`[{"key":"asset","path":"asset.txt"}]`), 0o600); err != nil {
 		t.Fatalf("write prune manifest: %v", err)
 	}
 	if _, err := execCommand("data", "resource", "import", "--manifest", prunedManifest, "--prune"); err != nil {

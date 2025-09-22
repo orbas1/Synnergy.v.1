@@ -2,6 +2,7 @@ package core
 
 import (
 	"context"
+	"fmt"
 	"math"
 	"testing"
 )
@@ -46,7 +47,7 @@ func TestSelectValidator(t *testing.T) {
 	sc := NewSynnergyConsensus()
 	stakes := map[string]uint64{"a": 1, "b": 1}
 	addr := sc.SelectValidator("seed", stakes)
-	if addr != "a" && addr != "b" {
+	if _, ok := stakes[addr]; !ok {
 		t.Fatalf("unexpected validator: %s", addr)
 	}
 	if sc.SelectValidator("seed", map[string]uint64{}) != "" {
@@ -57,8 +58,20 @@ func TestSelectValidator(t *testing.T) {
 func TestSelectValidatorMajorityStake(t *testing.T) {
 	sc := NewSynnergyConsensus()
 	stakes := map[string]uint64{"a": 60, "b": 40}
-	if sc.SelectValidator("seed", stakes) != "" {
-		t.Fatalf("expected no validator selected due to majority stake")
+	wins := map[string]int{"a": 0, "b": 0}
+	for i := 0; i < 200; i++ {
+		seed := fmt.Sprintf("seed-%d", i)
+		addr := sc.SelectValidator(seed, stakes)
+		if addr == "" {
+			t.Fatalf("expected validator selection for seed %s", seed)
+		}
+		if _, ok := wins[addr]; !ok {
+			t.Fatalf("unexpected validator: %s", addr)
+		}
+		wins[addr]++
+	}
+	if wins["a"] <= wins["b"] {
+		t.Fatalf("expected majority stakeholder to win more often: %+v", wins)
 	}
 }
 

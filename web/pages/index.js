@@ -10,6 +10,9 @@ export default function Home() {
   const [orchestrator, setOrchestrator] = useState(null);
   const [orchError, setOrchError] = useState("");
   const [orchLoading, setOrchLoading] = useState(true);
+  const [enterprise, setEnterprise] = useState(null);
+  const [enterpriseError, setEnterpriseError] = useState("");
+  const [enterpriseLoading, setEnterpriseLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/commands")
@@ -19,6 +22,7 @@ export default function Home() {
 
   useEffect(() => {
     refreshOrchestrator();
+    refreshEnterprise();
   }, []);
 
   useEffect(() => {
@@ -81,6 +85,26 @@ export default function Home() {
       .finally(() => setOrchLoading(false));
   };
 
+  const refreshEnterprise = () => {
+    setEnterpriseLoading(true);
+    fetch("/api/enterprise-special")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to load enterprise special node status");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setEnterprise(data);
+        setEnterpriseError("");
+      })
+      .catch((err) => {
+        setEnterprise(null);
+        setEnterpriseError(err.message);
+      })
+      .finally(() => setEnterpriseLoading(false));
+  };
+
   return (
     <main style={{ padding: 20 }}>
       <h1>Synnergy Control Panel</h1>
@@ -139,6 +163,69 @@ export default function Home() {
               </p>
             ) : (
               <p>Opcode documentation is complete.</p>
+            )}
+          </div>
+        )}
+      </section>
+      <section style={{ marginTop: 20, marginBottom: 20 }}>
+        <h2>Enterprise Special Node Status</h2>
+        <button onClick={refreshEnterprise} disabled={enterpriseLoading}>
+          {enterpriseLoading ? "Refreshing..." : "Refresh"}
+        </button>
+        {enterpriseError && <p style={{ color: "red" }}>{enterpriseError}</p>}
+        {enterprise && (
+          <div style={{ marginTop: 10 }}>
+            <p>
+              <strong>Timestamp:</strong> {enterprise.timestamp}
+            </p>
+            <p>
+              <strong>Plugins:</strong> {enterprise.nodeCount} (total mempool {""}
+              {enterprise.totalMempool}, validators {enterprise.totalValidators})
+            </p>
+            <p>
+              <strong>Highest block height:</strong> {enterprise.highestBlockHeight}
+            </p>
+            {enterprise.roles && Object.keys(enterprise.roles).length > 0 && (
+              <p>
+                <strong>Roles:</strong>{" "}
+                {Object.entries(enterprise.roles)
+                  .map(([role, count]) => `${role}: ${count}`)
+                  .join(", ")}
+              </p>
+            )}
+            {Array.isArray(enterprise.plugins) && enterprise.plugins.length > 0 ? (
+              <table style={{ width: "100%", marginTop: 10 }}>
+                <thead>
+                  <tr>
+                    <th align="left">ID</th>
+                    <th align="left">Role</th>
+                    <th align="left">Mempool</th>
+                    <th align="left">Validators</th>
+                    <th align="left">Height</th>
+                    <th align="left">Labels</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {enterprise.plugins.map((plugin) => (
+                    <tr key={plugin.id}>
+                      <td>{plugin.id}</td>
+                      <td>{plugin.role}</td>
+                      <td>{plugin.metrics?.mempoolSize ?? 0}</td>
+                      <td>{plugin.metrics?.validatorCount ?? 0}</td>
+                      <td>{plugin.metrics?.blockHeight ?? 0}</td>
+                      <td>
+                        {plugin.labels
+                          ? Object.entries(plugin.labels)
+                              .map(([k, v]) => `${k}=${v}`)
+                              .join(", ")
+                          : ""}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <p>No plugins registered.</p>
             )}
           </div>
         )}

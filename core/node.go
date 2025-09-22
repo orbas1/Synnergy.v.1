@@ -70,7 +70,8 @@ func (n *Node) MineBlock() *Block {
 	if len(n.Blockchain) > 0 {
 		prevHash = n.Blockchain[len(n.Blockchain)-1].Hash
 	}
-	validator := n.Consensus.SelectValidator(prevHash, n.eligibleStakes())
+	eligible := n.eligibleStakes()
+	validator := n.Consensus.SelectValidator(prevHash, eligible)
 	if validator == "" {
 		return nil
 	}
@@ -81,7 +82,14 @@ func (n *Node) MineBlock() *Block {
 	n.Mempool = nil
 	block := NewBlock([]*SubBlock{sb}, prevHash)
 	n.Consensus.MineBlock(block, 3)
-	n.Consensus.FinalizeBlock(block, map[string]bool{validator: true}, n.Validators, 1)
+	votes := make(map[string]bool, len(eligible))
+	for addr := range eligible {
+		votes[addr] = true
+	}
+	if len(votes) == 0 {
+		votes[validator] = true
+	}
+	n.Consensus.FinalizeBlock(block, votes, n.Validators, 1)
 	var totalFees uint64
 	for _, tx := range sb.Transactions {
 		totalFees += tx.Fee
