@@ -75,10 +75,24 @@ func main() {
 		"EnterpriseNodeAudit":      75,
 		"EnterpriseAuthorityElect": 80,
 	}
-	if inserted, err := synn.EnsureGasSchedule(stage78Gas); err != nil {
+	stage77Gas := map[string]uint64{
+		"Stage77NodeFailover":    110,
+		"Stage77WalletSealing":   65,
+		"Stage77ConsensusProbe":  55,
+		"Stage77VMSandboxReset":  85,
+		"Stage77GovernancePulse": 70,
+	}
+	merged := make(map[string]uint64, len(stage78Gas)+len(stage77Gas))
+	for k, v := range stage78Gas {
+		merged[k] = v
+	}
+	for k, v := range stage77Gas {
+		merged[k] = v
+	}
+	if inserted, err := synn.EnsureGasSchedule(merged); err != nil {
 		logrus.Fatalf("stage 78 gas sync failed: %v", err)
 	} else if len(inserted) > 0 {
-		logrus.Infof("registered %d stage 78 opcodes", len(inserted))
+		logrus.Infof("registered %d stage 77/78 opcodes", len(inserted))
 	}
 	register := func(category, description string, names ...string) {
 		for _, name := range names {
@@ -102,6 +116,7 @@ func main() {
 	register("monetary", "Stage 40 monetary policy queries", "BlockReward", "CirculatingSupply", "RemainingSupply", "InitialPrice", "AlphaFactor", "MinimumStake")
 	register("p2p", "Stage 67 Kademlia routing operations", "KademliaStore", "KademliaGet", "KademliaClosest", "KademliaDistance")
 	register("orchestrator", "Stage 78 enterprise orchestrator operations", "EnterpriseBootstrap", "EnterpriseConsensusSync", "EnterpriseWalletSeal", "EnterpriseNodeAudit", "EnterpriseAuthorityElect")
+	register("resilience", "Stage 77 high-availability workflows", "Stage77NodeFailover", "Stage77WalletSealing", "Stage77ConsensusProbe", "Stage77VMSandboxReset", "Stage77GovernancePulse")
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.

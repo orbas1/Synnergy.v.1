@@ -1,3 +1,22 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: synnergy-node
+  labels:
+    app: synnergy-node
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: synnergy-node-pdb
+  labels:
+    app: synnergy-node
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app: synnergy-node
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -13,45 +32,111 @@ spec:
     metadata:
       labels:
         app: synnergy-node
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9102"
+        prometheus.io/scrape: "true"
     spec:
+      serviceAccountName: synnergy-node
+      securityContext:
+        fsGroup: 1010
+      topologySpreadConstraints:
+      - maxSkew: 1
+        topologyKey: topology.kubernetes.io/zone
+        whenUnsatisfiable: DoNotSchedule
+        labelSelector:
+          matchLabels:
+            app: synnergy-node
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: synnergy-node
+              topologyKey: kubernetes.io/hostname
+      initContainers:
+      - name: wait-config
+        image: busybox:1.36
+        command: ["sh", "-c", "until [ -f /etc/synnergy/config.yaml ]; do echo 'waiting for config'; sleep 2; done"]
+        volumeMounts:
+        - name: config
+          mountPath: /etc/synnergy
       containers:
       - name: node
         image: synnergy/node:latest
         imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1010
+          runAsGroup: 1010
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
         ports:
         - containerPort: 30303
           name: p2p
         - containerPort: 8080
           name: rpc
+        - containerPort: 9102
+          name: metrics
         env:
         - name: SYN_CONFIG
           value: /etc/synnergy/config.yaml
+        - name: SYN_RESILIENCE_PROFILE
+          value: stage77-ha
         resources:
           requests:
-            cpu: "500m"
-            memory: "512Mi"
-          limits:
-            cpu: "1"
+            cpu: "750m"
             memory: "1Gi"
+          limits:
+            cpu: "2"
+            memory: "2Gi"
         readinessProbe:
           httpGet:
             path: /healthz
             port: 8080
           initialDelaySeconds: 10
           periodSeconds: 5
+          failureThreshold: 6
         livenessProbe:
           httpGet:
             path: /livez
             port: 8080
           initialDelaySeconds: 30
           periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /startupz
+            port: 8080
+          failureThreshold: 18
+          periodSeconds: 5
         volumeMounts:
         - name: config
           mountPath: /etc/synnergy
+        - name: ledger
+          mountPath: /var/lib/synnergy
+      - name: telemetry
+        image: otel/opentelemetry-collector:0.94.0
+        args:
+        - "--config=/conf/collector.yaml"
+        volumeMounts:
+        - name: otel-config
+          mountPath: /conf
+      - name: prom-exporter
+        image: prom/statsd-exporter:v0.26.0
+        args:
+        - "--web.listen-address=:9102"
       volumes:
       - name: config
         configMap:
           name: syn-node-config
+      - name: otel-config
+        configMap:
+          name: syn-node-otel
+      - name: ledger
+        persistentVolumeClaim:
+          claimName: syn-node-ledger
 ---
 apiVersion: v1
 kind: Service
@@ -69,3 +154,6 @@ spec:
   - name: rpc
     port: 8080
     targetPort: 8080
+  - name: metrics
+    port: 9102
+    targetPort: 9102

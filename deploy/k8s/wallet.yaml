@@ -1,3 +1,22 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: synnergy-wallet
+  labels:
+    app: synnergy-wallet
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: synnergy-wallet-pdb
+  labels:
+    app: synnergy-wallet
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: synnergy-wallet
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -5,7 +24,7 @@ metadata:
   labels:
     app: synnergy-wallet
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: synnergy-wallet
@@ -13,43 +32,95 @@ spec:
     metadata:
       labels:
         app: synnergy-wallet
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "9103"
+        prometheus.io/scrape: "true"
     spec:
+      serviceAccountName: synnergy-wallet
+      securityContext:
+        fsGroup: 2020
       containers:
       - name: wallet
         image: synnergy/walletserver:latest
         imagePullPolicy: IfNotPresent
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 2020
+          runAsGroup: 2020
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
         ports:
         - containerPort: 8081
           name: http
+        - containerPort: 9103
+          name: metrics
         env:
         - name: SYN_CONFIG
           value: /etc/synnergy/config.yaml
+        - name: SYN_WALLET_HSM_CONFIG
+          value: /etc/synnergy/hsm.yaml
+        - name: SYN_VIRTUAL_MACHINE_ENDPOINT
+          value: http://synnergy-node:8080
         resources:
           requests:
-            cpu: "250m"
-            memory: "256Mi"
-          limits:
-            cpu: "500m"
+            cpu: "300m"
             memory: "512Mi"
+          limits:
+            cpu: "1"
+            memory: "1Gi"
         readinessProbe:
           httpGet:
             path: /healthz
             port: 8081
           initialDelaySeconds: 5
           periodSeconds: 5
+          failureThreshold: 6
         livenessProbe:
           httpGet:
             path: /livez
             port: 8081
           initialDelaySeconds: 20
           periodSeconds: 10
+        startupProbe:
+          httpGet:
+            path: /startupz
+            port: 8081
+          failureThreshold: 15
+          periodSeconds: 4
         volumeMounts:
         - name: config
           mountPath: /etc/synnergy
+        - name: hsm-secrets
+          mountPath: /etc/synnergy/hsm.yaml
+          subPath: hsm.yaml
+        - name: tls
+          mountPath: /etc/synnergy/tls
+      - name: wallet-telemetry
+        image: otel/opentelemetry-collector:0.94.0
+        args:
+        - "--config=/conf/collector.yaml"
+        volumeMounts:
+        - name: otel-config
+          mountPath: /conf
+      - name: wallet-metrics
+        image: ghcr.io/netosolaris/synnergy-wallet-metrics:1.0.0
+        env:
+        - name: SYN_WALLET_METRICS_BIND
+          value: :9103
       volumes:
       - name: config
         configMap:
           name: syn-wallet-config
+      - name: hsm-secrets
+        secret:
+          secretName: syn-wallet-hsm
+      - name: tls
+        secret:
+          secretName: syn-wallet-mtls
+      - name: otel-config
+        configMap:
+          name: syn-wallet-otel
 ---
 apiVersion: v1
 kind: Service
@@ -64,4 +135,7 @@ spec:
   - name: http
     port: 8081
     targetPort: 8081
+  - name: metrics
+    port: 9103
+    targetPort: 9103
   type: ClusterIP

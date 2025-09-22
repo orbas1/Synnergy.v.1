@@ -10,6 +10,7 @@ Synnergy prices computation through a dedicated **GasTable** that maps each opco
 - **Query and Introspection** – `GasCost` and `HasOpcode` expose lookups for wallets and explorers, while `GasCostByName` resolves exported function names to their current prices.
 - **Dynamic Updates** – Operators can inject or override prices using `RegisterGasCost`; `ResetGasTable` clears the cache so tests or governance actions can reload revised schedules without restarting processes.
 - **Audit Support** – `GasTableSnapshot` and its JSON variant provide immutable views of the live schedule for monitoring systems or compliance archives.
+- **Targeted Queries** – Stage 77 introduced `GasMetadataCatalogue` filters so CLI and web clients can stream category-specific or prefix-matched entries (`gas list --category resilience`), surfacing the new Stage 77 high-availability opcodes alongside historical pricing data.
 
 ### CLI Integration
 The `gas list` command prints the active cost of every registered opcode, ensuring developers and auditors can verify pricing directly from the command line.
@@ -61,6 +62,7 @@ Deterministic addresses defined by `DefaultGenesisWallets` and seeded through `A
 - **Transaction Structure**: Each transaction includes an explicit fee field, ensuring deterministic ordering and verifiable cost accounting.
 - **Reversal Requests**: Users seeking an authority-mediated reversal must reserve funds covering both the transfer amount and a return gas fee, protecting the network from abuse.
 - **Evolving Gas Catalogue**: The gas table evolves alongside new features—from cross-chain bridges to biometric security commands—so cost visibility remains current as Synnergy expands.
+- **Resilience Channels**: Stage 77 registers new resilience opcodes such as `Stage77NodeFailover`, `Stage77ConsensusProbe`, and `Stage77VMSandboxReset`, pricing the operational health checks exercised by Terraform and Kubernetes during failover drills.
 
 ## Enterprise Tooling and Optimisation
 - **CLI Suite** – The `fees estimate` command models charges for transfers, purchases, token interactions, contract deployments and wallet verification while `fees share` computes proportional splits for custom arrangements. These tools mirror on-chain logic so operators can forecast costs before submission.

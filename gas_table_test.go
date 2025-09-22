@@ -131,6 +131,9 @@ func TestGasMetadataCatalogue(t *testing.T) {
 	if err := RegisterGasMetadata("EnterpriseBootstrap", 200, "orchestrator", "Stage 78 bootstrap sequence"); err != nil {
 		t.Fatalf("register metadata: %v", err)
 	}
+	if err := RegisterGasMetadata("EnterpriseNodeAudit", 120, "operations", "Stage 77 observability checks"); err != nil {
+		t.Fatalf("register metadata: %v", err)
+	}
 	entry, ok := GasMetadataFor("EnterpriseBootstrap")
 	if !ok {
 		t.Fatalf("expected metadata for EnterpriseBootstrap")
@@ -155,5 +158,19 @@ func TestGasMetadataCatalogue(t *testing.T) {
 	}
 	if !found {
 		t.Fatalf("catalogue missing EnterpriseBootstrap entry")
+	}
+
+	filtered := GasMetadataCatalogue(GasQuery{Category: "operations"})
+	if len(filtered) != 1 || filtered[0].Name != "EnterpriseNodeAudit" {
+		t.Fatalf("expected filtered catalogue to contain EnterpriseNodeAudit only, got %#v", filtered)
+	}
+
+	prefixFiltered := GasMetadataCatalogue(GasQuery{Prefix: "enterprise", Limit: 1})
+	if len(prefixFiltered) != 1 {
+		t.Fatalf("expected limit to restrict results to 1, got %d", len(prefixFiltered))
+	}
+	snapshot := GasTableSnapshot()
+	if _, ok := snapshot["EnterpriseBootstrap"]; !ok {
+		t.Fatalf("snapshot missing EnterpriseBootstrap")
 	}
 }

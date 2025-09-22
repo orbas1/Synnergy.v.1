@@ -47,6 +47,16 @@ import (
 // gas costs.
 type GasTable map[string]uint64
 
+// GasQuery represents filters that can be applied when exporting gas metadata.
+// Category matching is case-insensitive while Prefix comparisons normalise to
+// lower-case, enabling CLI callers to provide user input without worrying about
+// the canonical casing used in documentation.
+type GasQuery struct {
+	Category string
+	Prefix   string
+	Limit    int
+}
+
 // GasMetadata captures descriptive information about opcodes so enterprise
 // tooling can surface user friendly pricing insights without scraping the
 // documentation at runtime.
@@ -249,9 +259,11 @@ func RegisterGasMetadata(name string, cost uint64, category, description string)
 	if err := RegisterGasCost(name, cost); err != nil {
 		return err
 	}
+	category = strings.TrimSpace(category)
 	if category == "" {
 		category = "runtime"
 	}
+	description = strings.TrimSpace(description)
 	metadataMu.Lock()
 	entry := metadataCache[name]
 	entry.Name = name
@@ -276,18 +288,48 @@ func GasMetadataFor(name string) (GasMetadata, bool) {
 	return entry, true
 }
 
-// GasCatalogue returns a deterministic list of metadata entries suitable for
-// CLI rendering and telemetry exports.
-func GasCatalogue() []GasMetadata {
+// GasTableSnapshot returns a copy of the loaded gas schedule so that callers can
+// persist the current state without holding locks or mutating the live table.
+func GasTableSnapshot() GasTable {
+	LoadGasTable()
+	gasMu.RLock()
+	defer gasMu.RUnlock()
+	snapshot := make(GasTable, len(gasCache))
+	for name, cost := range gasCache {
+		snapshot[name] = cost
+	}
+	return snapshot
+}
+
+// GasMetadataCatalogue returns a deterministic list of metadata entries. The
+// optional query filters the results by category, prefix and limit so that CLI
+// tooling can stream paginated views without loading the full catalogue into
+// memory for each call.
+func GasMetadataCatalogue(query GasQuery) []GasMetadata {
 	LoadGasTable()
 	metadataMu.RLock()
 	entries := make([]GasMetadata, 0, len(metadataCache))
 	for _, entry := range metadataCache {
+		if query.Category != "" && !strings.EqualFold(entry.Category, query.Category) {
+			continue
+		}
+		if query.Prefix != "" && !strings.HasPrefix(strings.ToLower(entry.Name), strings.ToLower(query.Prefix)) {
+			continue
+		}
 		entries = append(entries, entry)
 	}
 	metadataMu.RUnlock()
 	sort.Slice(entries, func(i, j int) bool { return entries[i].Name < entries[j].Name })
+	if query.Limit > 0 && len(entries) > query.Limit {
+		entries = entries[:query.Limit]
+	}
 	return entries
+}
+
+// GasCatalogue preserves the legacy interface used by existing tooling. It is
+// equivalent to calling GasMetadataCatalogue with an empty query.
+func GasCatalogue() []GasMetadata {
+	return GasMetadataCatalogue(GasQuery{})
 }
 
 // ResetGasTable clears the cached table. Primarily used in tests to reload

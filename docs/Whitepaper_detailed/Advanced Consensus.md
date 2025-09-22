@@ -51,3 +51,22 @@ Fair validator selection is achieved through a weighted random algorithm that di
 ## Summary
 Through a synthesis of adaptive weighting, dynamic hopping, specialised nodes, rigorous validator governance, and cross-consensus networking, Neto Solaris delivers a resilient and versatile consensus layer for the Synnergy Network. This design enables the platform to maintain performance and security across diverse deployment scenarios while remaining agile in the face of evolving market conditions and threat landscapes.
 
+## Stage 77 Fault-Tolerant Enhancements
+Stage 77 extends the operational story around consensus by aligning runtime
+instrumentation, gas economics, and infrastructure automation. The node CLI now
+registers additional Stage 77 opcodes—`Stage77NodeFailover`,
+`Stage77ConsensusProbe`, and `Stage77VMSandboxReset`—so gas schedules price the
+health checks exercised by Kubernetes and Terraform roll-outs. These opcodes are
+categorised under the new `resilience` channel in the gas catalogue and can be
+queried with `gas list --category resilience`, mirroring the filtered metadata
+API added to the Go runtime.
+
+On the infrastructure side, the Kubernetes manifests ship with pod disruption
+budgets, OpenTelemetry sidecars, and topology spread constraints that map
+directly onto the consensus service loops. Terraform provisions application load
+balancers, KMS-backed log groups, and Aurora clusters so validator quorum,
+wallet signing, and VM replay buffers survive AZ failures without manual
+intervention. These upgrades ensure that consensus observability, failover, and
+governance metrics remain available to CLI, web, and regulatory dashboards even
+under stress.
+

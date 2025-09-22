@@ -1713,25 +1713,25 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] deploy/helm/synnergy/Chart.yaml
 
 **Stage 77**
-- [ ] deploy/k8s/README.md
-- [ ] deploy/k8s/node.yaml
-- [ ] deploy/k8s/wallet.yaml
-- [ ] deploy/terraform/.terraform.lock.hcl
-- [ ] deploy/terraform/main.tf
-- [ ] docker/Dockerfile
-- [ ] docker/README.md
-- [ ] docker/docker-compose.yml
-- [ ] docs/AGENTS.md
+- [x] deploy/k8s/README.md | Stage 77 HA guide: telemetry sidecars, disruption budgets, CLI alignment documented.
+- [x] deploy/k8s/node.yaml | Manifests hardened with service accounts, resilience env vars, telemetry and storage mounts.
+- [x] deploy/k8s/wallet.yaml | Wallet pods gain HSM secrets, OTel sidecars, security context and metrics port.
+- [x] deploy/terraform/.terraform.lock.hcl | Platforms annotated for multi-arch validation.
+- [x] deploy/terraform/main.tf | Terraform extended with KMS, ALB, Aurora, IAM, telemetry bootstrap and Stage 77 tags.
+- [x] docker/Dockerfile | Multi-stage build runs tests, enforces non-root runtime and publishes health checks.
+- [x] docker/README.md | Stage 77 container workflow, profiles and production parity explained.
+- [x] docker/docker-compose.yml | Compose stack adds telemetry, Prometheus and optional web UI with health-gated deps.
+- [x] docs/AGENTS.md | Tracker updated to reflect Stage 77 progress and remaining documentation targets.
 - [ ] docs/MODULE_BOUNDARIES.md
 - [ ] docs/PRODUCTION_STAGES.md
-- [ ] docs/Whitepaper_detailed/Advanced Consensus.md
-- [ ] docs/Whitepaper_detailed/Ai.md
-- [ ] docs/Whitepaper_detailed/Authority Nodes.md
-- [ ] docs/Whitepaper_detailed/Banks.md
+- [x] docs/Whitepaper_detailed/Advanced Consensus.md | Stage 77 resilience opcodes and infrastructure integration captured.
+- [x] docs/Whitepaper_detailed/Ai.md | Stage 77 alignment section describing telemetry, Docker and Terraform hooks.
+- [x] docs/Whitepaper_detailed/Authority Nodes.md | Added Stage 77 infra guardrails and gas catalogue link.
+- [x] docs/Whitepaper_detailed/Banks.md | Documented Stage 77 Terraform/K8s templates for financial operators.
 - [ ] docs/Whitepaper_detailed/Block and subblocks.md
 - [ ] docs/Whitepaper_detailed/Block rewards dispersions and halving.md
-- [ ] docs/Whitepaper_detailed/Blockchain Fees & Gas.md
-- [ ] docs/Whitepaper_detailed/Blockchain Logic.md
+- [x] docs/Whitepaper_detailed/Blockchain Fees & Gas.md | Gas metadata filters and resilience opcodes noted.
+- [x] docs/Whitepaper_detailed/Blockchain Logic.md | Stage 77 deployment automation and resilience pricing described.
 
 **Stage 78**
 - [x] docs/Whitepaper_detailed/Central banks.md – Stage 78 orchestrator diagnostics, gas parity and testing documented.
