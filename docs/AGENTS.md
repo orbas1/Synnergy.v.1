@@ -1978,26 +1978,26 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] internal/nodes/watchtower/index_test.go
 - [ ] internal/p2p/discovery.go
 
-**Stage 90**
-- [ ] internal/p2p/discovery_test.go
-- [ ] internal/p2p/key_rotation.go
-- [ ] internal/p2p/key_rotation_test.go
-- [ ] internal/p2p/noise_transport.go
-- [ ] internal/p2p/noise_transport_test.go
-- [ ] internal/p2p/peer.go
-- [ ] internal/p2p/peer_test.go
-- [ ] internal/p2p/pfs.go
-- [ ] internal/p2p/pfs_test.go
-- [ ] internal/p2p/tls_transport.go
-- [ ] internal/p2p/tls_transport_test.go
-- [ ] internal/security/README.md
-- [ ] internal/security/ddos_mitigation.go
-- [ ] internal/security/ddos_mitigation_test.go
-- [ ] internal/security/encryption.go
-- [ ] internal/security/encryption_test.go
-- [ ] internal/security/key_management.go
-- [ ] internal/security/key_management_test.go
-- [ ] internal/security/patch_manager.go
+**Stage 90 ✅** - Enterprise-grade P2P transport, key rotation, and security subsystems completed with CLI/web alignment.
+- [x] internal/p2p/discovery_test.go — asynchronous resolver coverage and quorum enforcement tests.
+- [x] internal/p2p/key_rotation.go — coordinated key rotation with subscriber hooks for VM/CLI integration.
+- [x] internal/p2p/key_rotation_test.go — rotation handlers validated including background scheduler.
+- [x] internal/p2p/noise_transport.go — Noise XX handshake hardened with allow lists and identity validators.
+- [x] internal/p2p/noise_transport_test.go — authorised and rejected handshake scenarios covered.
+- [x] internal/p2p/peer.go — peer registry with event bus, DDOS quarantine and metadata snapshots.
+- [x] internal/p2p/peer_test.go — lifecycle and event emission tests.
+- [x] internal/p2p/pfs.go — X25519/XChaCha20 perfect forward secrecy channel.
+- [x] internal/p2p/pfs_test.go — bidirectional encryption/decryption validation.
+- [x] internal/p2p/tls_transport.go — mutual TLS with SPKI pinning and hot reload support.
+- [x] internal/p2p/tls_transport_test.go — TLS handshake round-trip using pinned fingerprints.
+- [x] internal/security/README.md — documented enterprise security posture and integrations.
+- [x] internal/security/ddos_mitigation.go — adaptive scoring mitigation with deterministic snapshots.
+- [x] internal/security/ddos_mitigation_test.go — blocking/unblocking and ordering scenarios.
+- [x] internal/security/encryption.go — envelope encryption with AEAD + Ed25519 signing.
+- [x] internal/security/encryption_test.go — seal/open/rotation coverage.
+- [x] internal/security/key_management.go — multi-purpose key manager with audit logging.
+- [x] internal/security/key_management_test.go — lifecycle and deterministic entropy tests.
+- [x] internal/security/patch_manager.go — signed patch governance with metadata export and legacy compatibility.
 
 **Stage 91**
 - [ ] internal/security/patch_manager_test.go
