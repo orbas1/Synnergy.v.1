@@ -520,6 +520,16 @@
 | `NewValidatorManager` | `1` |
 | `NewValidatorNode` | `1` |
 | `NewVestingSchedule` | `1` |
+| `Ledger_StreamReplication` | `7` |
+| `Ledger_PrimaryElection` | `5` |
+| `Ledger_PrivacyEnvelope` | `4` |
+| `Consensus_StateDigest` | `6` |
+| `Consensus_AttestValidator` | `6` |
+| `Wallet_PrivacyEnvelope` | `3` |
+| `Node_Attest` | `4` |
+| `Authority_Attestation` | `5` |
+| `Loanpool_ComplianceDisburse` | `4` |
+| `CLI_CommandManifest` | `2` |
 | `NewWallet` | `1` |
 | `NewWarfareNode` | `1` |
 | `NewWatchtowerNode` | `1` |

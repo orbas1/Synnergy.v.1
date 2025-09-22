@@ -261,6 +261,9 @@ func (e *ZeroTrustEngine) AuthorizePeer(id, participant, pubHex string) error {
 	if err != nil {
 		return fmt.Errorf("decode key: %w", err)
 	}
+	if len(key) == ed25519.PrivateKeySize {
+		key = key[:ed25519.PublicKeySize]
+	}
 	if len(key) != ed25519.PublicKeySize {
 		return fmt.Errorf("invalid public key size: %d", len(key))
 	}

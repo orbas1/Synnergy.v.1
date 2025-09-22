@@ -76,6 +76,9 @@ func (r *InsuranceRegistry) IssuePolicy(holder, coverage string, premium, payout
 	if !end.After(start) || time.Now().After(end) {
 		return nil, errors.New("invalid policy period")
 	}
+	if limit == 0 {
+		limit = payout
+	}
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.counter++

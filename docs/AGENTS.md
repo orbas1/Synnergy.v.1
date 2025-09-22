@@ -13,9 +13,14 @@
 
 - Stage 75: Complete – warfare/watchtower/zero-trust modules emit signed events with CLI/UI integration, deterministic CLI metadata handling and hardened subscription tests.
 - Stage 75: In progress – validator node supports concurrent joins; VM, wallet and cross-chain layers pending.
+- Stage 93: Complete – governance and financial token suites hardened with audited gas-safe flows, CLI alignment and dedicated tests.
+- Stage 96: Complete – private transaction hardening, regulatory automation, watchtower validation, and enterprise CLI/AI script suite covering RBAC, failover, inference, privacy, and secure storage workflows.
+
+=======
 - Stage 100: In progress – data governance tooling plus new devnet bootstrapper, Docker build/compose harnesses and e2e network smoke tests delivered; remaining ops scripts pending.
 =======
 - Stage 93: Complete – governance and financial token suites hardened with audited gas-safe flows, CLI alignment and dedicated tests
+
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
@@ -2132,25 +2137,25 @@ Stage 79 complete: runtime bootstrap aligned CLI, VM, consensus, ledger and wall
 - [ ] node_ext/watchtower/index.go
 
 **Stage 96**
-- [ ] node_ext/watchtower/index_test.go
-- [ ] pkg/README.md
-- [ ] pkg/version/version.go
-- [ ] pkg/version/version_test.go
-- [ ] private_transactions.go
-- [ ] private_transactions_test.go
-- [ ] regulatory_management.go
-- [ ] regulatory_management_test.go
-- [ ] regulatory_node.go
-- [ ] regulatory_node_test.go
-- [ ] scripts/access_control_setup.sh
-- [ ] scripts/active_active_sync.sh
-- [ ] scripts/ai_drift_monitor.sh
-- [ ] scripts/ai_explainability_report.sh
-- [ ] scripts/ai_inference.sh
-- [ ] scripts/ai_inference_analysis.sh
-- [ ] scripts/ai_model_management.sh
-- [ ] scripts/ai_privacy_preservation.sh
-- [ ] scripts/ai_secure_storage.sh
+- [x] node_ext/watchtower/index_test.go | Added metric validation tests exercising the new guard-rail helper.
+- [x] pkg/README.md | Documented version metadata module, CLI integration and build embedding guidance.
+- [x] pkg/version/version.go | Replaced constant with atomic metadata registry and user-agent helper.
+- [x] pkg/version/version_test.go | Added unit tests covering metadata overrides and validation.
+- [x] private_transactions.go | Hardened AES-GCM usage, added signatures, metadata and manager upsert semantics.
+- [x] private_transactions_test.go | Expanded coverage for AAD, key validation, manager behaviour and signatures.
+- [x] regulatory_management.go | Introduced detailed evaluation results, whitelist/deny rules and validation helpers.
+- [x] regulatory_management_test.go | Exercised thresholds, whitelist rules and duplicate protections.
+- [x] regulatory_node.go | Logged structured violations, recorded approvals and exposed last-approval timestamps.
+- [x] regulatory_node_test.go | Verified approval/audit flows and nil-manager protections.
+- [x] scripts/access_control_setup.sh | Enterprise RBAC bootstrapper with CSV ingestion, verification, and dry-run support.
+- [x] scripts/active_active_sync.sh | CLI-driven failover orchestrator producing machine-readable status output.
+- [x] scripts/ai_drift_monitor.sh | Baseline store and drift evaluation utility with JSON state management.
+- [x] scripts/ai_explainability_report.sh | Feature importance reporter flattening payloads and exporting summaries.
+- [x] scripts/ai_inference.sh | Contract invocation helper handling payload encoding, decoding, and gas tracking.
+- [x] scripts/ai_inference_analysis.sh | Latency analytics pipeline delivering rolling statistics and persistent reports.
+- [x] scripts/ai_model_management.sh | Contract lifecycle manager maintaining local registry with CLI integration.
+- [x] scripts/ai_privacy_preservation.sh | Dataset anonymisation pipeline enforcing policy and producing compliance reports.
+- [x] scripts/ai_secure_storage.sh | AES-GCM encryption plus signing/verification wrapper with metadata generation.
 
 **Stage 97**
 - [ ] scripts/ai_setup.sh
