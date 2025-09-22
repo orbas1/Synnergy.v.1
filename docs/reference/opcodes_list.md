@@ -711,3 +711,8 @@ and warfare nodes as well as UI integrations.
 | `RegulatorList` | `0x0002A2` |
 | `RegulatorEvaluate` | `0x0002A3` |
 | `RegNodeAudit` | `0x0002A4` |
+| `core_enterprise_orchestrator_NewEnterpriseOrchestrator` | `0x0004F6` |
+| `core_enterprise_orchestrator_Diagnostics` | `0x0004F7` |
+| `core_enterprise_orchestrator_RegisterConsensusNetwork` | `0x0004F8` |
+| `core_enterprise_orchestrator_RegisterAuthorityNode` | `0x0004F9` |
+| `core_enterprise_orchestrator_SyncGasSchedule` | `0x0004FA` |

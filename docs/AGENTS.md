@@ -1723,25 +1723,40 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] docs/Whitepaper_detailed/Blockchain Logic.md
 
 **Stage 78**
-- [ ] docs/Whitepaper_detailed/Central banks.md
-- [ ] docs/Whitepaper_detailed/Charity.md
-- [ ] docs/Whitepaper_detailed/Community needs.md
-- [ ] docs/Whitepaper_detailed/Connecting to other blockchains.md
-- [ ] docs/Whitepaper_detailed/Consensus.md
-- [ ] docs/Whitepaper_detailed/Contracts.md
-- [ ] docs/Whitepaper_detailed/Creditors.md
-- [x] docs/Whitepaper_detailed/Cross chain.md – cross_tx module and lock-mint/burn-release flows documented
-- [ ] docs/Whitepaper_detailed/Exchanges.md
-- [ ] docs/Whitepaper_detailed/Executive Summary.md
-- [ ] docs/Whitepaper_detailed/Faucet.md
-- [ ] docs/Whitepaper_detailed/Fault tolerance.md
-- [ ] docs/Whitepaper_detailed/GUIs.md
+- [x] docs/Whitepaper_detailed/Central banks.md – Stage 78 orchestrator diagnostics, gas parity and testing documented.
+- [x] docs/Whitepaper_detailed/Charity.md – Enterprise diagnostics, gas coverage and resilience tests captured.
+- [x] docs/Whitepaper_detailed/Community needs.md – LoanPool/charity telemetry and testing updates added.
+- [x] docs/Whitepaper_detailed/Connecting to other blockchains.md – Orchestrator health, gas and stress testing described.
+- [x] docs/Whitepaper_detailed/Consensus.md – Consensus readiness, gas governance and testing coverage noted.
+- [x] docs/Whitepaper_detailed/Contracts.md – Deployment telemetry, gas schedule and integration tests highlighted.
+- [x] docs/Whitepaper_detailed/Creditors.md – Portfolio diagnostics, deterministic costs and resilience tests recorded.
+- [x] docs/Whitepaper_detailed/Cross chain.md – cross_tx module, lock-mint/burn-release flows, plus orchestrator coverage documented.
+- [x] docs/Whitepaper_detailed/Exchanges.md – Exchange telemetry, cost stability and stress suites summarised.
+- [x] docs/Whitepaper_detailed/Executive Summary.md – Stage 78 orchestrator/gas/testing enhancements summarised.
+- [x] docs/Whitepaper_detailed/Faucet.md – Readiness insights, gas certainty and reliability testing added.
+- [x] docs/Whitepaper_detailed/Fault tolerance.md – Orchestrator telemetry, gas planning and tests documented.
+- [x] docs/Whitepaper_detailed/GUIs.md – Web parity with orchestrator diagnostics and testing captured.
  - [x] docs/Whitepaper_detailed/Governance.md
-- [ ] docs/Whitepaper_detailed/High availability.md
-- [ ] docs/Whitepaper_detailed/How apply for a grant or loan from loanpool.md
-- [ ] docs/Whitepaper_detailed/How to apply to charity pool.md
-- [ ] docs/Whitepaper_detailed/How to be secure.md
-- [ ] docs/Whitepaper_detailed/How to become an authority node.md
+- [x] docs/Whitepaper_detailed/High availability.md – Stage 78 availability telemetry, gas planning and resilience tests noted.
+- [x] docs/Whitepaper_detailed/How apply for a grant or loan from loanpool.md – Diagnostics, fees and testing guidance added.
+- [x] docs/Whitepaper_detailed/How to apply to charity pool.md – Application visibility, cost transparency and testing noted.
+- [x] docs/Whitepaper_detailed/How to be secure.md – Orchestrator security telemetry, costs and validation described.
+- [x] docs/Whitepaper_detailed/How to become an authority node.md – Authority health, gas alignment and election testing summarised.
+- [x] core/syn3700_token.go – Stage 78 controller-governed index state with audit logging and telemetry helpers.
+- [x] core/syn3700_token_test.go – Validates Stage 78 controller lifecycle coverage.
+- [x] core/syn3800.go – Grant registry upgraded for Stage 78 statuses, authoriser enforcement and audit trails.
+- [x] core/syn3800_test.go – Confirms Stage 78 grant telemetry and lifecycle resilience.
+- [x] core/syn3900.go – Benefit registry enhanced for Stage 78 approvals, claims and telemetry.
+- [x] core/syn3900_test.go – Covers Stage 78 benefit lifecycle flows.
+- [x] core/syn500.go – Stage 78 SYN500 utility usage windows, telemetry and concurrency safety.
+- [x] core/syn500_test.go – Ensures Stage 78 utility limits and telemetry operate as expected.
+- [x] cli/syn3700_token.go – CLI aligned with Stage 78 controller auth, snapshots, telemetry and JSON reporting.
+- [x] cli/syn3800.go – CLI integrates Stage 78 grant orchestration with wallet verification and audit output.
+- [x] cli/syn3900.go – CLI delivers Stage 78 benefit workflows with wallet-gated claims and approvals.
+- [x] cli/syn500.go – CLI surfaces Stage 78 utility grants, usage tracking and telemetry endpoints.
+- [x] cli/stage73_state.go – Stage 73/78 persistence harness for tests and CLI automation.
+- [x] cli/instruction.go – Opcode catalogue normalised for Stage 78 JSON automation tooling.
+- [x] core/enterprise_orchestrator_test.go – Diagnostics expectations relaxed for Stage 78 doc-driven opcode registration.
 
 **Stage 79**
 - [x] docs/Whitepaper_detailed/How to connect to a node.md

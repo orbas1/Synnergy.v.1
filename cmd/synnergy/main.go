@@ -42,6 +42,18 @@ func main() {
 
 	// Warm up caches for shared resources and ensure gas costs are registered.
 	synn.LoadGasTable()
+	stage78Gas := map[string]uint64{
+		"EnterpriseBootstrap":      120,
+		"EnterpriseConsensusSync":  95,
+		"EnterpriseWalletSeal":     60,
+		"EnterpriseNodeAudit":      75,
+		"EnterpriseAuthorityElect": 80,
+	}
+	if inserted, err := synn.EnsureGasSchedule(stage78Gas); err != nil {
+		logrus.Fatalf("stage 78 gas sync failed: %v", err)
+	} else if len(inserted) > 0 {
+		logrus.Infof("registered %d stage 78 opcodes", len(inserted))
+	}
 	mustRegister := func(name string) {
 		if err := synn.RegisterGasCost(name, synn.GasCost(name)); err != nil {
 			logrus.Fatalf("register gas cost %s: %v", name, err)
@@ -119,6 +131,12 @@ func main() {
 	mustRegister("KademliaGet")
 	mustRegister("KademliaClosest")
 	mustRegister("KademliaDistance")
+	// Stage 78 enterprise orchestrator operations
+	mustRegister("EnterpriseBootstrap")
+	mustRegister("EnterpriseConsensusSync")
+	mustRegister("EnterpriseWalletSeal")
+	mustRegister("EnterpriseNodeAudit")
+	mustRegister("EnterpriseAuthorityElect")
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.

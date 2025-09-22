@@ -107,6 +107,11 @@ Larger organisations can integrate directly with the Synnergy Network through ou
 
 Neto Solaris conducts due diligence on all applicants and may request supplemental documentation to satisfy regulatory obligations or anti‑money‑laundering controls. Dedicated compliance contacts are available to help multinational charities align their internal policies with on‑chain transparency requirements.
 
+## Stage 78 Enterprise Enhancements
+- **Application visibility:** The enterprise orchestrator aggregates charity registration, consensus status and wallet custody so applicants can verify programme availability via `synnergy orchestrator status --json` or the control panel before submitting proposals.【F:core/enterprise_orchestrator.go†L21-L166】【F:cli/orchestrator.go†L6-L75】
+- **Cost transparency:** Stage 78 gas documentation covers orchestrator-driven audits, authority elections and wallet sealing, keeping application pipelines and dashboards aligned on deterministic operational costs.【F:docs/reference/gas_table_list.md†L420-L424】
+- **Operational assurance:** New unit, situational, stress, functional and real-world orchestrator tests exercise charity workflows under high demand and compliance review, ensuring applicants experience predictable processing times.【F:core/enterprise_orchestrator_test.go†L5-L75】【F:cli/orchestrator_test.go†L5-L26】
+
 ## Support
 For assistance with registration or technical integration, contact the Neto Solaris support team via our official channels. Development proposals and enhancements to the charity module are welcomed through our public repository.
 

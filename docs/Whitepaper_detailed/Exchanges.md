@@ -85,6 +85,11 @@ Enterprises can schedule transactions for future execution or cancellation, free
 ### Deterministic Gas Accounting
 A central gas table enumerates opcode costs so wallets, CLIs and monitoring systems can price liquidity operations, bridge transfers and compliance checks deterministically across the network【F:gas_table.go†L18-L36】.
 
+## Stage 78 Enterprise Enhancements
+- **Exchange telemetry:** `core.NewEnterpriseOrchestrator` correlates liquidity pool status, cross-chain relayers and wallet seals with consensus and VM health so exchanges can verify readiness through `synnergy orchestrator status` or the web dashboards before onboarding new markets.【F:core/enterprise_orchestrator.go†L21-L166】【F:cli/orchestrator.go†L6-L75】
+- **Cost stability:** Stage 78 gas entries ensure orchestrator-led audits and authority rotations keep exchange automation in lockstep across CLI, VM and GUI clients when listing tokens or routing bridges.【F:docs/reference/gas_table_list.md†L420-L424】【F:snvm._opcodes.go†L325-L329】
+- **Battle-tested workflows:** The expanded orchestrator test matrix validates liquidity management, relayer registration and wallet sealing under unit, situational, stress, functional and real-world loads, protecting market integrity during volatility spikes.【F:core/enterprise_orchestrator_test.go†L5-L75】【F:cli/orchestrator_test.go†L5-L26】
+
 ## Future Roadmap
 A dedicated `TokenExchange` smart contract scaffold is reserved for advanced DEX logic, including order books and programmatic fee routing【F:smart-contracts/solidity/TokenExchange.sol†L1-L6】.
 

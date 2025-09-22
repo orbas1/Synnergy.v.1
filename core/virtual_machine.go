@@ -20,6 +20,20 @@ const (
 	VMSuperLight
 )
 
+// String returns a descriptive label for the VM profile.
+func (m VMMode) String() string {
+	switch m {
+	case VMHeavy:
+		return "heavy"
+	case VMLight:
+		return "light"
+	case VMSuperLight:
+		return "super_light"
+	default:
+		return "unknown"
+	}
+}
+
 // opcodeHandler defines the function signature for executing a single
 // opcode. Input bytes are transformed and returned as new output.
 type opcodeHandler func([]byte) ([]byte, error)
@@ -125,6 +139,13 @@ func (vm *SimpleVM) Status() bool {
 	vm.mu.RLock()
 	defer vm.mu.RUnlock()
 	return vm.running
+}
+
+// Mode reports the configured VM profile.
+func (vm *SimpleVM) Mode() VMMode {
+	vm.mu.RLock()
+	defer vm.mu.RUnlock()
+	return vm.mode
 }
 
 // ExecuteContext interprets bytecode with context cancellation and gas limits.
