@@ -64,6 +64,11 @@ Creditor nodes manage high‑value transfers with deterministic tooling. Transac
 ## Interaction with Other Nodes
 Creditor nodes collaborate with authority, government and central bank nodes. Many decisions—especially those involving public funds from the LoanPool—require multi‑party approval. This layered consensus ensures that no single creditor can unilaterally manipulate liquidity or violate governance mandates.
 
+## Stage 78 Enterprise Enhancements
+- **Portfolio oversight:** The enterprise orchestrator correlates creditor registries, consensus relayers and wallet custody so compliance teams can verify lending capacity and authority sign-off through `synnergy orchestrator status` or the web dashboards before releasing capital.【F:core/enterprise_orchestrator.go†L21-L166】【F:cli/orchestrator.go†L6-L75】
+- **Gas predictability:** Stage 78 gas updates cover orchestrator-led authority elections and audits, keeping credit issuance, treasury reviews and wallet sealing deterministic across CLI, VM and GUI experiences.【F:docs/reference/gas_table_list.md†L420-L424】【F:snvm._opcodes.go†L325-L329】
+- **Rigorous testing:** Unit, situational, stress, functional and real-world orchestrator tests ensure creditor workflows remain fault tolerant during loan surges, regulatory audits or cross-chain settlements.【F:core/enterprise_orchestrator_test.go†L5-L75】【F:cli/orchestrator_test.go†L5-L26】
+
 ## Contribution to the Ecosystem
 By extending capital to individuals, businesses and public initiatives, creditors stimulate growth and enable broader adoption of the Synnergy Network. Their activities support grant programs, secured and unsecured lending, and ecosystem innovation funds, aligning financial incentives with community development.
 

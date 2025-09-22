@@ -1283,6 +1283,11 @@ var SNVMOpcodes = []SNVMOpcode{
 	{"core_bank_nodes_index_Get", 0x0004F3},
 	{"core_bank_nodes_index_Remove", 0x0004F4},
 	{"core_bank_nodes_index_List", 0x0004F5},
+	{"core_enterprise_orchestrator_NewEnterpriseOrchestrator", 0x0004F6},
+	{"core_enterprise_orchestrator_Diagnostics", 0x0004F7},
+	{"core_enterprise_orchestrator_RegisterConsensusNetwork", 0x0004F8},
+	{"core_enterprise_orchestrator_RegisterAuthorityNode", 0x0004F9},
+	{"core_enterprise_orchestrator_SyncGasSchedule", 0x0004FA},
 }
 
 // SNVMOpcodeByName returns the opcode for a given function identifier.

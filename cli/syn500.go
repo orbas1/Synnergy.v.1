@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/spf13/cobra"
 	"synnergy/core"
@@ -56,16 +58,28 @@ func init() {
 			}
 			tier, _ := cmd.Flags().GetInt("tier")
 			max, _ := cmd.Flags().GetUint64("max")
+			windowStr, _ := cmd.Flags().GetString("window")
 			if tier <= 0 || max == 0 {
 				return fmt.Errorf("tier and max must be positive")
 			}
-			syn500Token.Grant(args[0], tier, max)
+			window := time.Hour
+			if windowStr != "" {
+				dur, err := time.ParseDuration(windowStr)
+				if err != nil {
+					return fmt.Errorf("invalid window: %w", err)
+				}
+				window = dur
+			}
+			if err := syn500Token.Grant(args[0], tier, max, window); err != nil {
+				return err
+			}
 			cmd.Println("granted")
 			return nil
 		},
 	}
 	grantCmd.Flags().Int("tier", 0, "service tier")
-	grantCmd.Flags().Uint64("max", 0, "max usage")
+	grantCmd.Flags().Uint64("max", 0, "max usage per window")
+	grantCmd.Flags().String("window", "1h", "usage window duration")
 	grantCmd.MarkFlagRequired("tier")
 	grantCmd.MarkFlagRequired("max")
 
@@ -77,7 +91,7 @@ func init() {
 			if syn500Token == nil {
 				return fmt.Errorf("token not created")
 			}
-			if err := syn500Token.Use(args[0]); err != nil {
+			if err := syn500Token.Use(args[0], time.Now()); err != nil {
 				return err
 			}
 			cmd.Println("usage recorded")
@@ -85,6 +99,38 @@ func init() {
 		},
 	}
 
-	cmd.AddCommand(createCmd, grantCmd, useCmd)
+	statusCmd := &cobra.Command{
+		Use:   "status <addr>",
+		Args:  cobra.ExactArgs(1),
+		Short: "Show usage status",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if syn500Token == nil {
+				return fmt.Errorf("token not created")
+			}
+			status, ok := syn500Token.Status(args[0])
+			if !ok {
+				return fmt.Errorf("no grant for %s", args[0])
+			}
+			payload, _ := json.MarshalIndent(status, "", "  ")
+			cmd.Println(string(payload))
+			return nil
+		},
+	}
+
+	telemetryCmd := &cobra.Command{
+		Use:   "telemetry",
+		Short: "Show grant telemetry",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if syn500Token == nil {
+				return fmt.Errorf("token not created")
+			}
+			tele := syn500Token.Telemetry()
+			payload, _ := json.MarshalIndent(tele, "", "  ")
+			cmd.Println(string(payload))
+			return nil
+		},
+	}
+
+	cmd.AddCommand(createCmd, grantCmd, useCmd, statusCmd, telemetryCmd)
 	rootCmd.AddCommand(cmd)
 }

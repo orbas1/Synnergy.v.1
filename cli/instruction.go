@@ -57,8 +57,12 @@ func init() {
 		Short: "List registered opcodes",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("InstructionList")
-			cat := core.Catalogue()
-			printOutput(cat)
+			entries := core.Catalogue()
+			catalogue := make(map[string]string, len(entries))
+			for _, entry := range entries {
+				catalogue[entry.Name] = fmt.Sprintf("0x%06X", entry.Op)
+			}
+			printOutput(catalogue)
 		},
 	})
 
