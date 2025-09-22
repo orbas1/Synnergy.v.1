@@ -52,3 +52,13 @@ The root command provides options that apply to every sub-command:
 ## Sharding
 - `synnergy sharding leader set <id> <addr> --json` – assign a leader to a shard
 - `synnergy sharding map --json` – list shard-to-leader mappings
+
+## Stage 100 Automation Helpers
+
+- `scripts/devnet_start.sh` provisions a wallet-backed devnet, starts the
+  simple VM, bootstraps networking and adjusts consensus weights in one step.
+- `scripts/docker_build.sh` and `scripts/docker_compose_up.sh` provide
+  reproducible container builds with retry, logging and optional registry
+  pushes.
+- `scripts/e2e_network_tests.sh` runs a CLI-driven smoke test that asserts swarm
+  membership counts, weight balancing and broadcast health.
