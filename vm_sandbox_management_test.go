@@ -17,8 +17,26 @@ func TestSandboxManager(t *testing.T) {
 	if err := m.StopSandbox("sb1"); err != nil {
 		t.Fatalf("stop: %v", err)
 	}
-	if sb.Active {
+	status, ok := m.SandboxStatus("sb1")
+	if !ok {
+		t.Fatalf("sandbox should exist")
+	}
+	if status.Active {
 		t.Fatalf("sandbox should be inactive")
+	}
+	status.Active = true
+	fresh, ok := m.SandboxStatus("sb1")
+	if !ok || fresh.Active {
+		t.Fatalf("sandbox mutation should not leak")
+	}
+	listed := m.ListSandboxes()
+	if len(listed) != 1 {
+		t.Fatalf("expected one sandbox, got %d", len(listed))
+	}
+	listed[0].Active = true
+	fresh, _ = m.SandboxStatus("sb1")
+	if fresh.Active {
+		t.Fatalf("list mutation should not leak")
 	}
 	if err := m.DeleteSandbox("sb1"); err != nil {
 		t.Fatalf("delete: %v", err)
