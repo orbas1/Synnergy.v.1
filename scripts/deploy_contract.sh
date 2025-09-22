@@ -67,7 +67,17 @@ while [[ $# -gt 0 ]]; do
       LABEL="${2:-}"
       shift 2
       ;;
+    -*)
+      log_error "Unknown argument: $1"
+      usage
+      exit 1
+      ;;
     *)
+      if [[ -z "$WASM" ]]; then
+        WASM="$1"
+        shift
+        continue
+      fi
       log_error "Unknown argument: $1"
       usage
       exit 1
@@ -82,7 +92,7 @@ if [[ -z "$WASM" ]]; then
 fi
 
 if [[ ! -f "$WASM" ]]; then
-  log_error "WASM artifact not found: $WASM"
+  log_error "contract file not found: $WASM"
   exit 1
 fi
 

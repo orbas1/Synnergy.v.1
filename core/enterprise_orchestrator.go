@@ -8,6 +8,7 @@ import (
 	"time"
 
 	synn "synnergy"
+	security "synnergy/internal/security"
 	"synnergy/internal/telemetry"
 )
 
@@ -47,6 +48,7 @@ type EnterpriseDiagnostics struct {
 	GasCoverage       map[string]uint64 `json:"gasCoverage"`
 	MissingOpcodes    []string          `json:"missingOpcodes"`
 	InsertedOpcodes   []string          `json:"insertedOpcodes,omitempty"`
+	Resilience        *ResilienceReport `json:"resilience,omitempty"`
 }
 
 // EnterpriseOrchestrator coordinates Stage 78 subsystems so enterprise operators
@@ -61,6 +63,7 @@ type EnterpriseOrchestrator struct {
 	gas               map[string]uint64
 	last              EnterpriseDiagnostics
 	pendingInsertions []string
+	failover          *FailoverManager
 }
 
 // NewEnterpriseOrchestrator boots a heavy VM, authorises a consensus relayer,
@@ -82,19 +85,38 @@ func NewEnterpriseOrchestrator(ctx context.Context, opts ...EnterpriseOption) (*
 		return nil, fmt.Errorf("wallet init: %w", err)
 	}
 
+	consensusMgr := NewConsensusNetworkManager()
+	registry := NewAuthorityNodeRegistry()
+	ledger := NewLedger()
+	failover := NewFailoverManager(wallet.Address, 10*time.Second,
+		WithFailoverVirtualMachine(vm),
+		WithFailoverConsensus(consensusMgr),
+		WithFailoverWallet(wallet),
+		WithFailoverRegistry(registry),
+		WithFailoverLedger(ledger),
+		WithFailoverSigner(security.NewKeyManager()),
+	)
+	failover.RegisterNode(FailoverNode{ID: wallet.Address, Role: "orchestrator", Region: "global", PublicKey: wallet.PublicKeyBytes()})
+
 	orchestrator := &EnterpriseOrchestrator{
 		vm:        vm,
-		consensus: NewConsensusNetworkManager(),
+		consensus: consensusMgr,
 		wallet:    wallet,
-		registry:  NewAuthorityNodeRegistry(),
-		ledger:    NewLedger(),
+		registry:  registry,
+		ledger:    ledger,
 		gas: map[string]uint64{
+			"Stage77FailoverInit":      110,
+			"Stage77FailoverRegister":  55,
+			"Stage77FailoverHeartbeat": 45,
+			"Stage77FailoverActive":    30,
+			"Stage77FailoverReport":    75,
 			"EnterpriseBootstrap":      120,
 			"EnterpriseConsensusSync":  95,
 			"EnterpriseWalletSeal":     60,
 			"EnterpriseNodeAudit":      75,
 			"EnterpriseAuthorityElect": 80,
 		},
+		failover: failover,
 	}
 
 	for _, opt := range opts {
@@ -163,6 +185,9 @@ func (o *EnterpriseOrchestrator) RegisterAuthorityNode(ctx context.Context, addr
 	if err != nil {
 		return nil, err
 	}
+	if o.failover != nil {
+		o.failover.RegisterNode(FailoverNode{ID: node.Address, Role: role, Region: "authority"})
+	}
 	o.refreshDiagnostics(ctx)
 	return node, nil
 }
@@ -223,6 +248,17 @@ func (o *EnterpriseOrchestrator) refreshDiagnostics(ctx context.Context) Enterpr
 	}
 	sort.Strings(missing)
 	diag.MissingOpcodes = missing
+
+	if o.failover != nil {
+		report := o.failover.Report(ctx)
+		diag.Resilience = &report
+		if report.WalletAddress != "" {
+			diag.WalletAddress = report.WalletAddress
+		}
+		if report.LedgerHeight > diag.LedgerHeight {
+			diag.LedgerHeight = report.LedgerHeight
+		}
+	}
 
 	o.mu.Lock()
 	if len(o.pendingInsertions) > 0 {

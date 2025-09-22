@@ -13,7 +13,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
   - [Run a Local Node](#run-a-local-node)
   - [Multi-node Devnet](#multi-node-devnet)
 - [CLI Modules](#cli-modules)
-- [Stage 78 Enterprise Diagnostics](#stage-78-enterprise-diagnostics)
+- [Stage 77/78 Resilience & Diagnostics](#stage-7778-resilience--diagnostics)
 - [Production Deployment](#production-deployment)
   - [Docker Compose](#docker-compose)
   - [Kubernetes (Helm)](#kubernetes-helm)
@@ -49,6 +49,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
 - **Enterprise orchestrator** – Stage 78 introduces `core.NewEnterpriseOrchestrator` and the `synnergy orchestrator` CLI to unify VM readiness, consensus relayers, wallet bootstrap, authority registry state and gas documentation with telemetry for CLI and web dashboards.
+- **Stage 77 failover orchestration** – `core/high_availability.go`, `cli/high_availability.go` and the enterprise orchestrator expose signed resilience reports, heartbeat verification and Stage 77 gas/opcode catalogues so CLI, VM and web control planes share a consistent high-availability view.
 - **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
 - **Resilient node primitives** – forensic nodes prune over-capacity logs, full node modes are mutex-protected, gateway endpoints require a running node, and failover managers can remove stale peers.
 - **Thread-safe mempools and plasma bridge safeguards** – node mempools are mutex-protected for concurrent submissions and Plasma bridge operations surface explicit paused errors.
@@ -95,7 +96,7 @@ pkg/          Reusable libraries and experimental modules
 2. Resolve configuration path from `SYN_CONFIG` or `config.DefaultConfigPath`.
 3. Parse YAML via `config.Load` and configure logging.
 4. Initialise tracer provider (`otel.SetTracerProvider`).
-5. Warm caches by calling `synnergy.LoadGasTable()`, synchronising the Stage 78 enterprise schedule with `synnergy.EnsureGasSchedule()` and registering contextual metadata with `synnergy.RegisterGasMetadata()` for core operations like `MineBlock`, `OpenConnection`, `MintNFT` and the enterprise orchestrator opcodes.
+5. Warm caches by calling `synnergy.LoadGasTable()`, synchronising the Stage 77 failover and Stage 78 enterprise schedules with `synnergy.EnsureGasSchedule()` and registering contextual metadata with `synnergy.RegisterGasMetadata()` for core operations like `MineBlock`, `OpenConnection`, `MintNFT`, the failover manager opcodes and the enterprise orchestrator diagnostics.
 6. Pre-load modules used by the CLI:
    - `core.NewNetwork` for pub‑sub networking
    - `core.NewContractRegistry` backed by `core.NewSimpleVM`
@@ -235,16 +236,17 @@ Each helper honours the shared `--dry-run`, `--timeout` and `--log-file`
 switches provided by `scripts/lib/common.sh` so workflows are deterministic
 across CI, staging and developer laptops.
 =======
-## Stage 78 Enterprise Diagnostics
-Stage 78 upgrades the runtime with a hardened enterprise orchestrator that validates end-to-end readiness across the virtual machine, consensus mesh, wallets, node registries and gas documentation. The orchestrator powers the `synnergy orchestrator` CLI and exports JSON suitable for the function web dashboards so operators can embed live diagnostics into existing tooling.
+## Stage 77/78 Resilience & Diagnostics
+Stages 77 and 78 combine signed failover telemetry with enterprise diagnostics. The enhanced `FailoverManager` verifies wallet heartbeats, tracks authority metadata and publishes Stage 77 gas/opcode entries, while the Stage 78 orchestrator aggregates VM, consensus, wallet and ledger state into a single JSON payload consumable by the CLI and function web dashboards. Together they keep high-availability automation, documentation and pricing in lockstep across environments.
 
 ```bash
 ./synnergy orchestrator status          # human-readable snapshot
 ./synnergy orchestrator status --json   # machine-readable diagnostics
 ./synnergy orchestrator sync            # refresh gas schedule & authority counts
+./synnergy highavailability report --json  # signed failover snapshot
 ```
 
-Diagnostics confirm VM mode and concurrency, consensus network registration, wallet provenance, authority node totals, and whether Stage 78 opcodes are documented with enterprise-grade gas costs. Results surface through the updated Next.js API (`web/pages/api/orchestrator.js`) and dashboard widgets on the control panel home page, ensuring parity between CLI automation and browser operations. Stress, situational and real-world tests under `core/enterprise_orchestrator_test.go` and `cli/orchestrator_test.go` assert fault tolerance, security controls and regulatory alignment, keeping performance predictable even under high-throughput workloads.
+Diagnostics confirm VM mode and concurrency, consensus network registration, wallet provenance, authority node totals, and whether Stage 77/78 opcodes are documented with enterprise-grade gas costs. Results surface through the updated Next.js APIs (`web/pages/api/orchestrator.js`, `web/pages/api/resilience.js`) and dashboard widgets on the control panel home page, ensuring parity between CLI automation and browser operations. Stress, situational and real-world tests under `core/high_availability_test.go`, `cli/high_availability_test.go`, `core/enterprise_orchestrator_test.go` and `cli/orchestrator_test.go` assert fault tolerance, security controls and regulatory alignment, keeping performance predictable even under high-throughput workloads.
 
 
 ## Production Deployment

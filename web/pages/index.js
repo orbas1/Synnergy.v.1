@@ -10,6 +10,9 @@ export default function Home() {
   const [orchestrator, setOrchestrator] = useState(null);
   const [orchError, setOrchError] = useState("");
   const [orchLoading, setOrchLoading] = useState(true);
+  const [resilience, setResilience] = useState(null);
+  const [resError, setResError] = useState("");
+  const [resLoading, setResLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/commands")
@@ -19,6 +22,7 @@ export default function Home() {
 
   useEffect(() => {
     refreshOrchestrator();
+    refreshResilience();
   }, []);
 
   useEffect(() => {
@@ -81,6 +85,26 @@ export default function Home() {
       .finally(() => setOrchLoading(false));
   };
 
+  const refreshResilience = () => {
+    setResLoading(true);
+    fetch("/api/resilience")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to load resilience status");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setResilience(data);
+        setResError("");
+      })
+      .catch((err) => {
+        setResilience(null);
+        setResError(err.message);
+      })
+      .finally(() => setResLoading(false));
+  };
+
   return (
     <main style={{ padding: 20 }}>
       <h1>Synnergy Control Panel</h1>
@@ -124,6 +148,58 @@ export default function Home() {
               </p>
             ) : (
               <p>Opcode documentation is complete.</p>
+            )}
+          </div>
+        )}
+      </section>
+      <section style={{ marginTop: 20, marginBottom: 20 }}>
+        <h2>Stage 77 Resilience Snapshot</h2>
+        <button onClick={refreshResilience} disabled={resLoading}>
+          {resLoading ? "Refreshing..." : "Refresh"}
+        </button>
+        {resError && <p style={{ color: "red" }}>{resError}</p>}
+        {resilience && (
+          <div style={{ marginTop: 10 }}>
+            <p>
+              <strong>Active node:</strong> {resilience.activeNode} ({resilience.activeRole} / {resilience.activeRegion})
+            </p>
+            <p>
+              <strong>Governance ready:</strong> {resilience.governanceReady ? "yes" : "no"}
+            </p>
+            <p>
+              <strong>Region diversity:</strong> {resilience.regionDiversity ? "multi-region" : "single region"}
+            </p>
+            <p>
+              <strong>Interoperability:</strong> {resilience.interoperability ? "connected" : "offline"}
+            </p>
+            <p>
+              <strong>Scalability score:</strong> {resilience.scalabilityScore?.toFixed?.(2) ?? resilience.scalabilityScore}
+            </p>
+            <p>
+              <strong>Wallet ready:</strong> {resilience.walletReady ? "yes" : "no"}
+            </p>
+            <p>
+              <strong>Ledger height:</strong> {resilience.ledgerHeight}
+            </p>
+            {Array.isArray(resilience.backups) && resilience.backups.length > 0 ? (
+              <div>
+                <strong>Backups:</strong>
+                <ul>
+                  {resilience.backups.map((node) => (
+                    <li key={node.id}>
+                      {node.id} ({node.role}/{node.region}) – {node.healthy ? "healthy" : "stale"},
+                      signature {node.signatureVerified ? "verified" : "missing"}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <p>No registered backups.</p>
+            )}
+            {Array.isArray(resilience.compliance) && resilience.compliance.length > 0 && (
+              <p style={{ color: "orange" }}>
+                Compliance warnings: {resilience.compliance.join(", ")}
+              </p>
             )}
           </div>
         )}

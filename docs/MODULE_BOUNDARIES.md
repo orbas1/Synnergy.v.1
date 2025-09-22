@@ -18,6 +18,8 @@ ongoing refactor that will move code into the new `internal/` and `pkg/` directo
   - Authentication, authorization and monitoring such as `firewall.go`, `identity_verification.go`, `access_control.go` and `zero_trust_data_channels.go`.
 - **Utilities**
   - Shared helpers that will become public libraries under `pkg/` including configuration, logging and common data structures.
+- **Resilience & Telemetry**
+  - Stage 77 failover orchestration connects `core/high_availability.go`, `cli/high_availability.go` and the enterprise orchestrator/web dashboards so signed heartbeat telemetry, gas schedules and governance alignment remain consistent across modules.
 
 ## Directory Strategy
 

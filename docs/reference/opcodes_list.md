@@ -716,3 +716,7 @@ and warfare nodes as well as UI integrations.
 | `core_enterprise_orchestrator_RegisterConsensusNetwork` | `0x0004F8` |
 | `core_enterprise_orchestrator_RegisterAuthorityNode` | `0x0004F9` |
 | `core_enterprise_orchestrator_SyncGasSchedule` | `0x0004FA` |
+| `core_high_availability_RegisterNode` | `0x0004FB` |
+| `core_high_availability_RecordHeartbeat` | `0x0004FC` |
+| `core_high_availability_Report` | `0x0004FD` |
+| `core_high_availability_RemoveNode` | `0x0004FE` |

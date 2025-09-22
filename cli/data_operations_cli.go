@@ -859,9 +859,15 @@ func newResourceCommand() *cobra.Command {
 				return err
 			}
 			allowed := make(map[string]struct{}, len(entries))
+			imported := 0
 			for _, entry := range entries {
-				if err := resourcesStore.put(entry.Key, entry.Payload, entry.Labels, entry.Source); err != nil {
-					return err
+				if entry.HasPayload {
+					if err := resourcesStore.put(entry.Key, entry.Payload, entry.Labels, entry.Source); err != nil {
+						return err
+					}
+					imported++
+				} else if !prune {
+					return fmt.Errorf("entry %s missing data, base64 or path", entry.Key)
 				}
 				allowed[entry.Key] = struct{}{}
 			}
@@ -870,10 +876,10 @@ func newResourceCommand() *cobra.Command {
 				if err != nil {
 					return err
 				}
-				dataPrint(map[string]any{"imported": len(entries), "removed": removed}, fmt.Sprintf("imported %d", len(entries)))
+				dataPrint(map[string]any{"imported": imported, "retained": len(allowed), "removed": removed}, fmt.Sprintf("imported %d", imported))
 				return nil
 			}
-			dataPrint(map[string]any{"imported": len(entries)}, fmt.Sprintf("imported %d", len(entries)))
+			dataPrint(map[string]any{"imported": imported}, fmt.Sprintf("imported %d", imported))
 			return nil
 		},
 	}
@@ -911,10 +917,11 @@ func newResourceCommand() *cobra.Command {
 }
 
 type resourceManifestEntry struct {
-	Key     string
-	Payload []byte
-	Labels  []string
-	Source  string
+	Key        string
+	Payload    []byte
+	Labels     []string
+	Source     string
+	HasPayload bool
 }
 
 func readResourceManifest(path string) ([]resourceManifestEntry, error) {
@@ -936,6 +943,7 @@ func readResourceManifest(path string) ([]resourceManifestEntry, error) {
 		labels := extractLabels(item)
 		source, _ := item["source"].(string)
 		var payload []byte
+		hasPayload := false
 		switch {
 		case item["path"] != nil:
 			pathVal, _ := item["path"].(string)
@@ -961,9 +969,13 @@ func readResourceManifest(path string) ([]resourceManifestEntry, error) {
 		case item["data"] != nil:
 			payload = []byte(fmt.Sprint(item["data"]))
 		default:
-			return nil, fmt.Errorf("entry %s missing data, base64 or path", key)
+			payload = nil
+			hasPayload = false
 		}
-		entries = append(entries, resourceManifestEntry{Key: key, Payload: payload, Labels: labels, Source: source})
+		if len(payload) > 0 || item["path"] != nil || item["base64"] != nil || item["data"] != nil {
+			hasPayload = true
+		}
+		entries = append(entries, resourceManifestEntry{Key: key, Payload: payload, Labels: labels, Source: source, HasPayload: hasPayload})
 	}
 	return entries, nil
 }

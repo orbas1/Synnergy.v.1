@@ -43,5 +43,7 @@ Operational teams may disable classes of validators or suspend PoW compensation 
 ## 4. Supply Tracking and Operational Tooling
 Real‑time monitoring of emission progress is available through the CLI. `synnergy coin reward [height]` reveals the reward at a particular height, and `synnergy coin supply [height]` reports the circulating and remaining supply using the core helpers mentioned above【F:cli/coin.go†L31-L57】.
 
+Stage 77’s failover orchestration feeds reward distribution telemetry into the same dashboards: the signed resilience report records active nodes, authority coverage and ledger height so operators can confirm payout integrity even during failovers, while the `highavailability` CLI exposes registration, heartbeat and report flows that prove the emission pipeline is still governed by the authenticated validator set.【F:core/high_availability.go†L17-L260】【F:cli/high_availability.go†L1-L207】【F:core/enterprise_orchestrator.go†L70-L310】
+
 ## 5. Economic and Security Implications
 The aggressive halving cadence front‑loads distribution, quickly rewarding early participants while converging on the fixed supply to instill long‑term scarcity. Splitting rewards across Proof‑of‑Stake, Proof‑of‑History, and Proof‑of‑Work actors diversifies incentives and aligns security with resource contribution. As the reward diminishes, transaction fees and staking yields become the dominant revenue streams, promoting sustainable network operation.

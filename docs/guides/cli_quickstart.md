@@ -33,6 +33,7 @@ make build
 - `synnergy zero-trust events <id> --since <seq>` – fetch channel lifecycle events (open, message, rotate, close) for monitoring pipelines
 - `synnergy zero-trust rotate <id> <hexkey>` – rotate the symmetric encryption key while retaining authorised participants
 - `synnergy gas list --json` – enumerate opcode pricing with Stage 91 metadata including categories and descriptions for dashboards
+- `synnergy highavailability report --json` – Stage 77 signed resilience report covering active node, backups, ledger height and compliance warnings
 
 ## Help
 Run `synnergy --help` or `synnergy <command> --help` for more details.

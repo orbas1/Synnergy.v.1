@@ -699,6 +699,11 @@
 | `Snapshot` | `1` |
 | `SplitHolographic` | `1` |
 | `Stake` | `1` |
+| `Stage77FailoverActive` | `30` |
+| `Stage77FailoverHeartbeat` | `45` |
+| `Stage77FailoverInit` | `110` |
+| `Stage77FailoverRegister` | `55` |
+| `Stage77FailoverReport` | `75` |
 | `StartLease` | `1` |
 | `StartSandbox` | `1` |
 | `Start` | `1` |

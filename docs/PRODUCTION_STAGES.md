@@ -148,5 +148,9 @@ This document outlines a 20-stage roadmap for reorganizing the repository and pr
     - Automate packaging and artifact publishing in CI/CD with distinct stable and pre-release channels.
     - Document installation, upgrade, and rollback procedures and verify packages through integration tests.
 
+21. **Stage 77 Resilience Automation ✅**
+    - Harden `core/high_availability.go`, `cli/high_availability.go`, and `core/enterprise_orchestrator.go` with signed failover telemetry, Stage 77 gas/opcode catalogue entries, and end-to-end diagnostics surfaced through CLI and web control planes.
+    - Ensure failover workflows register authority nodes, virtual machine status, consensus topology, wallet custody and ledger height so governance and compliance tooling can rely on the shared resilience report.
+
 These stages, once completed, will transition the repository from a prototype into a maintainable, production-grade codebase suitable for enterprise deployment.
 

@@ -1713,25 +1713,42 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] deploy/helm/synnergy/Chart.yaml
 
 **Stage 77**
-- [ ] deploy/k8s/README.md
-- [ ] deploy/k8s/node.yaml
-- [ ] deploy/k8s/wallet.yaml
-- [ ] deploy/terraform/.terraform.lock.hcl
-- [ ] deploy/terraform/main.tf
-- [ ] docker/Dockerfile
-- [ ] docker/README.md
-- [ ] docker/docker-compose.yml
-- [ ] docs/AGENTS.md
-- [ ] docs/MODULE_BOUNDARIES.md
-- [ ] docs/PRODUCTION_STAGES.md
-- [ ] docs/Whitepaper_detailed/Advanced Consensus.md
-- [ ] docs/Whitepaper_detailed/Ai.md
-- [ ] docs/Whitepaper_detailed/Authority Nodes.md
-- [ ] docs/Whitepaper_detailed/Banks.md
-- [ ] docs/Whitepaper_detailed/Block and subblocks.md
-- [ ] docs/Whitepaper_detailed/Block rewards dispersions and halving.md
-- [ ] docs/Whitepaper_detailed/Blockchain Fees & Gas.md
-- [ ] docs/Whitepaper_detailed/Blockchain Logic.md
+- [x] Stage 77 | Failover manager, diagnostics, CLI and web dashboard now emit signed resilience telemetry with Stage 77 gas/opcode coverage – stage complete.
+- [x] cmd/synnergy/main.go | Bootstrap ensures failover orchestration, gas catalogue refresh and web API wiring load for Stage 77.
+- [x] cli/high_availability.go | Metadata flags, signed heartbeats and resilience reports available via JSON-aware CLI.
+- [x] cli/high_availability_test.go | Workflow test exercises init/add/heartbeat/report paths with signature assertions.
+- [x] core/high_availability.go | Report attestation, compliance metrics and region-aware scoring hardened for Stage 77.
+- [x] core/high_availability_test.go | Validates signed reports, heartbeat verification and audit exports.
+- [x] core/enterprise_orchestrator.go | Diagnostics embed failover resilience snapshots and gas sync state.
+- [x] core/enterprise_orchestrator_test.go | Confirms enterprise diagnostics surface signed resilience reports.
+- [x] gas_table.go | Stage 77 opcodes and gas costs registered for CLI/bootstrap alignment.
+- [x] gas_table_test.go | Gas table snapshot verifies Stage 77 opcode catalogue.
+- [x] snvm._opcodes.go | Stage 77 opcodes exported to the VM catalogue.
+- [x] web/pages/api/resilience.js | Next.js API surfaces failover report JSON with error handling.
+- [x] web/pages/index.js | Dashboard renders Stage 77 resilience summary and handles API fallbacks.
+- [x] README.md | Documented Stage 77 failover orchestration access points.
+- [x] docs/guides/cli_quickstart.md | High-availability commands and governance logging noted for Stage 77.
+- [x] docs/reference/gas_table_list.md | Listed Stage 77 failover opcodes and costs.
+- [x] docs/reference/opcodes_list.md | Documented Stage 77 resilience opcode names.
+- [x] deploy/k8s/README.md | Stage 77 HA guide: telemetry sidecars, disruption budgets, CLI alignment documented.
+- [x] deploy/k8s/node.yaml | Manifests hardened with service accounts, resilience env vars, telemetry and storage mounts.
+- [x] deploy/k8s/wallet.yaml | Wallet pods gain HSM secrets, OTel sidecars, security context and metrics port.
+- [x] deploy/terraform/.terraform.lock.hcl | Platforms annotated for multi-arch validation.
+- [x] deploy/terraform/main.tf | Terraform extended with KMS, ALB, Aurora, IAM, telemetry bootstrap and Stage 77 tags.
+- [x] docker/Dockerfile | Multi-stage build runs tests, enforces non-root runtime and publishes health checks.
+- [x] docker/README.md | Stage 77 container workflow, profiles and production parity explained.
+- [x] docker/docker-compose.yml | Compose stack adds telemetry, Prometheus and optional web UI with health-gated deps.
+- [x] docs/AGENTS.md | Tracker updated to reflect Stage 77 progress and remaining documentation targets.
+- [x] docs/MODULE_BOUNDARIES.md | Resilience boundary captures Stage 77 failover links between core, CLI and web dashboards.
+- [x] docs/PRODUCTION_STAGES.md | Added Stage 77 resilience automation milestone covering failover telemetry and diagnostics.
+- [x] docs/Whitepaper_detailed/Advanced Consensus.md | Stage 77 resilience opcodes and infrastructure integration captured.
+- [x] docs/Whitepaper_detailed/Ai.md | Stage 77 alignment section describing telemetry, Docker and Terraform hooks.
+- [x] docs/Whitepaper_detailed/Authority Nodes.md | Added Stage 77 infra guardrails and gas catalogue link.
+- [x] docs/Whitepaper_detailed/Banks.md | Documented Stage 77 Terraform/K8s templates for financial operators.
+- [x] docs/Whitepaper_detailed/Block and subblocks.md | New section details Stage 77 failover reports and Stage 77/78 gas alignment.
+- [x] docs/Whitepaper_detailed/Block rewards dispersions and halving.md | Reward tooling now references Stage 77 resilience telemetry and CLI flows.
+- [x] docs/Whitepaper_detailed/Blockchain Fees & Gas.md | Gas metadata filters and resilience opcodes noted.
+- [x] docs/Whitepaper_detailed/Blockchain Logic.md | Stage 77 deployment automation and resilience pricing described.
 
 **Stage 78**
 - [x] docs/Whitepaper_detailed/Central banks.md – Stage 78 orchestrator diagnostics, gas parity and testing documented.

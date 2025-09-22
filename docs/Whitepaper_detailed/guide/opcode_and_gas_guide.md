@@ -19,6 +19,8 @@ Stage 74 extends auditing to access control with an `Access_Audit` opcode that s
 
 Stage 75 enforces gas consumption through the upgraded VM execution context: every opcode now records a trace, charges the documented cost before execution and surfaces hooks consumed by the CLI, REST telemetry and the web console. Bridge registries, protocol catalogues and transfer managers emit event streams so cross-chain workflows carry deterministic pricing and lifecycle state to enterprise dashboards.
 
+Stage 77 layers in failover orchestration opcodes (`Stage77FailoverInit`, `Stage77FailoverRegister`, `Stage77FailoverHeartbeat`, `Stage77FailoverActive`, `Stage77FailoverReport`) so the CLI and enterprise orchestrator can quote the cost of registering nodes, verifying signed heartbeats and exporting resilience diagnostics alongside traditional consensus fees.【F:gas_table.go†L20-L120】【F:core/high_availability.go†L150-L260】【F:core/enterprise_orchestrator.go†L90-L200】
+
 ## Opcode Structure
 
 Every exported function in the core packages is mapped to a unique 24‑bit opcode.  The format `0xCCNNNN` splits the value into a one‑byte **category** `CC` and a two‑byte **index** `NNNN`.  Categories correspond to major modules such as the ledger, AMM, state channels or the virtual machine.  The catalogue is generated automatically; the dispatcher resolves the opcode at runtime and invokes the appropriate handler.

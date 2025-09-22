@@ -73,6 +73,13 @@ Neto Solaris provides multiple interfaces for managing authority nodes:
 ## Operational Resilience
 Authority nodes leverage the network's failover framework to guarantee availability. The `FailoverManager` tracks node heartbeats and promotes the most recent backup if the primary becomes unresponsive, ensuring continuity during infrastructure outages or maintenance windows【F:high_availability.go†L8-L69】.
 
+Stage 77 extends this model with infrastructure-as-code guardrails. Kubernetes
+deployments now embed disruption budgets, anti-affinity, and telemetry sidecars,
+while Terraform provisions KMS-backed log groups, Aurora clusters for regulator
+data, and encrypted load balancers. These assets integrate with the new
+`Stage77GovernancePulse` opcode in the gas catalogue so CLI health checks and
+web dashboards can correlate failover events with deterministic gas pricing.
+
 ## Security Considerations
 To mitigate centralisation risks, authority nodes operate on hardened infrastructure with mandatory multi-factor authentication, encrypted communications, and regular key rotations. Deterministic JSON encoders across registries and applications provide tamper-evident logs for forensic review【F:core/authority_nodes.go†L22-L31】【F:core/authority_apply.go†L139-L151】. Critical actions require quorum-based approvals, and all authority operations are recorded on-chain for transparency and post‑event audits.
 

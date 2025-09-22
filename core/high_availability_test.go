@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"testing"
 	"time"
 )
@@ -12,14 +13,13 @@ func TestFailoverManagerKeepsPrimaryWhenHealthy(t *testing.T) {
 	fm := NewFailoverManager("primary", timeout)
 	fm.RegisterBackup("backup")
 
-	// The primary heartbeat was recorded at construction time. Without
-	// exceeding the timeout, Active should return the primary.
 	if active := fm.Active(); active != "primary" {
 		t.Fatalf("expected primary to remain active, got %s", active)
 	}
 
-	// Heartbeating a backup should not change the active node.
-	fm.Heartbeat("backup")
+	if err := fm.RecordHeartbeat(HeartbeatProof{ID: "backup"}); err != nil {
+		t.Fatalf("heartbeat: %v", err)
+	}
 	if active := fm.Active(); active != "primary" {
 		t.Fatalf("expected primary after backup heartbeat, got %s", active)
 	}
@@ -34,18 +34,15 @@ func TestFailoverManagerFailoverToLatestBackup(t *testing.T) {
 	fm.RegisterBackup("b1")
 	fm.RegisterBackup("b2")
 
-	// Make the primary stale and set deterministic heartbeat times for backups.
 	fm.mu.Lock()
-	fm.nodes["p1"] = time.Now().Add(-2 * timeout)
-	fm.nodes["b1"] = time.Now().Add(-50 * time.Millisecond)
-	fm.nodes["b2"] = time.Now()
+	fm.nodes["p1"].LastHeartbeat = time.Now().Add(-2 * timeout)
+	fm.nodes["b1"].LastHeartbeat = time.Now().Add(-50 * time.Millisecond)
+	fm.nodes["b2"].LastHeartbeat = time.Now()
 	fm.mu.Unlock()
 
 	if active := fm.Active(); active != "b2" {
 		t.Fatalf("expected b2 to become primary, got %s", active)
 	}
-
-	// Active should now consistently return the promoted node.
 	if active := fm.Active(); active != "b2" {
 		t.Fatalf("expected b2 to remain primary after promotion, got %s", active)
 	}
@@ -57,25 +54,26 @@ func TestFailoverManagerHeartbeatAndRegister(t *testing.T) {
 	timeout := 20 * time.Millisecond
 	fm := NewFailoverManager("p1", timeout)
 
-	// Record the original heartbeat timestamp for the primary.
 	fm.mu.RLock()
-	primaryHB := fm.nodes["p1"]
+	primaryHB := fm.nodes["p1"].LastHeartbeat
 	fm.mu.RUnlock()
 
-	// Sleep to ensure a measurable difference, then heartbeat the primary.
 	time.Sleep(1 * time.Millisecond)
-	fm.Heartbeat("p1")
+	if err := fm.RecordHeartbeat(HeartbeatProof{ID: "p1"}); err != nil {
+		t.Fatalf("heartbeat: %v", err)
+	}
 
 	fm.mu.RLock()
-	updatedHB := fm.nodes["p1"]
+	updatedHB := fm.nodes["p1"].LastHeartbeat
 	fm.mu.RUnlock()
 	if !updatedHB.After(primaryHB) {
 		t.Fatalf("heartbeat did not update timestamp")
 	}
 
-	// Register and heartbeat a backup node.
 	fm.RegisterBackup("b1")
-	fm.Heartbeat("b1")
+	if err := fm.RecordHeartbeat(HeartbeatProof{ID: "b1"}); err != nil {
+		t.Fatalf("heartbeat backup: %v", err)
+	}
 	fm.mu.RLock()
 	_, ok := fm.nodes["b1"]
 	fm.mu.RUnlock()
@@ -91,8 +89,8 @@ func TestFailoverManagerRemoveNode(t *testing.T) {
 	fm := NewFailoverManager("p1", timeout)
 	fm.RegisterBackup("b1")
 	fm.RegisterBackup("b2")
-	fm.Heartbeat("b1")
-	fm.Heartbeat("b2")
+	_ = fm.RecordHeartbeat(HeartbeatProof{ID: "b1"})
+	_ = fm.RecordHeartbeat(HeartbeatProof{ID: "b2"})
 
 	fm.RemoveNode("p1")
 	if active := fm.Active(); active == "p1" || active == "" {
@@ -103,5 +101,65 @@ func TestFailoverManagerRemoveNode(t *testing.T) {
 	fm.RemoveNode("b2")
 	if active := fm.Active(); active != "" {
 		t.Fatalf("expected no active node after removing all, got %s", active)
+	}
+}
+
+// TestFailoverManagerReportIntegrations validates the resilience report surfaces
+// VM, consensus, wallet, ledger and audit data.
+func TestFailoverManagerReportIntegrations(t *testing.T) {
+	wallet, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet init: %v", err)
+	}
+	fm := NewFailoverManager(wallet.Address, 25*time.Millisecond,
+		WithFailoverVirtualMachine(NewSimpleVM(VMLight)),
+		WithFailoverConsensus(NewConsensusNetworkManager()),
+		WithFailoverWallet(wallet),
+		WithFailoverRegistry(NewAuthorityNodeRegistry()),
+		WithFailoverLedger(NewLedger()),
+	)
+	fm.RegisterBackup("backup")
+	if err := fm.RecordHeartbeat(HeartbeatProof{ID: "backup", Latency: 10 * time.Millisecond}); err != nil {
+		t.Fatalf("heartbeat: %v", err)
+	}
+
+	diag := fm.Report(context.Background())
+	if diag.ActiveNode != wallet.Address {
+		t.Fatalf("expected orchestrator wallet to remain active, got %s", diag.ActiveNode)
+	}
+	if diag.WalletAddress == "" || !diag.WalletReady {
+		t.Fatalf("wallet readiness not surfaced: %+v", diag)
+	}
+	if diag.Signature == "" {
+		t.Fatalf("report signature missing")
+	}
+	if len(diag.AuditTrail) == 0 {
+		t.Fatalf("expected audit trail entries")
+	}
+}
+
+// TestFailoverManagerRecordHeartbeatVerification ensures digital signatures are enforced.
+func TestFailoverManagerRecordHeartbeatVerification(t *testing.T) {
+	wallet, err := NewWallet()
+	if err != nil {
+		t.Fatalf("wallet init: %v", err)
+	}
+	fm := NewFailoverManager("primary", 10*time.Millisecond)
+	fm.RegisterNode(FailoverNode{ID: "signed", Role: "validator", Region: "us-east", PublicKey: wallet.PublicKeyBytes()})
+
+	payload := []byte("signed-heartbeat")
+	sig, err := wallet.SignMessage(payload)
+	if err != nil {
+		t.Fatalf("sign message: %v", err)
+	}
+	if err := fm.RecordHeartbeat(HeartbeatProof{ID: "signed", Payload: payload, Signature: sig}); err != nil {
+		t.Fatalf("record heartbeat: %v", err)
+	}
+
+	fm.mu.RLock()
+	verified := fm.nodes["signed"].SignatureVerified
+	fm.mu.RUnlock()
+	if !verified {
+		t.Fatalf("expected heartbeat signature verification to succeed")
 	}
 }
