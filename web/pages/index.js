@@ -87,6 +87,8 @@ export default function Home() {
       <p>Select a command, fill in optional flags, and run.</p>
       <p>
         <a href="/regnode">Regulatory node console</a>
+        {" | "}
+        <a href="/warfare">Warfare command center</a>
       </p>
       <section style={{ marginTop: 20, marginBottom: 20 }}>
         <h2>Enterprise Orchestrator Status</h2>

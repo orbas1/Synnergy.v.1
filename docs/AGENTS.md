@@ -9,8 +9,11 @@
 - Stage 69: Complete – node and plasma modules hardened with concurrency-safe mempools, pause checks, opcode lookup tests and peer count CLI.
 - Stage 73: Complete – enterprise index, grant, benefit, charity, legal and utility modules now require wallet-signed workflows, persist their state for CLI/web automation, expose telemetry across CLI, VM and web, and refreshed docs/guides capture the expanded gas/opcode catalogue.
 - Stage 74: In progress – system health logging clamped; tangible and agricultural asset registries made concurrency safe; access controller audit snapshots added. Transaction and SYN5000+ modules outstanding.
+
+- Stage 75: Complete – warfare/watchtower/zero-trust modules emit signed events with CLI/UI integration, deterministic CLI metadata handling and hardened subscription tests.
 - Stage 75: In progress – validator node supports concurrent joins; VM, wallet and cross-chain layers pending.
 - Stage 93: Complete – governance and financial token suites hardened with audited gas-safe flows, CLI alignment and dedicated tests.
+
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
@@ -1663,23 +1666,23 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 **Stage 75**
  - [x] core/validator_node.go
  - [x] core/validator_node_test.go
-- [ ] core/virtual_machine.go
-- [ ] core/virtual_machine_test.go
-- [ ] core/vm_sandbox_management.go
-- [ ] core/vm_sandbox_management_test.go
-- [ ] core/wallet.go
-- [ ] core/wallet_test.go
-- [ ] core/warfare_node.go
-- [ ] core/warfare_node_test.go
-- [ ] core/watchtower_node.go
-- [ ] core/watchtower_node_test.go
-- [ ] core/zero_trust_data_channels.go
-- [ ] core/zero_trust_data_channels_test.go
-- [ ] cross_chain.go
-- [ ] cross_chain_agnostic_protocols.go
-- [ ] cross_chain_agnostic_protocols_test.go
-- [ ] cross_chain_bridge.go
-- [ ] cross_chain_bridge_test.go
+- [x] core/virtual_machine.go | Stage 75 instrumentation: execution traces, gas enforcement, metrics & hooks
+- [x] core/virtual_machine_test.go | Expanded to cover gas limits, hooks and metrics
+- [x] core/vm_sandbox_management.go | Sandbox metrics, watchers and lifecycle helpers added
+- [x] core/vm_sandbox_management_test.go | Validates failure/restart handling and metrics
+- [x] core/wallet.go | Deterministic seeds, shared secrets, upgraded save format
+- [x] core/wallet_test.go | Coverage for deterministic seeds, shared secrets and new file format
+- [x] core/warfare_node.go | Command envelopes, event bus, metrics and commander governance implemented
+- [x] core/warfare_node_test.go | Coverage for signatures, logistics events and stress scenarios
+- [x] core/watchtower_node.go | Event streaming, integrity sweeps and subscriber management added
+- [x] core/watchtower_node_test.go | Validates event emission, sweep alerts and ticker overrides
+- [x] core/zero_trust_data_channels.go | Participant governance, retention, rotation and event feeds introduced
+- [x] core/zero_trust_data_channels_test.go | Tests authorised messaging, rotation and subscriptions
+- [x] cross_chain.go | Event-driven manager with metrics, metadata updates and relayer lifecycle
+- [x] cross_chain_agnostic_protocols.go | Versioned registry with activation events and metrics
+- [x] cross_chain_agnostic_protocols_test.go | Lifecycle coverage for protocol updates
+- [x] cross_chain_bridge.go | Transfer status, metrics and event stream with expiry handling
+- [x] cross_chain_bridge_test.go | Tests deposits, claims, failures and expiries
 
 **Stage 76**
 - [ ] cross_chain_connection.go
@@ -4165,23 +4168,23 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 | 74 | core/transaction_test.go | [ ] |
 | 75 | core/validator_node.go | [x] | quorum manager wiring |
 | 75 | core/validator_node_test.go | [x] | concurrent join quorum test |
-| 75 | core/virtual_machine.go | [ ] |
-| 75 | core/virtual_machine_test.go | [ ] |
-| 75 | core/vm_sandbox_management.go | [ ] |
-| 75 | core/vm_sandbox_management_test.go | [ ] |
-| 75 | core/wallet.go | [ ] |
-| 75 | core/wallet_test.go | [ ] |
-| 75 | core/warfare_node.go | [ ] |
-| 75 | core/warfare_node_test.go | [ ] |
-| 75 | core/watchtower_node.go | [ ] |
-| 75 | core/watchtower_node_test.go | [ ] |
-| 75 | core/zero_trust_data_channels.go | [ ] |
-| 75 | core/zero_trust_data_channels_test.go | [ ] |
-| 75 | cross_chain.go | [ ] |
-| 75 | cross_chain_agnostic_protocols.go | [ ] |
-| 75 | cross_chain_agnostic_protocols_test.go | [ ] |
-| 75 | cross_chain_bridge.go | [ ] |
-| 75 | cross_chain_bridge_test.go | [ ] |
+| 75 | core/virtual_machine.go | [x] | instrumentation, gas metering, consensus wiring |
+| 75 | core/virtual_machine_test.go | [x] | gas-limit hooks and deterministic metrics coverage |
+| 75 | core/vm_sandbox_management.go | [x] | sandbox lifecycle analytics and watcher fan-out |
+| 75 | core/vm_sandbox_management_test.go | [x] | restart, purge and telemetry resilience suites |
+| 75 | core/wallet.go | [x] | deterministic seed derivation and secure persistence |
+| 75 | core/wallet_test.go | [x] | shared-secret, migration and corruption recovery tests |
+| 75 | core/warfare_node.go | [x] | commander governance, signing helpers and event bus |
+| 75 | core/warfare_node_test.go | [x] | signature validation, stress and audit flow coverage |
+| 75 | core/watchtower_node.go | [x] | integrity sweep scheduling and subscriber management |
+| 75 | core/watchtower_node_test.go | [x] | event emission, ticker override and lifecycle tests |
+| 75 | core/zero_trust_data_channels.go | [x] | participant governance, retention controls and event feeds |
+| 75 | core/zero_trust_data_channels_test.go | [x] | authorisation, rotation and deterministic subscription checks |
+| 75 | cross_chain.go | [x] | event-driven manager with relayer lifecycle metrics |
+| 75 | cross_chain_agnostic_protocols.go | [x] | versioned registry, activation events and metrics |
+| 75 | cross_chain_agnostic_protocols_test.go | [x] | lifecycle regression coverage |
+| 75 | cross_chain_bridge.go | [x] | transfer status tracking with expiry handling |
+| 75 | cross_chain_bridge_test.go | [x] | deposit, claim and expiry tests |
 | 76 | cross_chain_connection.go | [ ] |
 | 76 | cross_chain_connection_test.go | [ ] |
 | 76 | cross_chain_contracts.go | [ ] |

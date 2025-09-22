@@ -17,6 +17,8 @@ Stage 67 registers Kademlia distance and lookup operations so DHT queries surfac
 Stage 73 introduces an audit opcode for regulatory nodes, enabling deterministic gas charges when verifying flagged addresses via CLI or web consoles.
 Stage 74 extends auditing to access control with an `Access_Audit` opcode that snapshots role assignments for administrative tooling.
 
+Stage 75 enforces gas consumption through the upgraded VM execution context: every opcode now records a trace, charges the documented cost before execution and surfaces hooks consumed by the CLI, REST telemetry and the web console. Bridge registries, protocol catalogues and transfer managers emit event streams so cross-chain workflows carry deterministic pricing and lifecycle state to enterprise dashboards.
+
 ## Opcode Structure
 
 Every exported function in the core packages is mapped to a unique 24‑bit opcode.  The format `0xCCNNNN` splits the value into a one‑byte **category** `CC` and a two‑byte **index** `NNNN`.  Categories correspond to major modules such as the ledger, AMM, state channels or the virtual machine.  The catalogue is generated automatically; the dispatcher resolves the opcode at runtime and invokes the appropriate handler.
@@ -2918,6 +2920,14 @@ Operations related to warfare / military nodes.
 | `Warfare_SecureCommand` | `300` |
 | `Warfare_TrackLogistics` | `300` |
 | `Warfare_ShareTactical` | `200` |
+
+Stage 75 extends these primitives with command envelopes that require Ed25519
+signatures and monotonic nonces. Although the opcode surface area is unchanged,
+the CLI (`synnergy warfare command --commander <id> --private <hex>`) now builds
+payloads that pass the additional replay-protection checks before invoking
+`Warfare_SecureCommand`. Logistics and tactical broadcasts emit events that do
+not consume extra gas but provide deterministic audit trails for the JavaScript
+dashboard and monitoring agents.
 
 ### Smart-Contract Marketplace
 

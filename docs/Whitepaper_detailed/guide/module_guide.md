@@ -475,10 +475,10 @@ Every file under `core/` is listed below with a short description derived from i
 - **wallet.go** – Wallet implementation for the Synnergy Network blockchain.
 - **wallet_management.go** – WalletManager wraps Ledger and HDWallet helpers to perform high level wallet operations.
 - **warehouse.go** – WarehouseItem represents an item stored on-chain for supply chain tracking.
-- **warfare_node.go** – LogisticsRecord captures movement or status changes of military assets.
-- **watchtower_node.go** – WatchtowerNode observes transactions and channel updates enforcing contract rules.
+- **warfare_node.go** – Enforces signed command envelopes, records logistics/tactical updates and exposes replayable event streams for CLI/UI subscribers.
+- **watchtower_node.go** – Emits start/stop/fork alerts, streams periodic health metrics and raises integrity sweeps against observed nodes.
 - **workflow_integrations.go** – Workflow represents a sequence of opcode names executed in order.
-- **zero_trust_data_channels.go** – ZeroTrustEngine manages encrypted data channels backed by ledger escrows.
+- **zero_trust_data_channels.go** – Coordinates encrypted channels with participant governance, retention policies, key rotation and event feeds.
 - **zkp_node.go** – ZKPNodeConfig aggregates network and ledger configuration for a zero-knowledge proof node.
 
 

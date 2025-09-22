@@ -3,6 +3,7 @@ package core
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -180,5 +181,23 @@ func TestEnvOverrides(t *testing.T) {
 	}
 	if tbl[op] != 77 {
 		t.Fatalf("expected override cost 77 for Add, got %d", tbl[op])
+	}
+}
+
+func TestValidateGasTable(t *testing.T) {
+	initGasTable()
+	if err := ValidateGasTable([]string{"Add"}); err != nil {
+		t.Fatalf("validate gas table: %v", err)
+	}
+	op, ok := Lookup("Add")
+	if !ok {
+		t.Fatalf("lookup failed")
+	}
+	gasMu.Lock()
+	delete(gasTable, op)
+	gasMu.Unlock()
+	t.Cleanup(func() { initGasTable() })
+	if err := ValidateGasTable([]string{"Add"}); !errors.Is(err, ErrGasTableIncomplete) {
+		t.Fatalf("expected ErrGasTableIncomplete, got %v", err)
 	}
 }

@@ -3,13 +3,17 @@ package core
 import (
 	"bytes"
 	"context"
+	"errors"
+	"sync"
 	"testing"
+	"time"
 )
 
 // TestSimpleVM verifies basic start/stop and opcode execution using the
 // default light VM profile.
 func TestSimpleVM(t *testing.T) {
 	vm := NewSimpleVM()
+	vm.ResetMetrics()
 	if vm.Status() {
 		t.Fatalf("expected stopped")
 	}
@@ -27,6 +31,14 @@ func TestSimpleVM(t *testing.T) {
 	}
 	if err := vm.Stop(); err != nil {
 		t.Fatalf("stop: %v", err)
+	}
+
+	metrics := vm.Metrics()
+	if metrics.Executions != 1 {
+		t.Fatalf("expected 1 execution, got %d", metrics.Executions)
+	}
+	if metrics.GasConsumed != 1 {
+		t.Fatalf("expected gas consumed 1, got %d", metrics.GasConsumed)
 	}
 }
 
@@ -72,5 +84,61 @@ func TestVMCustomHandler(t *testing.T) {
 	}
 	if len(out) != 2 || out[1] != 0xAA {
 		t.Fatalf("handler not invoked")
+	}
+}
+
+func TestVMGasLimitEnforced(t *testing.T) {
+	vm := NewSimpleVM()
+	_ = vm.Start()
+	_, _, err := vm.Execute([]byte{0, 0, 0, 0, 0, 0}, "", nil, 1)
+	if err == nil {
+		t.Fatalf("expected gas limit error")
+	}
+	if !errors.Is(err, ErrGasLimit) {
+		t.Fatalf("expected ErrGasLimit, got %v", err)
+	}
+}
+
+func TestVMHooksCaptureTraces(t *testing.T) {
+	vm := NewSimpleVM()
+	_ = vm.Start()
+	defer vm.ResetHooks()
+
+	var (
+		mu     sync.Mutex
+		traces []ExecutionTrace
+	)
+	vm.RegisterHook(func(trace ExecutionTrace) {
+		mu.Lock()
+		defer mu.Unlock()
+		traces = append(traces, trace)
+	})
+
+	wasm := []byte{0, 0, 0, 0, 0, 0} // two opcodes
+	args := []byte{0x01}
+	out, gas, err := vm.Execute(wasm, "", args, 10)
+	if err != nil {
+		t.Fatalf("execute: %v", err)
+	}
+	if !bytes.Equal(out, args) {
+		t.Fatalf("expected echo output")
+	}
+	if gas != 2 {
+		t.Fatalf("expected gas 2, got %d", gas)
+	}
+
+	time.Sleep(5 * time.Millisecond)
+	mu.Lock()
+	defer mu.Unlock()
+	if len(traces) != 2 {
+		t.Fatalf("expected 2 traces, got %d", len(traces))
+	}
+	for _, trace := range traces {
+		if trace.Name == "" {
+			t.Fatalf("trace missing opcode name")
+		}
+		if trace.GasCost == 0 {
+			t.Fatalf("trace missing gas cost")
+		}
 	}
 }
