@@ -21,6 +21,8 @@ Stage 74 extends auditing to access control with an `Access_Audit` opcode that s
 
 Every exported function in the core packages is mapped to a unique 24‑bit opcode.  The format `0xCCNNNN` splits the value into a one‑byte **category** `CC` and a two‑byte **index** `NNNN`.  Categories correspond to major modules such as the ledger, AMM, state channels or the virtual machine.  The catalogue is generated automatically; the dispatcher resolves the opcode at runtime and invokes the appropriate handler.
 
+Stage 80 promotes `SNVMOpcodeByCode` as the canonical lookup helper. The generator now emits O(1) maps that collapse case-only duplicates and retain the first-seen numeric mapping so legacy catalogues remain compatible while CLI, VM and auditing tools share a single authoritative view.【F:snvm._opcodes.go†L1-L1343】
+
 ## Operand Semantics
 
 Opcodes follow a stack‑based calling convention:

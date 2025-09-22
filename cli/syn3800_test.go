@@ -143,3 +143,26 @@ func TestSyn3800Validation(t *testing.T) {
 		t.Fatalf("unexpected missing wallet error: %v", err)
 	}
 }
+
+func TestSyn3800Stage73Persistence(t *testing.T) {
+	useMemoryWalletLoader(t)
+	statePath := filepath.Join(t.TempDir(), "stage73.json")
+	setStage73StatePath(statePath)
+	resetStage73LoadedForTests()
+	defer resetStage73LoadedForTests()
+
+	grantRegistry = core.NewGrantRegistry()
+	_, walletPath := createWalletFile(t, "pass")
+	if _, err := execCommand("syn3800", "create", "alice", "grant", "50", "--authorizer", walletPath+":pass"); err != nil {
+		t.Fatalf("create with stage 73 persistence: %v", err)
+	}
+
+	resetStage73LoadedForTests()
+	grantRegistry = core.NewGrantRegistry()
+	if err := ensureGrantRegistryLoaded(); err != nil {
+		t.Fatalf("reload stage73 state: %v", err)
+	}
+	if _, ok := grantRegistry.GetGrant(1); !ok {
+		t.Fatal("expected persisted grant to reload from stage73 state")
+	}
+}

@@ -12,6 +12,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	ilog "synnergy/internal/log"
 	"synnergy/internal/telemetry"
@@ -23,7 +24,7 @@ import (
 // and governance CLI operations so their fees are visible to users. Stage 24
 // extends coverage to cross-chain bridges, protocol registration and Plasma
 // management so inter-network workflows remain predictable. Stage 42 records
-// lock-mint and burn-release transfer opcodes so cross-chain transaction relays
+// lock-mint and burn-release transfer operations so cross-chain transaction relays
 // surface their costs alongside bridge operations. Stage 25 adds node
 // management operations (full, light, mining, staking, watchtower and warfare
 // nodes) so dashboards can price infrastructure actions. Stage 22 prices node status queries for the node operations dashboard. Stage 29 introduces
@@ -46,6 +47,16 @@ import (
 // gas costs.
 type GasTable map[string]uint64
 
+// GasSnapshot represents the immutable state of the gas registry at a point in
+// time. Consumers subscribe to snapshots to keep long-lived services (CLI,
+// authority nodes, web tier) synchronised without re-reading documentation on
+// every lookup.
+type GasSnapshot struct {
+	Table    GasTable
+	Version  uint64
+	LoadedAt time.Time
+}
+
 // DefaultGasCost is used when an opcode is missing from the guide.
 // A low value keeps experimental opcodes affordable during development.
 const DefaultGasCost uint64 = 1
@@ -54,6 +65,11 @@ var (
 	gasOnce  sync.Once
 	gasCache GasTable
 	gasMu    sync.RWMutex
+	gasVer   uint64
+	gasTime  time.Time
+
+	gasSubscribersMu sync.RWMutex
+	gasSubscribers   map[chan GasSnapshot]struct{}
 )
 
 // ErrInvalidGasRegistration is returned when registering an opcode with an empty
@@ -72,7 +88,13 @@ func loadGasTable() {
 	if err != nil {
 		span.RecordError(err)
 		ilog.Error("gas_table_load", "error", err)
+		gasMu.Lock()
 		gasCache = tbl
+		gasVer++
+		gasTime = time.Now().UTC()
+		snapshot := snapshotLocked()
+		gasMu.Unlock()
+		notifyGasSubscribers(snapshot)
 		return
 	}
 	scanner := bufio.NewScanner(bytes.NewReader(data))
@@ -98,7 +120,21 @@ func loadGasTable() {
 		span.RecordError(err)
 		ilog.Error("gas_table_scan", "error", err)
 	}
-	gasCache = tbl
+	gasMu.Lock()
+	if gasCache == nil {
+		gasCache = tbl
+	} else {
+		for name, cost := range tbl {
+			if _, exists := gasCache[name]; !exists {
+				gasCache[name] = cost
+			}
+		}
+	}
+	gasVer++
+	gasTime = time.Now().UTC()
+	snapshot := snapshotLocked()
+	gasMu.Unlock()
+	notifyGasSubscribers(snapshot)
 }
 
 // LoadGasTable returns the cached gas table, loading it on first use.
@@ -106,33 +142,37 @@ func LoadGasTable() GasTable {
 	gasOnce.Do(loadGasTable)
 	gasMu.RLock()
 	defer gasMu.RUnlock()
-	return gasCache
+	return cloneGasTable(gasCache)
 }
 
 // GasCost returns the gas price for a given opcode name. If the opcode is not
 // present in the table, DefaultGasCost is returned.
 func GasCost(opcode string) uint64 {
-        tbl := LoadGasTable()
-        if c, ok := tbl[opcode]; ok {
-                return c
-        }
-        return DefaultGasCost
+	gasOnce.Do(loadGasTable)
+	gasMu.RLock()
+	defer gasMu.RUnlock()
+	if c, ok := gasCache[opcode]; ok {
+		return c
+	}
+	return DefaultGasCost
 }
 
 // MustGasCost returns the gas price for an opcode and panics if it is missing.
 // It is useful during initialization of critical modules where undefined
 // pricing would indicate a misconfigured build or documentation drift.
 func MustGasCost(opcode string) uint64 {
-        if c, ok := LoadGasTable()[opcode]; ok {
-                return c
-        }
-        panic(fmt.Sprintf("missing gas cost for opcode %s", opcode))
+	if c, ok := LoadGasTable()[opcode]; ok {
+		return c
+	}
+	panic(fmt.Sprintf("missing gas cost for opcode %s", opcode))
 }
 
 // HasOpcode reports whether a gas price is defined for the opcode.
 func HasOpcode(name string) bool {
-	tbl := LoadGasTable()
-	_, ok := tbl[name]
+	gasOnce.Do(loadGasTable)
+	gasMu.RLock()
+	defer gasMu.RUnlock()
+	_, ok := gasCache[name]
 	return ok
 }
 
@@ -147,11 +187,18 @@ func RegisterGasCost(name string, cost uint64) error {
 		return fmt.Errorf("%w: cost", ErrInvalidGasRegistration)
 	}
 	gasMu.Lock()
-	defer gasMu.Unlock()
 	if gasCache == nil {
 		gasCache = make(GasTable)
 	}
+	unchanged := gasCache[name] == cost
 	gasCache[name] = cost
+	gasVer++
+	gasTime = time.Now().UTC()
+	snapshot := snapshotLocked()
+	gasMu.Unlock()
+	if !unchanged {
+		notifyGasSubscribers(snapshot)
+	}
 	return nil
 }
 
@@ -160,6 +207,90 @@ func RegisterGasCost(name string, cost uint64) error {
 func ResetGasTable() {
 	gasMu.Lock()
 	gasCache = nil
+	gasVer++
+	gasTime = time.Now().UTC()
+	snapshot := snapshotLocked()
 	gasMu.Unlock()
 	gasOnce = sync.Once{}
+	notifyGasSubscribers(snapshot)
+}
+
+// ReloadGasTable invalidates the cache and loads a fresh copy from disk. The
+// returned snapshot mirrors the state observed by subscribers after the
+// reload.
+func ReloadGasTable() GasSnapshot {
+	gasMu.Lock()
+	overrides := cloneGasTable(gasCache)
+	gasMu.Unlock()
+
+	gasOnce = sync.Once{}
+	gasMu.Lock()
+	gasCache = overrides
+	gasMu.Unlock()
+
+	gasOnce.Do(loadGasTable)
+	return SnapshotGasTable()
+}
+
+// SnapshotGasTable returns the current gas configuration along with versioning
+// metadata so callers can detect staleness.
+func SnapshotGasTable() GasSnapshot {
+	gasOnce.Do(loadGasTable)
+	gasMu.RLock()
+	defer gasMu.RUnlock()
+	return snapshotLocked()
+}
+
+// SubscribeGasTable streams immutable snapshots of the gas table. The caller
+// receives the current snapshot immediately and subsequent updates whenever the
+// registry changes. The returned cancel function must be invoked to stop the
+// stream and prevent goroutine leaks.
+func SubscribeGasTable(buffer int) (<-chan GasSnapshot, func()) {
+	if buffer <= 0 {
+		buffer = 1
+	}
+	gasOnce.Do(loadGasTable)
+	ch := make(chan GasSnapshot, buffer)
+	gasSubscribersMu.Lock()
+	if gasSubscribers == nil {
+		gasSubscribers = make(map[chan GasSnapshot]struct{})
+	}
+	gasSubscribers[ch] = struct{}{}
+	gasSubscribersMu.Unlock()
+	ch <- SnapshotGasTable()
+	var once sync.Once
+	cancel := func() {
+		once.Do(func() {
+			gasSubscribersMu.Lock()
+			if _, ok := gasSubscribers[ch]; ok {
+				delete(gasSubscribers, ch)
+				close(ch)
+			}
+			gasSubscribersMu.Unlock()
+		})
+	}
+	return ch, cancel
+}
+
+func snapshotLocked() GasSnapshot {
+	return GasSnapshot{Table: cloneGasTable(gasCache), Version: gasVer, LoadedAt: gasTime}
+}
+
+func cloneGasTable(src GasTable) GasTable {
+	clone := make(GasTable, len(src))
+	for k, v := range src {
+		clone[k] = v
+	}
+	return clone
+}
+
+func notifyGasSubscribers(snapshot GasSnapshot) {
+	gasSubscribersMu.RLock()
+	defer gasSubscribersMu.RUnlock()
+	for ch := range gasSubscribers {
+		select {
+		case ch <- snapshot:
+		default:
+		}
+	}
 }

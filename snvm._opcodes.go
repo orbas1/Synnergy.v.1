@@ -1,5 +1,10 @@
 package synnergy
 
+import (
+	"strings"
+	"sync"
+)
+
 // Updated for Stage 23 to ensure consensus and governance opcodes remain in sync.
 // Stage 25 verifies node operation opcodes are available for CLI node management.
 // Stage 38 covers biometric security node opcodes for CLI exposure.
@@ -1285,12 +1290,58 @@ var SNVMOpcodes = []SNVMOpcode{
 	{"core_bank_nodes_index_List", 0x0004F5},
 }
 
-// SNVMOpcodeByName returns the opcode for a given function identifier.
-func SNVMOpcodeByName(name string) uint32 {
+var (
+	opcodeIndicesOnce sync.Once
+	opcodeIndexByCode map[uint32]SNVMOpcode
+	opcodeIndexByName map[string]SNVMOpcode
+	opcodeIndexErr    error
+)
+
+func buildOpcodeIndices() {
+	opcodeIndexByCode = make(map[uint32]SNVMOpcode, len(SNVMOpcodes))
+	opcodeIndexByName = make(map[string]SNVMOpcode, len(SNVMOpcodes))
 	for _, op := range SNVMOpcodes {
-		if op.Name == name {
-			return op.Code
+		if _, exists := opcodeIndexByCode[op.Code]; exists {
+			continue
 		}
+		normalized := strings.ToLower(op.Name)
+		if _, exists := opcodeIndexByName[normalized]; exists {
+			continue
+		}
+		opcodeIndexByCode[op.Code] = op
+		opcodeIndexByName[normalized] = op
+	}
+}
+
+func ensureOpcodeIndices() {
+	opcodeIndicesOnce.Do(buildOpcodeIndices)
+	if opcodeIndexErr != nil {
+		panic(opcodeIndexErr)
+	}
+}
+
+// SNVMOpcodeByName returns the opcode for a given function identifier. The lookup
+// is case-insensitive and panics at startup if duplicate identifiers exist.
+func SNVMOpcodeByName(name string) uint32 {
+	ensureOpcodeIndices()
+	if op, ok := opcodeIndexByName[strings.ToLower(name)]; ok {
+		return op.Code
 	}
 	return 0
+}
+
+// SNVMOpcodeByCode returns the opcode metadata for a numeric machine code.
+func SNVMOpcodeByCode(code uint32) (SNVMOpcode, bool) {
+	ensureOpcodeIndices()
+	op, ok := opcodeIndexByCode[code]
+	return op, ok
+}
+
+// SNVMOpcodeCatalogue exposes a copy of the opcode catalogue for external
+// tooling. Callers receive a stable snapshot that is safe for concurrent use.
+func SNVMOpcodeCatalogue() []SNVMOpcode {
+	ensureOpcodeIndices()
+	out := make([]SNVMOpcode, 0, len(SNVMOpcodes))
+	out = append(out, SNVMOpcodes...)
+	return out
 }

@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 	"strings"
@@ -14,7 +15,10 @@ var syn3700 *core.SYN3700Token
 func init() {
 	cmd := &cobra.Command{
 		Use:   "syn3700",
-		Short: "SYN3700 index token",
+		Short: "SYN3700 index token operations",
+		PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+			return ensureSyn3700Loaded()
+		},
 	}
 
 	initCmd := &cobra.Command{
@@ -23,79 +27,154 @@ func init() {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			name, _ := cmd.Flags().GetString("name")
 			symbol, _ := cmd.Flags().GetString("symbol")
+			controllerSpec, _ := cmd.Flags().GetString("controller")
 			if name == "" || symbol == "" {
 				return fmt.Errorf("name and symbol required")
 			}
+			if controllerSpec == "" {
+				return fmt.Errorf("controller required")
+			}
+			addr, err := walletAddressFromSpec(controllerSpec)
+			if err != nil {
+				return err
+			}
 			syn3700 = core.NewSYN3700Token(name, symbol)
-			cmd.Println("token initialised")
+			syn3700.AddController(core.Address(addr), core.Address(addr))
+			if err := persistSyn3700(); err != nil {
+				return err
+			}
+			printOutput("token initialised")
 			return nil
 		},
 	}
 	initCmd.Flags().String("name", "", "token name")
 	initCmd.Flags().String("symbol", "", "token symbol")
+	initCmd.Flags().String("controller", "", "controller wallet path:password")
 	_ = initCmd.MarkFlagRequired("name")
 	_ = initCmd.MarkFlagRequired("symbol")
+	_ = initCmd.MarkFlagRequired("controller")
 	cmd.AddCommand(initCmd)
 
 	addCmd := &cobra.Command{
-		Use:   "add <token> <weight>",
+		Use:   "add <token>",
+		Args:  cobra.ExactArgs(1),
 		Short: "Add component to index",
-		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn3700 == nil {
 				return fmt.Errorf("token not initialised")
 			}
-			weight, err := strconv.ParseFloat(args[1], 64)
-			if err != nil || weight <= 0 {
+			weight, err := cmd.Flags().GetFloat64("weight")
+			if err != nil {
 				return fmt.Errorf("invalid weight")
 			}
-			if args[0] == "" {
-				return fmt.Errorf("token symbol required")
+			drift, err := cmd.Flags().GetFloat64("drift")
+			if err != nil {
+				return fmt.Errorf("invalid drift")
 			}
-			syn3700.AddComponent(args[0], weight)
-			cmd.Println("component added")
+			wallet, err := walletFromFlags(cmd)
+			if err != nil {
+				return err
+			}
+			if !syn3700.IsController(core.Address(wallet.Address)) {
+				return fmt.Errorf("wallet not authorised")
+			}
+			if err := syn3700.AddComponent(args[0], weight, drift, core.Address(wallet.Address)); err != nil {
+				return err
+			}
+			if err := persistSyn3700(); err != nil {
+				return err
+			}
+			printOutput("component added")
 			return nil
 		},
 	}
+	addCmd.Flags().Float64("weight", 0, "component weight")
+	addCmd.Flags().Float64("drift", 0, "allowed drift")
+	addWalletFlags(addCmd)
 	cmd.AddCommand(addCmd)
 
 	removeCmd := &cobra.Command{
 		Use:   "remove <token>",
-		Short: "Remove component from index",
 		Args:  cobra.ExactArgs(1),
+		Short: "Remove component from index",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn3700 == nil {
 				return fmt.Errorf("token not initialised")
 			}
-			if err := syn3700.RemoveComponent(args[0]); err != nil {
+			wallet, err := walletFromFlags(cmd)
+			if err != nil {
 				return err
 			}
-			cmd.Println("component removed")
+			if !syn3700.IsController(core.Address(wallet.Address)) {
+				return fmt.Errorf("wallet not authorised")
+			}
+			if err := syn3700.RemoveComponent(args[0], core.Address(wallet.Address)); err != nil {
+				return err
+			}
+			if err := persistSyn3700(); err != nil {
+				return err
+			}
+			printOutput("component removed")
 			return nil
 		},
 	}
+	addWalletFlags(removeCmd)
 	cmd.AddCommand(removeCmd)
 
-	listCmd := &cobra.Command{
-		Use:   "list",
-		Short: "List index components",
+	snapshotCmd := &cobra.Command{
+		Use:   "snapshot",
+		Short: "Emit token snapshot",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn3700 == nil {
 				return fmt.Errorf("token not initialised")
 			}
-			comps := syn3700.ListComponents()
-			for _, c := range comps {
-				cmd.Printf("%s %.2f\n", c.Token, c.Weight)
+			snap := syn3700.Snapshot()
+			resp := map[string]interface{}{
+				"name":       snap.Name,
+				"symbol":     snap.Symbol,
+				"components": snap.Components,
 			}
+			b, _ := json.MarshalIndent(resp, "", "  ")
+			cmd.Println(string(b))
 			return nil
 		},
 	}
-	cmd.AddCommand(listCmd)
+	cmd.AddCommand(snapshotCmd)
+
+	statusCmd := &cobra.Command{
+		Use:   "status",
+		Short: "Show component/controller counts",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if syn3700 == nil {
+				return fmt.Errorf("token not initialised")
+			}
+			tele := syn3700.Telemetry()
+			b, _ := json.MarshalIndent(tele, "", "  ")
+			cmd.Println(string(b))
+			return nil
+		},
+	}
+	cmd.AddCommand(statusCmd)
+
+	controllersCmd := &cobra.Command{
+		Use:   "controllers",
+		Short: "List controller addresses",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if syn3700 == nil {
+				return fmt.Errorf("token not initialised")
+			}
+			ctrls := syn3700.Controllers()
+			b, _ := json.MarshalIndent(ctrls, "", "  ")
+			cmd.Println(string(b))
+			return nil
+		},
+	}
+	cmd.AddCommand(controllersCmd)
 
 	valueCmd := &cobra.Command{
 		Use:   "value <token:price>...",
-		Short: "Compute index value using token prices",
 		Args:  cobra.MinimumNArgs(1),
+		Short: "Compute index value using token prices",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if syn3700 == nil {
 				return fmt.Errorf("token not initialised")
@@ -107,17 +186,56 @@ func init() {
 					return fmt.Errorf("invalid price pair %s", pair)
 				}
 				p, err := strconv.ParseFloat(parts[1], 64)
-				if err != nil || p < 0 {
+				if err != nil {
 					return fmt.Errorf("invalid price for %s", parts[0])
 				}
 				prices[parts[0]] = p
 			}
 			val := syn3700.Value(prices)
-			cmd.Printf("%.2f\n", val)
+			b, _ := json.MarshalIndent(map[string]float64{"value": val}, "", "  ")
+			cmd.Println(string(b))
 			return nil
 		},
 	}
 	cmd.AddCommand(valueCmd)
+
+	rebalanceCmd := &cobra.Command{
+		Use:   "rebalance",
+		Short: "Show rebalance plan",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if syn3700 == nil {
+				return fmt.Errorf("token not initialised")
+			}
+			wallet, err := walletFromFlags(cmd)
+			if err != nil {
+				return err
+			}
+			if !syn3700.IsController(core.Address(wallet.Address)) {
+				return fmt.Errorf("wallet not authorised")
+			}
+			plan := syn3700.RebalancePlan()
+			b, _ := json.MarshalIndent(plan, "", "  ")
+			cmd.Println(string(b))
+			return nil
+		},
+	}
+	addWalletFlags(rebalanceCmd)
+	requireWalletFlags(rebalanceCmd)
+	cmd.AddCommand(rebalanceCmd)
+
+	auditCmd := &cobra.Command{
+		Use:   "audit",
+		Short: "Show audit history",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if syn3700 == nil {
+				return fmt.Errorf("token not initialised")
+			}
+			b, _ := json.MarshalIndent(syn3700.AuditLog(), "", "  ")
+			cmd.Println(string(b))
+			return nil
+		},
+	}
+	cmd.AddCommand(auditCmd)
 
 	rootCmd.AddCommand(cmd)
 }

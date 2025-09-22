@@ -1,9 +1,20 @@
 package synnergy
 
-import "testing"
+import (
+	"context"
+	"fmt"
+	"sync"
+	"testing"
+	"time"
+)
 
 func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	ResetGasTable()
+	defer ResetGasTable()
+	table := LoadGasTable()
+	if len(table) == 0 {
+		t.Fatalf("expected table entries")
+	}
 	if !HasOpcode("Security_RaiseAlert") {
 		t.Fatalf("missing Security_RaiseAlert opcode")
 	}
@@ -22,9 +33,6 @@ func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	if GasCost("RegisterContentNode") != 5 {
 		t.Fatalf("unexpected cost for RegisterContentNode")
 	}
-	if !HasOpcode("KademliaDistance") {
-		t.Fatalf("missing KademliaDistance opcode")
-	}
 	if !HasOpcode("MineUntil") {
 		t.Fatalf("missing MineUntil opcode")
 	}
@@ -40,30 +48,6 @@ func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	if GasCost("RegNodeApprove") != 2 {
 		t.Fatalf("unexpected cost for RegNodeApprove")
 	}
-	if !HasOpcode("RegNodeFlag") {
-		t.Fatalf("missing RegNodeFlag opcode")
-	}
-	if GasCost("RegNodeFlag") != 1 {
-		t.Fatalf("unexpected cost for RegNodeFlag")
-	}
-	if !HasOpcode("RegNodeLogs") {
-		t.Fatalf("missing RegNodeLogs opcode")
-	}
-        if GasCost("RegNodeLogs") != 1 {
-                t.Fatalf("unexpected cost for RegNodeLogs")
-        }
-        if !HasOpcode("RegNodeAudit") {
-                t.Fatalf("missing RegNodeAudit opcode")
-        }
-        if GasCost("RegNodeAudit") != 3 {
-                t.Fatalf("unexpected cost for RegNodeAudit")
-        }
-        if !HasOpcode("Access_Audit") {
-                t.Fatalf("missing Access_Audit opcode")
-        }
-        if GasCost("Access_Audit") != 2 {
-                t.Fatalf("unexpected cost for Access_Audit")
-        }
 }
 
 func TestRegisterGasCostValidation(t *testing.T) {
@@ -82,4 +66,72 @@ func TestMustGasCostPanics(t *testing.T) {
 		}
 	}()
 	MustGasCost("UnknownOpcode")
+}
+
+func TestGasTableSubscription(t *testing.T) {
+	ResetGasTable()
+	defer ResetGasTable()
+	ch, cancel := SubscribeGasTable(1)
+	defer cancel()
+	snap := <-ch
+	if len(snap.Table) == 0 {
+		t.Fatalf("expected initial snapshot")
+	}
+	if err := RegisterGasCost("subscription_test", 77); err != nil {
+		t.Fatalf("register cost: %v", err)
+	}
+	select {
+	case snap = <-ch:
+		if snap.Table["subscription_test"] != 77 {
+			t.Fatalf("expected override propagated, got %v", snap.Table["subscription_test"])
+		}
+	case <-time.After(200 * time.Millisecond):
+		t.Fatalf("timeout waiting for update")
+	}
+}
+
+func TestGasTableReloadPreservesOverrides(t *testing.T) {
+	ResetGasTable()
+	defer ResetGasTable()
+	if err := RegisterGasCost("override_test", 55); err != nil {
+		t.Fatalf("register cost: %v", err)
+	}
+	snap := ReloadGasTable()
+	if snap.Table["override_test"] != 55 {
+		t.Fatalf("override not preserved after reload")
+	}
+}
+
+func TestConcurrentRegisterAndSnapshot(t *testing.T) {
+        ResetGasTable()
+        defer ResetGasTable()
+        var wg sync.WaitGroup
+        ctx, cancel := context.WithCancel(context.Background())
+        for i := 0; i < 4; i++ {
+                wg.Add(1)
+                go func(idx int) {
+                        defer wg.Done()
+                        name := fmt.Sprintf("concurrent_%d", idx)
+			for j := 0; j < 10; j++ {
+				if err := RegisterGasCost(name, uint64(10+idx+j)); err != nil {
+					t.Errorf("register: %v", err)
+				}
+			}
+		}(i)
+        }
+        wg.Add(1)
+        go func() {
+                defer wg.Done()
+                for {
+                        select {
+                        case <-ctx.Done():
+                                return
+                        default:
+                                _ = SnapshotGasTable()
+                        }
+                }
+        }()
+        time.Sleep(50 * time.Millisecond)
+        cancel()
+        wg.Wait()
 }

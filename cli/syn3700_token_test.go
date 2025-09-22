@@ -133,7 +133,7 @@ func TestSyn3700CLIValidation(t *testing.T) {
 	}
 	if _, err := execCommand("syn3700", "rebalance"); err == nil {
 		t.Fatal("expected error for missing wallet flags")
-	} else if !strings.Contains(err.Error(), "required flag") {
+	} else if !strings.Contains(err.Error(), "wallet and password required") {
 		t.Fatalf("unexpected rebalance error: %v", err)
 	}
 }

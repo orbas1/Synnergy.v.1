@@ -4,25 +4,15 @@
 
 Synnergy blockchain CLI
 
-Stage 38 finalises biometric security and associated CLI modules. Wallet and
-biometric commands are now fully tested and hardened, enabling secure
-configuration and automation in production environments. Stage 40 adds
-robust block management with strict argument validation and accompanying test
-coverage.
-Stage 43 introduces DAO governance commands with optional JSON output and
-signature verification utilities for secure organisational workflows. Membership
-actions through `dao-members`—including adding, updating and removing
-participants—require valid ECDSA signatures before roles change, ensuring
-authenticated governance actions.
-
 ### Options
 
 ```
-  -h, --help   help for synnergy
-      --json   output results in JSON
+      --config string          Path to configuration file
+  -h, --help                   help for synnergy
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
-
-Stage 80 adds a persistent flag `--stage73-state` that points to the shared JSON snapshot used by SYN3700/SYN3800/SYN3900 CLI modules. When supplied, every Stage 73 command reads from and writes to that path so automation and browser tooling operate on the same persisted state.【F:cli/stage73_state.go†L1-L142】
 
 ### SEE ALSO
 
@@ -35,6 +25,7 @@ Stage 80 adds a persistent flag `--stage73-state` that points to the shared JSON
 * [synnergy authority](#synnergy-authority)	 - Manage authority nodes
 * [synnergy authority_apply](#synnergy-authority-apply)	 - Authority node applications
 * [synnergy authority_index](#synnergy-authority-index)	 - Authority node index
+* [synnergy bank_index](#synnergy-bank-index)	 - Bank node index
 * [synnergy bankinst](#synnergy-bankinst)	 - Bank institutional node operations
 * [synnergy banknodes](#synnergy-banknodes)	 - Bank node type utilities
 * [synnergy basenode](#synnergy-basenode)	 - Manage base node lifecycle and peers
@@ -57,9 +48,11 @@ Stage 80 adds a persistent flag `--stage73-state` that points to the shared JSON
 * [synnergy consensus-mode](#synnergy-consensus-mode)	 - Evaluate and view consensus mode
 * [synnergy consensus-node](#synnergy-consensus-node)	 - Consensus specific node operations
 * [synnergy consensus-service](#synnergy-consensus-service)	 - Run consensus mining service
+* [synnergy content_node](#synnergy-content-node)	 - Manage content registry
 * [synnergy contract-mgr](#synnergy-contract-mgr)	 - Administrative contract management
 * [synnergy contractopcodes](#synnergy-contractopcodes)	 - List contract-related opcodes with gas costs
 * [synnergy contracts](#synnergy-contracts)	 - Compile, deploy and invoke smart contracts
+* [synnergy creator](#synnergy-creator)	 - Creator wallet controls
 * [synnergy cross-consensus](#synnergy-cross-consensus)	 - Manage cross-consensus scaling networks
 * [synnergy cross_chain](#synnergy-cross-chain)	 - Manage cross-chain bridges
 * [synnergy cross_chain_agnostic_protocols](#synnergy-cross-chain-agnostic-protocols)	 - Register cross-chain protocols
@@ -76,7 +69,6 @@ Stage 80 adds a persistent flag `--stage73-state` that points to the shared JSON
 * [synnergy elected-node](#synnergy-elected-node)	 - Manage elected authority nodes
 * [synnergy faucet](#synnergy-faucet)	 - Interact with the test token faucet
 * [synnergy fees](#synnergy-fees)	 - Estimate transaction fees and provide feedback
-* [synnergy fees](#synnergy-fees)	 - Fee utilities
 * [synnergy firewall](#synnergy-firewall)	 - Manage firewall rules
 * [synnergy forensic](#synnergy-forensic)	 - Record transactions and network traces
 * [synnergy fullnode](#synnergy-fullnode)	 - Manage full node configuration
@@ -85,6 +77,7 @@ Stage 80 adds a persistent flag `--stage73-state` that points to the shared JSON
 * [synnergy genesis](#synnergy-genesis)	 - Genesis utilities
 * [synnergy geospatial](#synnergy-geospatial)	 - Geospatial node operations
 * [synnergy government](#synnergy-government)	 - Government authority node operations
+* [synnergy gui](#synnergy-gui)	 - Launch the desktop GUI shell
 * [synnergy highavailability](#synnergy-highavailability)	 - High availability failover management
 * [synnergy historical](#synnergy-historical)	 - Historical node operations
 * [synnergy holographic](#synnergy-holographic)	 - Holographic node operations
@@ -103,12 +96,11 @@ Stage 80 adds a persistent flag `--stage73-state` that points to the shared JSON
 * [synnergy loanpool_apply](#synnergy-loanpool-apply)	 - Manage loan applications
 * [synnergy loanproposal](#synnergy-loanproposal)	 - Work with standalone loan proposals
 * [synnergy marketplace](#synnergy-marketplace)	 - Deploy and trade smart contracts
-* [synnergy storage_marketplace](#synnergy-storage_marketplace)  - Manage decentralized storage listings
-* [synnergy nft](#synnergy-nft)  - Mint and trade NFTs
 * [synnergy mining](#synnergy-mining)	 - Control a mining node
 * [synnergy mobile_mining](#synnergy-mobile-mining)	 - Operate a mobile mining node
 * [synnergy nat](#synnergy-nat)	 - Manage NAT port mappings
 * [synnergy network](#synnergy-network)	 - Control networking stack
+* [synnergy nft](#synnergy-nft)	 - Mint and trade NFTs
 * [synnergy node](#synnergy-node)	 - Node operations
 * [synnergy node_adapter](#synnergy-node-adapter)	 - Inspect node adapter
 * [synnergy nodeaddr](#synnergy-nodeaddr)	 - Node address utilities
@@ -134,6 +126,7 @@ Stage 80 adds a persistent flag `--stage73-state` that points to the shared JSON
 * [synnergy stake_penalty](#synnergy-stake-penalty)	 - Apply staking penalties or rewards
 * [synnergy staking_node](#synnergy-staking-node)	 - Manage staking balances
 * [synnergy state](#synnergy-state)	 - In-memory StateRW utilities
+* [synnergy storage_marketplace](#synnergy-storage-marketplace)	 - List and lease decentralised storage
 * [synnergy swarm](#synnergy-swarm)	 - Manage swarms of nodes
 * [synnergy syn10](#synnergy-syn10)	 - SYN10 CBDC token operations
 * [synnergy syn1000](#synnergy-syn1000)	 - SYN1000 stablecoin operations
@@ -160,7 +153,7 @@ Stage 80 adds a persistent flag `--stage73-state` that points to the shared JSON
 * [synnergy syn3400](#synnergy-syn3400)	 - Forex pair registry
 * [synnergy syn3500](#synnergy-syn3500)	 - SYN3500 currency token
 * [synnergy syn3600](#synnergy-syn3600)	 - Futures contract utilities
-* [synnergy syn3700](#synnergy-syn3700)	 - Index token management
+* [synnergy syn3700](#synnergy-syn3700)	 - SYN3700 index token operations
 * [synnergy syn3800](#synnergy-syn3800)	 - Manage SYN3800 grant records
 * [synnergy syn3900](#synnergy-syn3900)	 - Manage SYN3900 government benefits
 * [synnergy syn4200_token](#synnergy-syn4200-token)	 - Charity token operations
@@ -182,7 +175,7 @@ Stage 80 adds a persistent flag `--stage73-state` that points to the shared JSON
 * [synnergy wallet](#synnergy-wallet)	 - Wallet operations
 * [synnergy warfare](#synnergy-warfare)	 - Interact with a warfare node
 * [synnergy watchtower](#synnergy-watchtower)	 - Watchtower node operations
-* [synnergy watchtower](#synnergy-watchtower)	 - Manage watchtower node
+* [synnergy watchtower-node](#synnergy-watchtower-node)	 - Manage dedicated watchtower node
 * [synnergy xcontract](#synnergy-xcontract)	 - Register cross-chain contract mappings
 * [synnergy zero-trust](#synnergy-zero-trust)	 - Manage zero trust data channels
 
@@ -200,7 +193,10 @@ Role based access control
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -229,7 +225,10 @@ synnergy access grant [role] [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -254,7 +253,10 @@ synnergy access has [role] [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -279,7 +281,10 @@ synnergy access list [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -304,7 +309,10 @@ synnergy access revoke [role] [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -325,7 +333,10 @@ Address utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -353,7 +364,10 @@ synnergy address bytes [hex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -378,7 +392,10 @@ synnergy address parse [hex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -403,7 +420,10 @@ synnergy address short [hex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -424,7 +444,10 @@ Zero address utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -451,7 +474,10 @@ synnergy addrzero is [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -476,7 +502,10 @@ synnergy addrzero show [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -497,7 +526,10 @@ AI enhanced contract operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -526,7 +558,10 @@ synnergy ai_contract deploy [wasm_file] [model_hash] [manifest] [gas_limit] [own
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -551,7 +586,10 @@ synnergy ai_contract invoke [addr] [input_hex] [gas_limit] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -572,6 +610,14 @@ synnergy ai_contract list [flags]
 ```
   -h, --help   help for list
       --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -596,7 +642,10 @@ synnergy ai_contract model [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -617,7 +666,10 @@ Audit log management
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -642,6 +694,14 @@ synnergy audit list [address] [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy audit](#synnergy-audit)	 - Audit log management
@@ -664,7 +724,10 @@ synnergy audit log [address] [event] [key=value]... [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -685,7 +748,10 @@ Audit node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -711,6 +777,14 @@ synnergy audit_node list [address] [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy audit_node](#synnergy-audit-node)	 - Audit node operations
@@ -733,7 +807,10 @@ synnergy audit_node log [address] [event] [key=value]... [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -758,7 +835,10 @@ synnergy audit_node start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -779,7 +859,10 @@ Manage authority nodes
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -811,7 +894,10 @@ synnergy authority deregister [address] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -836,7 +922,10 @@ synnergy authority elect [n] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -857,6 +946,14 @@ synnergy authority info [address] [flags]
 ```
   -h, --help   help for info
       --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -881,7 +978,10 @@ synnergy authority is [address] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -902,6 +1002,14 @@ synnergy authority list [flags]
 ```
   -h, --help   help for list
       --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -926,7 +1034,10 @@ synnergy authority register [address] [role] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -945,13 +1056,18 @@ synnergy authority vote [voter] [candidate] [flags]
 ### Options
 
 ```
-  -h, --help   help for vote
+  -h, --help         help for vote
+      --pub string   hex-encoded public key of voter
+      --sig string   hex-encoded signature of candidate address
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -972,7 +1088,10 @@ Authority node applications
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1003,7 +1122,10 @@ synnergy authority_apply finalize [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1026,6 +1148,14 @@ synnergy authority_apply get [id] [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy authority_apply](#synnergy-authority-apply)	 - Authority node applications
@@ -1044,6 +1174,14 @@ synnergy authority_apply list [flags]
 ```
   -h, --help   help for list
       --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1068,7 +1206,10 @@ synnergy authority_apply submit [candidate] [role] [desc] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1093,7 +1234,10 @@ synnergy authority_apply tick [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1112,13 +1256,18 @@ synnergy authority_apply vote [voter] [id] [approve] [flags]
 ### Options
 
 ```
-  -h, --help   help for vote
+  -h, --help         help for vote
+      --pub string   hex-encoded public key of voter
+      --sig string   hex-encoded signature of 'id:approve'
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1139,7 +1288,10 @@ Authority node index
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1168,7 +1320,10 @@ synnergy authority_index add [address] [role] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1191,6 +1346,14 @@ synnergy authority_index get [address] [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy authority_index](#synnergy-authority-index)	 - Authority node index
@@ -1209,6 +1372,14 @@ synnergy authority_index list [flags]
 ```
   -h, --help   help for list
       --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1233,12 +1404,155 @@ synnergy authority_index remove [address] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy authority_index](#synnergy-authority-index)	 - Authority node index
+
+
+## synnergy bank_index
+
+Bank node index
+
+### Options
+
+```
+  -h, --help   help for bank_index
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy bank_index add](#synnergy-bank-index-add)	 - Add bank node record to index
+* [synnergy bank_index get](#synnergy-bank-index-get)	 - Get bank node details
+* [synnergy bank_index list](#synnergy-bank-index-list)	 - List bank node records
+* [synnergy bank_index remove](#synnergy-bank-index-remove)	 - Remove bank node record
+
+
+## synnergy bank_index add
+
+Add bank node record to index
+
+```
+synnergy bank_index add [id] [type] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for add
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy bank_index](#synnergy-bank-index)	 - Bank node index
+
+
+## synnergy bank_index get
+
+Get bank node details
+
+```
+synnergy bank_index get [id] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for get
+      --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy bank_index](#synnergy-bank-index)	 - Bank node index
+
+
+## synnergy bank_index list
+
+List bank node records
+
+```
+synnergy bank_index list [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for list
+      --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy bank_index](#synnergy-bank-index)	 - Bank node index
+
+
+## synnergy bank_index remove
+
+Remove bank node record
+
+```
+synnergy bank_index remove [id] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for remove
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy bank_index](#synnergy-bank-index)	 - Bank node index
 
 
 ## synnergy bankinst
@@ -1254,7 +1568,10 @@ Bank institutional node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1263,6 +1580,7 @@ Bank institutional node operations
 * [synnergy bankinst is](#synnergy-bankinst-is)	 - Check if an institution is registered
 * [synnergy bankinst list](#synnergy-bankinst-list)	 - List registered institutions
 * [synnergy bankinst register](#synnergy-bankinst-register)	 - Register a participating institution
+* [synnergy bankinst remove](#synnergy-bankinst-remove)	 - Remove a participating institution
 
 
 ## synnergy bankinst is
@@ -1282,7 +1600,10 @@ synnergy bankinst is [name] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1305,6 +1626,14 @@ synnergy bankinst list [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy bankinst](#synnergy-bankinst)	 - Bank institutional node operations
@@ -1321,13 +1650,48 @@ synnergy bankinst register [name] [flags]
 ### Options
 
 ```
-  -h, --help   help for register
+  -h, --help         help for register
+      --pub string   hex-encoded public key
+      --sig string   hex-encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy bankinst](#synnergy-bankinst)	 - Bank institutional node operations
+
+
+## synnergy bankinst remove
+
+Remove a participating institution
+
+```
+synnergy bankinst remove [name] [flags]
+```
+
+### Options
+
+```
+  -h, --help         help for remove
+      --pub string   hex-encoded public key
+      --sig string   hex-encoded signature
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1348,7 +1712,10 @@ Bank node type utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1372,6 +1739,14 @@ synnergy banknodes types [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy banknodes](#synnergy-banknodes)	 - Bank node type utilities
@@ -1390,7 +1765,10 @@ Manage base node lifecycle and peers
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1414,13 +1792,18 @@ synnergy basenode dial [addr] [flags]
 ### Options
 
 ```
-  -h, --help   help for dial
+  -h, --help         help for dial
+      --pub string   hex-encoded public key
+      --sig string   hex-encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1445,7 +1828,10 @@ synnergy basenode peers [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1470,7 +1856,10 @@ synnergy basenode running [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1495,7 +1884,10 @@ synnergy basenode start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1520,7 +1912,10 @@ synnergy basenode stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1541,7 +1936,10 @@ Base token operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1574,7 +1972,10 @@ synnergy basetoken allowance <owner> <spender> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1599,7 +2000,10 @@ synnergy basetoken approve <owner> <spender> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1624,7 +2028,10 @@ synnergy basetoken balance <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1649,7 +2056,10 @@ synnergy basetoken burn <from> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1677,7 +2087,10 @@ synnergy basetoken init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1702,7 +2115,10 @@ synnergy basetoken mint <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1727,7 +2143,10 @@ synnergy basetoken supply [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1752,7 +2171,10 @@ synnergy basetoken transfer <from> <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1768,12 +2190,15 @@ Manage biometric templates
 
 ```
   -h, --help   help for bioauth
+      --json   output results in JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1803,7 +2228,10 @@ synnergy bioauth enroll [addr] [data] [pubKeyHex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1828,7 +2256,10 @@ synnergy bioauth enrolled [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1853,7 +2284,10 @@ synnergy bioauth list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1878,7 +2312,10 @@ synnergy bioauth remove [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1903,7 +2340,10 @@ synnergy bioauth verify [addr] [data] [sigHex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1924,7 +2364,10 @@ Biometric authentication operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1951,7 +2394,10 @@ synnergy biometric enroll [userID] [data] [pubKeyHex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1976,7 +2422,10 @@ synnergy biometric verify [userID] [data] [sigHex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -1997,7 +2446,10 @@ Sub-block and block utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2026,7 +2478,10 @@ synnergy block create [prevhash] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2051,7 +2506,10 @@ synnergy block header [nonce] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2076,7 +2534,10 @@ synnergy block sub-create [validator] [from] [to] [amount] [fee] [nonce] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2101,7 +2562,10 @@ synnergy block sub-verify [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2117,12 +2581,15 @@ Biometric security node operations
 
 ```
   -h, --help   help for bsn
+      --json   output results in JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2151,7 +2618,10 @@ synnergy bsn addtx [addr] [data] [sigHex] [from] [to] [amount] [fee] [nonce] [fl
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2176,7 +2646,10 @@ synnergy bsn auth [addr] [data] [sigHex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2201,7 +2674,10 @@ synnergy bsn enroll [addr] [data] [pubKeyHex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2226,7 +2702,10 @@ synnergy bsn remove [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2245,11 +2724,19 @@ Central bank node operations
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy centralbank info](#synnergy-centralbank-info)	 - Show node info
-* [synnergy centralbank mint](#synnergy-centralbank-mint)	 - Mint currency tokens
+* [synnergy centralbank mint](#synnergy-centralbank-mint)	 - Mint CBDC tokens
 * [synnergy centralbank policy](#synnergy-centralbank-policy)	 - Update monetary policy
 
 
@@ -2270,7 +2757,10 @@ synnergy centralbank info [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2280,7 +2770,7 @@ synnergy centralbank info [flags]
 
 ## synnergy centralbank mint
 
-Mint currency tokens
+Mint CBDC tokens
 
 ```
 synnergy centralbank mint [to] [amount] [flags]
@@ -2295,7 +2785,10 @@ synnergy centralbank mint [to] [amount] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2320,7 +2813,10 @@ synnergy centralbank policy [description] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2336,12 +2832,15 @@ Charity pool management
 
 ```
   -h, --help   help for charity_mgmt
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2369,7 +2868,10 @@ synnergy charity_mgmt balances [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2394,7 +2896,10 @@ synnergy charity_mgmt donate [from] [amt] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2419,7 +2924,10 @@ synnergy charity_mgmt withdraw [to] [amt] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2435,12 +2943,15 @@ Charity pool operations
 
 ```
   -h, --help   help for charity_pool
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2470,7 +2981,10 @@ synnergy charity_pool register [addr] [category] [name] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2495,7 +3009,10 @@ synnergy charity_pool registration [addr] [cycle] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2520,7 +3037,10 @@ synnergy charity_pool tick [timestamp] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2545,7 +3065,10 @@ synnergy charity_pool vote [voterAddr] [charityAddr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2570,7 +3093,10 @@ synnergy charity_pool winners [cycle] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2586,12 +3112,15 @@ Synthron coin utilities
 
 ```
   -h, --help   help for coin
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2622,7 +3151,10 @@ synnergy coin alpha [volatility] [participation] [economic] [norm] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2647,7 +3179,10 @@ synnergy coin info [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2672,7 +3207,10 @@ synnergy coin minstake [totalTx] [currentReward] [circSupply] [alpha] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2697,7 +3235,10 @@ synnergy coin price [C] [R] [M] [V] [T] [E] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2722,7 +3263,10 @@ synnergy coin reward [height] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2747,7 +3291,10 @@ synnergy coin supply [height] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2763,12 +3310,15 @@ Compliance operations
 
 ```
   -h, --help   help for compliance
+      --json   output results in JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2800,7 +3350,10 @@ synnergy compliance audit [address] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2825,7 +3378,10 @@ synnergy compliance erase [address] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2850,7 +3406,10 @@ synnergy compliance fraud [address] [severity] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2875,7 +3434,10 @@ synnergy compliance monitor [tx.json] [threshold] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2900,7 +3462,10 @@ synnergy compliance risk [address] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2925,7 +3490,10 @@ synnergy compliance validate [kyc.json] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2950,7 +3518,10 @@ synnergy compliance verifyzkp [blob.bin] [commitmentHex] [proofHex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -2966,12 +3537,15 @@ Manage address compliance
 
 ```
   -h, --help   help for compliance_management
+      --json   output results in JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3002,7 +3576,10 @@ synnergy compliance_management resume [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3027,7 +3604,10 @@ synnergy compliance_management review [tx.json] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3052,7 +3632,10 @@ synnergy compliance_management status [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3077,7 +3660,10 @@ synnergy compliance_management suspend [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3102,7 +3688,10 @@ synnergy compliance_management unwhitelist [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3127,7 +3716,10 @@ synnergy compliance_management whitelist [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3143,12 +3735,15 @@ Compressed ledger snapshots
 
 ```
   -h, --help   help for compression
+      --json   output results in JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3175,7 +3770,10 @@ synnergy compression load [file] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3200,7 +3798,10 @@ synnergy compression save [file] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3221,7 +3822,10 @@ Manage connection pool
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3229,7 +3833,7 @@ Manage connection pool
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy connpool close](#synnergy-connpool-close)	 - Close the pool
 * [synnergy connpool dial](#synnergy-connpool-dial)	 - Dial an address using the pool
-* [synnergy connpool release](#synnergy-connpool-release)        - Release a connection from the pool
+* [synnergy connpool release](#synnergy-connpool-release)	 - Release a connection from the pool
 * [synnergy connpool stats](#synnergy-connpool-stats)	 - Show pool statistics
 
 
@@ -3250,7 +3854,10 @@ synnergy connpool close [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3275,7 +3882,10 @@ synnergy connpool dial [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3300,12 +3910,16 @@ synnergy connpool release [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy connpool](#synnergy-connpool)        - Manage connection pool
+* [synnergy connpool](#synnergy-connpool)	 - Manage connection pool
+
 
 ## synnergy connpool stats
 
@@ -3324,7 +3938,10 @@ synnergy connpool stats [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3345,7 +3962,10 @@ Consensus operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3378,7 +3998,10 @@ synnergy consensus adjust [demand] [stake] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3403,7 +4026,10 @@ synnergy consensus availability [pow] [pos] [poh] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3428,7 +4054,10 @@ synnergy consensus difficulty [old] [actual] [expected] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3453,7 +4082,10 @@ synnergy consensus mine [difficulty] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3478,7 +4110,10 @@ synnergy consensus powrewards [enabled] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3503,7 +4138,10 @@ synnergy consensus threshold [demand] [stake] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3528,7 +4166,10 @@ synnergy consensus transition [demand] [threat] [stake] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3553,7 +4194,10 @@ synnergy consensus weights [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3574,7 +4218,10 @@ Adaptive consensus weight management
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3602,7 +4249,10 @@ synnergy consensus-adaptive adjust [demand] [stake] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3627,7 +4277,10 @@ synnergy consensus-adaptive threshold [demand] [stake] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3652,7 +4305,10 @@ synnergy consensus-adaptive weights [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3673,7 +4329,10 @@ Manage PoW difficulty
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3701,7 +4360,10 @@ synnergy consensus-difficulty config [window] [initial] [target] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3726,7 +4388,10 @@ synnergy consensus-difficulty sample [seconds] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3751,7 +4416,10 @@ synnergy consensus-difficulty value [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3772,7 +4440,10 @@ Evaluate and view consensus mode
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3800,7 +4471,10 @@ synnergy consensus-mode evaluate [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3825,7 +4499,10 @@ synnergy consensus-mode set [mode] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3850,7 +4527,10 @@ synnergy consensus-mode show [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3871,7 +4551,10 @@ Consensus specific node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3900,7 +4583,10 @@ synnergy consensus-node create [mode] [id] [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3925,7 +4611,10 @@ synnergy consensus-node info [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3950,7 +4639,10 @@ synnergy consensus-node mine [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3975,7 +4667,10 @@ synnergy consensus-node stake [address] [amount] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -3996,7 +4691,10 @@ Run consensus mining service
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4024,7 +4722,10 @@ synnergy consensus-service info [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4049,7 +4750,10 @@ synnergy consensus-service start [ms] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4074,12 +4778,126 @@ synnergy consensus-service stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy consensus-service](#synnergy-consensus-service)	 - Run consensus mining service
+
+
+## synnergy content_node
+
+Manage content registry
+
+### Options
+
+```
+  -h, --help   help for content_node
+      --json   output json
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy content_node list](#synnergy-content-node-list)	 - 
+* [synnergy content_node register](#synnergy-content-node-register)	 - 
+* [synnergy content_node unregister](#synnergy-content-node-unregister)	 - 
+
+
+## synnergy content_node list
+
+
+
+```
+synnergy content_node list [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for list
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output json
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy content_node](#synnergy-content-node)	 - Manage content registry
+
+
+## synnergy content_node register
+
+
+
+```
+synnergy content_node register [id] [name] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for register
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output json
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy content_node](#synnergy-content-node)	 - Manage content registry
+
+
+## synnergy content_node unregister
+
+
+
+```
+synnergy content_node unregister [id] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for unregister
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output json
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy content_node](#synnergy-content-node)	 - Manage content registry
 
 
 ## synnergy contract-mgr
@@ -4095,7 +4913,10 @@ Administrative contract management
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4125,7 +4946,10 @@ synnergy contract-mgr info [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4150,7 +4974,10 @@ synnergy contract-mgr pause [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4175,7 +5002,10 @@ synnergy contract-mgr resume [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4200,7 +5030,10 @@ synnergy contract-mgr transfer [addr] [newOwner] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4225,7 +5058,10 @@ synnergy contract-mgr upgrade [addr] [wasmHex] [gasLimit] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4250,7 +5086,10 @@ synnergy contractopcodes [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4271,7 +5110,10 @@ Compile, deploy and invoke smart contracts
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4303,7 +5145,10 @@ synnergy contracts compile [src.wat|src.wasm] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4332,7 +5177,10 @@ synnergy contracts deploy [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4360,7 +5208,10 @@ synnergy contracts deploy-template [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4385,7 +5236,10 @@ synnergy contracts info <address> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4413,7 +5267,10 @@ synnergy contracts invoke <address> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4438,7 +5295,10 @@ synnergy contracts list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4463,12 +5323,70 @@ synnergy contracts list-templates [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy contracts](#synnergy-contracts)	 - Compile, deploy and invoke smart contracts
+
+
+## synnergy creator
+
+Creator wallet controls
+
+### Options
+
+```
+  -h, --help   help for creator
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy creator disable-distribution](#synnergy-creator-disable-distribution)	 - Redirect creator fee share to node hosts
+
+
+## synnergy creator disable-distribution
+
+Redirect creator fee share to node hosts
+
+```
+synnergy creator disable-distribution [flags]
+```
+
+### Options
+
+```
+  -h, --help              help for disable-distribution
+      --password string   wallet password
+      --wallet string     path to creator wallet file
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy creator](#synnergy-creator)	 - Creator wallet controls
 
 
 ## synnergy cross-consensus
@@ -4484,7 +5402,10 @@ Manage cross-consensus scaling networks
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4508,12 +5429,15 @@ synnergy cross-consensus get <id> [flags]
 
 ```
   -h, --help   help for get
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4533,12 +5457,15 @@ synnergy cross-consensus list [flags]
 
 ```
   -h, --help   help for list
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4558,12 +5485,15 @@ synnergy cross-consensus register <source> <target> [flags]
 
 ```
   -h, --help   help for register
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4583,12 +5513,15 @@ synnergy cross-consensus remove <id> [flags]
 
 ```
   -h, --help   help for remove
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4609,7 +5542,10 @@ Manage cross-chain bridges
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4639,7 +5575,10 @@ synnergy cross_chain authorize <bridge_id> <relayer_addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4662,6 +5601,14 @@ synnergy cross_chain get <bridge_id> [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy cross_chain](#synnergy-cross-chain)	 - Manage cross-chain bridges
@@ -4680,6 +5627,14 @@ synnergy cross_chain list [flags]
 ```
   -h, --help   help for list
       --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4704,7 +5659,10 @@ synnergy cross_chain register <source_chain> <target_chain> <relayer_addr> [flag
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4729,7 +5687,10 @@ synnergy cross_chain revoke <bridge_id> <relayer_addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4750,7 +5711,10 @@ Register cross-chain protocols
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4776,6 +5740,14 @@ synnergy cross_chain_agnostic_protocols get <id> [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy cross_chain_agnostic_protocols](#synnergy-cross-chain-agnostic-protocols)	 - Register cross-chain protocols
@@ -4796,6 +5768,14 @@ synnergy cross_chain_agnostic_protocols list [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy cross_chain_agnostic_protocols](#synnergy-cross-chain-agnostic-protocols)	 - Register cross-chain protocols
@@ -4813,12 +5793,15 @@ synnergy cross_chain_agnostic_protocols register <name> [flags]
 
 ```
   -h, --help   help for register
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4839,7 +5822,10 @@ Manage cross-chain token transfers
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4863,12 +5849,15 @@ synnergy cross_chain_bridge claim <transfer_id> <proof> [flags]
 
 ```
   -h, --help   help for claim
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4888,12 +5877,15 @@ synnergy cross_chain_bridge deposit <bridge_id> <from> <to> <amount> [tokenID] [
 
 ```
   -h, --help   help for deposit
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4916,6 +5908,14 @@ synnergy cross_chain_bridge get <id> [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy cross_chain_bridge](#synnergy-cross-chain-bridge)	 - Manage cross-chain token transfers
@@ -4936,6 +5936,14 @@ synnergy cross_chain_bridge list [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy cross_chain_bridge](#synnergy-cross-chain-bridge)	 - Manage cross-chain token transfers
@@ -4954,7 +5962,10 @@ Create and monitor chain connections
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -4978,12 +5989,15 @@ synnergy cross_chain_connection close <connection_id> [flags]
 
 ```
   -h, --help   help for close
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5006,6 +6020,14 @@ synnergy cross_chain_connection get <connection_id> [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy cross_chain_connection](#synnergy-cross-chain-connection)	 - Create and monitor chain connections
@@ -5026,6 +6048,14 @@ synnergy cross_chain_connection list [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy cross_chain_connection](#synnergy-cross-chain-connection)	 - Create and monitor chain connections
@@ -5043,12 +6073,15 @@ synnergy cross_chain_connection open <local_chain> <remote_chain> [flags]
 
 ```
   -h, --help   help for open
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5064,12 +6097,15 @@ Execute cross-chain asset transfers
 
 ```
   -h, --help   help for cross_tx
+      --json   output results in JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5099,7 +6135,10 @@ synnergy cross_tx burnrelease <bridge_id> <to> <asset_id> <amount> --from <addr>
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5119,7 +6158,15 @@ synnergy cross_tx get <tx_id> [flags]
 
 ```
   -h, --help   help for get
-      --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5139,7 +6186,15 @@ synnergy cross_tx list [flags]
 
 ```
   -h, --help   help for list
-      --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5166,7 +6221,10 @@ synnergy cross_tx lockmint <bridge_id> <asset_id> <amount> <proof> --from <addr>
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5187,7 +6245,10 @@ Operate a custodial node
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5210,12 +6271,15 @@ synnergy custodial custody <user> <amount> [flags]
 
 ```
   -h, --help   help for custody
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5235,12 +6299,15 @@ synnergy custodial holdings [user] [flags]
 
 ```
   -h, --help   help for holdings
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5260,12 +6327,15 @@ synnergy custodial release <user> <amount> [flags]
 
 ```
   -h, --help   help for release
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5286,7 +6356,10 @@ Manage decentralised autonomous organisations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5316,7 +6389,10 @@ synnergy dao create <name> <creator> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5341,7 +6417,10 @@ synnergy dao info <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5366,7 +6445,10 @@ synnergy dao join <id> <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5391,7 +6473,10 @@ synnergy dao leave <id> <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5416,7 +6501,10 @@ synnergy dao list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5437,7 +6525,10 @@ Manage DAO membership roles
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5446,8 +6537,8 @@ Manage DAO membership roles
 * [synnergy dao-members add](#synnergy-dao-members-add)	 - Add member with role
 * [synnergy dao-members list](#synnergy-dao-members-list)	 - List members
 * [synnergy dao-members remove](#synnergy-dao-members-remove)	 - Remove a member
-* [synnergy dao-members role](#synnergy-dao-members-role)        - Get member role
-* [synnergy dao-members update](#synnergy-dao-members-update)    - Update member role
+* [synnergy dao-members role](#synnergy-dao-members-role)	 - Get member role
+* [synnergy dao-members update](#synnergy-dao-members-update)	 - Update member role
 
 
 ## synnergy dao-members add
@@ -5461,13 +6552,19 @@ synnergy dao-members add <daoID> <addr> <role> [flags]
 ### Options
 
 ```
-  -h, --help   help for add
+  -h, --help         help for add
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5487,12 +6584,15 @@ synnergy dao-members list <daoID> [flags]
 
 ```
   -h, --help   help for list
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5511,13 +6611,19 @@ synnergy dao-members remove <daoID> <addr> [flags]
 ### Options
 
 ```
-  -h, --help   help for remove
+  -h, --help         help for remove
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5537,17 +6643,21 @@ synnergy dao-members role <daoID> <addr> [flags]
 
 ```
   -h, --help   help for role
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy dao-members](#synnergy-dao-members)	 - Manage DAO membership roles
+
 
 ## synnergy dao-members update
 
@@ -5560,18 +6670,24 @@ synnergy dao-members update <daoID> <admin> <addr> <role> [flags]
 ### Options
 
 ```
-  -h, --help   help for update
+  -h, --help         help for update
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy dao-members](#synnergy-dao-members)  - Manage DAO membership roles
+* [synnergy dao-members](#synnergy-dao-members)	 - Manage DAO membership roles
 
 
 ## synnergy dao-proposal
@@ -5587,7 +6703,10 @@ Manage DAO proposals
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5612,13 +6731,19 @@ synnergy dao-proposal create <daoID> <creator> <description> [flags]
 ### Options
 
 ```
-  -h, --help   help for create
+  -h, --help         help for create
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5631,19 +6756,25 @@ synnergy dao-proposal create <daoID> <creator> <description> [flags]
 Mark proposal executed
 
 ```
-synnergy dao-proposal execute <id> [flags]
+synnergy dao-proposal execute <id> <requester> [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for execute
+  -h, --help         help for execute
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5663,12 +6794,15 @@ synnergy dao-proposal get <id> [flags]
 
 ```
   -h, --help   help for get
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5688,12 +6822,15 @@ synnergy dao-proposal list [flags]
 
 ```
   -h, --help   help for list
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5713,12 +6850,15 @@ synnergy dao-proposal results <id> [flags]
 
 ```
   -h, --help   help for results
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5737,13 +6877,19 @@ synnergy dao-proposal vote <id> <voter> <weight> <yes|no> [flags]
 ### Options
 
 ```
-  -h, --help   help for vote
+  -h, --help         help for vote
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5764,7 +6910,10 @@ Quadratic voting operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5785,13 +6934,19 @@ synnergy dao-qv vote <id> <voter> <tokens> <yes|no> [flags]
 ### Options
 
 ```
-  -h, --help   help for vote
+  -h, --help         help for vote
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5811,12 +6966,15 @@ synnergy dao-qv weight <tokens> [flags]
 
 ```
   -h, --help   help for weight
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5837,7 +6995,10 @@ DAO staking operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5861,12 +7022,15 @@ synnergy dao-stake balance <daoID> <addr> [flags]
 
 ```
   -h, --help   help for balance
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5885,13 +7049,19 @@ synnergy dao-stake stake <daoID> <addr> <amount> [flags]
 ### Options
 
 ```
-  -h, --help   help for stake
+  -h, --help         help for stake
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5911,12 +7081,15 @@ synnergy dao-stake total <daoID> [flags]
 
 ```
   -h, --help   help for total
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5935,13 +7108,19 @@ synnergy dao-stake unstake <daoID> <addr> <amount> [flags]
 ### Options
 
 ```
-  -h, --help   help for unstake
+  -h, --help         help for unstake
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -5962,21 +7141,24 @@ DAO token ledger operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
-* [synnergy dao-token balance](#synnergy-dao-token-balance)      - Get DAO token balance
-* [synnergy dao-token burn](#synnergy-dao-token-burn)    - Burn DAO tokens from a member
-* [synnergy dao-token mint](#synnergy-dao-token-mint)    - Mint DAO tokens to a member
-* [synnergy dao-token transfer](#synnergy-dao-token-transfer)    - Transfer DAO tokens between members
+* [synnergy dao-token balance](#synnergy-dao-token-balance)	 - Get DAO token balance for a member
+* [synnergy dao-token burn](#synnergy-dao-token-burn)	 - Burn DAO tokens from a member
+* [synnergy dao-token mint](#synnergy-dao-token-mint)	 - Mint DAO tokens to a member
+* [synnergy dao-token transfer](#synnergy-dao-token-transfer)	 - Transfer DAO tokens between members
 
 
 ## synnergy dao-token balance
 
-Get token balance
+Get DAO token balance for a member
 
 ```
 synnergy dao-token balance <daoID> <addr> [flags]
@@ -5986,12 +7168,15 @@ synnergy dao-token balance <daoID> <addr> [flags]
 
 ```
   -h, --help   help for balance
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6001,7 +7186,7 @@ synnergy dao-token balance <daoID> <addr> [flags]
 
 ## synnergy dao-token burn
 
-Burn tokens from an address
+Burn DAO tokens from a member
 
 ```
 synnergy dao-token burn <daoID> <admin> <addr> <amount> [flags]
@@ -6010,13 +7195,19 @@ synnergy dao-token burn <daoID> <admin> <addr> <amount> [flags]
 ### Options
 
 ```
-  -h, --help   help for burn
+  -h, --help         help for burn
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6026,7 +7217,7 @@ synnergy dao-token burn <daoID> <admin> <addr> <amount> [flags]
 
 ## synnergy dao-token mint
 
-Mint tokens to an address
+Mint DAO tokens to a member
 
 ```
 synnergy dao-token mint <daoID> <admin> <addr> <amount> [flags]
@@ -6035,13 +7226,19 @@ synnergy dao-token mint <daoID> <admin> <addr> <amount> [flags]
 ### Options
 
 ```
-  -h, --help   help for mint
+  -h, --help         help for mint
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6051,7 +7248,7 @@ synnergy dao-token mint <daoID> <admin> <addr> <amount> [flags]
 
 ## synnergy dao-token transfer
 
-Transfer tokens
+Transfer DAO tokens between members
 
 ```
 synnergy dao-token transfer <daoID> <from> <to> <amount> [flags]
@@ -6060,13 +7257,19 @@ synnergy dao-token transfer <daoID> <from> <to> <amount> [flags]
 ### Options
 
 ```
-  -h, --help   help for transfer
+  -h, --help         help for transfer
+      --json         output as JSON
+      --msg string   hex encoded message
+      --pub string   hex encoded public key
+      --sig string   hex encoded signature
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6087,7 +7290,10 @@ Manage elected authority nodes
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6110,14 +7316,20 @@ synnergy elected-node create [flags]
 ```
       --addr string     node address
   -h, --help            help for create
+      --json            output as JSON
+      --msg string      hex encoded message
+      --pub string      hex encoded public key
       --role string     node role (default "validator")
+      --sig string      hex encoded signature
       --term duration   term duration (default 1h0m0s)
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6137,12 +7349,15 @@ synnergy elected-node status [flags]
 
 ```
   -h, --help   help for status
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6163,7 +7378,10 @@ Interact with the test token faucet
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6192,7 +7410,10 @@ synnergy faucet balance [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6219,7 +7440,10 @@ synnergy faucet config [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6247,7 +7471,10 @@ synnergy faucet init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6272,7 +7499,10 @@ synnergy faucet request <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6293,7 +7523,10 @@ Estimate transaction fees and provide feedback
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6301,6 +7534,7 @@ Estimate transaction fees and provide feedback
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy fees estimate](#synnergy-fees-estimate)	 - Estimate fees for a transaction
 * [synnergy fees feedback](#synnergy-fees-feedback)	 - Submit feedback about fee estimates
+* [synnergy fees share](#synnergy-fees-share)	 - Compute proportional validator and miner fee shares
 
 
 ## synnergy fees estimate
@@ -6324,7 +7558,10 @@ synnergy fees estimate [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6350,34 +7587,15 @@ synnergy fees feedback [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy fees](#synnergy-fees)	 - Estimate transaction fees and provide feedback
-
-
-## synnergy fees
-
-Fee utilities
-
-### Options
-
-```
-  -h, --help   help for fees
-```
-
-### Options inherited from parent commands
-
-```
-      --json   output results in JSON
-```
-
-### SEE ALSO
-
-* [synnergy](#synnergy)	 - Synnergy blockchain CLI
-* [synnergy fees share](#synnergy-fees-share)	 - Compute proportional validator and miner fee shares
 
 
 ## synnergy fees share
@@ -6397,12 +7615,15 @@ synnergy fees share [total] [validatorWeight] [minerWeight] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy fees](#synnergy-fees)	 - Fee utilities
+* [synnergy fees](#synnergy-fees)	 - Estimate transaction fees and provide feedback
 
 
 ## synnergy firewall
@@ -6418,7 +7639,10 @@ Manage firewall rules
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6447,7 +7671,10 @@ synnergy firewall allow <ip> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6472,7 +7699,10 @@ synnergy firewall block <ip> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6497,7 +7727,10 @@ synnergy firewall check <ip> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6522,7 +7755,10 @@ synnergy firewall list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6543,7 +7779,10 @@ Record transactions and network traces
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6574,7 +7813,10 @@ synnergy forensic record-trace [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6603,7 +7845,10 @@ synnergy forensic record-tx [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6628,7 +7873,10 @@ synnergy forensic traces [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6653,7 +7901,10 @@ synnergy forensic txs [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6674,7 +7925,10 @@ Manage full node configuration
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6704,7 +7958,10 @@ synnergy fullnode create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6729,7 +7986,10 @@ synnergy fullnode mode [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6754,7 +8014,10 @@ synnergy fullnode set-mode <mode> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6775,7 +8038,10 @@ Interact with gas table
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6783,7 +8049,7 @@ Interact with gas table
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy gas list](#synnergy-gas-list)	 - List gas costs
 * [synnergy gas set](#synnergy-gas-set)	 - Set gas cost for an opcode
-* [synnergy gas snapshot](#synnergy-gas-snapshot)	 - Print current gas table snapshot
+* [synnergy gas snapshot](#synnergy-gas-snapshot)	 - Print or persist current gas table snapshot
 
 
 ## synnergy gas list
@@ -6803,7 +8069,10 @@ synnergy gas list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6828,7 +8097,10 @@ synnergy gas set <opcode> <cost> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6838,7 +8110,7 @@ synnergy gas set <opcode> <cost> [flags]
 
 ## synnergy gas snapshot
 
-Print current gas table snapshot
+Print or persist current gas table snapshot
 
 ```
 synnergy gas snapshot [flags]
@@ -6847,8 +8119,17 @@ synnergy gas snapshot [flags]
 ### Options
 
 ```
-  -h, --help   help for snapshot
-      --json   output JSON
+  -h, --help         help for snapshot
+      --json         output JSON
+      --out string   write snapshot to file
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6869,7 +8150,10 @@ Gateway node endpoint management
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6898,7 +8182,10 @@ synnergy gateway call [name] [data] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6923,7 +8210,10 @@ synnergy gateway list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6948,7 +8238,10 @@ synnergy gateway register [name] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6973,7 +8266,10 @@ synnergy gateway remove [name] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -6994,7 +8290,10 @@ Genesis utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7023,7 +8322,10 @@ synnergy genesis allocate [total] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7048,7 +8350,10 @@ synnergy genesis init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7073,7 +8378,10 @@ synnergy genesis init-block [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7098,7 +8406,10 @@ synnergy genesis show [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7119,7 +8430,10 @@ Geospatial node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7146,7 +8460,10 @@ synnergy geospatial history [subject] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7171,7 +8488,10 @@ synnergy geospatial record [subject] [lat] [lon] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7192,7 +8512,10 @@ Government authority node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7218,12 +8541,43 @@ synnergy government new [address] [role] [department] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy government](#synnergy-government)	 - Government authority node operations
+
+
+## synnergy gui
+
+Launch the desktop GUI shell
+
+```
+synnergy gui [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for gui
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy](#synnergy)	 - Synnergy blockchain CLI
 
 
 ## synnergy highavailability
@@ -7239,7 +8593,10 @@ High availability failover management
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7268,7 +8625,10 @@ synnergy highavailability active [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7293,7 +8653,10 @@ synnergy highavailability add [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7318,7 +8681,10 @@ synnergy highavailability heartbeat [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7343,7 +8709,10 @@ synnergy highavailability init [primary] [timeoutSec] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7364,7 +8733,10 @@ Historical node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7393,7 +8765,10 @@ synnergy historical archive [height] [hash] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7418,7 +8793,10 @@ synnergy historical hash [hash] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7443,7 +8821,10 @@ synnergy historical height [n] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7468,7 +8849,10 @@ synnergy historical total [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7489,7 +8873,10 @@ Holographic node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7518,7 +8905,10 @@ synnergy holographic dial [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7543,7 +8933,10 @@ synnergy holographic peers [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7568,7 +8961,10 @@ synnergy holographic retrieve [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7593,7 +8989,10 @@ synnergy holographic store [id] [data] [shards] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7614,7 +9013,10 @@ Identity verification service
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7643,7 +9045,10 @@ synnergy identity info [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7668,7 +9073,10 @@ synnergy identity logs [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7693,7 +9101,10 @@ synnergy identity register [addr] [name] [dob] [nationality] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7718,7 +9129,10 @@ synnergy identity verify [addr] [method] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7739,7 +9153,10 @@ ID wallet registration
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7766,7 +9183,10 @@ synnergy idwallet check [address] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7791,7 +9211,10 @@ synnergy idwallet register [address] [info] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7812,7 +9235,10 @@ Immutability enforcement utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7839,7 +9265,10 @@ synnergy immutability check [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7864,7 +9293,10 @@ synnergy immutability init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7885,7 +9317,10 @@ Initialization replication control
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7912,7 +9347,10 @@ synnergy initrep start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7937,7 +9375,10 @@ synnergy initrep stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7958,7 +9399,10 @@ Work with VM instructions
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -7985,7 +9429,10 @@ synnergy instruction list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8010,7 +9457,10 @@ synnergy instruction new [opcode] [value] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8031,13 +9481,17 @@ Interact with the Kademlia DHT
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy kademlia closest](#synnergy-kademlia-closest)	 - List n closest keys to target
+* [synnergy kademlia distance](#synnergy-kademlia-distance)	 - Calculate XOR distance between two keys
 * [synnergy kademlia get](#synnergy-kademlia-get)	 - Retrieve a value
 * [synnergy kademlia store](#synnergy-kademlia-store)	 - Store a key/value pair
 
@@ -8059,7 +9513,38 @@ synnergy kademlia closest [target] [n] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy kademlia](#synnergy-kademlia)	 - Interact with the Kademlia DHT
+
+
+## synnergy kademlia distance
+
+Calculate XOR distance between two keys
+
+```
+synnergy kademlia distance [a] [b] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for distance
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8084,7 +9569,10 @@ synnergy kademlia get [key] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8109,7 +9597,10 @@ synnergy kademlia store [key] [value] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8130,7 +9621,10 @@ Interact with the ledger
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8162,7 +9656,10 @@ synnergy ledger balance [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8187,7 +9684,10 @@ synnergy ledger block [height] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8212,7 +9712,10 @@ synnergy ledger head [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8237,7 +9740,10 @@ synnergy ledger mint [addr] [amount] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8262,7 +9768,10 @@ synnergy ledger pool [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8287,7 +9796,10 @@ synnergy ledger transfer [from] [to] [amount] [fee] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8312,7 +9824,10 @@ synnergy ledger utxo [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8333,7 +9848,10 @@ Light node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8361,7 +9879,10 @@ synnergy light add-header [hash] [height] [parent] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8386,7 +9907,10 @@ synnergy light headers [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8411,7 +9935,10 @@ synnergy light latest [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8432,7 +9959,10 @@ Manage liquidity pools
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8463,7 +9993,10 @@ synnergy liquidity_pools add [poolID] [provider] [amtA] [amtB] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8488,7 +10021,10 @@ synnergy liquidity_pools create [tokenA] [tokenB] [feeBps] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8513,7 +10049,10 @@ synnergy liquidity_pools info [poolID] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8538,7 +10077,10 @@ synnergy liquidity_pools list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8563,7 +10105,10 @@ synnergy liquidity_pools remove [poolID] [provider] [lpTokens] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8588,7 +10133,10 @@ synnergy liquidity_pools swap [poolID] [tokenIn] [amtIn] [minOut] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8609,7 +10157,10 @@ Inspect liquidity pool views
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8636,7 +10187,10 @@ synnergy liquidity_views info [poolID] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8661,7 +10215,10 @@ synnergy liquidity_views list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8682,7 +10239,10 @@ Administrative loan pool controls
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8710,7 +10270,10 @@ synnergy loanmgr pause [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8735,7 +10298,10 @@ synnergy loanmgr resume [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8760,7 +10326,10 @@ synnergy loanmgr stats [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8781,7 +10350,10 @@ Manage loan pool proposals
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8814,7 +10386,10 @@ synnergy loanpool cancel [creator] [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8839,7 +10414,10 @@ synnergy loanpool disburse [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8864,7 +10442,10 @@ synnergy loanpool extend [creator] [id] [hrs] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8889,7 +10470,10 @@ synnergy loanpool get [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8914,7 +10498,10 @@ synnergy loanpool list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8939,7 +10526,10 @@ synnergy loanpool submit [creator] [recipient] [type] [amount] [desc] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8964,7 +10554,10 @@ synnergy loanpool tick [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -8989,7 +10582,10 @@ synnergy loanpool vote [voter] [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9010,7 +10606,10 @@ Manage loan applications
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9041,7 +10640,10 @@ synnergy loanpool_apply disburse [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9066,7 +10668,10 @@ synnergy loanpool_apply get [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9091,7 +10696,10 @@ synnergy loanpool_apply list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9116,7 +10724,10 @@ synnergy loanpool_apply process [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9141,7 +10752,10 @@ synnergy loanpool_apply submit [applicant] [amount] [termMonths] [purpose] [flag
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9166,7 +10780,10 @@ synnergy loanpool_apply vote [voter] [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9187,7 +10804,10 @@ Work with standalone loan proposals
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9217,7 +10837,10 @@ synnergy loanproposal expired [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9242,7 +10865,10 @@ synnergy loanproposal get [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9267,7 +10893,10 @@ synnergy loanproposal new [creator] [recipient] [type] [amount] [desc] [duration
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9292,7 +10921,10 @@ synnergy loanproposal vote [id] [voter] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9317,7 +10949,10 @@ synnergy loanproposal votes [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9338,7 +10973,10 @@ Deploy and trade smart contracts
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9365,7 +11003,10 @@ synnergy marketplace deploy [wasm] [owner] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9390,7 +11031,10 @@ synnergy marketplace trade [addr] [newOwner] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9411,7 +11055,10 @@ Control a mining node
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9420,6 +11067,7 @@ Control a mining node
 * [synnergy mining hashrate](#synnergy-mining-hashrate)	 - Display hash rate hint
 * [synnergy mining hex](#synnergy-mining-hex)	 - Mine pre-hex-encoded input
 * [synnergy mining mine](#synnergy-mining-mine)	 - Perform one mining attempt
+* [synnergy mining mine-until](#synnergy-mining-mine-until)	 - Mine until hash has prefix or timeout elapses
 * [synnergy mining start](#synnergy-mining-start)	 - Start mining
 * [synnergy mining status](#synnergy-mining-status)	 - Show mining status
 * [synnergy mining stop](#synnergy-mining-stop)	 - Stop mining
@@ -9442,7 +11090,10 @@ synnergy mining hashrate [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9467,7 +11118,10 @@ synnergy mining hex [data] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9492,7 +11146,39 @@ synnergy mining mine [data] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy mining](#synnergy-mining)	 - Control a mining node
+
+
+## synnergy mining mine-until
+
+Mine until hash has prefix or timeout elapses
+
+```
+synnergy mining mine-until [data] [prefix] [flags]
+```
+
+### Options
+
+```
+  -h, --help          help for mine-until
+      --timeout int   timeout in seconds
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9517,7 +11203,10 @@ synnergy mining start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9542,7 +11231,10 @@ synnergy mining status [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9567,7 +11259,10 @@ synnergy mining stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9588,7 +11283,10 @@ Operate a mobile mining node
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9619,7 +11317,10 @@ synnergy mobile_mining mine [data] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9644,7 +11345,10 @@ synnergy mobile_mining power [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9669,7 +11373,10 @@ synnergy mobile_mining set-power [limit] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9694,7 +11401,10 @@ synnergy mobile_mining start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9719,7 +11429,10 @@ synnergy mobile_mining status [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9744,7 +11457,10 @@ synnergy mobile_mining stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9765,7 +11481,10 @@ Manage NAT port mappings
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9793,7 +11512,10 @@ synnergy nat ip [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9812,13 +11534,17 @@ synnergy nat map [port] [flags]
 ### Options
 
 ```
-  -h, --help   help for map
+  -h, --help        help for map
+      --id string   mapping identifier (default "self")
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9837,13 +11563,17 @@ synnergy nat unmap [flags]
 ### Options
 
 ```
-  -h, --help   help for unmap
+  -h, --help        help for unmap
+      --id string   mapping identifier (default "self")
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9864,7 +11594,10 @@ Control networking stack
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9894,7 +11627,10 @@ synnergy network broadcast [topic] [data] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9919,7 +11655,10 @@ synnergy network peers [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9944,7 +11683,10 @@ synnergy network start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9969,7 +11711,10 @@ synnergy network stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -9994,12 +11739,126 @@ synnergy network subscribe [topic] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy network](#synnergy-network)	 - Control networking stack
+
+
+## synnergy nft
+
+Mint and trade NFTs
+
+### Options
+
+```
+  -h, --help   help for nft
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy nft buy](#synnergy-nft-buy)	 - Transfer ownership of an NFT
+* [synnergy nft list](#synnergy-nft-list)	 - Show NFT details
+* [synnergy nft mint](#synnergy-nft-mint)	 - Mint a new NFT
+
+
+## synnergy nft buy
+
+Transfer ownership of an NFT
+
+```
+synnergy nft buy [id] [newOwner] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for buy
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy nft](#synnergy-nft)	 - Mint and trade NFTs
+
+
+## synnergy nft list
+
+Show NFT details
+
+```
+synnergy nft list [id] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for list
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy nft](#synnergy-nft)	 - Mint and trade NFTs
+
+
+## synnergy nft mint
+
+Mint a new NFT
+
+```
+synnergy nft mint [id] [owner] [metadata] [price] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for mint
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy nft](#synnergy-nft)	 - Mint and trade NFTs
 
 
 ## synnergy node
@@ -10015,7 +11874,10 @@ Node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10047,7 +11909,10 @@ synnergy node addtx [from] [to] [amount] [fee] [nonce] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10072,7 +11937,10 @@ synnergy node info [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10097,7 +11965,10 @@ synnergy node mempool [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10122,7 +11993,10 @@ synnergy node mine [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10147,7 +12021,10 @@ synnergy node rehab [address] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10172,7 +12049,10 @@ synnergy node slash [address] [reason] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10197,7 +12077,10 @@ synnergy node stake [address] [amount] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10218,7 +12101,10 @@ Inspect node adapter
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10244,7 +12130,10 @@ synnergy node_adapter info [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10265,7 +12154,10 @@ Node address utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10292,7 +12184,10 @@ synnergy nodeaddr parse <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10317,7 +12212,10 @@ synnergy nodeaddr validate <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10338,7 +12236,10 @@ Inspect VM opcodes
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10366,7 +12267,10 @@ synnergy opcodes bytes [name] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10391,7 +12295,10 @@ synnergy opcodes hex [name] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10416,7 +12323,10 @@ synnergy opcodes list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10437,7 +12347,10 @@ Transaction optimisation utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10463,7 +12376,10 @@ synnergy optimize fee <tx...> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10484,7 +12400,10 @@ Peer discovery and connections
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10492,6 +12411,7 @@ Peer discovery and connections
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy peer advertise](#synnergy-peer-advertise)	 - Advertise current node on a topic
 * [synnergy peer connect](#synnergy-peer-connect)	 - Connect to a peer by address
+* [synnergy peer count](#synnergy-peer-count)	 - Show number of known peers
 * [synnergy peer discover](#synnergy-peer-discover)	 - List known peers or those advertising a topic
 
 
@@ -10512,7 +12432,10 @@ synnergy peer advertise [topic] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10537,7 +12460,38 @@ synnergy peer connect [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy peer](#synnergy-peer)	 - Peer discovery and connections
+
+
+## synnergy peer count
+
+Show number of known peers
+
+```
+synnergy peer count [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for count
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10562,7 +12516,10 @@ synnergy peer discover [topic] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10579,6 +12536,14 @@ Interact with the Plasma bridge
 ```
   -h, --help   help for plasma
       --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10601,7 +12566,10 @@ Manage Plasma bridge operations
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10629,7 +12597,10 @@ synnergy plasma plasma-mgmt pause [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10654,7 +12625,10 @@ synnergy plasma plasma-mgmt resume [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10679,7 +12653,10 @@ synnergy plasma plasma-mgmt status [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10700,7 +12677,10 @@ Plasma bridge deposits and exits
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10730,7 +12710,10 @@ synnergy plasma plasma-ops deposit [owner] [token] [amount] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10755,7 +12738,10 @@ synnergy plasma plasma-ops exit [owner] [token] [amount] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10780,7 +12766,10 @@ synnergy plasma plasma-ops finalize [nonce] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10805,7 +12794,10 @@ synnergy plasma plasma-ops get [nonce] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10830,7 +12822,10 @@ synnergy plasma plasma-ops list [owner] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10851,7 +12846,10 @@ Manage private transactions
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10879,7 +12877,10 @@ synnergy private-tx decrypt [key] [hexdata] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10904,7 +12905,10 @@ synnergy private-tx encrypt [key] [data] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10929,7 +12933,10 @@ synnergy private-tx send [file] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10950,7 +12957,10 @@ Manage quorum tracker
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -10979,7 +12989,10 @@ synnergy quorum check [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11004,7 +13017,10 @@ synnergy quorum init [total] [threshold] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11029,7 +13045,10 @@ synnergy quorum reset [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11054,7 +13073,10 @@ synnergy quorum vote [address] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11075,7 +13097,10 @@ Token registry utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11104,7 +13129,10 @@ synnergy registry info <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11129,7 +13157,10 @@ synnergy registry list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11154,7 +13185,10 @@ synnergy registry nextid [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11179,7 +13213,10 @@ synnergy registry register-base [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11200,21 +13237,24 @@ Regulatory node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy regnode approve](#synnergy-regnode-approve)	 - Approve or reject a transaction
+* [synnergy regnode audit](#synnergy-regnode-audit)	 - Audit an address for regulatory flags
 * [synnergy regnode flag](#synnergy-regnode-flag)	 - Flag an address for a reason
 * [synnergy regnode logs](#synnergy-regnode-logs)	 - Show logs for an address
 
 
 ## synnergy regnode approve
 
-Approve or reject a transaction. If a wallet file is provided the transaction is
-signed before verification.
+Approve or reject a transaction
 
 ```
 synnergy regnode approve [from] [amount] [flags]
@@ -11223,15 +13263,46 @@ synnergy regnode approve [from] [amount] [flags]
 ### Options
 
 ```
-      --wallet string     wallet file for signing
-      --password string   wallet password
   -h, --help              help for approve
+      --password string   wallet password
+      --wallet string     wallet file for signing
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy regnode](#synnergy-regnode)	 - Regulatory node operations
+
+
+## synnergy regnode audit
+
+Audit an address for regulatory flags
+
+```
+synnergy regnode audit [addr] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for audit
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11241,7 +13312,7 @@ synnergy regnode approve [from] [amount] [flags]
 
 ## synnergy regnode flag
 
-Flag an address for a reason; the reason must be non-empty
+Flag an address for a reason
 
 ```
 synnergy regnode flag [addr] [reason] [flags]
@@ -11256,7 +13327,10 @@ synnergy regnode flag [addr] [reason] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11281,7 +13355,10 @@ synnergy regnode logs [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11302,7 +13379,10 @@ Manage regulations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11331,7 +13411,10 @@ synnergy regulator add [id] [jurisdiction] [description] [maxAmount] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11356,7 +13439,10 @@ synnergy regulator evaluate [amount] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11381,7 +13467,10 @@ synnergy regulator list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11406,7 +13495,10 @@ synnergy regulator remove [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11427,7 +13519,10 @@ Control block replication
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11456,7 +13551,10 @@ synnergy replication replicate [hash] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11481,7 +13579,10 @@ synnergy replication start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11506,7 +13607,10 @@ synnergy replication status [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11531,7 +13635,10 @@ synnergy replication stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11552,7 +13659,10 @@ Control the rollup aggregator
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11580,7 +13690,10 @@ synnergy rollupmgr pause [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11605,7 +13718,10 @@ synnergy rollupmgr resume [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11630,7 +13746,10 @@ synnergy rollupmgr status [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11651,7 +13770,10 @@ Manage rollup batches
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11661,9 +13783,6 @@ Manage rollup batches
 * [synnergy rollups finalize](#synnergy-rollups-finalize)	 - Finalize or revert a batch
 * [synnergy rollups info](#synnergy-rollups-info)	 - Display batch header and state
 * [synnergy rollups list](#synnergy-rollups-list)	 - List recent batches
-* [synnergy rollups pause](#synnergy-rollups-pause)	 - Pause the rollup aggregator
-* [synnergy rollups resume](#synnergy-rollups-resume)	 - Resume the rollup aggregator
-* [synnergy rollups status](#synnergy-rollups-status)	 - Show aggregator status
 * [synnergy rollups submit](#synnergy-rollups-submit)	 - Submit a new rollup batch
 * [synnergy rollups txs](#synnergy-rollups-txs)	 - List transactions in a batch
 
@@ -11685,7 +13804,10 @@ synnergy rollups challenge [batchID] [txIdx] [proof] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11710,7 +13832,10 @@ synnergy rollups finalize [batchID] [valid] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11735,7 +13860,10 @@ synnergy rollups info [batchID] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11760,82 +13888,10 @@ synnergy rollups list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
-```
-
-### SEE ALSO
-
-* [synnergy rollups](#synnergy-rollups)	 - Manage rollup batches
-
-
-## synnergy rollups pause
-
-Pause the rollup aggregator
-
-```
-synnergy rollups pause [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for pause
-```
-
-### Options inherited from parent commands
-
-```
-      --json   output results in JSON
-```
-
-### SEE ALSO
-
-* [synnergy rollups](#synnergy-rollups)	 - Manage rollup batches
-
-
-## synnergy rollups resume
-
-Resume the rollup aggregator
-
-```
-synnergy rollups resume [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for resume
-```
-
-### Options inherited from parent commands
-
-```
-      --json   output results in JSON
-```
-
-### SEE ALSO
-
-* [synnergy rollups](#synnergy-rollups)	 - Manage rollup batches
-
-
-## synnergy rollups status
-
-Show aggregator status
-
-```
-synnergy rollups status [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for status
-```
-
-### Options inherited from parent commands
-
-```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11860,7 +13916,10 @@ synnergy rollups submit [tx ...] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11885,7 +13944,10 @@ synnergy rollups txs [batchID] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11906,7 +13968,10 @@ Simulate WebRTC RPC messaging
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11935,7 +14000,10 @@ synnergy rpcwebrtc connect [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11960,7 +14028,10 @@ synnergy rpcwebrtc disconnect [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -11985,7 +14056,10 @@ synnergy rpcwebrtc recv [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12010,7 +14084,10 @@ synnergy rpcwebrtc send [id] [msg] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12031,7 +14108,10 @@ Manage VM sandboxes
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12063,7 +14143,10 @@ synnergy sandbox delete <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12088,7 +14171,10 @@ synnergy sandbox list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12113,7 +14199,10 @@ synnergy sandbox purge [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12138,7 +14227,10 @@ synnergy sandbox reset <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12163,7 +14255,10 @@ synnergy sandbox start <id> <contract> <gas> <memory> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12188,7 +14283,10 @@ synnergy sandbox status <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12213,7 +14311,10 @@ synnergy sandbox stop <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12234,7 +14335,10 @@ Manage shard assignments
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12261,7 +14365,10 @@ Query or set shard leaders
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12288,7 +14395,10 @@ synnergy sharding leader get [shardID] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12313,7 +14423,10 @@ synnergy sharding leader set [shardID] [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12338,7 +14451,10 @@ synnergy sharding map [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12363,7 +14479,10 @@ synnergy sharding pull [shardID] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12388,7 +14507,10 @@ synnergy sharding rebalance [threshold] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12413,7 +14535,10 @@ synnergy sharding reshard [newBits] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12438,7 +14563,10 @@ synnergy sharding submit [fromShard] [toShard] [txHash] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12459,7 +14587,10 @@ Manage side-chains
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12495,7 +14626,10 @@ synnergy sidechain deposit [chainID] [from] [amount] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12520,7 +14654,10 @@ synnergy sidechain get-header [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12545,7 +14682,10 @@ synnergy sidechain header [id] [header] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12570,7 +14710,10 @@ synnergy sidechain list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12595,7 +14738,10 @@ synnergy sidechain meta [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12620,7 +14766,10 @@ synnergy sidechain pause [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12645,7 +14794,10 @@ synnergy sidechain register [id] [meta] [validators...] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12670,7 +14822,10 @@ synnergy sidechain remove [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12695,7 +14850,10 @@ synnergy sidechain resume [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12720,7 +14878,10 @@ synnergy sidechain update-validators [id] [validators...] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12745,7 +14906,10 @@ synnergy sidechain withdraw [chainID] [from] [amount] [proof] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12766,7 +14930,10 @@ Side-chain escrow helpers
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12794,7 +14961,10 @@ synnergy sidechainops balance [chainID] [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12819,7 +14989,10 @@ synnergy sidechainops deposit [chainID] [from] [amount] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12844,7 +15017,10 @@ synnergy sidechainops withdraw [chainID] [from] [amount] [proof] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12865,7 +15041,10 @@ Manage the simple virtual machine
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12895,7 +15074,10 @@ synnergy simplevm create [mode] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12921,7 +15103,10 @@ synnergy simplevm exec <wasmHex> [argsHex] [gas] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12946,7 +15131,10 @@ synnergy simplevm start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12971,7 +15159,10 @@ synnergy simplevm status [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -12996,7 +15187,10 @@ synnergy simplevm stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13017,7 +15211,10 @@ Interact with the Synnergy VM
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13043,7 +15240,10 @@ synnergy snvm exec [add|sub|mul|div] <a> <b> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13064,7 +15264,10 @@ Apply staking penalties or rewards
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13091,7 +15294,10 @@ synnergy stake_penalty reward <addr> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13116,7 +15322,10 @@ synnergy stake_penalty slash <addr> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13137,7 +15346,10 @@ Manage staking balances
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13166,7 +15378,10 @@ synnergy staking_node balance <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13191,7 +15406,10 @@ synnergy staking_node stake <addr> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13216,7 +15434,10 @@ synnergy staking_node total [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13241,7 +15462,10 @@ synnergy staking_node unstake <addr> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13262,7 +15486,10 @@ In-memory StateRW utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13293,7 +15520,10 @@ synnergy state balance <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13318,7 +15548,10 @@ synnergy state get <key> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13343,7 +15576,10 @@ synnergy state has <key> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13368,7 +15604,10 @@ synnergy state iterate <prefix> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13393,7 +15632,10 @@ synnergy state set <key> <value> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13418,12 +15660,128 @@ synnergy state transfer <from> <to> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy state](#synnergy-state)	 - In-memory StateRW utilities
+
+
+## synnergy storage_marketplace
+
+List and lease decentralised storage
+
+### Options
+
+```
+  -h, --help   help for storage_marketplace
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy storage_marketplace deal](#synnergy-storage-marketplace-deal)	 - Open a storage deal
+* [synnergy storage_marketplace list](#synnergy-storage-marketplace-list)	 - Create a storage listing
+* [synnergy storage_marketplace listings](#synnergy-storage-marketplace-listings)	 - List storage offers as JSON
+
+
+## synnergy storage_marketplace deal
+
+Open a storage deal
+
+```
+synnergy storage_marketplace deal [listingID] [buyer] [flags]
+```
+
+### Options
+
+```
+      --gas uint   gas limit (default 500)
+  -h, --help       help for deal
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy storage_marketplace](#synnergy-storage-marketplace)	 - List and lease decentralised storage
+
+
+## synnergy storage_marketplace list
+
+Create a storage listing
+
+```
+synnergy storage_marketplace list [hash] [price] [owner] [flags]
+```
+
+### Options
+
+```
+      --gas uint   gas limit (default 800)
+  -h, --help       help for list
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy storage_marketplace](#synnergy-storage-marketplace)	 - List and lease decentralised storage
+
+
+## synnergy storage_marketplace listings
+
+List storage offers as JSON
+
+```
+synnergy storage_marketplace listings [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for listings
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy storage_marketplace](#synnergy-storage-marketplace)	 - List and lease decentralised storage
 
 
 ## synnergy swarm
@@ -13439,7 +15797,10 @@ Manage swarms of nodes
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13469,7 +15830,10 @@ synnergy swarm broadcast <from> <to> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13494,7 +15858,10 @@ synnergy swarm consensus [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13519,7 +15886,10 @@ synnergy swarm join <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13544,7 +15914,10 @@ synnergy swarm leave <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13569,7 +15942,10 @@ synnergy swarm peers [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13590,7 +15966,10 @@ SYN10 CBDC token operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13621,7 +16000,10 @@ synnergy syn10 balance <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13646,7 +16028,10 @@ synnergy syn10 info [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13676,7 +16061,10 @@ synnergy syn10 init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13701,7 +16089,10 @@ synnergy syn10 mint <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13726,7 +16117,10 @@ synnergy syn10 set-rate <rate> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13751,7 +16145,10 @@ synnergy syn10 transfer <from> <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13772,7 +16169,10 @@ SYN1000 stablecoin operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13804,7 +16204,10 @@ synnergy syn1000 add-reserve <asset> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13829,7 +16232,10 @@ synnergy syn1000 balance <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13857,7 +16263,10 @@ synnergy syn1000 init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13882,7 +16291,10 @@ synnergy syn1000 mint <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13907,7 +16319,10 @@ synnergy syn1000 set-price <asset> <price> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13932,7 +16347,10 @@ synnergy syn1000 transfer <from> <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13957,7 +16375,10 @@ synnergy syn1000 value [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -13978,7 +16399,10 @@ Manage multiple SYN1000 tokens
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14007,7 +16431,10 @@ synnergy syn1000index add-reserve <id> <asset> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14033,7 +16460,10 @@ synnergy syn1000index create <name> <symbol> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14058,7 +16488,10 @@ synnergy syn1000index set-price <id> <asset> <price> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14083,7 +16516,10 @@ synnergy syn1000index value <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14104,7 +16540,10 @@ Healthcare record token
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14121,19 +16560,25 @@ Healthcare record token
 Add a health record
 
 ```
-synnergy syn1100 add <id> <owner> <data> [flags]
+synnergy syn1100 add [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for add
+      --data string    record data
+  -h, --help           help for add
+      --id uint        record ID
+      --owner string   record owner
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14146,19 +16591,24 @@ synnergy syn1100 add <id> <owner> <data> [flags]
 Retrieve record
 
 ```
-synnergy syn1100 get <id> <caller> [flags]
+synnergy syn1100 get [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for get
+      --caller string   caller address
+  -h, --help            help for get
+      --id uint         record ID
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14171,19 +16621,24 @@ synnergy syn1100 get <id> <caller> [flags]
 Grant access
 
 ```
-synnergy syn1100 grant <id> <grantee> [flags]
+synnergy syn1100 grant [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for grant
+      --grantee string   grantee address
+  -h, --help             help for grant
+      --id uint          record ID
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14196,19 +16651,24 @@ synnergy syn1100 grant <id> <grantee> [flags]
 Revoke access
 
 ```
-synnergy syn1100 revoke <id> <grantee> [flags]
+synnergy syn1100 revoke [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for revoke
+      --grantee string   grantee address
+  -h, --help             help for revoke
+      --id uint          record ID
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14229,7 +16689,10 @@ SYN12 treasury bill token
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14259,7 +16722,10 @@ synnergy syn12 balance <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14284,7 +16750,10 @@ synnergy syn12 info [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14308,9 +16777,9 @@ synnergy syn12 init [flags]
       --discount float    discount rate
       --face uint         face value
   -h, --help              help for init
-      --issue string      issue date RFC3339 (default "2025-09-03T23:11:39Z")
+      --issue string      issue date RFC3339 (default "2025-09-22T02:06:11Z")
       --issuer string     issuer
-      --maturity string   maturity date RFC3339 (default "2025-10-03T23:11:39Z")
+      --maturity string   maturity date RFC3339 (default "2025-10-22T02:06:11Z")
       --name string       token name
       --symbol string     token symbol
 ```
@@ -14318,7 +16787,10 @@ synnergy syn12 init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14343,7 +16815,10 @@ synnergy syn12 mint <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14368,7 +16843,10 @@ synnergy syn12 transfer <from> <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14389,7 +16867,10 @@ Supply chain asset registry
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14417,7 +16898,10 @@ synnergy syn1300 get <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14446,7 +16930,10 @@ synnergy syn1300 register [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14474,7 +16961,10 @@ synnergy syn1300 update <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14495,7 +16985,10 @@ SYN131 intangible asset tokens
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14528,7 +17021,10 @@ synnergy syn131 create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14553,7 +17049,10 @@ synnergy syn131 get <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14578,7 +17077,10 @@ synnergy syn131 value <id> <valuation> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14599,7 +17101,10 @@ SYN1401 investment tokens
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14628,7 +17133,10 @@ synnergy syn1401 accrue <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14653,7 +17161,10 @@ synnergy syn1401 get <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14674,7 +17185,7 @@ synnergy syn1401 issue [flags]
 ```
   -h, --help             help for issue
       --id string        investment id
-      --maturity int     maturity unix time (default 1756941099)
+      --maturity int     maturity unix time
       --owner string     owner
       --principal uint   principal
       --rate float       annual rate
@@ -14683,7 +17194,10 @@ synnergy syn1401 issue [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14708,7 +17222,10 @@ synnergy syn1401 redeem <id> <owner> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14729,7 +17246,10 @@ Music token utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14759,7 +17279,10 @@ synnergy syn1600 info [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14787,7 +17310,10 @@ synnergy syn1600 init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14812,7 +17338,10 @@ synnergy syn1600 payout <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14837,7 +17366,10 @@ synnergy syn1600 share <addr> <share> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14865,7 +17397,10 @@ synnergy syn1600 update [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14886,7 +17421,10 @@ Event ticket token
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14921,7 +17459,10 @@ synnergy syn1700 init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14946,7 +17487,10 @@ synnergy syn1700 issue <owner> <class> <type> <price> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14971,7 +17515,10 @@ synnergy syn1700 transfer <id> <from> <to> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -14996,7 +17543,10 @@ synnergy syn1700 verify <id> <holder> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15017,7 +17567,10 @@ SYN20 token with pause and freeze
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15051,7 +17604,10 @@ synnergy syn20 balance <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15076,7 +17632,10 @@ synnergy syn20 burn <from> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15101,7 +17660,10 @@ synnergy syn20 freeze <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15129,7 +17691,10 @@ synnergy syn20 init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15154,7 +17719,10 @@ synnergy syn20 mint <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15179,7 +17747,10 @@ synnergy syn20 pause [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15204,7 +17775,10 @@ synnergy syn20 transfer <from> <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15229,7 +17803,10 @@ synnergy syn20 unfreeze <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15254,7 +17831,10 @@ synnergy syn20 unpause [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15275,7 +17855,10 @@ Carbon credit registry
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15307,7 +17890,10 @@ synnergy syn200 info <project> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15332,7 +17918,10 @@ synnergy syn200 issue <project> <to> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15357,7 +17946,10 @@ synnergy syn200 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15385,7 +17977,10 @@ synnergy syn200 register [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15410,7 +18005,10 @@ synnergy syn200 retire <project> <holder> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15435,7 +18033,10 @@ synnergy syn200 verifications <project> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15460,7 +18061,10 @@ synnergy syn200 verify <project> <verifier> <recordID> [status] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15481,7 +18085,10 @@ Trade finance token operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15513,7 +18120,10 @@ synnergy syn2100 add-liquidity <addr> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15538,7 +18148,10 @@ synnergy syn2100 finance <docID> <financier> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15563,7 +18176,10 @@ synnergy syn2100 get <docID> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15588,7 +18204,10 @@ synnergy syn2100 liquidity [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15613,7 +18232,10 @@ synnergy syn2100 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15645,7 +18267,10 @@ synnergy syn2100 register [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15670,7 +18295,10 @@ synnergy syn2100 remove-liquidity <addr> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15691,7 +18319,10 @@ SYN223 token utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15723,7 +18354,10 @@ synnergy syn223 balance <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15748,7 +18382,10 @@ synnergy syn223 blacklist <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15777,7 +18414,10 @@ synnergy syn223 init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15802,7 +18442,10 @@ synnergy syn223 transfer <from> <to> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15827,7 +18470,10 @@ synnergy syn223 unblacklist <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15852,7 +18498,10 @@ synnergy syn223 unwhitelist <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15877,7 +18526,10 @@ synnergy syn223 whitelist <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15898,7 +18550,10 @@ Virtual item registry
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15932,7 +18587,10 @@ synnergy syn2369 create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15957,7 +18615,10 @@ synnergy syn2369 get <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -15982,7 +18643,10 @@ synnergy syn2369 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16007,7 +18671,10 @@ synnergy syn2369 transfer <id> <newOwner> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16032,7 +18699,10 @@ synnergy syn2369 update-attrs <id> <attrs> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16053,7 +18723,10 @@ DAO membership registry
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16087,7 +18760,10 @@ synnergy syn2500 add [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16112,7 +18788,10 @@ synnergy syn2500 get <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16137,7 +18816,10 @@ synnergy syn2500 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16162,7 +18844,10 @@ synnergy syn2500 remove <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16187,7 +18872,10 @@ synnergy syn2500 update <id> <power> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16208,7 +18896,10 @@ Investor token registry
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16239,7 +18930,10 @@ synnergy syn2600 deactivate <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16264,7 +18958,10 @@ synnergy syn2600 get <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16284,7 +18981,7 @@ synnergy syn2600 issue [flags]
 
 ```
       --asset string    underlying asset
-      --expiry string   expiry time (default "2025-09-04T23:11:39Z")
+      --expiry string   expiry time (default "2025-09-23T02:06:11Z")
   -h, --help            help for issue
       --owner string    owner address
       --shares uint     share quantity
@@ -16293,7 +18990,10 @@ synnergy syn2600 issue [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16318,7 +19018,10 @@ synnergy syn2600 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16343,7 +19046,10 @@ synnergy syn2600 return <id> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16368,7 +19074,10 @@ synnergy syn2600 transfer <id> <newOwner> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16389,7 +19098,10 @@ Vesting schedule management
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16417,7 +19129,10 @@ synnergy syn2700 claim [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16436,14 +19151,17 @@ synnergy syn2700 create [flags]
 ### Options
 
 ```
-      --entries string   entry as time:amount,comma-separated
+      --entries string   entry as time=amount,comma-separated
   -h, --help             help for create
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16468,7 +19186,10 @@ synnergy syn2700 pending [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16489,7 +19210,10 @@ Life insurance policies
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16520,7 +19244,10 @@ synnergy syn2800 claim <policy> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16545,7 +19272,10 @@ synnergy syn2800 deactivate <policy> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16570,7 +19300,10 @@ synnergy syn2800 get <policy> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16591,17 +19324,20 @@ synnergy syn2800 issue [flags]
 ```
       --beneficiary string   beneficiary
       --coverage uint        coverage amount
-      --end string           end time (default "2025-09-04T23:11:39Z")
+      --end string           end time (default "2025-09-23T02:06:11Z")
   -h, --help                 help for issue
       --insured string       insured party
       --premium uint         premium amount
-      --start string         start time (default "2025-09-03T23:11:39Z")
+      --start string         start time (default "2025-09-22T02:06:11Z")
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16626,7 +19362,10 @@ synnergy syn2800 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16651,7 +19390,10 @@ synnergy syn2800 pay <policy> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16672,7 +19414,10 @@ General insurance policies
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16702,7 +19447,10 @@ synnergy syn2900 claim <policy> <desc> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16727,7 +19475,10 @@ synnergy syn2900 deactivate <policy> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16752,7 +19503,10 @@ synnergy syn2900 get <policy> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16773,19 +19527,22 @@ synnergy syn2900 issue [flags]
 ```
       --coverage string   coverage type
       --deductible uint   deductible
-      --end string        end time (default "2025-09-04T23:11:39Z")
+      --end string        end time (default "2025-09-23T02:06:11Z")
   -h, --help              help for issue
       --holder string     policy holder
       --limit uint        limit
       --payout uint       payout amount
       --premium uint      premium amount
-      --start string      start time (default "2025-09-03T23:11:39Z")
+      --start string      start time (default "2025-09-22T02:06:11Z")
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16810,7 +19567,10 @@ synnergy syn2900 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16831,7 +19591,10 @@ SYN300 governance token
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16865,7 +19628,10 @@ synnergy syn300 delegate <owner> <delegate> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16890,7 +19656,10 @@ synnergy syn300 execute <id> <quorum> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16916,7 +19685,10 @@ synnergy syn300 init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16941,7 +19713,10 @@ synnergy syn300 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16966,7 +19741,10 @@ synnergy syn300 power <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -16991,7 +19769,10 @@ synnergy syn300 propose <creator> <desc> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17016,7 +19797,10 @@ synnergy syn300 revoke <owner> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17041,7 +19825,10 @@ synnergy syn300 status <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17066,7 +19853,10 @@ synnergy syn300 vote <id> <voter> <approve> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17087,7 +19877,10 @@ Bill registry operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17116,7 +19909,10 @@ synnergy syn3200 adjust <id> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17136,7 +19932,7 @@ synnergy syn3200 create [flags]
 
 ```
       --amount uint     amount
-      --due string      due time (default "2025-09-04T23:11:39Z")
+      --due string      due time (default "2025-09-23T02:06:11Z")
   -h, --help            help for create
       --id string       bill id
       --issuer string   issuer
@@ -17147,7 +19943,10 @@ synnergy syn3200 create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17172,7 +19971,10 @@ synnergy syn3200 get <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17197,7 +19999,10 @@ synnergy syn3200 pay <id> <payer> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17218,7 +20023,10 @@ Forex pair registry
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17247,7 +20055,10 @@ synnergy syn3400 get <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17272,7 +20083,10 @@ synnergy syn3400 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17294,13 +20108,16 @@ synnergy syn3400 register [flags]
       --base string    base currency
   -h, --help           help for register
       --quote string   quote currency
-      --rate float     exchange rate (default 1)
+      --rate float     exchange rate
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17325,7 +20142,10 @@ synnergy syn3400 update <id> <rate> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17346,7 +20166,10 @@ SYN3500 currency token
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17377,7 +20200,10 @@ synnergy syn3500 balance <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17402,7 +20228,10 @@ synnergy syn3500 info [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17431,7 +20260,10 @@ synnergy syn3500 init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17456,7 +20288,10 @@ synnergy syn3500 mint <addr> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17481,7 +20316,10 @@ synnergy syn3500 redeem <addr> <amt> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17506,7 +20344,10 @@ synnergy syn3500 setrate <rate> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17527,7 +20368,10 @@ Futures contract utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17549,7 +20393,7 @@ synnergy syn3600 create [flags]
 ### Options
 
 ```
-      --expiration string   expiration time (default "2025-09-04T23:11:39Z")
+      --expiration string   expiration time (RFC3339)
   -h, --help                help for create
       --price uint          price per unit
       --qty uint            quantity
@@ -17559,7 +20403,10 @@ synnergy syn3600 create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17584,7 +20431,10 @@ synnergy syn3600 settle <marketPrice> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17609,7 +20459,10 @@ synnergy syn3600 status [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17619,7 +20472,7 @@ synnergy syn3600 status [flags]
 
 ## synnergy syn3700
 
-Index token management
+SYN3700 index token operations
 
 ### Options
 
@@ -17630,47 +20483,117 @@ Index token management
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
-* [synnergy syn3700 add](#synnergy-syn3700-add)	 - Add component
-* [synnergy syn3700 init](#synnergy-syn3700-init)	 - Initialise index token
-* [synnergy syn3700 list](#synnergy-syn3700-list)	 - List components
-* [synnergy syn3700 remove](#synnergy-syn3700-remove)	 - Remove component
-* [synnergy syn3700 value](#synnergy-syn3700-value)	 - Compute index value from price list
+* [synnergy syn3700 add](#synnergy-syn3700-add)	 - Add component to index
+* [synnergy syn3700 audit](#synnergy-syn3700-audit)	 - Show audit history
+* [synnergy syn3700 controllers](#synnergy-syn3700-controllers)	 - List controller addresses
+* [synnergy syn3700 init](#synnergy-syn3700-init)	 - Initialise the index token
+* [synnergy syn3700 rebalance](#synnergy-syn3700-rebalance)	 - Show rebalance plan
+* [synnergy syn3700 remove](#synnergy-syn3700-remove)	 - Remove component from index
+* [synnergy syn3700 snapshot](#synnergy-syn3700-snapshot)	 - Emit token snapshot
+* [synnergy syn3700 status](#synnergy-syn3700-status)	 - Show component/controller counts
+* [synnergy syn3700 value](#synnergy-syn3700-value)	 - Compute index value using token prices
 
 
 ## synnergy syn3700 add
 
-Add component
+Add component to index
 
 ```
-synnergy syn3700 add <token> <weight> [flags]
+synnergy syn3700 add <token> [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for add
+      --drift float       allowed drift
+  -h, --help              help for add
+      --password string   wallet password
+      --wallet string     path to wallet file
+      --weight float      component weight
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy syn3700](#synnergy-syn3700)	 - Index token management
+* [synnergy syn3700](#synnergy-syn3700)	 - SYN3700 index token operations
+
+
+## synnergy syn3700 audit
+
+Show audit history
+
+```
+synnergy syn3700 audit [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for audit
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn3700](#synnergy-syn3700)	 - SYN3700 index token operations
+
+
+## synnergy syn3700 controllers
+
+List controller addresses
+
+```
+synnergy syn3700 controllers [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for controllers
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn3700](#synnergy-syn3700)	 - SYN3700 index token operations
 
 
 ## synnergy syn3700 init
 
-Initialise index token
+Initialise the index token
 
 ```
 synnergy syn3700 init [flags]
@@ -17679,50 +20602,59 @@ synnergy syn3700 init [flags]
 ### Options
 
 ```
-  -h, --help            help for init
-      --name string     name
-      --symbol string   symbol
+      --controller string   controller wallet path:password
+  -h, --help                help for init
+      --name string         token name
+      --symbol string       token symbol
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy syn3700](#synnergy-syn3700)	 - Index token management
+* [synnergy syn3700](#synnergy-syn3700)	 - SYN3700 index token operations
 
 
-## synnergy syn3700 list
+## synnergy syn3700 rebalance
 
-List components
+Show rebalance plan
 
 ```
-synnergy syn3700 list [flags]
+synnergy syn3700 rebalance [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help   help for list
+  -h, --help              help for rebalance
+      --password string   wallet password
+      --wallet string     path to wallet file
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy syn3700](#synnergy-syn3700)	 - Index token management
+* [synnergy syn3700](#synnergy-syn3700)	 - SYN3700 index token operations
 
 
 ## synnergy syn3700 remove
 
-Remove component
+Remove component from index
 
 ```
 synnergy syn3700 remove <token> [flags]
@@ -17731,44 +20663,107 @@ synnergy syn3700 remove <token> [flags]
 ### Options
 
 ```
-  -h, --help   help for remove
+  -h, --help              help for remove
+      --password string   wallet password
+      --wallet string     path to wallet file
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy syn3700](#synnergy-syn3700)	 - Index token management
+* [synnergy syn3700](#synnergy-syn3700)	 - SYN3700 index token operations
 
 
-## synnergy syn3700 value
+## synnergy syn3700 snapshot
 
-Compute index value from price list
+Emit token snapshot
 
 ```
-synnergy syn3700 value [flags]
+synnergy syn3700 snapshot [flags]
 ```
 
 ### Options
 
 ```
-  -h, --help            help for value
-      --prices string   token=price comma-separated
+  -h, --help   help for snapshot
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy syn3700](#synnergy-syn3700)	 - Index token management
+* [synnergy syn3700](#synnergy-syn3700)	 - SYN3700 index token operations
+
+
+## synnergy syn3700 status
+
+Show component/controller counts
+
+```
+synnergy syn3700 status [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for status
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn3700](#synnergy-syn3700)	 - SYN3700 index token operations
+
+
+## synnergy syn3700 value
+
+Compute index value using token prices
+
+```
+synnergy syn3700 value <token:price>... [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for value
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn3700](#synnergy-syn3700)	 - SYN3700 index token operations
 
 
 ## synnergy syn3800
@@ -17784,16 +20779,80 @@ Manage SYN3800 grant records
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy syn3800 audit](#synnergy-syn3800-audit)	 - Show audit log for a grant
+* [synnergy syn3800 authorize](#synnergy-syn3800-authorize)	 - Authorize a wallet to release grant funds
 * [synnergy syn3800 create](#synnergy-syn3800-create)	 - Create a new grant
 * [synnergy syn3800 get](#synnergy-syn3800-get)	 - Show grant details
 * [synnergy syn3800 list](#synnergy-syn3800-list)	 - List grants
 * [synnergy syn3800 release](#synnergy-syn3800-release)	 - Release funds for a grant
+* [synnergy syn3800 status](#synnergy-syn3800-status)	 - Show grant registry status
+
+
+## synnergy syn3800 audit
+
+Show audit log for a grant
+
+```
+synnergy syn3800 audit <id> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for audit
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn3800](#synnergy-syn3800)	 - Manage SYN3800 grant records
+
+
+## synnergy syn3800 authorize
+
+Authorize a wallet to release grant funds
+
+```
+synnergy syn3800 authorize <id> [flags]
+```
+
+### Options
+
+```
+  -h, --help              help for authorize
+      --password string   wallet password
+      --wallet string     path to wallet file
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn3800](#synnergy-syn3800)	 - Manage SYN3800 grant records
 
 
 ## synnergy syn3800 create
@@ -17807,13 +20866,17 @@ synnergy syn3800 create <beneficiary> <name> <amount> [flags]
 ### Options
 
 ```
-  -h, --help   help for create
+      --authorizer string   wallet:path:password of initial authorizer
+  -h, --help                help for create
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17838,7 +20901,10 @@ synnergy syn3800 get <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17863,7 +20929,10 @@ synnergy syn3800 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17882,13 +20951,46 @@ synnergy syn3800 release <id> <amount> [note] [flags]
 ### Options
 
 ```
-  -h, --help   help for release
+  -h, --help              help for release
+      --password string   wallet password
+      --wallet string     path to wallet file
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn3800](#synnergy-syn3800)	 - Manage SYN3800 grant records
+
+
+## synnergy syn3800 status
+
+Show grant registry status
+
+```
+synnergy syn3800 status [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for status
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17909,15 +21011,51 @@ Manage SYN3900 government benefits
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy syn3900 approve](#synnergy-syn3900-approve)	 - Approve a benefit payout
 * [synnergy syn3900 claim](#synnergy-syn3900-claim)	 - Claim a benefit
 * [synnergy syn3900 get](#synnergy-syn3900-get)	 - Show benefit details
+* [synnergy syn3900 list](#synnergy-syn3900-list)	 - List registered benefits
 * [synnergy syn3900 register](#synnergy-syn3900-register)	 - Register a new benefit
+* [synnergy syn3900 status](#synnergy-syn3900-status)	 - Show benefit registry status
+
+
+## synnergy syn3900 approve
+
+Approve a benefit payout
+
+```
+synnergy syn3900 approve <id> [flags]
+```
+
+### Options
+
+```
+  -h, --help              help for approve
+      --password string   wallet password
+      --wallet string     path to wallet file
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn3900](#synnergy-syn3900)	 - Manage SYN3900 government benefits
 
 
 ## synnergy syn3900 claim
@@ -17931,13 +21069,18 @@ synnergy syn3900 claim <id> [flags]
 ### Options
 
 ```
-  -h, --help   help for claim
+  -h, --help              help for claim
+      --password string   wallet password
+      --wallet string     path to wallet file
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17962,7 +21105,38 @@ synnergy syn3900 get <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn3900](#synnergy-syn3900)	 - Manage SYN3900 government benefits
+
+
+## synnergy syn3900 list
+
+List registered benefits
+
+```
+synnergy syn3900 list [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for list
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -17981,13 +21155,45 @@ synnergy syn3900 register <recipient> <program> <amount> [flags]
 ### Options
 
 ```
-  -h, --help   help for register
+      --approver string   approver wallet path:password
+  -h, --help              help for register
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn3900](#synnergy-syn3900)	 - Manage SYN3900 government benefits
+
+
+## synnergy syn3900 status
+
+Show benefit registry status
+
+```
+synnergy syn3900 status [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for status
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18008,7 +21214,10 @@ Charity token operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18038,7 +21247,10 @@ synnergy syn4200_token donate <symbol> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18063,7 +21275,10 @@ synnergy syn4200_token progress <symbol> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18084,7 +21299,10 @@ Manage SYN4700 legal tokens
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18124,7 +21342,10 @@ synnergy syn4700 create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18149,7 +21370,10 @@ synnergy syn4700 dispute <id> <action> [result] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18174,7 +21398,10 @@ synnergy syn4700 info <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18199,7 +21426,10 @@ synnergy syn4700 revoke <id> <party> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18224,7 +21454,10 @@ synnergy syn4700 sign <id> <party> <sig> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18249,7 +21482,10 @@ synnergy syn4700 status <id> <status> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18270,15 +21506,49 @@ SYN500 utility token
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy syn500 audit](#synnergy-syn500-audit)	 - Show SYN500 audit events
 * [synnergy syn500 create](#synnergy-syn500-create)	 - Create a SYN500 token
 * [synnergy syn500 grant](#synnergy-syn500-grant)	 - Grant a usage tier
+* [synnergy syn500 status](#synnergy-syn500-status)	 - Show grant status
+* [synnergy syn500 telemetry](#synnergy-syn500-telemetry)	 - Summarise SYN500 usage
 * [synnergy syn500 use](#synnergy-syn500-use)	 - Record usage
+
+
+## synnergy syn500 audit
+
+Show SYN500 audit events
+
+```
+synnergy syn500 audit [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for audit
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn500](#synnergy-syn500)	 - SYN500 utility token
 
 
 ## synnergy syn500 create
@@ -18303,7 +21573,10 @@ synnergy syn500 create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18322,15 +21595,75 @@ synnergy syn500 grant <addr> [flags]
 ### Options
 
 ```
-  -h, --help       help for grant
-      --max uint   max usage
-      --tier int   service tier
+  -h, --help              help for grant
+      --max uint          max usage
+      --tier int          service tier
+      --window duration   rolling usage window (e.g. 1h)
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn500](#synnergy-syn500)	 - SYN500 utility token
+
+
+## synnergy syn500 status
+
+Show grant status
+
+```
+synnergy syn500 status <addr> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for status
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy syn500](#synnergy-syn500)	 - SYN500 utility token
+
+
+## synnergy syn500 telemetry
+
+Summarise SYN500 usage
+
+```
+synnergy syn500 telemetry [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for telemetry
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18355,7 +21688,10 @@ synnergy syn500 use <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18376,7 +21712,10 @@ SYN5000 gambling token
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18408,7 +21747,10 @@ synnergy syn5000 bet <bettor> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18436,7 +21778,10 @@ synnergy syn5000 create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18464,7 +21809,10 @@ synnergy syn5000 resolve [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18485,7 +21833,10 @@ Gambling token index
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18512,7 +21863,10 @@ synnergy syn5000_index add <symbol> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18537,7 +21891,10 @@ synnergy syn5000_index list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18558,7 +21915,10 @@ SYN70 game asset token
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18591,7 +21951,10 @@ synnergy syn70 achievement <id> <name> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18616,7 +21979,10 @@ synnergy syn70 balance <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18641,7 +22007,10 @@ synnergy syn70 info <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18669,7 +22038,10 @@ synnergy syn70 init [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18694,7 +22066,10 @@ synnergy syn70 list [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18719,7 +22094,10 @@ synnergy syn70 register <id> <owner> <name> <game> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18744,7 +22122,10 @@ synnergy syn70 setattr <id> <key> <value> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18769,7 +22150,10 @@ synnergy syn70 transfer <id> <newOwner> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18790,7 +22174,10 @@ Manage SYN700 IP tokens
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18819,7 +22206,10 @@ synnergy syn700 info <tokenID> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18844,7 +22234,10 @@ synnergy syn700 license <tokenID> <licID> <type> <licensee> <royalty> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18869,7 +22262,10 @@ synnergy syn700 register <id> <title> <desc> <creator> <owner> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18894,7 +22290,10 @@ synnergy syn700 royalty <tokenID> <licID> <licensee> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18915,7 +22314,10 @@ Manage SYN800 asset tokens
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18943,7 +22345,10 @@ synnergy syn800_token info <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18968,7 +22373,10 @@ synnergy syn800_token register <id> <desc> <valuation> <loc> <type> <cert> [flag
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -18993,7 +22401,10 @@ synnergy syn800_token update <id> <valuation> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19014,7 +22425,10 @@ Debt instrument tokens
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19047,7 +22461,10 @@ synnergy syn845 create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19072,7 +22489,10 @@ synnergy syn845 info <token> <debtID> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19097,7 +22517,10 @@ synnergy syn845 issue <token> <debtID> <borrower> <principal> <rate> <penalty> <
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19122,7 +22545,10 @@ synnergy syn845 pay <token> <debtID> <amount> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19139,6 +22565,14 @@ Blockchain synchronization
 ```
   -h, --help   help for synchronization
       --json   output as JSON
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19167,7 +22601,10 @@ synnergy synchronization once [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19192,7 +22629,10 @@ synnergy synchronization start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19217,7 +22657,10 @@ synnergy synchronization status [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19242,7 +22685,10 @@ synnergy synchronization stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output as JSON
+      --config string          Path to configuration file
+      --json                   output as JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19263,7 +22709,10 @@ System health utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19290,7 +22739,10 @@ synnergy system_health log <level> <msg> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19315,7 +22767,10 @@ synnergy system_health snapshot [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19336,7 +22791,10 @@ Manage SYN130 tangible assets
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19345,6 +22803,7 @@ Manage SYN130 tangible assets
 * [synnergy token_syn130 endlease](#synnergy-token-syn130-endlease)	 - End a lease
 * [synnergy token_syn130 info](#synnergy-token-syn130-info)	 - Get asset info
 * [synnergy token_syn130 lease](#synnergy-token-syn130-lease)	 - Start a lease
+* [synnergy token_syn130 list](#synnergy-token-syn130-list)	 - List all tangible assets
 * [synnergy token_syn130 register](#synnergy-token-syn130-register)	 - Register a tangible asset
 * [synnergy token_syn130 sale](#synnergy-token-syn130-sale)	 - Record a sale
 * [synnergy token_syn130 value](#synnergy-token-syn130-value)	 - Update valuation
@@ -19367,7 +22826,10 @@ synnergy token_syn130 endlease <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19392,7 +22854,10 @@ synnergy token_syn130 info <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19417,7 +22882,38 @@ synnergy token_syn130 lease <id> <lessee> <pay> <start> <end> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy token_syn130](#synnergy-token-syn130)	 - Manage SYN130 tangible assets
+
+
+## synnergy token_syn130 list
+
+List all tangible assets
+
+```
+synnergy token_syn130 list [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for list
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19442,7 +22938,10 @@ synnergy token_syn130 register <id> <owner> <meta> <value> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19467,7 +22966,10 @@ synnergy token_syn130 sale <id> <buyer> <price> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19492,7 +22994,10 @@ synnergy token_syn130 value <id> <val> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19513,7 +23018,10 @@ Manage SYN4900 agricultural assets
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19542,7 +23050,10 @@ synnergy token_syn4900 info <id> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19567,7 +23078,10 @@ synnergy token_syn4900 register <id> <type> <owner> <origin> <qty> <harvest> <ex
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19592,7 +23106,10 @@ synnergy token_syn4900 status <id> <status> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19617,7 +23134,10 @@ synnergy token_syn4900 transfer <id> <owner> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19638,7 +23158,10 @@ Transaction utilities
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19670,7 +23193,10 @@ synnergy tx basefee [adjustment] [fees...] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19691,7 +23217,10 @@ Advanced transaction controls
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19721,7 +23250,10 @@ synnergy tx control cancel [from] [to] [amount] [fee] [nonce] [execUnix] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19746,7 +23278,10 @@ synnergy tx control private [from] [to] [amount] [fee] [nonce] [keyhex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19771,7 +23306,10 @@ synnergy tx control receipt [txid] [status] [details] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19796,7 +23334,10 @@ synnergy tx control reverse [from] [to] [amount] [fee] [nonce] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19821,7 +23362,10 @@ synnergy tx control schedule [from] [to] [amount] [fee] [nonce] [execUnix] [flag
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19846,7 +23390,10 @@ synnergy tx create [from] [to] [amount] [fee] [nonce] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19873,7 +23420,10 @@ synnergy tx fee [type] [value] [base] [varRate] [tip] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19898,7 +23448,10 @@ synnergy tx sign [from] [to] [amount] [fee] [nonce] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19923,7 +23476,10 @@ synnergy tx variablefee [gasUnits] [gasPrice] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19948,7 +23504,10 @@ synnergy tx verify [from] [to] [amount] [fee] [nonce] [pubhex] [sighex] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -19969,7 +23528,10 @@ Manage consensus validators
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20000,7 +23562,10 @@ synnergy validator add [addr] [stake] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20025,7 +23590,10 @@ synnergy validator eligible [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20050,7 +23618,10 @@ synnergy validator remove [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20075,7 +23646,10 @@ synnergy validator set-min [stake] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20100,7 +23674,10 @@ synnergy validator slash [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20125,7 +23702,10 @@ synnergy validator stake [addr] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20146,7 +23726,10 @@ Operations for validator nodes
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20176,7 +23759,10 @@ synnergy validatornode add <addr> <stake> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20205,7 +23791,10 @@ synnergy validatornode create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20230,7 +23819,10 @@ synnergy validatornode quorum [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20255,7 +23847,10 @@ synnergy validatornode remove <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20280,7 +23875,10 @@ synnergy validatornode slash <addr> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20301,7 +23899,10 @@ Wallet operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20329,7 +23930,10 @@ synnergy wallet new [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20350,7 +23954,10 @@ Interact with a warfare node
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20380,7 +23987,10 @@ synnergy warfare command <cmd> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20407,7 +24017,10 @@ synnergy warfare create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20432,7 +24045,10 @@ synnergy warfare logistics [assetID] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20457,7 +24073,10 @@ synnergy warfare share <info> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20482,7 +24101,10 @@ synnergy warfare track <assetID> <location> <status> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20503,13 +24125,17 @@ Watchtower node operations
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
 * [synnergy watchtower fork](#synnergy-watchtower-fork)	 - Report a fork
+* [synnergy watchtower init](#synnergy-watchtower-init)	 - Initialise watchtower with ID
 * [synnergy watchtower metrics](#synnergy-watchtower-metrics)	 - Show latest metrics
 * [synnergy watchtower start](#synnergy-watchtower-start)	 - Start monitoring
 * [synnergy watchtower stop](#synnergy-watchtower-stop)	 - Stop monitoring
@@ -20532,7 +24158,38 @@ synnergy watchtower fork [height] [hash] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
+### SEE ALSO
+
+* [synnergy watchtower](#synnergy-watchtower)	 - Watchtower node operations
+
+
+## synnergy watchtower init
+
+Initialise watchtower with ID
+
+```
+synnergy watchtower init [id] [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for init
+```
+
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20557,7 +24214,10 @@ synnergy watchtower metrics [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20582,7 +24242,10 @@ synnergy watchtower start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20607,7 +24270,10 @@ synnergy watchtower stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20615,38 +24281,41 @@ synnergy watchtower stop [flags]
 * [synnergy watchtower](#synnergy-watchtower)	 - Watchtower node operations
 
 
-## synnergy watchtower
+## synnergy watchtower-node
 
-Manage watchtower node
+Manage dedicated watchtower node
 
 ### Options
 
 ```
-  -h, --help   help for watchtower
+  -h, --help   help for watchtower-node
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
-* [synnergy watchtower create](#synnergy-watchtower-create)	 - Create watchtower node
-* [synnergy watchtower fork](#synnergy-watchtower-fork)	 - Report fork event
-* [synnergy watchtower metrics](#synnergy-watchtower-metrics)	 - Show latest system metrics
-* [synnergy watchtower start](#synnergy-watchtower-start)	 - Start monitoring
-* [synnergy watchtower stop](#synnergy-watchtower-stop)	 - Stop monitoring
+* [synnergy watchtower-node create](#synnergy-watchtower-node-create)	 - Create watchtower node
+* [synnergy watchtower-node fork](#synnergy-watchtower-node-fork)	 - Report fork event
+* [synnergy watchtower-node metrics](#synnergy-watchtower-node-metrics)	 - Show latest system metrics
+* [synnergy watchtower-node start](#synnergy-watchtower-node-start)	 - Start monitoring
+* [synnergy watchtower-node stop](#synnergy-watchtower-node-stop)	 - Stop monitoring
 
 
-## synnergy watchtower create
+## synnergy watchtower-node create
 
 Create watchtower node
 
 ```
-synnergy watchtower create [flags]
+synnergy watchtower-node create [flags]
 ```
 
 ### Options
@@ -20659,20 +24328,23 @@ synnergy watchtower create [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy watchtower](#synnergy-watchtower)	 - Manage watchtower node
+* [synnergy watchtower-node](#synnergy-watchtower-node)	 - Manage dedicated watchtower node
 
 
-## synnergy watchtower fork
+## synnergy watchtower-node fork
 
 Report fork event
 
 ```
-synnergy watchtower fork <height> <hash> [flags]
+synnergy watchtower-node fork <height> <hash> [flags]
 ```
 
 ### Options
@@ -20684,20 +24356,23 @@ synnergy watchtower fork <height> <hash> [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy watchtower](#synnergy-watchtower)	 - Manage watchtower node
+* [synnergy watchtower-node](#synnergy-watchtower-node)	 - Manage dedicated watchtower node
 
 
-## synnergy watchtower metrics
+## synnergy watchtower-node metrics
 
 Show latest system metrics
 
 ```
-synnergy watchtower metrics [flags]
+synnergy watchtower-node metrics [flags]
 ```
 
 ### Options
@@ -20709,20 +24384,23 @@ synnergy watchtower metrics [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy watchtower](#synnergy-watchtower)	 - Manage watchtower node
+* [synnergy watchtower-node](#synnergy-watchtower-node)	 - Manage dedicated watchtower node
 
 
-## synnergy watchtower start
+## synnergy watchtower-node start
 
 Start monitoring
 
 ```
-synnergy watchtower start [flags]
+synnergy watchtower-node start [flags]
 ```
 
 ### Options
@@ -20734,20 +24412,23 @@ synnergy watchtower start [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy watchtower](#synnergy-watchtower)	 - Manage watchtower node
+* [synnergy watchtower-node](#synnergy-watchtower-node)	 - Manage dedicated watchtower node
 
 
-## synnergy watchtower stop
+## synnergy watchtower-node stop
 
 Stop monitoring
 
 ```
-synnergy watchtower stop [flags]
+synnergy watchtower-node stop [flags]
 ```
 
 ### Options
@@ -20759,12 +24440,15 @@ synnergy watchtower stop [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
-* [synnergy watchtower](#synnergy-watchtower)	 - Manage watchtower node
+* [synnergy watchtower-node](#synnergy-watchtower-node)	 - Manage dedicated watchtower node
 
 
 ## synnergy xcontract
@@ -20780,7 +24464,10 @@ Register cross-chain contract mappings
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20807,6 +24494,14 @@ synnergy xcontract get <local_addr> [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy xcontract](#synnergy-xcontract)	 - Register cross-chain contract mappings
@@ -20827,6 +24522,14 @@ synnergy xcontract list [flags]
       --json   output as JSON
 ```
 
+### Options inherited from parent commands
+
+```
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
+```
+
 ### SEE ALSO
 
 * [synnergy xcontract](#synnergy-xcontract)	 - Register cross-chain contract mappings
@@ -20844,12 +24547,15 @@ synnergy xcontract register <local_addr> <remote_chain> <remote_addr> [flags]
 
 ```
   -h, --help   help for register
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20869,12 +24575,15 @@ synnergy xcontract remove <local_addr> [flags]
 
 ```
   -h, --help   help for remove
+      --json   output as JSON
 ```
 
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20895,7 +24604,10 @@ Manage zero trust data channels
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20925,7 +24637,10 @@ synnergy zero-trust close [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20950,7 +24665,10 @@ synnergy zero-trust messages [id] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -20975,7 +24693,10 @@ synnergy zero-trust open [id] [hexkey] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -21000,7 +24721,10 @@ synnergy zero-trust receive [id] [index] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
@@ -21025,174 +24749,13 @@ synnergy zero-trust send [id] [msg] [flags]
 ### Options inherited from parent commands
 
 ```
-      --json   output results in JSON
+      --config string          Path to configuration file
+      --json                   output results in JSON
+      --log-level string       Log verbosity: info or debug (default "info")
+      --stage73-state string   Path to Stage 73 state file (default "/root/.synnergy/stage73_state.json")
 ```
 
 ### SEE ALSO
 
 * [synnergy zero-trust](#synnergy-zero-trust)	 - Manage zero trust data channels
 
-
-## synnergy storage_marketplace
-
-Manage decentralized storage listings.
-
-### Options
-
-```
-  -h, --help   help for storage_marketplace
-```
-
-### SEE ALSO
-
-* [synnergy](#synnergy)  - Synnergy blockchain CLI
-* [synnergy storage_marketplace list](#synnergy-storage_marketplace-list)  - Create a storage listing
-* [synnergy storage_marketplace listings](#synnergy-storage_marketplace-listings)  - List storage offers
-* [synnergy storage_marketplace deal](#synnergy-storage_marketplace-deal)  - Open a storage deal
-
-## synnergy storage_marketplace list
-
-Create a storage listing
-
-```
-synnergy storage_marketplace list [hash] [price] [owner] [flags]
-```
-
-### Options
-
-```
-      --gas uint   gas limit
-  -h, --help      help for list
-```
-
-### SEE ALSO
-
-* [synnergy storage_marketplace](#synnergy-storage_marketplace)  - Manage decentralized storage listings
-
-## synnergy storage_marketplace listings
-
-List storage offers
-
-```
-synnergy storage_marketplace listings [flags]
-```
-
-### Options
-
-```
-  -h, --help   help for listings
-```
-
-### SEE ALSO
-
-* [synnergy storage_marketplace](#synnergy-storage_marketplace)  - Manage decentralized storage listings
-
-## synnergy storage_marketplace deal
-
-Open a storage deal
-
-```
-synnergy storage_marketplace deal [listingID] [buyer] [flags]
-```
-
-### Options
-
-```
-      --gas uint   gas limit
-  -h, --help      help for deal
-```
-
-### SEE ALSO
-
-* [synnergy storage_marketplace](#synnergy-storage_marketplace)  - Manage decentralized storage listings
-
-
-## synnergy nft
-
-Mint and trade NFTs
-
-### Options
-
-```
-  -h, --help   help for nft
-```
-
-### SEE ALSO
-
-* [synnergy](#synnergy)
-* [synnergy nft mint](#synnergy-nft-mint)  - Mint a new NFT
-* [synnergy nft list](#synnergy-nft-list)  - Show NFT details
-* [synnergy nft buy](#synnergy-nft-buy)  - Transfer ownership of an NFT
-
-## synnergy nft mint
-
-Mint a new NFT
-
-```
-synnergy nft mint [id] [owner] [metadata] [price]
-```
-
-## synnergy nft list
-
-Show NFT details
-
-```
-synnergy nft list [id]
-```
-
-## synnergy nft buy
-
-Transfer ownership of an NFT
-
-```
-synnergy nft buy [id] [newOwner]
-```
-
-## DEX Screener
-The Stage 39 DEX Screener GUI relies on the following commands:
-
-```bash
-# List all pools with reserves
-synnergy liquidity_views list
-
-# Inspect a specific pool
-synnergy liquidity_views info <id>
-```
-
-## Smart contract tests
-
-Stage 44 introduces a contract test harness ensuring templates deploy correctly through the CLI and virtual machine. Run:
-
-```bash
-go test ./tests/contracts
-```
-
-to validate the token faucet template and future contract modules.
-
-## Kubernetes deployment
-Stage 48 adds manifests under `deploy/k8s/` for running the node and wallet
-server inside a Kubernetes cluster. Apply them with `kubectl`:
-
-```bash
-kubectl apply -f deploy/k8s/node.yaml
-kubectl apply -f deploy/k8s/wallet.yaml
-```
-
-These manifests include health probes and resource limits so clusters can
-maintain availability automatically.
-
-### Node Operations Dashboard CLI
-
-The `node-operations-dashboard` module provides a lightweight CLI accessed with `npm start` to view node health status.
-
-### System Analytics Dashboard CLI
-
-The `system-analytics-dashboard` module supplies TypeScript utilities for collecting and serving metrics.
-
-```bash
-cd GUI/system-analytics-dashboard
-npm install
-npm start
-```
-
-Tests and lint checks can be run with `npm test` and `npm run lint` respectively.

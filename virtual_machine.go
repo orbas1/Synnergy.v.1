@@ -24,17 +24,32 @@ const (
 // opcode. Input bytes are transformed and returned as new output.
 type opcodeHandler func([]byte) ([]byte, error)
 
+type opcodeBinding struct {
+	name    string
+	handler opcodeHandler
+}
+
 // SimpleVM is a lightweight execution engine used by the contract registry. It
 // interprets 24-bit opcodes from bytecode and dispatches them to handlers. The
 // VM includes simple bottleneck management through a concurrency limiter and
 // satisfies the VirtualMachine interface.
 type SimpleVM struct {
-	mu       sync.RWMutex
-	running  bool
-	mode     VMMode
-	limiter  chan struct{}
-	handlers map[uint32]opcodeHandler
-	defaultH opcodeHandler
+	mu             sync.RWMutex
+	running        bool
+	mode           VMMode
+	limiter        chan struct{}
+	handlers       map[uint32]opcodeBinding
+	defaultBinding opcodeBinding
+
+	gasMu          sync.RWMutex
+	gasTable       GasTable
+	gasOverrides   map[string]uint64
+	gasVersion     uint64
+	gasLoadedAt    time.Time
+	gasUpdates     <-chan GasSnapshot
+	cancelGasWatch func()
+	gasWatcherDone chan struct{}
+	closeOnce      sync.Once
 }
 
 // NewSimpleVM creates a new stopped virtual machine instance. An optional
@@ -57,24 +72,55 @@ func NewSimpleVM(modes ...VMMode) *SimpleVM {
 		capacity = 1
 	}
 
-	handlers := map[uint32]opcodeHandler{
-		0x000000: func(b []byte) ([]byte, error) { // NOP/echo
+	defaultBinding := opcodeBinding{
+		name: "NOP",
+		handler: func(b []byte) ([]byte, error) {
 			out := make([]byte, len(b))
 			copy(out, b)
 			return out, nil
 		},
 	}
-	defaultH := handlers[0x000000]
+
+	handlers := map[uint32]opcodeBinding{
+		0x000000: defaultBinding,
+	}
 	for _, op := range SNVMOpcodes {
-		handlers[op.Code] = defaultH
+		if existing, ok := handlers[op.Code]; ok {
+			if existing.name == "" {
+				existing.name = op.Name
+			}
+			if existing.handler == nil {
+				existing.handler = defaultBinding.handler
+			}
+			handlers[op.Code] = existing
+			continue
+		}
+		handlers[op.Code] = opcodeBinding{name: op.Name, handler: defaultBinding.handler}
 	}
 
 	vm := &SimpleVM{
-		mode:     mode,
-		limiter:  make(chan struct{}, capacity),
-		handlers: handlers,
-		defaultH: defaultH,
+		mode:           mode,
+		limiter:        make(chan struct{}, capacity),
+		handlers:       handlers,
+		defaultBinding: defaultBinding,
+		gasOverrides:   make(map[string]uint64),
+		gasWatcherDone: make(chan struct{}),
 	}
+
+	snapshot := SnapshotGasTable()
+	vm.gasTable = snapshot.Table
+	for name, cost := range snapshot.Table {
+		if cost != 0 {
+			vm.gasOverrides[name] = cost
+		}
+	}
+	vm.gasVersion = snapshot.Version
+	vm.gasLoadedAt = snapshot.LoadedAt
+	updates, cancel := SubscribeGasTable(4)
+	vm.gasUpdates = updates
+	vm.cancelGasWatch = cancel
+	go vm.watchGasUpdates()
+
 	return vm
 }
 
@@ -100,6 +146,19 @@ func (vm *SimpleVM) Stop() error {
 	return nil
 }
 
+// Close releases background watchers. It is safe to invoke multiple times and
+// should be called when the VM will no longer be used.
+func (vm *SimpleVM) Close() {
+	vm.closeOnce.Do(func() {
+		if vm.cancelGasWatch != nil {
+			vm.cancelGasWatch()
+		}
+		if vm.gasWatcherDone != nil {
+			<-vm.gasWatcherDone
+		}
+	})
+}
+
 // Status reports whether the VM is running.
 func (vm *SimpleVM) Status() bool {
 	vm.mu.RLock()
@@ -110,12 +169,29 @@ func (vm *SimpleVM) Status() bool {
 // RegisterOpcode associates an opcode with a handler. Nil handlers
 // fallback to the VM's default no-op implementation.
 func (vm *SimpleVM) RegisterOpcode(code uint32, h opcodeHandler) {
+	vm.RegisterOpcodeNamed(code, "", h)
+}
+
+// RegisterOpcodeNamed allows callers to bind a specific identifier to the
+// opcode. When no name is provided the existing binding is retained or a
+// deterministic placeholder is generated so gas accounting remains accurate.
+func (vm *SimpleVM) RegisterOpcodeNamed(code uint32, name string, h opcodeHandler) {
 	vm.mu.Lock()
 	defer vm.mu.Unlock()
 	if h == nil {
-		h = vm.defaultH
+		h = vm.defaultBinding.handler
 	}
-	vm.handlers[code] = h
+	binding, ok := vm.handlers[code]
+	if !ok {
+		binding = opcodeBinding{}
+	}
+	if name != "" {
+		binding.name = name
+	} else if binding.name == "" {
+		binding.name = fmt.Sprintf("opcode_0x%06x", code)
+	}
+	binding.handler = h
+	vm.handlers[code] = binding
 }
 
 // Execute interprets the provided bytecode as a sequence of 24-bit opcodes and
@@ -144,15 +220,7 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 		return nil, 0, errors.New("bytecode required")
 	}
 
-	opCount := uint64((len(wasm) + 2) / 3) // number of 24-bit opcodes
-	gasUsed := opCount
-	if gasUsed == 0 {
-		gasUsed = 1
-	}
-	if gasUsed > gasLimit {
-		return nil, gasLimit, errors.New("gas limit exceeded")
-	}
-
+	var gasUsed uint64
 	out := args
 	for i := 0; i < len(wasm); i += 3 {
 		if err := ctx.Err(); err != nil {
@@ -167,12 +235,17 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 			b2 = wasm[i+2]
 		}
 		opcode := uint32(b0)<<16 | uint32(b1)<<8 | uint32(b2)
-		handler, ok := vm.handlers[opcode]
-		if !ok {
-			handler = vm.defaultH
+		binding := vm.bindingFor(opcode)
+		cost := vm.gasFor(binding.name)
+		if cost == 0 {
+			cost = DefaultGasCost
 		}
+		if gasLimit < cost || gasUsed > gasLimit-cost {
+			return nil, gasLimit, errors.New("gas limit exceeded")
+		}
+		gasUsed += cost
 		var err error
-		out, err = handler(out)
+		out, err = binding.handler(out)
 		if err != nil {
 			return nil, gasUsed, fmt.Errorf("opcode 0x%06x failed: %w", opcode, err)
 		}
@@ -191,4 +264,86 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 // Execute interprets the provided bytecode using a background context.
 func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {
 	return vm.ExecuteContext(context.Background(), wasm, method, args, gasLimit)
+}
+
+func (vm *SimpleVM) bindingFor(code uint32) opcodeBinding {
+	vm.mu.RLock()
+	binding, ok := vm.handlers[code]
+	vm.mu.RUnlock()
+	if !ok {
+		return vm.defaultBinding
+	}
+	if binding.handler == nil {
+		binding.handler = vm.defaultBinding.handler
+	}
+	if binding.name == "" {
+		binding.name = fmt.Sprintf("opcode_0x%06x", code)
+	}
+	return binding
+}
+
+func (vm *SimpleVM) gasFor(name string) uint64 {
+	if name == "" {
+		return DefaultGasCost
+	}
+	vm.gasMu.RLock()
+	table := vm.gasTable
+	override := vm.gasOverrides[name]
+	vm.gasMu.RUnlock()
+	if table != nil {
+		if cost, ok := table[name]; ok {
+			vm.recordGasOverride(name, cost)
+			return cost
+		}
+	}
+	if override != 0 {
+		return override
+	}
+	cost := GasCost(name)
+	vm.recordGasOverride(name, cost)
+	return cost
+}
+
+func (vm *SimpleVM) watchGasUpdates() {
+	if vm.gasUpdates == nil {
+		close(vm.gasWatcherDone)
+		return
+	}
+	defer close(vm.gasWatcherDone)
+	for snapshot := range vm.gasUpdates {
+		vm.gasMu.Lock()
+		vm.gasTable = snapshot.Table
+		vm.gasVersion = snapshot.Version
+		vm.gasLoadedAt = snapshot.LoadedAt
+		if vm.gasOverrides == nil {
+			vm.gasOverrides = make(map[string]uint64)
+		}
+		for name, cost := range snapshot.Table {
+			if cost != 0 {
+				vm.gasOverrides[name] = cost
+			}
+		}
+		vm.gasMu.Unlock()
+	}
+}
+
+// GasSnapshot exposes the most recent gas table cached by the VM. It allows
+// external tooling and tests to validate that the VM is operating with the
+// expected pricing data without reaching into package internals.
+func (vm *SimpleVM) GasSnapshot() GasSnapshot {
+	vm.gasMu.RLock()
+	defer vm.gasMu.RUnlock()
+	return GasSnapshot{Table: cloneGasTable(vm.gasTable), Version: vm.gasVersion, LoadedAt: vm.gasLoadedAt}
+}
+
+func (vm *SimpleVM) recordGasOverride(name string, cost uint64) {
+	if name == "" || cost == 0 {
+		return
+	}
+	vm.gasMu.Lock()
+	if vm.gasOverrides == nil {
+		vm.gasOverrides = make(map[string]uint64)
+	}
+	vm.gasOverrides[name] = cost
+	vm.gasMu.Unlock()
 }

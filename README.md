@@ -29,7 +29,9 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Pluggable node roles** – mining, staking, authority, regulatory, watchtower, warfare and more via constructors such as `core.NewMiningNode` and `core.NewRegulatoryNode`.
 - **Cross-chain interoperability** – bridges, protocol registries, connection managers and transaction relays (`core.NewBridgeRegistry`, `core.NewProtocolRegistry`, `core.NewChainConnectionManager`, `core.NewCrossChainTxManager`). Stage 42 finalises these modules with JSON emitting CLIs for deposits, claims and contract mappings.
 - **AI modules** – contract management, inference analysis, anomaly detection and secure storage (`core.NewAIEnhancedContract`, `core.NewAIDriftMonitor`).
-- **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()`, tunable at runtime through the `SYN_GAS_OVERRIDES` environment variable and adjustable with `synnergy.RegisterGasCost()`, which validates opcode names and costs.
+- **Gas accounting** – deterministic costs loaded via `synnergy.SnapshotGasTable()` with live subscription fan-out to CLI, VM, and web tooling. Runtime overrides flow through `synnergy.RegisterGasCost()`, emit structured telemetry, and preserve audit trails for every change.【F:gas_table.go†L20-L152】【F:cmd/synnergy/main.go†L51-L163】
+- **Stage 73 persistent state hub** – CLI and web tooling share JSON-backed snapshots for grant, benefit and institutional index modules so automation, dashboards and recovery scripts consume the exact same state that Stage 73 workflows emit.【F:cli/stage73_state.go†L1-L142】
+- **Deterministic opcode metadata** – Stage 80 introduces `synnergy.SNVMOpcodeByCode` and a hardened catalogue builder so the VM, CLI and documentation resolve machine code to human-readable entries without divergence while ignoring legacy duplicates.【F:snvm._opcodes.go†L1-L1343】
 - **Kademlia DHT tools** – CLI support for storing, retrieving and computing XOR distance between keys with gas-aware execution.
 - **Controlled proof-of-work** – mining nodes expose a `MineUntil` helper and `synnergy mining mine-until` command so hashing stops when a context is cancelled, a prefix target is reached, or a timeout fires.
 - **Opcode-aware contracts** – sample Solidity bridges, liquidity, multisig, oracle and token contracts invoke SNVM opcodes with deterministic gas costs.
@@ -37,6 +39,9 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Regulatory node logging** – `synnergy regnode approve` surfaces rejection reasons and address logs for auditability.
 - **Regulatory audits** – `synnergy regnode audit` reports whether an address has been flagged and returns recorded reasons.
 - **Wallet-signed approvals** – regulatory nodes verify transactions against registered wallet public keys, and the CLI can load and sign with a wallet file before submitting for approval.
+- **Enterprise grant lifecycle** – the SYN3800 CLI now enforces wallet-authorised releases, emits structured audit trails and snapshots state for dashboards and Stage 73 orchestration.【F:cli/syn3800.go†L1-L174】【F:core/syn3800.go†L1-L219】
+- **Institutional index governance** – the SYN3700 CLI manages controller-approved component changes, drift budgets and rebalance plans with persisted audit logs for downstream analytics.【F:cli/syn3700_token.go†L1-L213】【F:core/syn3700_token.go†L1-L220】
+- **Enterprise service entitlements** – the SYN500 CLI mints utility tiers, enforces windowed consumption, emits telemetry snapshots and persists audit trails for compliance automation.【F:cli/syn500.go†L1-L172】【F:core/syn500.go†L1-L150】
 - **Web regulatory console** – the `web/pages/regnode.js` interface exposes approval, flagging and log retrieval through a browser UI.
 - **Strict flagging** – regulatory flags require explicit non-empty reasons for improved audit integrity.
 - **Regulator-optional consensus** – if no regulatory node is configured, sub-block validation bypasses compliance checks so transactions continue to flow.
@@ -45,6 +50,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Bank node index** – track banking nodes via a thread-safe index exposed through `bank_index` CLI commands.
 - **Extensible CLI** – built with [Cobra](https://github.com/spf13/cobra) and backed by `cli.Execute()`.
 - **Resource-managed CLI** – connection pool commands can release individual peers and `contractopcodes` reports gas costs for contract operations.
+- **Hot-reloadable virtual machine** – `virtual_machine.go` and `core/virtual_machine.go` expose concurrency profiles, gas subscriptions, and clean shutdown semantics so tests, CLI sessions, and long-running nodes stay deterministic across upgrades.【F:virtual_machine.go†L1-L186】【F:core/virtual_machine.go†L1-L310】
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
 - **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
@@ -92,10 +98,10 @@ pkg/          Reusable libraries and experimental modules
 2. Resolve configuration path from `SYN_CONFIG` or `config.DefaultConfigPath`.
 3. Parse YAML via `config.Load` and configure logging.
 4. Initialise tracer provider (`otel.SetTracerProvider`).
-5. Warm caches by calling `synnergy.LoadGasTable()` and `synnergy.RegisterGasCost()` for core operations like `MineBlock`, `OpenConnection` and `MintNFT`.
+5. Snapshot the gas table (`synnergy.SnapshotGasTable()`), subscribe to live updates, and re-register critical opcodes so runtime pricing stays aligned with documentation.
 6. Pre-load modules used by the CLI:
    - `core.NewNetwork` for pub‑sub networking
-   - `core.NewContractRegistry` backed by `core.NewSimpleVM`
+   - `core.NewContractRegistry` backed by `core.NewSimpleVM` (which now exposes gas subscriptions and `Close()` semantics)
    - DAO managers (`core.NewDAOManager`, `core.NewProposalManager`, …)
    - Wallet, watchtower and warfare nodes (`core.NewWallet`, `core.NewWatchtowerNode`, `core.NewWarfareNode`)
    - Token constructors in `internal/tokens` (`tokens.NewSYN223Token`, etc.)
@@ -153,7 +159,19 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `mining start|status|stop|attempt` | Operate a mining node (`core.NewMiningNode`) |
 | `staking_node start|status|stop` | Control the staking service |
 | `contracts compile|deploy|invoke|list|info` | WASM smart contract lifecycle through `core.NewContractRegistry` |
+
+### Stage 73 Persistence Hub
+
+Enterprise tokens and registries introduced in Stage 73 (SYN3700 index governance, SYN3800 grants and SYN3900 benefits) persist their state to a shared JSON file so the CLI, browser UI and automation scripts operate on the same snapshots. Use the `--stage73-state` flag to set the location explicitly:
+
+```bash
+./synnergy syn3700 init --name Index --symbol IDX --controller wallet.json:pass --stage73-state ~/.synnergy/stage73.json
+./synnergy syn3800 status --stage73-state ~/.synnergy/stage73.json --json
+```
+
+The default path resolves to `${HOME}/.synnergy/stage73_state.json` (or the `SYN_STAGE73_STATE` environment variable). The web console (`web/pages/index.js`) surfaces a “Stage 73 state file” input so browser actions append the same flag automatically.【F:web/pages/index.js†L1-L120】 The persistence layer coordinates loading, applying and writing snapshots via `cli/stage73_state.go`, while `core/stage73_state.go` captures and restores combined runtime state for fast recovery and testing.【F:core/stage73_state.go†L1-L42】
 | `system_health snapshot|log` | Emit metrics and structured logs |
+| `syn500 create|grant|use|status|telemetry|audit` | Manage SYN500 service entitlements with usage windows and JSON telemetry |
 | `data monitor status` | Report network data distribution metrics |
 | `audit log|list` | Record and query audit events via `core.NewAuditManager` |
 | `audit_node start|log|list` | Operate a bootstrap audit node for network-wide logs |
@@ -165,7 +183,8 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `basetoken init|mint|balance` | Interact with a basic token (`tokens.NewBaseToken`) |
 | `dex liquidity <pair>` | Query on-chain liquidity pool reserves |
 | `syn500 create|grant|use` | Manage service-tier utility tokens |
-| `syn3800 create|release|get|list` | Manage programmatic grants via `core.GrantRegistry` |
+| `syn3700 init|add|remove|snapshot|status|rebalance|audit` | Manage institutional index tokens with controller wallets and drift-aware components (`core.SYN3700Token`) |
+| `syn3800 create|authorize|release|get|list|audit|status` | Wallet-gated grant lifecycle with audit trails and Stage 73 persistence (`core.GrantRegistry`) |
 | `syn3900 register|claim|get` | Track government benefits (`core.BenefitRegistry`) |
 | `syn4200_token donate|progress` | Record charity donations and view campaign totals |
 | `syn4700 create|sign|status|info|dispute` | Administer legal-document tokens |

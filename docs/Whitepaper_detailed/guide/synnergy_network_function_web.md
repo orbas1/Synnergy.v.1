@@ -38,6 +38,8 @@ directly from the CLI.
 Stage 27 layers in automation scripts for devnets and testnets, contract deployment helpers and quality gates, letting dashboards orchestrate network lifecycles through the CLI.
 Stage 28 adds release packaging, documentation generation, CI preparation and ledger backup tooling so user interfaces like the storage marketplace and system analytics dashboard can trigger builds, publish docs and safeguard chain data via the function web.
 
+Stage 80 hardens the shared control plane by wiring the Stage 73 persistence hub directly into the browser console. Operators can now supply a Stage 73 state file from the web UI, which appends the `--stage73-state` flag to every CLI invocation, keeps the path in local storage for resilience, and ensures the grant, benefit and institutional index registries stay synchronised across CLI, automation and web experiences.
+
 Stage 29 introduces smart contract templates accessible through the CLI. Dashboards
 can list and deploy precompiled modules such as token faucets, storage markets,
 DAO governance systems, NFT minters and AI model exchanges directly from the

@@ -6,12 +6,13 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	synn "synnergy"
 )
 
 // VMMode represents the resource profile of the virtual machine.
 // Heavy instances allow more concurrent executions while super light
-// instances are tailored for constrained environments like mobile
-// devices.
+// instances are tailored for constrained environments like mobile devices.
 type VMMode int
 
 const (
@@ -20,44 +21,56 @@ const (
 	VMSuperLight
 )
 
-// opcodeHandler defines the function signature for executing a single
-// opcode. Input bytes are transformed and returned as new output.
 type opcodeHandler func([]byte) ([]byte, error)
 
-// SimpleVM is a lightweight execution engine used by the contract registry. It
-// interprets 24-bit opcodes from bytecode and dispatches them to handlers. The
-// VM includes simple bottleneck management through a concurrency limiter and
-// satisfies the VirtualMachine interface.
-type SimpleVM struct {
-	mu       sync.RWMutex
-	running  bool
-	mode     VMMode
-	limiter  chan struct{}
-	handlers map[uint32]opcodeHandler
-	defaultH opcodeHandler
+type opcodeBinding struct {
+	name     string
+	handler  opcodeHandler
+	dispatch bool
 }
 
-// Call implements the OpContext interface used by the global opcode dispatcher.
-// For now it simply acts as a stub; higher-level integration can wire this to
-// actual protocol functionality.
+// SimpleVM is the execution engine used by the contract registry and CLI
+// helpers. It mirrors the root VM implementation but wires in the opcode
+// dispatcher so unknown codes are resolved through the generated catalogue.
+type SimpleVM struct {
+	mu             sync.RWMutex
+	running        bool
+	mode           VMMode
+	limiter        chan struct{}
+	handlers       map[uint32]opcodeBinding
+	defaultBinding opcodeBinding
+
+	gasMu          sync.RWMutex
+	gasTable       synn.GasTable
+	gasOverrides   map[string]uint64
+	gasVersion     uint64
+	gasLoadedAt    time.Time
+	gasUpdates     <-chan synn.GasSnapshot
+	cancelGasWatch func()
+	gasWatcherDone chan struct{}
+	closeOnce      sync.Once
+}
+
+// Call implements the OpContext interface used by the opcode dispatcher. The
+// lightweight VM does not expose additional host functionality yet.
 func (vm *SimpleVM) Call(string) error { return nil }
 
-// Gas satisfies the OpContext interface. The lightweight VM does not meter gas
-// beyond counting opcodes, so this is a no-op placeholder.
+// Gas satisfies the OpContext interface. The lightweight VM meters gas locally
+// rather than delegating to the dispatcher, so this is a no-op.
 func (vm *SimpleVM) Gas(uint64) error { return nil }
 
-// NewSimpleVM creates a new stopped virtual machine instance.  An optional
-// mode can be supplied to configure resource limits; by default a light VM is
-// created.
+// Concurrency returns the number of parallel executions permitted by the
+// limiter. It provides visibility for monitoring and tests.
+func (vm *SimpleVM) Concurrency() int { return cap(vm.limiter) }
+
+// NewSimpleVM creates a new stopped virtual machine instance. An optional mode
+// can be supplied to configure resource limits; by default a light VM is created.
 func NewSimpleVM(modes ...VMMode) *SimpleVM {
 	mode := VMLight
 	if len(modes) > 0 {
 		mode = modes[0]
 	}
 
-	// Concurrency capacities for different VM profiles. The heavy VM allows
-	// more parallel executions while the super light VM processes a single
-	// request at a time.
 	capacity := 5
 	switch mode {
 	case VMHeavy:
@@ -66,37 +79,61 @@ func NewSimpleVM(modes ...VMMode) *SimpleVM {
 		capacity = 1
 	}
 
-	vm := &SimpleVM{
-		mode:    mode,
-		limiter: make(chan struct{}, capacity),
-	}
-	vm.handlers = map[uint32]opcodeHandler{
-		0x000000: func(b []byte) ([]byte, error) { // NOP/echo
+	defaultBinding := opcodeBinding{
+		name: "NOP",
+		handler: func(b []byte) ([]byte, error) {
 			out := make([]byte, len(b))
 			copy(out, b)
 			return out, nil
 		},
 	}
-	vm.defaultH = vm.handlers[0x000000]
+
+	handlers := map[uint32]opcodeBinding{
+		0x000000: defaultBinding,
+	}
+
+	vm := &SimpleVM{
+		mode:           mode,
+		limiter:        make(chan struct{}, capacity),
+		handlers:       handlers,
+		defaultBinding: defaultBinding,
+		gasOverrides:   make(map[string]uint64),
+		gasWatcherDone: make(chan struct{}),
+	}
+
+	snapshot := synn.SnapshotGasTable()
+	vm.gasTable = snapshot.Table
+	for name, cost := range snapshot.Table {
+		if cost != 0 {
+			vm.gasOverrides[name] = cost
+		}
+	}
+	vm.gasVersion = snapshot.Version
+	vm.gasLoadedAt = snapshot.LoadedAt
+	updates, cancel := synn.SubscribeGasTable(4)
+	vm.gasUpdates = updates
+	vm.cancelGasWatch = cancel
+	go vm.watchGasUpdates()
+
 	return vm
 }
 
 // RegisterHandler allows callers to inject or override opcode handlers at
-// runtime.  It is safe for concurrent use and enables higher level modules or
+// runtime. It is safe for concurrent use and enables higher level modules or
 // tests to extend the VM without recompilation.
 func (vm *SimpleVM) RegisterHandler(op uint32, h opcodeHandler) {
-	vm.mu.Lock()
-	if vm.handlers == nil {
-		vm.handlers = make(map[uint32]opcodeHandler)
-	}
-	vm.handlers[op] = h
-	vm.mu.Unlock()
+	vm.RegisterHandlerNamed(op, fmt.Sprintf("custom_0x%06x", op), h)
 }
 
-// Concurrency returns the maximum number of executions the VM will run in
-// parallel based on its current limiter capacity.  This is primarily exported
-// for monitoring and tests.
-func (vm *SimpleVM) Concurrency() int { return cap(vm.limiter) }
+// RegisterHandlerNamed allows callers to inject opcode handlers with explicit gas labels.
+func (vm *SimpleVM) RegisterHandlerNamed(op uint32, name string, h opcodeHandler) {
+	vm.mu.Lock()
+	if vm.handlers == nil {
+		vm.handlers = make(map[uint32]opcodeBinding)
+	}
+	vm.handlers[op] = opcodeBinding{name: name, handler: h}
+	vm.mu.Unlock()
+}
 
 // Start marks the VM as running. It is safe to call multiple times.
 func (vm *SimpleVM) Start() error {
@@ -118,6 +155,19 @@ func (vm *SimpleVM) Stop() error {
 	}
 	vm.running = false
 	return nil
+}
+
+// Close releases background watchers. It is safe to invoke multiple times and
+// should be called when the VM will no longer be used.
+func (vm *SimpleVM) Close() {
+	vm.closeOnce.Do(func() {
+		if vm.cancelGasWatch != nil {
+			vm.cancelGasWatch()
+		}
+		if vm.gasWatcherDone != nil {
+			<-vm.gasWatcherDone
+		}
+	})
 }
 
 // Status reports whether the VM is running.
@@ -149,15 +199,7 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 		return nil, 0, errors.New("bytecode required")
 	}
 
-	opCount := (uint64(len(wasm)) + 2) / 3
-	gasUsed := opCount
-	if gasUsed == 0 {
-		gasUsed = 1
-	}
-	if gasUsed > gasLimit {
-		return nil, gasLimit, errors.New("gas limit exceeded")
-	}
-
+	var gasUsed uint64
 	out := args
 	for i := 0; i < len(wasm); i += 3 {
 		if err := ctx.Err(); err != nil {
@@ -172,19 +214,27 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 			b2 = wasm[i+2]
 		}
 		opcode := uint32(b0)<<16 | uint32(b1)<<8 | uint32(b2)
+		binding := vm.bindingFor(opcode)
+		cost := vm.gasFor(binding.name)
+		if cost == 0 {
+			cost = synn.DefaultGasCost
+		}
+		if gasLimit < cost || gasUsed > gasLimit-cost {
+			return nil, gasLimit, errors.New("gas limit exceeded")
+		}
+		gasUsed += cost
 
-		if handler, ok := vm.handlers[opcode]; ok {
-			var err error
-			out, err = handler(out)
-			if err != nil {
-				return nil, gasUsed, fmt.Errorf("opcode 0x%06x failed: %w", opcode, err)
+		if binding.dispatch {
+			if err := Dispatch(vm, Opcode(opcode)); err != nil {
+				return nil, gasUsed, fmt.Errorf("dispatch 0x%06x failed: %w", opcode, err)
 			}
 			continue
 		}
-		if opcode != 0 {
-			if err := Dispatch(vm, Opcode(opcode)); err != nil {
-				continue
-			}
+
+		var err error
+		out, err = binding.handler(out)
+		if err != nil {
+			return nil, gasUsed, fmt.Errorf("opcode 0x%06x failed: %w", opcode, err)
 		}
 	}
 
@@ -199,4 +249,117 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 
 func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit uint64) ([]byte, uint64, error) {
 	return vm.ExecuteContext(context.Background(), wasm, method, args, gasLimit)
+}
+
+func (vm *SimpleVM) bindingFor(code uint32) opcodeBinding {
+	vm.mu.RLock()
+	binding, ok := vm.handlers[code]
+	vm.mu.RUnlock()
+	if ok {
+		if binding.handler == nil {
+			binding.handler = vm.defaultBinding.handler
+		}
+		if binding.name == "" {
+			binding.name = fmt.Sprintf("opcode_0x%06x", code)
+		}
+		return binding
+	}
+	name, dispatch := vm.lookupOpcodeName(code)
+	if !dispatch {
+		return opcodeBinding{name: name, handler: vm.defaultBinding.handler}
+	}
+	if name == "" {
+		name = fmt.Sprintf("opcode_0x%06x", code)
+	}
+	return opcodeBinding{name: name, handler: vm.defaultBinding.handler, dispatch: true}
+}
+
+func (vm *SimpleVM) lookupOpcodeName(code uint32) (string, bool) {
+	if op, ok := synn.SNVMOpcodeByCode(code); ok {
+		return op.Name, true
+	}
+	if name, ok := LookupOpcodeName(code); ok {
+		return name, true
+	}
+	return fmt.Sprintf("opcode_0x%06x", code), false
+}
+
+func (vm *SimpleVM) gasFor(name string) uint64 {
+	if name == "" {
+		return synn.DefaultGasCost
+	}
+	vm.gasMu.RLock()
+	table := vm.gasTable
+	override := vm.gasOverrides[name]
+	vm.gasMu.RUnlock()
+	if table != nil {
+		if cost, ok := table[name]; ok {
+			vm.recordGasOverride(name, cost)
+			return cost
+		}
+	}
+	if override != 0 {
+		return override
+	}
+	cost := synn.GasCost(name)
+	vm.recordGasOverride(name, cost)
+	return cost
+}
+
+func (vm *SimpleVM) watchGasUpdates() {
+	if vm.gasUpdates == nil {
+		close(vm.gasWatcherDone)
+		return
+	}
+	defer close(vm.gasWatcherDone)
+	for snapshot := range vm.gasUpdates {
+		vm.gasMu.Lock()
+		vm.gasTable = snapshot.Table
+		vm.gasVersion = snapshot.Version
+		vm.gasLoadedAt = snapshot.LoadedAt
+		if vm.gasOverrides == nil {
+			vm.gasOverrides = make(map[string]uint64)
+		}
+		for name, cost := range snapshot.Table {
+			if cost != 0 {
+				vm.gasOverrides[name] = cost
+			}
+		}
+		vm.gasMu.Unlock()
+	}
+}
+
+// GasSnapshot exposes the most recent gas table cached by the VM. It allows
+// external tooling and tests to validate that the VM is operating with the
+// expected pricing data without reaching into package internals.
+func (vm *SimpleVM) GasSnapshot() synn.GasSnapshot {
+	vm.gasMu.RLock()
+	defer vm.gasMu.RUnlock()
+	table := make(synn.GasTable, len(vm.gasTable))
+	for k, v := range vm.gasTable {
+		table[k] = v
+	}
+	return synn.GasSnapshot{Table: table, Version: vm.gasVersion, LoadedAt: vm.gasLoadedAt}
+}
+
+func (vm *SimpleVM) recordGasOverride(name string, cost uint64) {
+	if name == "" || cost == 0 {
+		return
+	}
+	vm.gasMu.Lock()
+	if vm.gasOverrides == nil {
+		vm.gasOverrides = make(map[string]uint64)
+	}
+	vm.gasOverrides[name] = cost
+	vm.gasMu.Unlock()
+}
+
+// LookupOpcodeName bridges the dispatcher catalogue to provide human readable
+// names for opcodes handled externally.
+func LookupOpcodeName(code uint32) (string, bool) {
+	ops := Opcodes()
+	if name, ok := ops[Opcode(code)]; ok {
+		return name, true
+	}
+	return "", false
 }
