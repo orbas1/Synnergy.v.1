@@ -1823,7 +1823,7 @@ Stage 79 complete: runtime bootstrap aligned CLI, VM, consensus, ledger and wall
 - [x] docs/Whitepaper_detailed/architecture/identity_access_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/kubernetes_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/loanpool_architecture.md
-- [ ] docs/Whitepaper_detailed/architecture/module_cli_list.md
+- [x] docs/Whitepaper_detailed/architecture/module_cli_list.md – Stage 81 catalogue aligned with CLI, gas schedule, VM, wallet and JS control plane.
 - [x] docs/Whitepaper_detailed/architecture/monitoring_logging_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/nft_marketplace_architecture.md
 - [x] docs/Whitepaper_detailed/architecture/node_roles_architecture.md

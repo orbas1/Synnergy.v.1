@@ -10,6 +10,9 @@ export default function Home() {
   const [orchestrator, setOrchestrator] = useState(null);
   const [orchError, setOrchError] = useState("");
   const [orchLoading, setOrchLoading] = useState(true);
+  const [modules, setModules] = useState([]);
+  const [modulesError, setModulesError] = useState("");
+  const [modulesLoading, setModulesLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/commands")
@@ -19,6 +22,25 @@ export default function Home() {
 
   useEffect(() => {
     refreshOrchestrator();
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/modules")
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to load module catalogue");
+        }
+        return res.json();
+      })
+      .then((data) => {
+        setModules(data.modules || []);
+        setModulesError("");
+      })
+      .catch((err) => {
+        setModules([]);
+        setModulesError(err.message);
+      })
+      .finally(() => setModulesLoading(false));
   }, []);
 
   useEffect(() => {
@@ -126,6 +148,41 @@ export default function Home() {
               <p>Opcode documentation is complete.</p>
             )}
           </div>
+        )}
+      </section>
+      <section style={{ marginBottom: 20 }}>
+        <h2>Stage 81 Module Catalogue</h2>
+        {modulesLoading && <p>Loading module metadata…</p>}
+        {modulesError && <p style={{ color: "red" }}>{modulesError}</p>}
+        {!modulesLoading && !modulesError && (
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left" }}>Module</th>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left" }}>Command</th>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left" }}>Category</th>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left" }}>Opcodes &amp; Gas</th>
+                <th style={{ borderBottom: "1px solid #ccc", textAlign: "left" }}>Documentation</th>
+              </tr>
+            </thead>
+            <tbody>
+              {modules.map((mod) => (
+                <tr key={mod.name}>
+                  <td style={{ padding: "6px 4px" }}>{mod.name}</td>
+                  <td style={{ padding: "6px 4px" }}>synnergy {mod.command}</td>
+                  <td style={{ padding: "6px 4px" }}>{mod.category}</td>
+                  <td style={{ padding: "6px 4px" }}>
+                    {(mod.opcodes || []).map((op) => `${op.name}=${op.cost}`).join(", ")}
+                  </td>
+                  <td style={{ padding: "6px 4px", color: mod.missingOpcodes?.length ? "#b45309" : "#047857" }}>
+                    {mod.missingOpcodes?.length
+                      ? `Missing: ${mod.missingOpcodes.join(", ")}`
+                      : "Fully documented"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         )}
       </section>
       <select value={selected} onChange={(e) => setSelected(e.target.value)}>

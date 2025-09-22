@@ -358,6 +358,8 @@
 | `Mode` | `1` |
 | `ModelHash` | `1` |
 | `MonitorTransaction` | `1` |
+| `ModuleCatalogueInspect` | `5` |
+| `ModuleCatalogueList` | `3` |
 | `MustParseOpcode` | `1` |
 | `Name` | `1` |
 | `NetworkAverage` | `1` |
@@ -526,6 +528,7 @@
 | `Consensus_StateDigest` | `6` |
 | `Consensus_AttestValidator` | `6` |
 | `Wallet_PrivacyEnvelope` | `3` |
+| `WalletNew` | `20` |
 | `Node_Attest` | `4` |
 | `Authority_Attestation` | `5` |
 | `Loanpool_ComplianceDisburse` | `4` |
@@ -536,6 +539,13 @@
 | `NewWebRTCRPC` | `1` |
 | `NewZeroTrustEngine` | `1` |
 | `NextID` | `1` |
+| `NodeAddTx` | `8` |
+| `NodeInfo` | `4` |
+| `NodeMempool` | `3` |
+| `NodeMine` | `55` |
+| `NodeRehab` | `12` |
+| `NodeSlash` | `30` |
+| `NodeStake` | `25` |
 | `NodeStatus` | `5` |
 | `Offer` | `1` |
 | `Once` | `1` |
@@ -764,6 +774,11 @@
 | `ValidateSubBlock` | `1` |
 | `ValidateTransaction` | `1` |
 | `Value` | `1` |
+| `VMCreate` | `15` |
+| `VMExec` | `45` |
+| `VMStart` | `10` |
+| `VMStatus` | `4` |
+| `VMStop` | `6` |
 | `Verifications` | `1` |
 | `VerifySignature` | `1` |
 | `VerifyTicket` | `1` |

@@ -64,6 +64,36 @@ func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	if GasCost("Access_Audit") != 2 {
 		t.Fatalf("unexpected cost for Access_Audit")
 	}
+	if !HasOpcode("ModuleCatalogueList") {
+		t.Fatalf("missing ModuleCatalogueList opcode")
+	}
+	if GasCost("ModuleCatalogueList") != 3 {
+		t.Fatalf("unexpected cost for ModuleCatalogueList")
+	}
+	if !HasOpcode("ModuleCatalogueInspect") {
+		t.Fatalf("missing ModuleCatalogueInspect opcode")
+	}
+	if GasCost("ModuleCatalogueInspect") != 5 {
+		t.Fatalf("unexpected cost for ModuleCatalogueInspect")
+	}
+	if !HasOpcode("WalletNew") {
+		t.Fatalf("missing WalletNew opcode")
+	}
+	if GasCost("WalletNew") != 20 {
+		t.Fatalf("unexpected cost for WalletNew")
+	}
+	if !HasOpcode("VMCreate") || !HasOpcode("VMExec") {
+		t.Fatalf("missing VM lifecycle opcodes")
+	}
+	if GasCost("VMCreate") != 15 || GasCost("VMExec") != 45 {
+		t.Fatalf("unexpected VM opcode costs")
+	}
+	if !HasOpcode("NodeStake") || !HasOpcode("NodeSlash") {
+		t.Fatalf("missing node management opcodes")
+	}
+	if GasCost("NodeStake") != 25 || GasCost("NodeSlash") != 30 {
+		t.Fatalf("unexpected node opcode costs")
+	}
 }
 
 func TestRegisterGasCostValidation(t *testing.T) {

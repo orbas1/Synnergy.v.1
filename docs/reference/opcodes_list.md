@@ -21,6 +21,13 @@ and warfare nodes as well as UI integrations.
 | `AddMember` | `0x10000A` |
 | `AddNode` | `0x10000B` |
 | `NodeStatus` | `0x500001` |
+| `NodeAddTx` | `0x620005` |
+| `NodeInfo` | `0x620001` |
+| `NodeMempool` | `0x620006` |
+| `NodeMine` | `0x620007` |
+| `NodeRehab` | `0x620004` |
+| `NodeSlash` | `0x620003` |
+| `NodeStake` | `0x620002` |
 | `AddOffset` | `0x10000C` |
 | `AddPeer` | `0x10000D` |
 | `AddRecord` | `0x10000E` |
@@ -444,6 +451,7 @@ and warfare nodes as well as UI integrations.
 | `NewValidatorNode` | `0x10018E` |
 | `NewVestingSchedule` | `0x10018F` |
 | `NewWallet` | `0x100190` |
+| `WalletNew` | `0x710010` |
 | `NewWarfareNode` | `0x100191` |
 | `NewWatchtowerNode` | `0x100192` |
 | `NewWebRTCRPC` | `0x100193` |
@@ -630,6 +638,11 @@ and warfare nodes as well as UI integrations.
 | `Verifications` | `0x100243` |
 | `Verify` | `0x100244` |
 | `VerifySignature` | `0x100245` |
+| `VMCreate` | `0x8F0001` |
+| `VMExec` | `0x8F0005` |
+| `VMStart` | `0x8F0002` |
+| `VMStatus` | `0x8F0004` |
+| `VMStop` | `0x8F0003` |
 | `VerifyTicket` | `0x100246` |
 | `VerifyZKP` | `0x100247` |
 | `Vote` | `0x100248` |
@@ -681,6 +694,8 @@ and warfare nodes as well as UI integrations.
 | `BurnAndRelease` | `0x090005` |
 | `QueryOracle` | `0x0A0008` |
 | `MintToken` | `0x0E0014` |
+| `ModuleCatalogueList` | `0x910000` |
+| `ModuleCatalogueInspect` | `0x910001` |
 | `MultiSig_Submit` | `0x200001` |
 | `MultiSig_Confirm` | `0x200002` |
 | `MultiSig_Revoke` | `0x200003` |

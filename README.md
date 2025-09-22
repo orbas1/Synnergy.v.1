@@ -31,6 +31,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Cross-chain interoperability** – bridges, protocol registries, connection managers and transaction relays (`core.NewBridgeRegistry`, `core.NewProtocolRegistry`, `core.NewChainConnectionManager`, `core.NewCrossChainTxManager`). Stage 42 finalises these modules with JSON emitting CLIs for deposits, claims and contract mappings.
 - **AI modules** – contract management, inference analysis, anomaly detection and secure storage (`core.NewAIEnhancedContract`, `core.NewAIDriftMonitor`).
 - **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()` now include rich metadata surfaced through `synnergy.GasCatalogue()` so CLI and web dashboards can describe categories, default limits and intent. Runtime overrides continue to work through the `SYN_GAS_OVERRIDES` environment variable, while Stage 91 adds `synnergy.RegisterGasMetadata()` to validate names, attach descriptions and keep the VM and consensus engines aligned on pricing.
+- **Stage 81 module catalogue** – `synnergy modules list` streams consensus, VM, wallet, node and authority readiness with gas prices for both CLI automation and the JavaScript control panel.
 - **Kademlia DHT tools** – CLI support for storing, retrieving and computing XOR distance between keys with gas-aware execution.
 - **Controlled proof-of-work** – mining nodes expose a `MineUntil` helper and `synnergy mining mine-until` command so hashing stops when a context is cancelled, a prefix target is reached, or a timeout fires.
 - **Opcode-aware contracts** – sample Solidity bridges, liquidity, multisig, oracle and token contracts invoke SNVM opcodes with deterministic gas costs.
@@ -174,6 +175,7 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | ------- | ----------- |
 | `network start|stop|peers|broadcast|subscribe` | Manage the P2P layer backed by `core.NewNetwork` |
 | `wallet new` | Generate encrypted wallets via `core.NewWallet` |
+| `modules list [--json]` | Inspect Stage 81 module catalogue, opcode coverage and gas pricing for CLI/VM/web orchestration |
 | `mining start|status|stop|attempt` | Operate a mining node (`core.NewMiningNode`) |
 | `staking_node start|status|stop` | Control the staking service |
 | `contracts compile|deploy|invoke|list|info` | WASM smart contract lifecycle through `core.NewContractRegistry` |
