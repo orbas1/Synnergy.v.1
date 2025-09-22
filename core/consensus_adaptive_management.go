@@ -56,7 +56,7 @@ func (am *AdaptiveManager) Adjust(demand, stake float64) ConsensusWeights {
 	am.record(demand, stake)
 	d, s := am.averages()
 	am.engine.AdjustWeights(d, s)
-	return am.engine.Weights
+	return am.engine.WeightsSnapshot()
 }
 
 // Threshold computes the consensus threshold for switching modes using the
@@ -79,7 +79,7 @@ func (am *AdaptiveManager) Weights() ConsensusWeights {
 	if am.engine == nil {
 		return ConsensusWeights{}
 	}
-	return am.engine.Weights
+	return am.engine.WeightsSnapshot()
 }
 
 // RecordMetrics allows external components to feed network demand and stake

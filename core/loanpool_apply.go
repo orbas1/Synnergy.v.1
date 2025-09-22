@@ -1,6 +1,9 @@
 package core
 
-import "errors"
+import (
+	"errors"
+	"sync"
+)
 
 // LoanApplication represents a simplified loan request reviewed by voting.
 type LoanApplication struct {
@@ -19,6 +22,8 @@ type LoanPoolApply struct {
 	Pool         *LoanPool
 	Applications map[uint64]*LoanApplication
 	nextID       uint64
+
+	mu sync.RWMutex
 }
 
 // NewLoanPoolApply creates a new application manager.
@@ -32,6 +37,8 @@ func NewLoanPoolApply(pool *LoanPool) *LoanPoolApply {
 
 // Submit adds a new loan application.
 func (l *LoanPoolApply) Submit(applicant string, amount uint64, termMonths uint32, purpose string) uint64 {
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	id := l.nextID
 	l.nextID++
 	l.Applications[id] = &LoanApplication{
@@ -47,6 +54,8 @@ func (l *LoanPoolApply) Submit(applicant string, amount uint64, termMonths uint3
 
 // Vote records a vote for an application.
 func (l *LoanPoolApply) Vote(voter string, id uint64) error {
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	app, ok := l.Applications[id]
 	if !ok {
 		return errors.New("application not found")
@@ -57,6 +66,8 @@ func (l *LoanPoolApply) Vote(voter string, id uint64) error {
 
 // Process finalises applications approving those with at least one vote.
 func (l *LoanPoolApply) Process() {
+	l.mu.Lock()
+	defer l.mu.Unlock()
 	for _, app := range l.Applications {
 		if !app.Approved && len(app.Votes) > 0 {
 			app.Approved = true
@@ -66,29 +77,43 @@ func (l *LoanPoolApply) Process() {
 
 // Disburse pays out an approved application.
 func (l *LoanPoolApply) Disburse(id uint64) error {
+	l.mu.RLock()
 	app, ok := l.Applications[id]
+	l.mu.RUnlock()
 	if !ok {
 		return errors.New("application not found")
 	}
+	l.mu.Lock()
 	if !app.Approved || app.Disbursed {
+		l.mu.Unlock()
 		return errors.New("application not approved or already disbursed")
 	}
-	if l.Pool.Treasury < app.Amount {
-		return errors.New("insufficient treasury")
+	amount := app.Amount
+	l.mu.Unlock()
+	if l.Pool == nil {
+		return errors.New("loan pool unavailable")
 	}
-	l.Pool.Treasury -= app.Amount
+	if err := l.Pool.withdraw(amount); err != nil {
+		return err
+	}
+	l.mu.Lock()
 	app.Disbursed = true
+	l.mu.Unlock()
 	return nil
 }
 
 // Get returns an application by ID.
 func (l *LoanPoolApply) Get(id uint64) (*LoanApplication, bool) {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
 	app, ok := l.Applications[id]
 	return app, ok
 }
 
 // List returns all applications.
 func (l *LoanPoolApply) List() []*LoanApplication {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
 	res := make([]*LoanApplication, 0, len(l.Applications))
 	for _, a := range l.Applications {
 		res = append(res, a)

@@ -34,7 +34,9 @@ func NewLoanProposalView(p *LoanProposal) LoanProposalView {
 
 // ProposalInfo returns a view for a proposal by ID if it exists.
 func (lp *LoanPool) ProposalInfo(id uint64) (LoanProposalView, bool) {
-	p, ok := lp.GetProposal(id)
+	lp.mu.RLock()
+	defer lp.mu.RUnlock()
+	p, ok := lp.Proposals[id]
 	if !ok {
 		return LoanProposalView{}, false
 	}
@@ -43,9 +45,10 @@ func (lp *LoanPool) ProposalInfo(id uint64) (LoanProposalView, bool) {
 
 // ProposalViews lists all proposals in view form.
 func (lp *LoanPool) ProposalViews() []LoanProposalView {
-	proposals := lp.ListProposals()
-	views := make([]LoanProposalView, 0, len(proposals))
-	for _, p := range proposals {
+	lp.mu.RLock()
+	defer lp.mu.RUnlock()
+	views := make([]LoanProposalView, 0, len(lp.Proposals))
+	for _, p := range lp.Proposals {
 		views = append(views, NewLoanProposalView(p))
 	}
 	return views
@@ -79,7 +82,9 @@ func NewLoanApplicationView(a *LoanApplication) LoanApplicationView {
 
 // ApplicationInfo returns a view for an application by ID if it exists.
 func (l *LoanPoolApply) ApplicationInfo(id uint64) (LoanApplicationView, bool) {
-	app, ok := l.Get(id)
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	app, ok := l.Applications[id]
 	if !ok {
 		return LoanApplicationView{}, false
 	}
@@ -88,9 +93,10 @@ func (l *LoanPoolApply) ApplicationInfo(id uint64) (LoanApplicationView, bool) {
 
 // ApplicationViews lists all applications in view form.
 func (l *LoanPoolApply) ApplicationViews() []LoanApplicationView {
-	apps := l.List()
-	views := make([]LoanApplicationView, 0, len(apps))
-	for _, a := range apps {
+	l.mu.RLock()
+	defer l.mu.RUnlock()
+	views := make([]LoanApplicationView, 0, len(l.Applications))
+	for _, a := range l.Applications {
 		views = append(views, NewLoanApplicationView(a))
 	}
 	return views

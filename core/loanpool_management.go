@@ -20,16 +20,25 @@ func NewLoanPoolManager(p *LoanPool) *LoanPoolManager {
 
 // Pause stops new proposals from being submitted.
 func (m *LoanPoolManager) Pause() {
-	m.Pool.Paused = true
+	if m.Pool != nil {
+		m.Pool.SetPaused(true)
+	}
 }
 
 // Resume allows proposal submissions again.
 func (m *LoanPoolManager) Resume() {
-	m.Pool.Paused = false
+	if m.Pool != nil {
+		m.Pool.SetPaused(false)
+	}
 }
 
 // Stats returns a summary of the pool's state.
 func (m *LoanPoolManager) Stats() LoanPoolStats {
+	if m.Pool == nil {
+		return LoanPoolStats{}
+	}
+	m.Pool.mu.RLock()
+	defer m.Pool.mu.RUnlock()
 	stats := LoanPoolStats{Treasury: m.Pool.Treasury}
 	for _, p := range m.Pool.Proposals {
 		stats.ProposalCount++

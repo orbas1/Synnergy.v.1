@@ -28,10 +28,11 @@ func (cs *ConsensusSwitcher) Evaluate(sc *SynnergyConsensus) ConsensusMode {
 	if sc == nil {
 		return cs.mode
 	}
+	snapshot := sc.WeightsSnapshot()
 	weights := map[ConsensusMode]float64{
-		ModePoW: sc.Weights.PoW,
-		ModePoS: sc.Weights.PoS,
-		ModePoH: sc.Weights.PoH,
+		ModePoW: snapshot.PoW,
+		ModePoS: snapshot.PoS,
+		ModePoH: snapshot.PoH,
 	}
 	var maxMode ConsensusMode
 	maxWeight := -1.0
