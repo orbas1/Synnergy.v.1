@@ -52,3 +52,12 @@ The root command provides options that apply to every sub-command:
 ## Sharding
 - `synnergy sharding leader set <id> <addr> --json` – assign a leader to a shard
 - `synnergy sharding map --json` – list shard-to-leader mappings
+
+## Tokenised Services (Stage 74)
+- `synnergy syn500 create --name Utility --symbol UTL --owner <addr> --dec 2 --supply 1000` – initialise a SYN500 utility token and emit gas metadata.
+- `synnergy syn500 grant <addr> --tier 1 --max 10` – issue or update a service tier; use `--json` to retrieve remaining allowance and audit digest.
+- `synnergy syn500 snapshot --json` – export the current grant map with audit counters for dashboards and the web console.
+- `synnergy syn700 register <id> <title> <desc> <creator> <owner>` – register an intellectual property asset; follow with `syn700 license ... --expiry <RFC3339>` to issue a signed license.
+- `synnergy syn700 royalties <tokenID> <licenseID> --json` – aggregate royalty payments for reporting.
+- `synnergy syn800_token register <id> <desc> <valuation> <loc> <type> <cert>` – record a tangible asset with certification metadata.
+- `synnergy syn800_token history --limit 5 --json` – stream the most recent valuation or custodian updates for compliance reviews.

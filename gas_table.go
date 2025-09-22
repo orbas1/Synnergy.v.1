@@ -43,7 +43,9 @@ import (
 // role update operations so governance tooling prices admin-managed role
 // changes and authority term renewals. Stage 73 adds regulatory node approval,
 // flagging, log query and audit operations so compliance tooling surfaces predictable
-// gas costs.
+// gas costs. Stage 74 extends pricing to SYN500 utility management, IP registry
+// licensing and tangible asset custody so enterprise operators can forecast gas
+// for the end-to-end workflow.
 type GasTable map[string]uint64
 
 // DefaultGasCost is used when an opcode is missing from the guide.

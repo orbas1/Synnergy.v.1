@@ -1,6 +1,8 @@
 package core
 
 import (
+	"errors"
+	"math"
 	"testing"
 	"time"
 )
@@ -103,4 +105,42 @@ func TestReceiptStore(t *testing.T) {
 	if len(res) != 1 {
 		t.Fatalf("expected 1 result got %d", len(res))
 	}
+	listed := rs.List()
+	if len(listed) != 1 || listed[0].TxID != "tx1" {
+		t.Fatalf("unexpected list contents: %+v", listed)
+	}
+}
+
+func TestReceiptStoreRetention(t *testing.T) {
+	now := time.Now()
+	clock := func() time.Time { return now }
+	rs := NewReceiptStore(WithReceiptRetention(time.Second), WithReceiptClock(clock))
+	rs.Store(GenerateReceipt("t1", "ok", "a"))
+	if removed := rs.PurgeExpired(); removed != 0 {
+		t.Fatalf("expected no removals got %d", removed)
+	}
+	now = now.Add(2 * time.Second)
+	if removed := rs.PurgeExpired(); removed != 1 {
+		t.Fatalf("expected removal got %d", removed)
+	}
+	if _, ok := rs.Get("t1"); ok {
+		t.Fatal("receipt should have been purged")
+	}
+}
+
+func TestReversalOverflow(t *testing.T) {
+	l := NewLedger()
+	l.Credit("a", math.MaxUint64)
+	tx := NewTransaction("a", "b", math.MaxUint64, 1, 0)
+	if err := l.ApplyTransaction(tx); !errors.Is(err, ErrTransactionOverflow) {
+		t.Fatalf("expected overflow error got %v", err)
+	}
+	l.Credit("b", 10)
+	tx = NewTransaction("b", "c", 5, 0, 0)
+	if err := l.ApplyTransaction(tx); err != nil {
+		t.Fatalf("apply: %v", err)
+	}
+        if _, err := RequestReversal(l, tx, math.MaxUint64); !errors.Is(err, ErrTransactionOverflow) {
+                t.Fatalf("expected overflow on request got %v", err)
+        }
 }

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"sync"
+	"time"
 )
 
 var (
@@ -182,12 +183,15 @@ func (l *Ledger) ApplyTransaction(tx *Transaction) error {
 	if tx == nil {
 		return ErrNilTransaction
 	}
-	if tx.From == "" || tx.To == "" {
-		return ErrEmptyAddress
+	if err := tx.ValidateBasic(TransactionValidationConfig{Now: time.Now(), MaxClockSkew: 0}); err != nil {
+		return err
 	}
 	l.mu.Lock()
 	defer l.mu.Unlock()
-	total := uint64(tx.Amount + tx.Fee)
+	total, err := tx.TotalCost()
+	if err != nil {
+		return err
+	}
 	if l.balances[tx.From] < total {
 		return errors.New("insufficient funds")
 	}

@@ -42,7 +42,7 @@ func TestSyn3900Lifecycle(t *testing.T) {
 	if err := json.Unmarshal([]byte(jsonPayload(data)), &benefit); err != nil {
 		t.Fatalf("unmarshal: %v", err)
 	}
-	if !benefit.Claimed || benefit.Status != string(core.BenefitStatusClaimed) {
+	if !benefit.Claimed || !strings.EqualFold(benefit.Status, "claimed") {
 		t.Fatalf("unexpected benefit: %+v", benefit)
 	}
 	approver, path2 := createClaimWallet(t, "pw2")

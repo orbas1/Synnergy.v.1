@@ -18,7 +18,29 @@ var (
 	memoryWalletsMu sync.Mutex
 	memoryWallets   map[string]memoryWallet
 	memorySeq       uint64
+	stage73Path     string
+	stage73Once     sync.Once
 )
+
+// setStage73StatePath allows stage 74 CLI tests to override the path used by
+// stage 73 stateful helpers that live in other packages. Earlier stages stored
+// the value in a separate file which is not built in this repository, so the
+// tests in this workspace stub the behaviour.
+func setStage73StatePath(path string) {
+	memoryWalletsMu.Lock()
+	stage73Path = path
+	memoryWalletsMu.Unlock()
+}
+
+// resetStage73LoadedForTests clears the once guard so tests can reinitialise
+// stage 73 fixtures after changing the path. The real implementation lived in
+// stage 73 sources, so we replicate the minimal behaviour to keep later stages
+// compiling.
+func resetStage73LoadedForTests() {
+	memoryWalletsMu.Lock()
+	stage73Once = sync.Once{}
+	memoryWalletsMu.Unlock()
+}
 
 func useMemoryWalletLoader(t *testing.T) {
 	t.Helper()

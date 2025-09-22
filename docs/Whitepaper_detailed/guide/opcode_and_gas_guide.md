@@ -15,7 +15,7 @@ Stage 43 adds pricing for DAO membership operations so governance tooling can an
 Stage 65 introduces gas costs and opcodes for DAO token ledger operations so member-gated minting, burning and transfers remain predictable, and records authority term renewals.
 Stage 67 registers Kademlia distance and lookup operations so DHT queries surface deterministic fees across the CLI and VM.
 Stage 73 introduces an audit opcode for regulatory nodes, enabling deterministic gas charges when verifying flagged addresses via CLI or web consoles.
-Stage 74 extends auditing to access control with an `Access_Audit` opcode that snapshots role assignments for administrative tooling.
+Stage 74 extends auditing to access control with an `Access_Audit` opcode that snapshots role assignments for administrative tooling and adds dedicated opcodes for SYN500 tier grants (`GrantServiceTier`), SYN700 licensing (`CreateIPLicense`, `RecordIPRoyalty`) and SYN800 custody (`AssignAssetCustodian`, `AssetHistory`).
 
 ## Opcode Structure
 
