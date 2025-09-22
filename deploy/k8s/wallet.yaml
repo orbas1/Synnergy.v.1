@@ -1,67 +1,160 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: synnergy-wallet-config
+  namespace: synnergy
+  labels:
+    app.kubernetes.io/name: synnergy-wallet
+    app.kubernetes.io/part-of: synnergy-network
+data:
+  wallet.yaml: |
+    server:
+      host: 0.0.0.0
+      port: 8090
+    auth:
+      jwtSecretRef: synnergy-wallet-secret
+    logging:
+      level: info
+      format: json
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: synnergy-wallet-secret
+  namespace: synnergy
+stringData:
+  password: change-me
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: synnergy-wallet
+  namespace: synnergy
   labels:
-    app: synnergy-wallet
+    app.kubernetes.io/name: synnergy-wallet
+    app.kubernetes.io/part-of: synnergy-network
 spec:
   replicas: 2
+  revisionHistoryLimit: 5
   selector:
     matchLabels:
-      app: synnergy-wallet
+      app.kubernetes.io/name: synnergy-wallet
   template:
     metadata:
       labels:
-        app: synnergy-wallet
+        app.kubernetes.io/name: synnergy-wallet
+        app.kubernetes.io/part-of: synnergy-network
     spec:
+      serviceAccountName: synnergy-node
       containers:
-      - name: wallet
-        image: synnergy/walletserver:latest
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 8081
-          name: http
-        env:
-        - name: SYN_CONFIG
-          value: /etc/synnergy/config.yaml
-        resources:
-          requests:
-            cpu: "250m"
-            memory: "256Mi"
-          limits:
-            cpu: "500m"
-            memory: "512Mi"
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: 8081
-          initialDelaySeconds: 5
-          periodSeconds: 5
-        livenessProbe:
-          httpGet:
-            path: /livez
-            port: 8081
-          initialDelaySeconds: 20
-          periodSeconds: 10
-        volumeMounts:
-        - name: config
-          mountPath: /etc/synnergy
+        - name: wallet
+          image: ghcr.io/synnergy/walletserver:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SYN_CONFIG
+              value: /etc/synnergy/wallet.yaml
+            - name: SYN_WALLET_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: synnergy-wallet-secret
+                  key: password
+          ports:
+            - containerPort: 8090
+              name: http
+          resources:
+            requests:
+              cpu: 200m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8090
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /livez
+              port: 8090
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          volumeMounts:
+            - name: config
+              mountPath: /etc/synnergy
+              readOnly: true
       volumes:
-      - name: config
-        configMap:
-          name: syn-wallet-config
+        - name: config
+          configMap:
+            name: synnergy-wallet-config
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: node-role.kubernetes.io/infra
+                    operator: In
+                    values: ["true"]
+      tolerations:
+        - key: node.kubernetes.io/role
+          operator: Equal
+          value: infra
+          effect: NoSchedule
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: synnergy-wallet
+  namespace: synnergy
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: synnergy-wallet
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 60
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: synnergy-wallet
+  namespace: synnergy
   labels:
-    app: synnergy-wallet
+    app.kubernetes.io/name: synnergy-wallet
+    app.kubernetes.io/part-of: synnergy-network
 spec:
   selector:
-    app: synnergy-wallet
+    app.kubernetes.io/name: synnergy-wallet
   ports:
-  - name: http
-    port: 8081
-    targetPort: 8081
+    - name: http
+      port: 8090
+      targetPort: 8090
   type: ClusterIP
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: synnergy-wallet-ingress
+  namespace: synnergy
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: synnergy-wallet
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app.kubernetes.io/name: synnergy-node
+      ports:
+        - port: 8090
+          protocol: TCP

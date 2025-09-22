@@ -1,7 +1,10 @@
 package main
 
 import (
+	"context"
+	"fmt"
 	"os"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/subosito/gotenv"
@@ -12,6 +15,7 @@ import (
 	"synnergy/cli"
 	"synnergy/core"
 	"synnergy/internal/config"
+	runtime "synnergy/internal/runtime"
 	security "synnergy/internal/security"
 	tokens "synnergy/internal/tokens"
 )
@@ -42,83 +46,88 @@ func main() {
 
 	// Warm up caches for shared resources and ensure gas costs are registered.
 	synn.LoadGasTable()
-	mustRegister := func(name string) {
-		if err := synn.RegisterGasCost(name, synn.GasCost(name)); err != nil {
-			logrus.Fatalf("register gas cost %s: %v", name, err)
-		}
+	criticalOps := []string{
+		"MineBlock",
+		"CreateDAO",
+		"UpdateMemberRole",
+		"RenewAuthorityTerm",
+		"RegisterBridge",
+		"BridgeDeposit",
+		"BridgeClaim",
+		"OpenConnection",
+		"CloseConnection",
+		"LockMint",
+		"BurnRelease",
+		"SetMode",
+		"Stake",
+		"Unstake",
+		"Optimize",
+		"SecureCommand",
+		"TrackLogistics",
+		"ShareTactical",
+		"ReportFork",
+		"Metrics",
+		"DeployTokenFaucetTemplate",
+		"DeployStorageMarketTemplate",
+		"DeployDAOGovernanceTemplate",
+		"DeployNFTMintingTemplate",
+		"DeployAIModelMarketTemplate",
+		"DeploySmartContract",
+		"TradeContract",
+		"CreateListing",
+		"ListListings",
+		"GetListing",
+		"OpenDeal",
+		"CloseDeal",
+		"ListDeals",
+		"GetDeal",
+		"Storage_Pin",
+		"Storage_Retrieve",
+		"IPFS_Add",
+		"IPFS_Get",
+		"IPFS_Unpin",
+		"MintNFT",
+		"ListNFT",
+		"BuyNFT",
+		"Liquidity_Pool",
+		"Liquidity_Pools",
+		"NewWallet",
+		"Sign",
+		"VerifySignature",
+		"RegisterContentNode",
+		"UploadContent",
+		"RetrieveContent",
+		"ListContentNodes",
+		"BlockReward",
+		"CirculatingSupply",
+		"RemainingSupply",
+		"InitialPrice",
+		"AlphaFactor",
+		"MinimumStake",
+		"KademliaStore",
+		"KademliaGet",
+		"KademliaClosest",
+		"KademliaDistance",
 	}
-	mustRegister("MineBlock")
-	mustRegister("CreateDAO")
-	mustRegister("UpdateMemberRole")
-	mustRegister("RenewAuthorityTerm")
-	// Stage 24 cross-chain operations
-	mustRegister("RegisterBridge")
-	mustRegister("BridgeDeposit")
-	mustRegister("BridgeClaim")
-	mustRegister("OpenConnection")
-	mustRegister("CloseConnection")
-	mustRegister("LockMint")
-	mustRegister("BurnRelease")
-	// Stage 25 node and operations costs
-	mustRegister("SetMode")
-	mustRegister("Stake")
-	mustRegister("Unstake")
-	mustRegister("Optimize")
-	mustRegister("SecureCommand")
-	mustRegister("TrackLogistics")
-	mustRegister("ShareTactical")
-	mustRegister("ReportFork")
-	mustRegister("Metrics")
-	// Stage 29 smart contract templates
-	mustRegister("DeployTokenFaucetTemplate")
-	mustRegister("DeployStorageMarketTemplate")
-	mustRegister("DeployDAOGovernanceTemplate")
-	mustRegister("DeployNFTMintingTemplate")
-	mustRegister("DeployAIModelMarketTemplate")
-	// Stage 34 smart-contract marketplace operations
-	mustRegister("DeploySmartContract")
-	mustRegister("TradeContract")
-	// Stage 35 storage marketplace operations
-	mustRegister("CreateListing")
-	mustRegister("ListListings")
-	mustRegister("GetListing")
-	mustRegister("OpenDeal")
-	mustRegister("CloseDeal")
-	mustRegister("ListDeals")
-	mustRegister("GetDeal")
-	mustRegister("Storage_Pin")
-	mustRegister("Storage_Retrieve")
-	mustRegister("IPFS_Add")
-	mustRegister("IPFS_Get")
-	mustRegister("IPFS_Unpin")
-	// Stage 36 NFT marketplace operations
-	mustRegister("MintNFT")
-	mustRegister("ListNFT")
-	mustRegister("BuyNFT")
-	// Stage 39 liquidity view operations for DEX screener
-	mustRegister("Liquidity_Pool")
-	mustRegister("Liquidity_Pools")
-	// Wallet operations used by GUI clients
-	mustRegister("NewWallet")
-	mustRegister("Sign")
-	mustRegister("VerifySignature")
-	// Stage 59 content node management
-	mustRegister("RegisterContentNode")
-	mustRegister("UploadContent")
-	mustRegister("RetrieveContent")
-	mustRegister("ListContentNodes")
-	// Stage 40 monetary policy queries
-	mustRegister("BlockReward")
-	mustRegister("CirculatingSupply")
-	mustRegister("RemainingSupply")
-	mustRegister("InitialPrice")
-	mustRegister("AlphaFactor")
-	mustRegister("MinimumStake")
-	// Stage 67 Kademlia operations
-	mustRegister("KademliaStore")
-	mustRegister("KademliaGet")
-	mustRegister("KademliaClosest")
-	mustRegister("KademliaDistance")
+
+	integration, err := runtime.NewRuntimeIntegration(runtime.IntegrationConfig{
+		NodeID:              "cli-runtime-node",
+		NodeAddress:         fmt.Sprintf("%s:%d", cfg.Server.Host, cfg.Server.Port),
+		AuthorityAddress:    "cli-authority",
+		AuthorityDepartment: "operations",
+		CriticalOpcodes:     criticalOps,
+		GasLimit:            10_000,
+		MonitorInterval:     2 * time.Second,
+	})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	if err := integration.EnsureGasSchedule(); err != nil {
+		logrus.Fatal(err)
+	}
+	if err := integration.Start(context.Background()); err != nil {
+		logrus.Fatal(err)
+	}
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.
@@ -174,6 +183,19 @@ func main() {
 	_ = core.NewNFTMarketplace()
 
 	logrus.Infof("starting Synnergy in %s mode on %s:%d", cfg.Environment, cfg.Server.Host, cfg.Server.Port)
+
+	go func() {
+		for range integration.HealthChannel() {
+			// Periodically log health snapshots so operators can
+			// correlate CLI usage, VM workloads and consensus status.
+			health := integration.HealthReport()
+			logrus.WithFields(logrus.Fields{
+				"node":       health.NodeID,
+				"vm_running": health.VMRunning,
+				"height":     health.LedgerHeight,
+			}).Debug("runtime integration health")
+		}
+	}()
 
 	if err := cli.Execute(); err != nil {
 		logrus.Fatal(err)

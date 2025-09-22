@@ -1,47 +1,43 @@
-# Block Rewards Dispersions and Halving
+# Block Rewards, Distribution and Halving – Stage 77 Economics
 
-*Prepared by Neto Solaris*
+Stage 77 refines Synnergy’s reward mechanics by aligning consensus, wallet,
+ledger and documentation components through the runtime integration and
+deployment pipelines.
 
-## 1. Emission Overview
-Synnergy Network's native currency, the Synthron coin (SYN), follows a capped issuance model. Key monetary constants are baked into the core protocol: a maximum supply of 500 million SYN, a 5 million SYN genesis allocation, an initial block reward of 1,252 SYN, and a halving interval of 200,000 blocks【F:core/coin.go†L6-L16】. With a three‑second target block time, each halving epoch spans roughly 6.9 days【F:configs/network.yaml†L12-L19】.
+## Reward Calculation
 
-## 2. Halving Mechanism
-The halving schedule governs issuance using the relation `Reward(height) = 1252 / 2^n`, where `n` equals the number of completed 200,000‑block intervals. Once the shift has eliminated all significant bits, rewards fall to zero, enforcing the fixed supply. The `CirculatingSupply` and `RemainingSupply` helpers iterate through historical rewards to model supply at any block height and clamp output once the cap is reached【F:core/coin.go†L19-L49】.
+- Blocks distribute transaction fees and block rewards using helper contracts
+  that reference validator stakes, block utilisation and consensus weights to
+  maintain predictable economics across PoW, PoS and PoH participants【F:core/node.go†L81-L160】【F:core/consensus.go†L190-L218】.
+- `NewRuntimeIntegration` pre-registers gas costs and stakes the operator wallet
+  before CLI commands execute, ensuring mining, staking and halving operations
+  observe the same pricing and validator set as production deployments【F:internal/runtime/integration.go†L15-L126】【F:cmd/synnergy/main.go†L38-L99】.
+- Gas schedule enforcement guarantees that economic operations such as
+  `BlockReward`, `CirculatingSupply` and `RemainingSupply` are priced according to
+  the published reference tables, preventing unbounded reward queries or wallet
+  manipulation【F:gas_table.go†L108-L126】【F:cmd/synnergy/main.go†L62-L90】.
 
-### 2.1 Emission Forecast
-The deterministic issuance curve rapidly approaches the cap, as summarised below.
+## Distribution Pipelines
 
-| Epoch | Approx. day | Reward per block (SYN) | Coins minted in epoch (M SYN) | Cumulative supply (M SYN) |
-|------:|------------:|-----------------------:|------------------------------:|--------------------------:|
-| 1 | 6.9 | 1,252.00 | 250.40 | 255.40 |
-| 2 | 13.9 | 626.00 | 125.20 | 380.60 |
-| 3 | 20.8 | 313.00 | 62.60 | 443.20 |
-| 4 | 27.8 | 156.50 | 31.30 | 474.50 |
-| 5 | 34.7 | 78.25 | 15.65 | 490.15 |
-| 6 | 41.7 | 39.13 | 7.83 | 497.98 |
-| 7 | 48.6 | 19.56 | 2.03 | 500.00 |
+- Reward shares are credited via the ledger and fee distribution contracts,
+  applying validator penalties or bonuses based on quorum participation and block
+  performance metrics【F:core/node.go†L125-L160】【F:core/stake_penalty.go†L8-L61】.
+- Docker, Kubernetes and Terraform deployments store configuration in encrypted
+  volumes and parameters so that halving schedules, minimum stake thresholds and
+  treasury addresses remain consistent across environments【F:docker/Dockerfile†L1-L49】【F:deploy/k8s/node.yaml†L1-L143】【F:deploy/terraform/main.tf†L1-L231】.
+- The Next.js function web consumes the same RPC interfaces as the CLI, exposing
+  dashboards for reward distribution, validator performance and halving countdowns
+  without bespoke backend services【F:docker/docker-compose.yml†L1-L64】.
 
-Beyond the seventh epoch the block reward underflows to zero and the circulating supply remains at the 500 million SYN cap.
+## Testing and Governance
 
-## 3. Reward Dispersion Model
-Minted rewards per block are distributed exclusively to consensus participants. Synnergy’s consensus engine seeds weights of 30 % to Proof‑of‑Stake validators, 30 % to Proof‑of‑History schedulers and 40 % to Proof‑of‑Work miners【F:core/consensus.go†L41-L43】【F:configs/network.yaml†L12-L19】. The dispersion is expressed as:
+- Integration tests sign and submit transactions via the runtime integration,
+  verifying ledger updates and health telemetry to ensure halving or reward
+  changes do not break CLI automation or orchestration tooling【F:integration_test.go†L5-L66】.
+- Governance controls enforced by authority nodes and the regulatory manager
+  validate reward adjustments, block reversals or treasury reallocations, keeping
+  economic policy auditable and permissioned【F:core/government_authority_node.go†L1-L35】【F:core/regulatory_node.go†L17-L90】.
 
-```
-A_pos      = 0.30 * A_block  # PoS validators
-A_poh      = 0.30 * A_block  # PoH schedulers
-A_pow      = 0.40 * A_block  # PoW miners
-```
-
-`A_pos` and `A_poh` are further subdivided in proportion to validator stake and time‑slot attendance, while rewards are subject to a cooldown period to discourage short‑term hopping【F:Synnergy_Network_Future_Of_Blockchan.md†L405-L417】. Treasuries and ecosystem funds are financed solely from transaction fees, ensuring block rewards remain an incentive for security.
-
-### 3.1 Dynamic Weight Rebalancing
-Weights are not static. `AdjustWeights` recalibrates the distribution based on observed demand and stake concentration, clamping each mechanism between 7.5 % and 100 % before renormalising to unity【F:core/consensus.go†L61-L74】. This allows Neto Solaris operators to emphasise security primitives during periods of elevated load or threat.
-
-### 3.2 Runtime Reward Controls
-Operational teams may disable classes of validators or suspend PoW compensation without redeploying the network. `SetAvailability` toggles each consensus path, and `SetPoWRewards` halts payouts while leaving PoW participation for utility purposes【F:core/consensus.go†L130-L142】. The CLI exposes these levers via `synnergy consensus availability [pow] [pos] [poh]` and `synnergy consensus powrewards [enabled]`, the latter emitting audit logs when rewards are toggled【F:cli/consensus.go†L164-L176】.
-
-## 4. Supply Tracking and Operational Tooling
-Real‑time monitoring of emission progress is available through the CLI. `synnergy coin reward [height]` reveals the reward at a particular height, and `synnergy coin supply [height]` reports the circulating and remaining supply using the core helpers mentioned above【F:cli/coin.go†L31-L57】.
-
-## 5. Economic and Security Implications
-The aggressive halving cadence front‑loads distribution, quickly rewarding early participants while converging on the fixed supply to instill long‑term scarcity. Splitting rewards across Proof‑of‑Stake, Proof‑of‑History, and Proof‑of‑Work actors diversifies incentives and aligns security with resource contribution. As the reward diminishes, transaction fees and staking yields become the dominant revenue streams, promoting sustainable network operation.
+Stage 77 couples deterministic gas schedules, runtime orchestration and
+infrastructure automation to deliver a reward system that is transparent,
+scalable and compliant across all Synnergy deployment models.

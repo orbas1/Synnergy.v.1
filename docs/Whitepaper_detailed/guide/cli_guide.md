@@ -21194,3 +21194,14 @@ npm start
 ```
 
 Tests and lint checks can be run with `npm test` and `npm run lint` respectively.
+
+## Stage 73 – Enterprise Grants, Benefits and Utility Controls
+
+Stage 73 commands require authenticated wallets and align the CLI, runtime integration and web function web experience:
+
+- **SYN3700** now enforces controller-only mutations. `syn3700 add`, `syn3700 remove` and `syn3700 rebalance` require a wallet and password while `snapshot`, `controllers`, `status`, `value` and `audit` return JSON for direct ingestion by the operations dashboard.
+- **SYN3800** grant orchestration captures digital signatures for every release. The CLI persists authorizer sets, surfaces telemetry totals via `syn3800 status` and exposes tamper-evident logs through `syn3800 audit`.
+- **SYN3900** benefit approvals validate the claimant wallet and restrict approvals to registered approvers. `syn3900 status` reports pending, claimed and approved counts so compliance teams can track workloads in real time.
+- **SYN500** utility grants support configurable usage windows and expose JSON telemetry to the function web UI and monitoring pipelines.
+
+All commands emit a gas cost preface followed by structured output, keeping the virtual machine, consensus layer and user interfaces synchronized while satisfying regulatory audit requirements.

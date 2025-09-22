@@ -57,3 +57,15 @@ func TestVMContextCancel(t *testing.T) {
 		t.Fatalf("expected context cancellation error")
 	}
 }
+
+func TestSimpleVMGasLimit(t *testing.T) {
+	vm := NewSimpleVM()
+	if err := vm.Start(); err != nil {
+		t.Fatalf("start: %v", err)
+	}
+	code := SNVMOpcodes[0].Code
+	wasm := []byte{byte(code >> 16), byte(code >> 8), byte(code)}
+	if _, _, err := vm.Execute(wasm, "", nil, 0); err == nil {
+		t.Fatalf("expected gas limit exceeded error")
+	}
+}

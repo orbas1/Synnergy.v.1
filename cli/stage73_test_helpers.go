@@ -15,10 +15,20 @@ type memoryWallet struct {
 }
 
 var (
-	memoryWalletsMu sync.Mutex
-	memoryWallets   map[string]memoryWallet
-	memorySeq       uint64
+	memoryWalletsMu  sync.Mutex
+	memoryWallets    map[string]memoryWallet
+	memorySeq        uint64
+	stage73StatePath string
+	stage73Loaded    bool
 )
+
+func setStage73StatePath(path string) {
+	stage73StatePath = path
+}
+
+func resetStage73LoadedForTests() {
+	stage73Loaded = false
+}
 
 func useMemoryWalletLoader(t *testing.T) {
 	t.Helper()

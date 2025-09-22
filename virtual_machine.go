@@ -29,12 +29,14 @@ type opcodeHandler func([]byte) ([]byte, error)
 // VM includes simple bottleneck management through a concurrency limiter and
 // satisfies the VirtualMachine interface.
 type SimpleVM struct {
-	mu       sync.RWMutex
-	running  bool
-	mode     VMMode
-	limiter  chan struct{}
-	handlers map[uint32]opcodeHandler
-	defaultH opcodeHandler
+	mu          sync.RWMutex
+	running     bool
+	mode        VMMode
+	limiter     chan struct{}
+	handlers    map[uint32]opcodeHandler
+	defaultH    opcodeHandler
+	opcodeNames map[uint32]string
+	gasResolver func(string) uint64
 }
 
 // NewSimpleVM creates a new stopped virtual machine instance. An optional
@@ -65,15 +67,19 @@ func NewSimpleVM(modes ...VMMode) *SimpleVM {
 		},
 	}
 	defaultH := handlers[0x000000]
+	opcodeNames := map[uint32]string{0x000000: "NOP"}
 	for _, op := range SNVMOpcodes {
 		handlers[op.Code] = defaultH
+		opcodeNames[op.Code] = op.Name
 	}
 
 	vm := &SimpleVM{
-		mode:     mode,
-		limiter:  make(chan struct{}, capacity),
-		handlers: handlers,
-		defaultH: defaultH,
+		mode:        mode,
+		limiter:     make(chan struct{}, capacity),
+		handlers:    handlers,
+		defaultH:    defaultH,
+		opcodeNames: opcodeNames,
+		gasResolver: GasCost,
 	}
 	return vm
 }
@@ -116,6 +122,12 @@ func (vm *SimpleVM) RegisterOpcode(code uint32, h opcodeHandler) {
 		h = vm.defaultH
 	}
 	vm.handlers[code] = h
+	if vm.opcodeNames == nil {
+		vm.opcodeNames = make(map[uint32]string)
+	}
+	if _, ok := vm.opcodeNames[code]; !ok {
+		vm.opcodeNames[code] = fmt.Sprintf("0x%06x", code)
+	}
 }
 
 // Execute interprets the provided bytecode as a sequence of 24-bit opcodes and
@@ -144,15 +156,7 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 		return nil, 0, errors.New("bytecode required")
 	}
 
-	opCount := uint64((len(wasm) + 2) / 3) // number of 24-bit opcodes
-	gasUsed := opCount
-	if gasUsed == 0 {
-		gasUsed = 1
-	}
-	if gasUsed > gasLimit {
-		return nil, gasLimit, errors.New("gas limit exceeded")
-	}
-
+	var gasUsed uint64
 	out := args
 	for i := 0; i < len(wasm); i += 3 {
 		if err := ctx.Err(); err != nil {
@@ -171,6 +175,17 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 		if !ok {
 			handler = vm.defaultH
 		}
+		name := vm.opcodeNames[opcode]
+		cost := DefaultGasCost
+		if vm.gasResolver != nil && name != "" {
+			if resolved := vm.gasResolver(name); resolved > 0 {
+				cost = resolved
+			}
+		}
+		if gasUsed+cost > gasLimit {
+			return nil, gasLimit, errors.New("gas limit exceeded")
+		}
+		gasUsed += cost
 		var err error
 		out, err = handler(out)
 		if err != nil {

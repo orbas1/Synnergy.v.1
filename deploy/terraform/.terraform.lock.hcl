@@ -1,5 +1,8 @@
 # This file is maintained automatically by "terraform init".
 # Manual edits may be lost in future updates.
+# Stage 77 verification: run `terraform init -upgrade` after cloning to ensure
+# provider checksums match your platform and to pull in additional providers such
+# as Helm or Kubernetes when extending the deployment.
 
 provider "registry.terraform.io/hashicorp/aws" {
   version     = "5.100.0"

@@ -1,45 +1,67 @@
-# Artificial Intelligence
+# Artificial Intelligence Platform – Stage 77 Update
 
-## Strategic Vision
-Neto Solaris embeds artificial intelligence at the core of the Synnergy Network to deliver predictive insight, autonomous optimisation and a self‑service model economy. The AI stack operates within a privacy‑preserving, decentralised environment while satisfying enterprise governance requirements.
+The Synnergy AI stack now operates as a first-class citizen within the enterprise
+runtime. The runtime integrator introduced in Stage 77 ensures that the AI model
+marketplace, inference services and training pipelines all share the same
+consensus, wallet and gas configuration used by the CLI and the JavaScript
+function web. Key capabilities include:
 
-## AI Service Layer
-The `AIService` orchestrates prediction utilities and model commerce through concurrency‑safe registries backed by read‑write mutexes【F:ai.go†L32-L38】.
-- **PredictFraud** ingests transaction payloads and derives a deterministic fraud probability by hashing the JSON bytes【F:ai.go†L50-L58】.
-- **OptimiseBaseFee** reviews average gas prices to recommend the next block’s base fee【F:ai.go†L60-L67】.
-- **ForecastVolume** scales recent transaction counts to project near‑term network activity【F:ai.go†L70-L77】.
-Model metadata captures royalty percentages and publish timestamps so creators are compensated whenever analytics are invoked【F:ai.go†L13-L19】【F:ai.go†L80-L92】.
+## Secure Model Lifecycle
 
-## Model Marketplace and Escrow
-Enterprise participants monetise models through the `ModelMarketplace`, which tracks listings, owners and dynamic pricing with thread‑safe maps【F:ai_model_management.go†L19-L24】【F:ai_model_management.go†L31-L45】. Listings can be enumerated, updated or removed by the seller to reflect evolving commercial terms【F:ai_model_management.go†L56-L98】. Purchases deposit funds into an escrow ledger, while rentals set an expiry window before releasing payment; escrows are cleared atomically once the seller claims funds【F:ai.go†L108-L151】【F:ai.go†L153-L164】.
+- **Marketplace Contracts** – AI models are listed, purchased and invoked via
+  deterministic opcodes enumerated in `SNVMOpcodes`, allowing on-chain
+  coordination for publishing, pricing, escrow and analytics【F:snvm._opcodes.go†L1-L120】.
+- **Governed Execution** – The Stage 77 runtime ensures every opcode executed by
+  the virtual machine is priced using the documented gas catalogue, preventing
+  runaway computation during inference or training jobs【F:virtual_machine.go†L24-L142】【F:gas_table.go†L108-L126】.
+- **Wallet Binding** – Operator wallets created by `NewRuntimeIntegration`
+  register their public keys with the regulatory node, so AI workloads inherit
+  auditable approvals and tamper-evident signatures before entering the training
+  queue or deploying models to production【F:internal/runtime/integration.go†L39-L192】.
 
-## Training Lifecycle Orchestration
-The `TrainingManager` coordinates model development pipelines using guarded job registries【F:ai_training.go†L20-L24】. Operators can start jobs by providing dataset and model identifiers【F:ai_training.go†L32-L49】, query status or enumerate all jobs for auditability【F:ai_training.go†L52-L69】, and cancel or complete work while recording terminal timestamps for governance【F:ai_training.go†L71-L103】.
+## Privacy and Compliance
 
-## Inference Engine and Fraud Analysis
-The `InferenceEngine` loads model binaries and returns deterministic output hashes for reproducible decisioning【F:ai_inference_analysis.go†L15-L43】. A batch `Analyse` method produces per‑transaction fraud scores, enabling automated compliance across large datasets【F:ai_inference_analysis.go†L45-L53】.
+- **Regulatory Oversight** – The runtime integration connects AI transactions to
+  the regulatory node, flagging anomalous behaviour and enforcing jurisdictional
+  policy through the same checks applied to financial transactions and smart
+  contracts【F:internal/runtime/integration.go†L43-L79】.
+- **Permissioned Access** – Wallet server containers now ship with secrets and
+  network policies that only admit authorised node traffic, protecting
+  AI-generated insights and sensitive training data when accessed via the CLI or
+  web dashboard【F:deploy/k8s/wallet.yaml†L1-L108】【F:docker/docker-compose.yml†L1-L64】.
+- **Auditability** – Terraform provisions an encrypted PostgreSQL instance for
+  AI and wallet audit trails, keyed by AWS KMS to satisfy data residency and
+  financial reporting requirements【F:deploy/terraform/main.tf†L197-L231】.
 
-## Continuous Monitoring
-### Drift Monitoring
-`DriftMonitor` maintains baseline metrics and reports deviations exceeding a configurable threshold to highlight model decay before it impacts production【F:ai_drift_monitor.go†L8-L35】.
-### Anomaly Detection
-An `AnomalyDetector` performs streaming z‑score checks over operational signals, defaulting to a threshold of three standard deviations to minimise false positives【F:anomaly_detection.go†L8-L49】.
+## Scalability and Interoperability
 
-## Secure Model Storage
-`SecureStorage` protects artefacts with AES‑GCM encryption. Keys must be 32 bytes, nonces are randomly generated and ciphertext is stored only after successful sealing, ensuring confidentiality and integrity on retrieval【F:ai_secure_storage.go†L23-L44】【F:ai_secure_storage.go†L47-L75】.
+- **Auto-Scaling Infrastructure** – Kubernetes manifests now include horizontal
+  pod autoscalers and PodDisruptionBudgets for both node and wallet workloads,
+  delivering high availability as AI traffic grows while preserving validator
+  quorum【F:deploy/k8s/node.yaml†L1-L143】【F:deploy/k8s/wallet.yaml†L1-L108】.
+- **Multi-Channel Access** – Docker Compose bundles the node, wallet and Next.js
+  function web, enabling AI administrators to trigger CLI commands, review gas
+  consumption and monitor training jobs from a unified dashboard【F:docker/Dockerfile†L1-L49】【F:docker/docker-compose.yml†L1-L64】.
+- **Cross-Chain Hooks** – Consensus and cross-chain opcodes remain accessible to
+  AI contracts, allowing models to react to external chain events, bridge tokens
+  or feed data into other blockchains without compromising deterministic
+  execution【F:snvm._opcodes.go†L121-L200】.
 
-## AI‑Enhanced Smart Contracts
-The `AIContractRegistry` layers AI metadata over the base contract registry, mapping each deployment to the model hash governing its inference logic【F:ai_enhanced_contract.go†L8-L35】. Contracts expose a dedicated `infer` entry point invoked through `InvokeAIContract`, allowing on‑chain transactions to trigger model evaluation within the virtual machine【F:ai_enhanced_contract.go†L39-L46】.
+## Testing and Assurance
 
-## Financial Forecasting Utilities
-A common `PriceModel` interface supports multiple predictors—simple moving averages, linear regression and AR(1)—all available through `ForecastSeries`, which defaults to a three‑point moving average when no model is specified【F:financial_prediction.go†L7-L107】. These tools help authority nodes project revenue and plan liquidity months in advance.
+- **Runtime Integration Tests** – New integration tests exercise the AI-enabled
+  runtime by signing transactions, executing bytecode and verifying that health
+  telemetry is emitted as expected, providing regression coverage for CLI,
+  virtual machine and wallet interactions【F:integration_test.go†L5-L66】.
+- **Gas Table Verification** – `EnsureGasCosts` fails fast when AI or ML opcodes
+  lack documented gas entries, ensuring reference guides, CLI tooling and the VM
+  never drift apart【F:gas_table_test.go†L1-L42】.
+- **Documentation Synchronisation** – Stage 77 updates the AI whitepaper, module
+  boundaries and production stages to reflect enterprise-ready integration across
+  infrastructure, CLI and governance workflows【F:docs/MODULE_BOUNDARIES.md†L1-L30】【F:docs/PRODUCTION_STAGES.md†L145-L159】.
 
-## Quality Assurance
-End‑to‑end tests exercise prediction APIs, marketplace flows, training controls, inference operations, drift and anomaly detection and secure storage to guarantee deterministic behaviour across modules【F:ai_modules_test.go†L8-L142】.
-
-## Enterprise Governance and Branding
-Every AI capability is engineered under Neto Solaris’s commitment to responsible innovation. Royalty tracking, auditable job metadata and encrypted model handling demonstrate how the platform aligns powerful machine intelligence with transparent governance and monetisation.
-
-## Conclusion
-By coupling predictive engines, lifecycle management, continuous monitoring and AI‑aware smart contracts, the Synnergy Network delivers a unified framework for secure, accountable artificial intelligence. Neto Solaris clients can deploy, monetise and evolve models directly within the blockchain ecosystem while maintaining rigorous operational control.
-
+Together these enhancements deliver a secure, scalable and compliant AI platform
+that integrates seamlessly with Synnergy’s consensus engine, wallet services and
+front-end tooling. AI stakeholders can now trust that gas costs, telemetry,
+access control and regulatory requirements remain consistent across CLI,
+Terraform, Kubernetes and the enterprise web interface.

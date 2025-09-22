@@ -52,3 +52,48 @@ The root command provides options that apply to every sub-command:
 ## Sharding
 - `synnergy sharding leader set <id> <addr> --json` – assign a leader to a shard
 - `synnergy sharding map --json` – list shard-to-leader mappings
+
+### Stage 73 Runtime Workflows – Grants, Benefits and Index Operations
+
+Stage 73 commands now require authenticated wallets and produce machine-readable telemetry so that the web console and automated scripts can operate deterministically. The following quick recipes cover the upgraded flows:
+
+1. **SYN3700 index controller setup**
+   ```sh
+   synnergy syn3700 init --name "Institutional" --symbol IDX --controller /path/wallet.json:password
+   synnergy syn3700 add AAA --weight 0.5 --drift 0.1 --wallet /path/wallet.json --password password
+   synnergy syn3700 snapshot
+   synnergy syn3700 rebalance --wallet /path/wallet.json --password password
+   ```
+   All component writes require a controller wallet. Snapshot, controllers, status and audit commands emit JSON that can be consumed directly by dashboards.
+
+2. **SYN3800 grant orchestration**
+   ```sh
+   synnergy syn3800 create bob research 100 --authorizer /path/ops.json:password
+   synnergy syn3800 release 1 40 phase1 --wallet /path/ops.json --password password
+   synnergy syn3800 authorize 1 --wallet /path/secondary.json --password pass2
+   synnergy syn3800 audit 1
+   synnergy syn3800 status
+   ```
+   Releases and authorization events are persisted with actor metadata and surface in the audit log for compliance review.
+
+3. **SYN3900 benefit approval pipeline**
+   ```sh
+   synnergy syn3900 register 0xRecipient housing 200 --approver /path/authority.json:password
+   synnergy syn3900 claim 1 --wallet /path/beneficiary.json --password password
+   synnergy syn3900 approve 1 --wallet /path/authority.json --password password
+   synnergy syn3900 list
+   synnergy syn3900 status
+   ```
+   Claims validate that the signing wallet matches the registered recipient and approvals require previously whitelisted approvers.
+
+4. **SYN500 utility limits and telemetry**
+   ```sh
+   synnergy syn500 create --name Loyalty --symbol LOY --owner treasury --dec 2 --supply 1000
+   synnergy syn500 grant bob --tier 1 --max 2 --window 1h
+   synnergy syn500 use bob
+   synnergy syn500 status bob
+   synnergy syn500 telemetry
+   ```
+   Usage windows automatically reset once the configured interval elapses, and telemetry exposes how many grants remain active before limits are reached.
+
+Each command prints a gas cost prefix followed by JSON output, making it straightforward to route responses into the web UI function web and external orchestration pipelines.

@@ -1,22 +1,82 @@
-version: '3.9'
+version: "3.9"
+
 services:
   synnergy:
     build:
       context: ..
       dockerfile: docker/Dockerfile
       target: synnergy
+      args:
+        GO_VERSION: 1.22
+    image: synnergy/node:stage77
+    restart: unless-stopped
+    environment:
+      SYN_CONFIG: /etc/synnergy/synnergy.yaml
+    volumes:
+      - ../configs/dev.yaml:/etc/synnergy/synnergy.yaml:ro
+      - synnergy-data:/home/synnergy/data
     ports:
       - "8080:8080"
-    environment:
-      - SYN_CONFIG=/configs/dev.yaml
-    volumes:
-      - ../configs:/configs:ro
+      - "30303:30303"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - synnergy
+
   walletserver:
     build:
       context: ..
       dockerfile: docker/Dockerfile
       target: walletserver
+      args:
+        GO_VERSION: 1.22
+    image: synnergy/wallet:stage77
+    restart: unless-stopped
+    environment:
+      SYN_WALLET_CONFIG: /etc/synnergy/wallet.yaml
+    volumes:
+      - ./secrets/wallet.yaml:/etc/synnergy/wallet.yaml:ro
     ports:
       - "8090:8090"
     depends_on:
+      synnergy:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8090/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
       - synnergy
+
+  web:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: web
+      args:
+        NODE_VERSION: 20
+    image: synnergy/web:stage77
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_CLI_ENDPOINT: "http://synnergy:8080"
+      NEXT_PUBLIC_WALLET_ENDPOINT: "http://walletserver:8090"
+    ports:
+      - "3000:3000"
+    depends_on:
+      synnergy:
+        condition: service_healthy
+      walletserver:
+        condition: service_healthy
+    networks:
+      - synnergy
+
+networks:
+  synnergy:
+    driver: bridge
+
+volumes:
+  synnergy-data:

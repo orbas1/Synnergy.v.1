@@ -49,21 +49,21 @@ func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	if !HasOpcode("RegNodeLogs") {
 		t.Fatalf("missing RegNodeLogs opcode")
 	}
-        if GasCost("RegNodeLogs") != 1 {
-                t.Fatalf("unexpected cost for RegNodeLogs")
-        }
-        if !HasOpcode("RegNodeAudit") {
-                t.Fatalf("missing RegNodeAudit opcode")
-        }
-        if GasCost("RegNodeAudit") != 3 {
-                t.Fatalf("unexpected cost for RegNodeAudit")
-        }
-        if !HasOpcode("Access_Audit") {
-                t.Fatalf("missing Access_Audit opcode")
-        }
-        if GasCost("Access_Audit") != 2 {
-                t.Fatalf("unexpected cost for Access_Audit")
-        }
+	if GasCost("RegNodeLogs") != 1 {
+		t.Fatalf("unexpected cost for RegNodeLogs")
+	}
+	if !HasOpcode("RegNodeAudit") {
+		t.Fatalf("missing RegNodeAudit opcode")
+	}
+	if GasCost("RegNodeAudit") != 3 {
+		t.Fatalf("unexpected cost for RegNodeAudit")
+	}
+	if !HasOpcode("Access_Audit") {
+		t.Fatalf("missing Access_Audit opcode")
+	}
+	if GasCost("Access_Audit") != 2 {
+		t.Fatalf("unexpected cost for Access_Audit")
+	}
 }
 
 func TestRegisterGasCostValidation(t *testing.T) {
@@ -82,4 +82,13 @@ func TestMustGasCostPanics(t *testing.T) {
 		}
 	}()
 	MustGasCost("UnknownOpcode")
+}
+
+func TestEnsureGasCosts(t *testing.T) {
+	if err := EnsureGasCosts([]string{"MineBlock", "CreateDAO"}); err != nil {
+		t.Fatalf("expected known opcodes: %v", err)
+	}
+	if err := EnsureGasCosts([]string{"", "DefinitelyMissing"}); err == nil {
+		t.Fatalf("expected error for missing opcode")
+	}
 }

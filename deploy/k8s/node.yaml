@@ -1,71 +1,200 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: synnergy
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: synnergy-node
+  namespace: synnergy
+  labels:
+    app.kubernetes.io/name: synnergy-node
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: synnergy-node-config
+  namespace: synnergy
+  labels:
+    app.kubernetes.io/name: synnergy-node
+    app.kubernetes.io/part-of: synnergy-network
+data:
+  synnergy.yaml: |
+    logLevel: info
+    environment: production
+    telemetry:
+      exporter: otlp
+      endpoint: http://localhost:4317
+    server:
+      host: 0.0.0.0
+      port: 8080
+    consensus:
+      maxValidators: 128
+      minStake: 1
+    wallet:
+      keystore: /etc/synnergy/wallet/operator.json
+      passwordSecret: synnergy-node-wallet
+  otel-collector.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc: {}
+          http: {}
+    exporters:
+      logging: {}
+    service:
+      pipelines:
+        traces:
+          receivers: [otlp]
+          exporters: [logging]
+        metrics:
+          receivers: [otlp]
+          exporters: [logging]
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: synnergy-node
+  namespace: synnergy
   labels:
-    app: synnergy-node
+    app.kubernetes.io/name: synnergy-node
+    app.kubernetes.io/part-of: synnergy-network
 spec:
   replicas: 3
+  revisionHistoryLimit: 10
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   selector:
     matchLabels:
-      app: synnergy-node
+      app.kubernetes.io/name: synnergy-node
   template:
     metadata:
       labels:
-        app: synnergy-node
+        app.kubernetes.io/name: synnergy-node
+        app.kubernetes.io/part-of: synnergy-network
     spec:
+      serviceAccountName: synnergy-node
+      securityContext:
+        fsGroup: 1000
       containers:
-      - name: node
-        image: synnergy/node:latest
-        imagePullPolicy: IfNotPresent
-        ports:
-        - containerPort: 30303
-          name: p2p
-        - containerPort: 8080
-          name: rpc
-        env:
-        - name: SYN_CONFIG
-          value: /etc/synnergy/config.yaml
-        resources:
-          requests:
-            cpu: "500m"
-            memory: "512Mi"
-          limits:
-            cpu: "1"
-            memory: "1Gi"
-        readinessProbe:
-          httpGet:
-            path: /healthz
-            port: 8080
-          initialDelaySeconds: 10
-          periodSeconds: 5
-        livenessProbe:
-          httpGet:
-            path: /livez
-            port: 8080
-          initialDelaySeconds: 30
-          periodSeconds: 10
-        volumeMounts:
-        - name: config
-          mountPath: /etc/synnergy
+        - name: synnergy-node
+          image: ghcr.io/synnergy/network-node:latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - "--log-level=info"
+          env:
+            - name: SYN_CONFIG
+              value: /etc/synnergy/synnergy.yaml
+            - name: SYN_WALLET_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: synnergy-node-wallet
+                  key: password
+          ports:
+            - containerPort: 8080
+              name: rpc
+            - containerPort: 30303
+              name: p2p
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          volumeMounts:
+            - name: config
+              mountPath: /etc/synnergy
+              readOnly: true
+            - name: wallet
+              mountPath: /etc/synnergy/wallet
+              readOnly: true
+        - name: otel-collector
+          image: otel/opentelemetry-collector:0.102.0
+          args:
+            - "--config=/etc/otel/collector.yaml"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otel
+              subPath: otel-collector.yaml
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
       volumes:
-      - name: config
-        configMap:
-          name: syn-node-config
+        - name: config
+          configMap:
+            name: synnergy-node-config
+        - name: wallet
+          secret:
+            secretName: synnergy-node-wallet
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/name
+                      operator: In
+                      values: [synnergy-node]
+                topologyKey: kubernetes.io/hostname
+      tolerations:
+        - key: node.kubernetes.io/not-ready
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 60
+        - key: node.kubernetes.io/unreachable
+          operator: Exists
+          effect: NoExecute
+          tolerationSeconds: 60
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: synnergy-node
+  namespace: synnergy
+spec:
+  minAvailable: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: synnergy-node
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: synnergy-node
+  namespace: synnergy
   labels:
-    app: synnergy-node
+    app.kubernetes.io/name: synnergy-node
+    app.kubernetes.io/part-of: synnergy-network
 spec:
   selector:
-    app: synnergy-node
+    app.kubernetes.io/name: synnergy-node
   ports:
-  - name: p2p
-    port: 30303
-    targetPort: 30303
-  - name: rpc
-    port: 8080
-    targetPort: 8080
+    - name: rpc
+      port: 8080
+      targetPort: 8080
+    - name: p2p
+      port: 30303
+      targetPort: 30303
+  type: ClusterIP

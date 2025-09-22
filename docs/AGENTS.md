@@ -1701,26 +1701,39 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] deploy/ansible/playbook.yml
 - [ ] deploy/helm/synnergy/Chart.yaml
 
-**Stage 77**
-- [ ] deploy/k8s/README.md
-- [ ] deploy/k8s/node.yaml
-- [ ] deploy/k8s/wallet.yaml
-- [ ] deploy/terraform/.terraform.lock.hcl
-- [ ] deploy/terraform/main.tf
-- [ ] docker/Dockerfile
-- [ ] docker/README.md
-- [ ] docker/docker-compose.yml
-- [ ] docs/AGENTS.md
-- [ ] docs/MODULE_BOUNDARIES.md
-- [ ] docs/PRODUCTION_STAGES.md
-- [ ] docs/Whitepaper_detailed/Advanced Consensus.md
-- [ ] docs/Whitepaper_detailed/Ai.md
-- [ ] docs/Whitepaper_detailed/Authority Nodes.md
-- [ ] docs/Whitepaper_detailed/Banks.md
-- [ ] docs/Whitepaper_detailed/Block and subblocks.md
-- [ ] docs/Whitepaper_detailed/Block rewards dispersions and halving.md
-- [ ] docs/Whitepaper_detailed/Blockchain Fees & Gas.md
-- [ ] docs/Whitepaper_detailed/Blockchain Logic.md
+**Stage 77 ✅ – Runtime integration, enterprise deployment and function web completed.**
+- [x] core/syn3700_token.go – Controller-gated index management with audit trails and deterministic telemetry.
+- [x] core/syn3800.go – Grant registry now tracks authorisers, status summaries and audit events for wallet-signed releases.
+- [x] core/syn3900.go – Benefit registry validates claimant wallets, approver sets and exposes lifecycle telemetry.
+- [x] core/syn500.go – Utility grants enforce usage windows with aggregate telemetry helpers.
+- [x] cli/syn3700_token.go – Wallet-authenticated index CLI with JSON snapshots, controller listings and rebalance audits.
+- [x] cli/syn3800.go – Grant CLI aligns with core authorisers, emits telemetry and requires wallets for releases.
+- [x] cli/syn3900.go – Benefit CLI enforces recipient authentication, approver approvals and JSON outputs.
+- [x] cli/syn500.go – Utility CLI surfaces usage status, telemetry and configurable grant windows.
+- [x] docs/reference/gas_table_list.md – Documented gas prices for Stage 73 CLI operations.
+- [x] docs/reference/opcodes_list.md – Registered new opcodes for grants, benefits, index and utility commands.
+- [x] docs/guides/cli_quickstart.md – Added wallet-backed Stage 73 workflow walkthroughs.
+- [x] docs/Whitepaper_detailed/guide/cli_guide.md – Documented Stage 73 enterprise controls and telemetry alignment.
+- [x] README.md – Highlighted Stage 73 CLI alignment across runtime, VM and function web.
+- [x] deploy/k8s/README.md – Documented secrets, telemetry and rollout guidance for hardened manifests.
+- [x] deploy/k8s/node.yaml – Namespaced deployment with ConfigMaps, probes, telemetry sidecar and disruption budget.
+- [x] deploy/k8s/wallet.yaml – Added secrets, HPA and network policy to secure wallet access.
+- [x] deploy/terraform/.terraform.lock.hcl – Annotated Stage 77 workflow guidance for provider refresh.
+- [x] deploy/terraform/main.tf – Introduced remote state, IAM, autoscaling, load balancing and database resources.
+- [x] docker/Dockerfile – Multi-stage build for node, wallet and web UI with health checks and non-root execution.
+- [x] docker/README.md – Extended instructions covering secrets, endpoints and extension options.
+- [x] docker/docker-compose.yml – Added health-aware stack with Next.js web frontend and persistent volumes.
+- [x] docs/AGENTS.md – Tracked Stage 77 completion notes.
+- [x] docs/MODULE_BOUNDARIES.md – Captured runtime integration boundary updates.
+- [x] docs/PRODUCTION_STAGES.md – Logged Stage 77 production hardening deliverables.
+- [x] docs/Whitepaper_detailed/Advanced Consensus.md – Expanded with runtime integration, gas governance and telemetry notes.
+- [x] docs/Whitepaper_detailed/Ai.md – Updated AI governance, privacy and interoperability content.
+- [x] docs/Whitepaper_detailed/Authority Nodes.md – Documented authority operational security and integration flow.
+- [x] docs/Whitepaper_detailed/Banks.md – Detailed banking node compliance, privacy and cross-chain workflows.
+- [x] docs/Whitepaper_detailed/Block and subblocks.md – Clarified block assembly, consensus integration and VM hooks.
+- [x] docs/Whitepaper_detailed/Block rewards dispersions and halving.md – Described economic models with governance controls.
+- [x] docs/Whitepaper_detailed/Blockchain Fees & Gas.md – Synced gas catalogue, CLI alignment and testing approach.
+- [x] docs/Whitepaper_detailed/Blockchain Logic.md – Summarised end-to-end runtime orchestration and accessibility.
 
 **Stage 78**
 - [ ] docs/Whitepaper_detailed/Central banks.md
