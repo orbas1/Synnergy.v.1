@@ -2,16 +2,25 @@ package auth
 
 import (
 	"errors"
+	"sort"
 	"sync"
 )
 
 // Permission represents an action that can be performed within the system.
 type Permission string
 
+// PermissionCondition optionally constrains a permission based on metadata.
+type PermissionCondition func(metadata map[string]any) bool
+
+// PermissionRule stores metadata about a permission assignment.
+type PermissionRule struct {
+	Condition PermissionCondition
+}
+
 // Role groups a set of permissions under a common name.
 type Role struct {
 	Name        string
-	Permissions map[Permission]struct{}
+	Permissions map[Permission]PermissionRule
 }
 
 // RBAC manages roles, permissions and their assignment to users.
@@ -36,18 +45,40 @@ func (r *RBAC) AddRole(name string) {
 	if _, exists := r.roles[name]; exists {
 		return
 	}
-	r.roles[name] = &Role{Name: name, Permissions: make(map[Permission]struct{})}
+	r.roles[name] = &Role{Name: name, Permissions: make(map[Permission]PermissionRule)}
+}
+
+// RemoveRole removes a role and revokes it from all users.
+func (r *RBAC) RemoveRole(name string) bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	if _, ok := r.roles[name]; !ok {
+		return false
+	}
+	delete(r.roles, name)
+	for user, roles := range r.userRoles {
+		delete(roles, name)
+		if len(roles) == 0 {
+			delete(r.userRoles, user)
+		}
+	}
+	return true
 }
 
 // AddPermissionToRole attaches a permission to an existing role.
 func (r *RBAC) AddPermissionToRole(roleName string, perm Permission) error {
+	return r.AddConditionalPermissionToRole(roleName, perm, nil)
+}
+
+// AddConditionalPermissionToRole attaches a permission guarded by a condition.
+func (r *RBAC) AddConditionalPermissionToRole(roleName string, perm Permission, cond PermissionCondition) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	role, ok := r.roles[roleName]
 	if !ok {
 		return errors.New("role does not exist")
 	}
-	role.Permissions[perm] = struct{}{}
+	role.Permissions[perm] = PermissionRule{Condition: cond}
 	return nil
 }
 
@@ -65,8 +96,43 @@ func (r *RBAC) AssignRole(userID, roleName string) error {
 	return nil
 }
 
-// hasPermission reports whether the given user has the provided permission.
-func (r *RBAC) hasPermission(userID string, perm Permission) bool {
+// RevokeRole removes a role assignment from a user.
+func (r *RBAC) RevokeRole(userID, roleName string) bool {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	roles, ok := r.userRoles[userID]
+	if !ok {
+		return false
+	}
+	if _, exists := roles[roleName]; !exists {
+		return false
+	}
+	delete(roles, roleName)
+	if len(roles) == 0 {
+		delete(r.userRoles, userID)
+	}
+	return true
+}
+
+// ListUserRoles returns a sorted list of roles assigned to the user.
+func (r *RBAC) ListUserRoles(userID string) []string {
+	r.mu.RLock()
+	defer r.mu.RUnlock()
+	roles := r.userRoles[userID]
+	out := make([]string, 0, len(roles))
+	for name := range roles {
+		out = append(out, name)
+	}
+	sort.Strings(out)
+	return out
+}
+
+// HasPermission checks if the user has the specified permission with metadata conditions.
+func (r *RBAC) HasPermission(userID string, perm Permission, metadata map[string]any) bool {
+	return r.hasPermission(userID, perm, metadata)
+}
+
+func (r *RBAC) hasPermission(userID string, perm Permission, metadata map[string]any) bool {
 	r.mu.RLock()
 	defer r.mu.RUnlock()
 	roles := r.userRoles[userID]
@@ -75,8 +141,10 @@ func (r *RBAC) hasPermission(userID string, perm Permission) bool {
 		if role == nil {
 			continue
 		}
-		if _, ok := role.Permissions[perm]; ok {
-			return true
+		if rule, ok := role.Permissions[perm]; ok {
+			if rule.Condition == nil || rule.Condition(metadata) {
+				return true
+			}
 		}
 	}
 	return false
@@ -98,7 +166,7 @@ func NewPolicyEnforcer(r *RBAC, l AuditLogger) *PolicyEnforcer {
 
 // Authorize verifies that the user has the specified permission and records the attempt.
 func (p *PolicyEnforcer) Authorize(userID string, perm Permission, metadata map[string]any) error {
-	allowed := p.rbac.hasPermission(userID, perm)
+	allowed := p.rbac.hasPermission(userID, perm, metadata)
 	if p.audit != nil {
 		p.audit.Log(userID, perm, allowed, metadata)
 	}

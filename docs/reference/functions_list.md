@@ -76,7 +76,7 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/syn1700_token.go` | `41` | `func (e *EventMetadata) IssueTicket(owner, class, ticketType string, price uint64) (uint64, error) {` |
 | `core/syn1700_token.go` | `52` | `func (e *EventMetadata) TransferTicket(id uint64, from, to string) error {` |
 | `core/syn1700_token.go` | `62` | `func (e *EventMetadata) VerifyTicket(id uint64, holder string) bool {` |
-| `core/syn3800_test.go` | `5` | `func TestGrantRegistry(t *testing.T) {` |
+| `core/syn3800_test.go` | `5` | `func TestGrantRegistryLifecycle(t *testing.T) {` |
 | `core/transaction.go` | `42` | `func NewTransaction(from, to string, amount, fee, nonce uint64) *Transaction {` |
 | `core/transaction.go` | `58` | `func (t *Transaction) Hash() string {` |
 | `core/transaction.go` | `75` | `func (t *Transaction) Verify(pub *ecdsa.PublicKey) bool {` |
@@ -820,10 +820,17 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/mining_node.go` | `45` | `func (mn *MiningNode) Mine(data []byte) (string, error) {` |
 | `core/mining_node.go` | `60` | `func (mn *MiningNode) HashRateHint() uint64 {` |
 | `core/syn3800.go` | `22` | `func NewGrantRegistry() *GrantRegistry {` |
-| `core/syn3800.go` | `27` | `func (r *GrantRegistry) CreateGrant(beneficiary, name string, amount uint64) uint64 {` |
-| `core/syn3800.go` | `35` | `func (r *GrantRegistry) Disburse(id uint64, amount uint64, note string) error {` |
-| `core/syn3800.go` | `51` | `func (r *GrantRegistry) GetGrant(id uint64) (*GrantRecord, bool) {` |
-| `core/syn3800.go` | `57` | `func (r *GrantRegistry) ListGrants() []*GrantRecord {` |
+| `core/syn3800.go` | `115` | `func (r *GrantRegistry) CreateGrant(beneficiary, name string, amount uint64, authorizers ...string) (uint64, error) {` |
+| `core/syn3800.go` | `164` | `func (r *GrantRegistry) Authorize(id uint64, addr string) (*GrantEvent, error) {` |
+| `core/syn3800.go` | `193` | `func (r *GrantRegistry) Revoke(id uint64, addr, note string) (*GrantEvent, error) {` |
+| `core/syn3800.go` | `220` | `func (r *GrantRegistry) Disburse(id uint64, amount uint64, note, signer string) (*GrantEvent, error) {` |
+| `core/syn3800.go` | `250` | `func (r *GrantRegistry) GetGrant(id uint64) (*GrantRecord, bool) {` |
+| `core/syn3800.go` | `258` | `func (r *GrantRegistry) ListGrants() []*GrantRecord {` |
+| `core/syn3800.go` | `266` | `func (r *GrantRegistry) Audit(id uint64) ([]GrantEvent, error) {` |
+| `core/syn3800.go` | `276` | `func (r *GrantRegistry) StatusSummary() GrantStatusSummary {` |
+| `core/syn3800.go` | `288` | `func (r *GrantRegistry) Snapshot() GrantRegistrySnapshot {` |
+| `core/syn3800.go` | `302` | `func (r *GrantRegistry) Restore(snapshot GrantRegistrySnapshot) {` |
+| `core/syn3800.go` | `314` | `func (r *GrantRegistry) IsAuthorized(id uint64, addr string) bool {` |
 | `core/peer_management_test.go` | `5` | `func TestPeerManager(t *testing.T) {` |
 | `core/consensus_specific.go` | `21` | `func NewConsensusSwitcher(mode ConsensusMode) *ConsensusSwitcher {` |
 | `core/consensus_specific.go` | `27` | `func (cs *ConsensusSwitcher) Evaluate(sc *SynnergyConsensus) ConsensusMode {` |

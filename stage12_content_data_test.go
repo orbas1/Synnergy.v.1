@@ -2,6 +2,7 @@ package synnergy
 
 import (
 	"bytes"
+	"context"
 	"testing"
 	"time"
 )
@@ -201,6 +202,7 @@ func TestDataResourceManagerIsolation(t *testing.T) {
 
 func TestIndexingNode(t *testing.T) {
 	n := NewIndexingNode()
+	ctx := context.Background()
 	n.Index("k", []byte("v"))
 	if c := n.Count(); c != 1 {
 		t.Fatalf("count %d", c)
@@ -211,7 +213,7 @@ func TestIndexingNode(t *testing.T) {
 	if len(n.Keys()) != 1 {
 		t.Fatalf("keys mismatch")
 	}
-	n.Remove("k")
+	n.Remove(ctx, "k")
 	if _, ok := n.Query("k"); ok {
 		t.Fatalf("remove failed")
 	}
@@ -222,10 +224,11 @@ func TestIndexingNode(t *testing.T) {
 
 func TestIndexingNodeEdgeCases(t *testing.T) {
 	n := NewIndexingNode()
+	ctx := context.Background()
 	if _, ok := n.Query("missing"); ok {
 		t.Fatalf("expected missing key to return false")
 	}
-	n.Remove("missing")
+	n.Remove(ctx, "missing")
 	if n.Count() != 0 {
 		t.Fatalf("expected count 0 after removing missing key")
 	}

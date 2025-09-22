@@ -17,3 +17,16 @@ func TestSplitAndReconstructHolographic(t *testing.T) {
 		t.Fatalf("expected no shards for n<=0")
 	}
 }
+
+func TestHolographicShardIsolation(t *testing.T) {
+	data := []byte("enterprise-grade")
+	frame := SplitHolographic("iso", data, 4)
+	if len(frame.Shards) != 4 {
+		t.Fatalf("expected 4 shards")
+	}
+	frame.Shards[0][0] = 'X'
+	recon := ReconstructHolographic(frame)
+	if string(recon[:len(data)]) == string(data) {
+		t.Fatalf("expected reconstruction to reflect shard mutation")
+	}
+}

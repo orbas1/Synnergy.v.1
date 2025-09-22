@@ -181,6 +181,14 @@ and warfare nodes as well as UI integrations.
 | `GetTransfer` | `0x1000A2` |
 | `Grant` | `0x1000A3` |
 | `GrantAccess` | `0x1000A4` |
+| `GrantToken_Authorize` | `0x1F0007` |
+| `GrantToken_Audit` | `0x1F0009` |
+| `GrantToken_Create` | `0x1F0003` |
+| `GrantToken_Disburse` | `0x1F0004` |
+| `GrantToken_Info` | `0x1F0005` |
+| `GrantToken_List` | `0x1F0006` |
+| `GrantToken_Revoke` | `0x1F0008` |
+| `GrantToken_Status` | `0x1F000A` |
 | `Handle` | `0x1000A5` |
 | `HasDrift` | `0x1000A6` |
 | `HasQuorum` | `0x1000A7` |

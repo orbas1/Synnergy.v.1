@@ -834,6 +834,10 @@ var SNVMOpcodes = []SNVMOpcode{
 	{"core_syn3800_Disburse", 0x000332},
 	{"core_syn3800_GetGrant", 0x000333},
 	{"core_syn3800_ListGrants", 0x000334},
+	{"core_syn3800_Authorize", 0x0008A0},
+	{"core_syn3800_Revoke", 0x0008A1},
+	{"core_syn3800_Audit", 0x0008A2},
+	{"core_syn3800_StatusSummary", 0x0008A3},
 	{"core_consensus_specific_node_NewConsensusSpecificNode", 0x000335},
 	{"core_consensus_specific_node_configure", 0x000336},
 	{"core_high_availability_NewFailoverManager", 0x000337},
@@ -1283,6 +1287,16 @@ var SNVMOpcodes = []SNVMOpcode{
 	{"core_bank_nodes_index_Get", 0x0004F3},
 	{"core_bank_nodes_index_Remove", 0x0004F4},
 	{"core_bank_nodes_index_List", 0x0004F5},
+}
+
+// LookupOpcode returns the opcode code for the provided name if present.
+func LookupOpcode(name string) (uint32, bool) {
+        for _, op := range SNVMOpcodes {
+                if op.Name == name {
+                        return op.Code, true
+                }
+        }
+        return 0, false
 }
 
 // SNVMOpcodeByName returns the opcode for a given function identifier.

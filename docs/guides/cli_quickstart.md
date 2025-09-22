@@ -25,6 +25,20 @@ make build
 - `synnergy basenode dial <addr> --pub <hex> --sig <hex>` – connect to a peer with signature validation
 - `synnergy bioauth enroll <addr> <data> <pubHex>` – register a biometric template with an Ed25519 key
 
+## Stage 85 – SYN3800 grant lifecycle
+
+Stage 85 hardens the grant distribution CLI with wallet-gated flows, persistent
+state and enterprise telemetry coordinated by the Grant Orchestrator.
+
+- `synnergy syn3800 create <beneficiary> <name> <amount> --wallet <path> --password <pw> [--authorizer <wallet:path>]` – create an orchestrated grant with signed provenance and optional initial authorisers.
+- `synnergy syn3800 authorize <id> --wallet <path> --password <pw>` – enrol an
+  additional wallet using encrypted credentials.
+- `synnergy syn3800 release <id> <amount> [note] --wallet <path> --password <pw>` – disburse funds with signature validation and
+  automatic status transitions.
+- `synnergy syn3800 audit <id>` / `synnergy syn3800 status` – stream JSON event
+  logs and lifecycle totals for observability tooling and the `/grants` web
+  console.
+
 ## Help
 Run `synnergy --help` or `synnergy <command> --help` for more details.
 

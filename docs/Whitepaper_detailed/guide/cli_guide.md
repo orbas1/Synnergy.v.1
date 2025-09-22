@@ -17788,15 +17788,20 @@ Manage SYN3800 grant records
 ### SEE ALSO
 
 * [synnergy](#synnergy)	 - Synnergy blockchain CLI
+* [synnergy syn3800 authorize](#synnergy-syn3800-authorize)	 - Authorize a wallet to manage a grant
+* [synnergy syn3800 audit](#synnergy-syn3800-audit)	 - Show grant audit events
 * [synnergy syn3800 create](#synnergy-syn3800-create)	 - Create a new grant
 * [synnergy syn3800 get](#synnergy-syn3800-get)	 - Show grant details
 * [synnergy syn3800 list](#synnergy-syn3800-list)	 - List grants
 * [synnergy syn3800 release](#synnergy-syn3800-release)	 - Release funds for a grant
+* [synnergy syn3800 status](#synnergy-syn3800-status)	 - Summarize grant lifecycle metrics
 
 
 ## synnergy syn3800 create
 
-Create a new grant
+Create a new grant and optionally bootstrap authorised wallets. Authoriser flags
+accept `path:password` pairs so encrypted Stage 73 wallet files can be loaded
+non-interactively.
 
 ```
 synnergy syn3800 create <beneficiary> <name> <amount> [flags]
@@ -17805,7 +17810,14 @@ synnergy syn3800 create <beneficiary> <name> <amount> [flags]
 ### Options
 
 ```
-  -h, --help   help for create
+      --authorizer strings   Wallet path:password pairs to authorise (repeatable)
+  -h, --help                help for create
+```
+
+### Examples
+
+```
+synnergy syn3800 create alice "STEM Innovation" 1000 --authorizer wallet.json:pass
 ```
 
 ### Options inherited from parent commands
@@ -17817,6 +17829,52 @@ synnergy syn3800 create <beneficiary> <name> <amount> [flags]
 ### SEE ALSO
 
 * [synnergy syn3800](#synnergy-syn3800)	 - Manage SYN3800 grant records
+
+
+## synnergy syn3800 authorize
+
+Authorise an additional wallet for a grant. Wallet credentials are encrypted and must match an existing file; repeat the command for each signer.
+
+```
+synnergy syn3800 authorize <id> [flags]
+```
+
+### Options
+
+```
+  -h, --help         help for authorize
+      --password string   Wallet password (required)
+      --wallet string     Path to the wallet file (required)
+```
+
+### SEE ALSO
+
+* [synnergy syn3800](#synnergy-syn3800)  - Manage SYN3800 grant records
+
+
+## synnergy syn3800 audit
+
+Show the chronological audit log for a grant including creation, authorisation and disbursement events.
+
+```
+synnergy syn3800 audit <id> [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for audit
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output results in JSON
+```
+
+### SEE ALSO
+
+* [synnergy syn3800](#synnergy-syn3800)  - Manage SYN3800 grant records
 
 
 ## synnergy syn3800 get
@@ -17871,7 +17929,8 @@ synnergy syn3800 list [flags]
 
 ## synnergy syn3800 release
 
-Release funds for a grant
+Release funds for a grant using an authorised wallet. The command enforces
+encrypted key usage and records an audit event for every disbursement.
 
 ```
 synnergy syn3800 release <id> <amount> [note] [flags]
@@ -17880,7 +17939,15 @@ synnergy syn3800 release <id> <amount> [note] [flags]
 ### Options
 
 ```
-  -h, --help   help for release
+  -h, --help         help for release
+      --password string   Wallet password (required)
+      --wallet string     Path to the wallet file (required)
+```
+
+### Examples
+
+```
+synnergy syn3800 release 1 400 phase1 --wallet wallet.json --password pass
 ```
 
 ### Options inherited from parent commands
@@ -17892,6 +17959,31 @@ synnergy syn3800 release <id> <amount> [note] [flags]
 ### SEE ALSO
 
 * [synnergy syn3800](#synnergy-syn3800)	 - Manage SYN3800 grant records
+
+
+## synnergy syn3800 status
+
+Summarise grant lifecycle metrics including pending, active and completed totals.
+
+```
+synnergy syn3800 status [flags]
+```
+
+### Options
+
+```
+  -h, --help   help for status
+```
+
+### Options inherited from parent commands
+
+```
+      --json   output results in JSON
+```
+
+### SEE ALSO
+
+* [synnergy syn3800](#synnergy-syn3800)  - Manage SYN3800 grant records
 
 
 ## synnergy syn3900

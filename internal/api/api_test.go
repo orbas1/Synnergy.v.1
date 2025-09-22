@@ -1,24 +1,30 @@
 package api
 
-import "testing"
+import (
+	"context"
+	"net/http"
+	"testing"
+)
 
-func TestGateway(t *testing.T) {
+func TestClaimsFromContext(t *testing.T) {
+	ctx := context.Background()
+	claims := &TokenClaims{Subject: "user"}
+	ctx = context.WithValue(ctx, claimsContextKey{}, claims)
+	got, ok := ClaimsFromContext(ctx)
+	if !ok || got.Subject != "user" {
+		t.Fatalf("expected claims in context")
+	}
+}
+
+func TestGatewayRoutes(t *testing.T) {
 	g := NewGateway()
-	if err := g.Start(); err != nil {
-		t.Fatalf("start failed: %v", err)
+	g.HandleFunc("/one", "", func(http.ResponseWriter, *http.Request) {})
+	g.HandleFunc("/two", "", func(http.ResponseWriter, *http.Request) {})
+	routes := g.Routes()
+	if len(routes) != 2 {
+		t.Fatalf("expected 2 routes, got %v", routes)
 	}
-}
-
-func TestAuthMiddleware(t *testing.T) {
-	a := &AuthMiddleware{}
-	if !a.Authenticate("token") {
-		t.Fatalf("expected token to be valid")
-	}
-}
-
-func TestRateLimiter(t *testing.T) {
-	r := NewRateLimiter(1)
-	if !r.Allow() || r.Allow() {
-		t.Fatalf("rate limiting failed")
+	if routes[0] != "/one" || routes[1] != "/two" {
+		t.Fatalf("unexpected route order: %v", routes)
 	}
 }

@@ -43,7 +43,9 @@ import (
 // role update operations so governance tooling prices admin-managed role
 // changes and authority term renewals. Stage 73 adds regulatory node approval,
 // flagging, log query and audit operations so compliance tooling surfaces predictable
-// gas costs.
+// gas costs. Stage 85 extends pricing to SYN3800 grant lifecycle operations so the
+// CLI, VM integrations and web console expose deterministic costs for creation,
+// authorization, disbursement and telemetry queries.
 type GasTable map[string]uint64
 
 // DefaultGasCost is used when an opcode is missing from the guide.
@@ -112,21 +114,21 @@ func LoadGasTable() GasTable {
 // GasCost returns the gas price for a given opcode name. If the opcode is not
 // present in the table, DefaultGasCost is returned.
 func GasCost(opcode string) uint64 {
-        tbl := LoadGasTable()
-        if c, ok := tbl[opcode]; ok {
-                return c
-        }
-        return DefaultGasCost
+	tbl := LoadGasTable()
+	if c, ok := tbl[opcode]; ok {
+		return c
+	}
+	return DefaultGasCost
 }
 
 // MustGasCost returns the gas price for an opcode and panics if it is missing.
 // It is useful during initialization of critical modules where undefined
 // pricing would indicate a misconfigured build or documentation drift.
 func MustGasCost(opcode string) uint64 {
-        if c, ok := LoadGasTable()[opcode]; ok {
-                return c
-        }
-        panic(fmt.Sprintf("missing gas cost for opcode %s", opcode))
+	if c, ok := LoadGasTable()[opcode]; ok {
+		return c
+	}
+	panic(fmt.Sprintf("missing gas cost for opcode %s", opcode))
 }
 
 // HasOpcode reports whether a gas price is defined for the opcode.

@@ -49,21 +49,36 @@ func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	if !HasOpcode("RegNodeLogs") {
 		t.Fatalf("missing RegNodeLogs opcode")
 	}
-        if GasCost("RegNodeLogs") != 1 {
-                t.Fatalf("unexpected cost for RegNodeLogs")
-        }
-        if !HasOpcode("RegNodeAudit") {
-                t.Fatalf("missing RegNodeAudit opcode")
-        }
-        if GasCost("RegNodeAudit") != 3 {
-                t.Fatalf("unexpected cost for RegNodeAudit")
-        }
-        if !HasOpcode("Access_Audit") {
-                t.Fatalf("missing Access_Audit opcode")
-        }
-        if GasCost("Access_Audit") != 2 {
-                t.Fatalf("unexpected cost for Access_Audit")
-        }
+	if GasCost("RegNodeLogs") != 1 {
+		t.Fatalf("unexpected cost for RegNodeLogs")
+	}
+	if !HasOpcode("RegNodeAudit") {
+		t.Fatalf("missing RegNodeAudit opcode")
+	}
+	if GasCost("RegNodeAudit") != 3 {
+		t.Fatalf("unexpected cost for RegNodeAudit")
+	}
+	if !HasOpcode("Access_Audit") {
+		t.Fatalf("missing Access_Audit opcode")
+	}
+	if GasCost("Access_Audit") != 2 {
+		t.Fatalf("unexpected cost for Access_Audit")
+	}
+	if GasCost("GrantCreate") != 420 {
+		t.Fatalf("unexpected cost for GrantCreate")
+	}
+	if GasCost("GrantAuthorize") != 180 {
+		t.Fatalf("unexpected cost for GrantAuthorize")
+	}
+	if GasCost("GrantRelease") != 520 {
+		t.Fatalf("unexpected cost for GrantRelease")
+	}
+	if GasCost("GrantAudit") != 110 {
+		t.Fatalf("unexpected cost for GrantAudit")
+	}
+	if GasCost("GrantStatus") != 70 {
+		t.Fatalf("unexpected cost for GrantStatus")
+	}
 }
 
 func TestRegisterGasCostValidation(t *testing.T) {

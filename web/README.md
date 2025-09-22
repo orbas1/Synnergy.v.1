@@ -38,3 +38,13 @@ custom dashboards. It lists authority nodes by invoking `synnergy authority list
 
 DAO governance, staking and custodial node commands are now available through the
 web control panel, allowing browser-based experimentation with these modules.
+
+## Stage 85 additions
+
+- `/grants` delivers an enterprise grant lifecycle console that fronts the hardened
+  SYN3800 CLI. It supports creation, authorization, disbursement and audit review
+  with wallet-gated access and live telemetry sourced from the new `/api/grants`
+  route.
+- `/api/grants` orchestrates CLI invocations server-side, parses JSON payloads,
+  refreshes dashboards after each action and surfaces error telemetry so the
+  browser experience remains fault tolerant.

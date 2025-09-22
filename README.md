@@ -38,6 +38,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Regulatory audits** – `synnergy regnode audit` reports whether an address has been flagged and returns recorded reasons.
 - **Wallet-signed approvals** – regulatory nodes verify transactions against registered wallet public keys, and the CLI can load and sign with a wallet file before submitting for approval.
 - **Web regulatory console** – the `web/pages/regnode.js` interface exposes approval, flagging and log retrieval through a browser UI.
+- **Grant lifecycle orchestration** – Stage 85 now routes SYN3800 activity through a Grant Orchestrator that binds the registry, consensus engine, VM opcodes and authority node directory. CLI create/authorize/release flows require wallet signatures, telemetry is streamed to subscribers and the `/grants` web console exercises the same hardened API.
 - **Strict flagging** – regulatory flags require explicit non-empty reasons for improved audit integrity.
 - **Regulator-optional consensus** – if no regulatory node is configured, sub-block validation bypasses compliance checks so transactions continue to flow.
 - **Role-based security** – biometric authentication and security node CLI (`core.NewBiometricService`, `synnergy bioauth`, `synnergy bsn`), zero‑trust data channels and PKI tooling. Authority node voting, base-node peering and biometric flows all require Ed25519 signatures for verifiable governance.
@@ -158,6 +159,7 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `audit log|list` | Record and query audit events via `core.NewAuditManager` |
 | `audit_node start|log|list` | Operate a bootstrap audit node for network-wide logs |
 | `authority register|vote|list` | Manage the authority node registry (`core.NewAuthorityNodeRegistry`) |
+| `syn3800 create|authorize|release|audit|status` | Coordinate wallet-signed grant programmes via the Grant Orchestrator with authority validation and streaming telemetry |
 | `authority_apply submit|vote|finalize|list` | Handle authority node applications (`core.NewAuthorityApplicationManager`) |
 | `bankinst register|remove|list|is --pub --sig` | Manage institutional bank participants with signed requests (`core.NewBankInstitutionalNode`) |
 | `banknodes types` | Display supported bank node categories |
@@ -165,7 +167,7 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `basetoken init|mint|balance` | Interact with a basic token (`tokens.NewBaseToken`) |
 | `dex liquidity <pair>` | Query on-chain liquidity pool reserves |
 | `syn500 create|grant|use` | Manage service-tier utility tokens |
-| `syn3800 create|release|get|list` | Manage programmatic grants via `core.GrantRegistry` |
+| `syn3800 create|release|get|list` | Inspect orchestrated grants via shared registry snapshots and VM-backed APIs |
 | `syn3900 register|claim|get` | Track government benefits (`core.BenefitRegistry`) |
 | `syn4200_token donate|progress` | Record charity donations and view campaign totals |
 | `syn4700 create|sign|status|info|dispute` | Administer legal-document tokens |

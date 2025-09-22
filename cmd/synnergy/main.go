@@ -102,6 +102,14 @@ func main() {
 	mustRegister("NewWallet")
 	mustRegister("Sign")
 	mustRegister("VerifySignature")
+	// Stage 85 grant orchestration operations
+	mustRegister("GrantCreate")
+	mustRegister("GrantAuthorize")
+	mustRegister("GrantRelease")
+	mustRegister("GrantGet")
+	mustRegister("GrantList")
+	mustRegister("GrantAudit")
+	mustRegister("GrantStatus")
 	// Stage 59 content node management
 	mustRegister("RegisterContentNode")
 	mustRegister("UploadContent")

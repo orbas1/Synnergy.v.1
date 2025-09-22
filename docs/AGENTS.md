@@ -1872,26 +1872,26 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] high_availability_test.go
 - [ ] holographic.go
 
-**Stage 85**
-- [ ] holographic_test.go
-- [ ] identity_verification.go
-- [ ] identity_verification_test.go
-- [ ] idwallet_registration.go
-- [ ] idwallet_registration_test.go
-- [ ] indexing_node.go
-- [ ] indexing_node_test.go
-- [ ] internal/README.md
-- [ ] internal/api/api_test.go
-- [ ] internal/api/auth_middleware.go
-- [ ] internal/api/auth_middleware_test.go
-- [ ] internal/api/gateway.go
-- [ ] internal/api/gateway_test.go
-- [ ] internal/api/rate_limiter.go
-- [ ] internal/api/rate_limiter_test.go
-- [ ] internal/auth/audit.go
-- [ ] internal/auth/audit_test.go
-- [ ] internal/auth/rbac.go
-- [ ] internal/auth/rbac_test.go
+**Stage 85** – [x] SYN3800 grant lifecycle elevated with the Grant Orchestrator binding wallet-signed flows to consensus, authority nodes, VM opcodes and the `/grants` console; Stage 73 persistence, refined gas/opcode guides, expanded Go/JS tests and CLI state syncing completed. Vitest `/grants` API/page suites stabilised with deterministic mocks.
+- [x] holographic_test.go
+- [x] identity_verification.go
+- [x] identity_verification_test.go
+- [x] idwallet_registration.go
+- [x] idwallet_registration_test.go
+- [x] indexing_node.go
+- [x] indexing_node_test.go
+- [x] internal/README.md
+- [x] internal/api/api_test.go
+- [x] internal/api/auth_middleware.go
+- [x] internal/api/auth_middleware_test.go
+- [x] internal/api/gateway.go
+- [x] internal/api/gateway_test.go
+- [x] internal/api/rate_limiter.go
+- [x] internal/api/rate_limiter_test.go
+- [x] internal/auth/audit.go
+- [x] internal/auth/audit_test.go
+- [x] internal/auth/rbac.go
+- [x] internal/auth/rbac_test.go
 
 **Stage 86**
 - [ ] internal/config/config.go

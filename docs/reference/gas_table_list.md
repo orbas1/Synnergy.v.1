@@ -90,7 +90,7 @@
 | `ConvertToPrivate` | `1` |
 | `Count` | `1` |
 | `CreateDAO` | `25` |
-| `CreateGrant` | `1` |
+| `CreateGrant` | `420` |
 | `CreateItem` | `1` |
 | `CreateLicense` | `1` |
 | `CreateListing` | `800` |
@@ -186,7 +186,7 @@
 | `GetDeal` | `100` |
 | `GetDebt` | `1` |
 | `GetDocument` | `1` |
-| `GetGrant` | `1` |
+| `GetGrant` | `60` |
 | `GetID` | `1` |
 | `GetItem` | `1` |
 | `GetListing` | `100` |
@@ -203,8 +203,16 @@
 | `GetTransfer` | `1` |
 | `Get` | `1` |
 | `GrantAccess` | `1` |
+| `GrantAudit` | `110` |
+| `GrantAuthorize` | `180` |
 | `GrantRole` | `100` |
 | `Grant` | `1` |
+| `GrantRelease` | `520` |
+| `GrantStatus` | `70` |
+| `GrantToken_Authorize` | `180` |
+| `GrantToken_Revoke` | `360` |
+| `GrantToken_Audit` | `110` |
+| `GrantToken_Status` | `70` |
 | `Handle` | `1` |
 | `HasDrift` | `1` |
 | `HasQuorum` | `1` |
@@ -294,7 +302,7 @@
 | `ListDeals` | `100` |
 | `ListDocuments` | `1` |
 | `ListEvents` | `1` |
-| `ListGrants` | `1` |
+| `ListGrants` | `80` |
 | `ListItems` | `1` |
 | `ListListings` | `100` |
 | `ListMappings` | `1` |

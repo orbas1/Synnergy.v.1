@@ -58,3 +58,15 @@ Synnergy's modular design supports a broad range of enterprise and public-sector
 
 Detailed application scenarios are expanded in the [Use Cases](#use-cases) section.
 
+## Stage 85: Enterprise Grant Lifecycle
+
+Stage 85 elevates the SYN3800 grant subsystem with a dedicated Grant
+Orchestrator that binds the registry, consensus engine, virtual machine opcodes
+and authority node registry. Funding requests now require wallet signatures for
+creation, authorisation and release, authority enrolment is synchronised across
+Stage 73 snapshots, and subscribers receive streamed audit telemetry for every
+disbursement. The `/grants` web console and CLI exercise the same orchestrated
+API, delivering fault tolerance, privacy controls and compliance-grade audit
+trails without sacrificing throughput or interoperability with existing
+modules.
+

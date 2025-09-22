@@ -20,8 +20,10 @@ func TestSyn3800Lifecycle(t *testing.T) {
 	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
 	resetStage73LoadedForTests()
 	grantRegistry = core.NewGrantRegistry()
+	creator, creatorPath := createWalletFile(t, "creator")
 	authorizer, path := createWalletFile(t, "pass")
-	out, err := execCommand("syn3800", "create", "bob", "research", "100", "--authorizer", path+":pass")
+	out, err := execCommand("syn3800", "create", "bob", "research", "100",
+		"--wallet", creatorPath, "--password", "creator", "--authorizer", path+":pass")
 	if err != nil {
 		t.Fatalf("create: %v", err)
 	}
@@ -68,7 +70,7 @@ func TestSyn3800Lifecycle(t *testing.T) {
 		t.Fatalf("expected final disbursement of 60, got %+v", events[len(events)-1])
 	}
 	// use second wallet variable to silence unused warning
-	if second.Address == "" || authorizer.Address == "" {
+	if second.Address == "" || authorizer.Address == "" || creator.Address == "" {
 		t.Fatalf("wallet addresses missing")
 	}
 	statusJSON, err := execCommand("syn3800", "status")
@@ -94,23 +96,25 @@ func TestSyn3800Validation(t *testing.T) {
 	setStage73StatePath(filepath.Join(t.TempDir(), "stage73.json"))
 	resetStage73LoadedForTests()
 	grantRegistry = core.NewGrantRegistry()
-	if _, err := execCommand("syn3800", "create", "", "name", "10"); err == nil {
+	_, creatorPath := createWalletFile(t, "pw")
+	if _, err := execCommand("syn3800", "create", "", "name", "10", "--wallet", creatorPath, "--password", "pw"); err == nil {
 		t.Fatal("expected error for missing beneficiary")
 	} else if !strings.Contains(err.Error(), "beneficiary") {
 		t.Fatalf("unexpected beneficiary error: %v", err)
 	}
-	if _, err := execCommand("syn3800", "create", "bob", "", "10"); err == nil {
+	if _, err := execCommand("syn3800", "create", "bob", "", "10", "--wallet", creatorPath, "--password", "pw"); err == nil {
 		t.Fatal("expected error for missing name")
 	} else if !strings.Contains(err.Error(), "name required") {
 		t.Fatalf("unexpected name error: %v", err)
 	}
-	if _, err := execCommand("syn3800", "create", "bob", "research", "0"); err == nil {
+	if _, err := execCommand("syn3800", "create", "bob", "research", "0", "--wallet", creatorPath, "--password", "pw"); err == nil {
 		t.Fatal("expected error for zero amount")
 	} else if !strings.Contains(err.Error(), "invalid amount") {
 		t.Fatalf("unexpected amount error: %v", err)
 	}
 	_, path := createWalletFile(t, "pass")
-	if _, err := execCommand("syn3800", "create", "alice", "grant", "50", "--authorizer", path+":pass"); err != nil {
+	if _, err := execCommand("syn3800", "create", "alice", "grant", "50",
+		"--wallet", creatorPath, "--password", "pw", "--authorizer", path+":pass"); err != nil {
 		t.Fatalf("create valid: %v", err)
 	}
 	if _, err := execCommand("syn3800", "release", "1", "10", "--wallet", path, "--password", "wrong"); err == nil {

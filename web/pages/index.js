@@ -61,6 +61,9 @@ export default function Home() {
       <p>
         <a href="/regnode">Regulatory node console</a>
       </p>
+      <p>
+        <a href="/grants">Grant lifecycle console</a>
+      </p>
       <select value={selected} onChange={(e) => setSelected(e.target.value)}>
         <option value="">-- select command --</option>
         {commands.map((c) => (

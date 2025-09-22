@@ -2387,10 +2387,21 @@ Operations related to government grant tokens.
 |---|---|
 | `InitGrantEngine` | `800` |
 | `GrantEngine` | `200` |
-| `GrantToken_Create` | `500` |
-| `GrantToken_Disburse` | `500` |
+| `GrantToken_Create` | `420` |
+| `GrantToken_Disburse` | `520` |
+| `GrantToken_Authorize` | `180` |
+| `GrantToken_Revoke` | `360` |
+| `GrantToken_Audit` | `110` |
+| `GrantToken_Status` | `70` |
 | `GrantToken_Info` | `100` |
 | `GrantToken_List` | `100` |
+
+Stage 85 introduces explicit opcodes for wallet authorisation, revocation,
+status queries and audit retrieval. The Grant Orchestrator registers these
+handlers with the VM so smart contracts and off-chain automation can invoke the
+same wallet-signed workflows exposed via the CLI and web console. Each action
+now carries a defined gas cost so enterprise deployments can model the total
+expense of multi-signer grant programmes before executing them on-chain.
 | `InitSYN10` | `800` |
 | `SYN10` | `200` |
 | `SYN10_UpdateRate` | `100` |

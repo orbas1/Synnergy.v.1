@@ -41,6 +41,58 @@ func NewWallet() (*Wallet, error) {
 	return &Wallet{PrivateKey: pk, Address: addr}, nil
 }
 
+// AddressFromPublicKey derives the wallet address from the provided ECDSA public key.
+// The derivation mirrors NewWallet so addresses can be recomputed deterministically
+// when verifying digital signatures.
+func AddressFromPublicKey(pub *ecdsa.PublicKey) (string, error) {
+	if pub == nil || pub.X == nil || pub.Y == nil {
+		return "", errors.New("invalid public key")
+	}
+	xBytes := pub.X.Bytes()
+	yBytes := pub.Y.Bytes()
+	payload := append(append([]byte{0x04}, xBytes...), yBytes...)
+	hash := sha256.Sum256(payload)
+	return hex.EncodeToString(hash[:20]), nil
+}
+
+// SignMessage signs the provided message using the wallet private key. Messages are hashed
+// with SHA-256 so callers can provide arbitrary payload sizes without weakening signatures.
+func (w *Wallet) SignMessage(msg []byte) ([]byte, error) {
+	if w == nil || w.PrivateKey == nil {
+		return nil, errors.New("wallet not initialised")
+	}
+	if len(msg) == 0 {
+		return nil, errors.New("message required")
+	}
+	digest := sha256.Sum256(msg)
+	r, s, err := ecdsa.Sign(rand.Reader, w.PrivateKey, digest[:])
+	if err != nil {
+		return nil, err
+	}
+	rb := r.Bytes()
+	sb := s.Bytes()
+	sig := make([]byte, len(rb)+len(sb))
+	copy(sig, rb)
+	copy(sig[len(rb):], sb)
+	return sig, nil
+}
+
+// VerifyMessageSignature checks the signature produced by SignMessage using the supplied
+// public key. The message is hashed with SHA-256 to match SignMessage semantics.
+func VerifyMessageSignature(msg []byte, sig []byte, pub *ecdsa.PublicKey) bool {
+	if pub == nil || len(sig) == 0 || len(msg) == 0 {
+		return false
+	}
+	digest := sha256.Sum256(msg)
+	half := len(sig) / 2
+	if half == 0 {
+		return false
+	}
+	r := new(big.Int).SetBytes(sig[:half])
+	s := new(big.Int).SetBytes(sig[half:])
+	return ecdsa.Verify(pub, digest[:], r, s)
+}
+
 // Sign signs the transaction hash with the wallet's private key.
 func (w *Wallet) Sign(tx *Transaction) ([]byte, error) {
 	h, err := hex.DecodeString(tx.Hash())
