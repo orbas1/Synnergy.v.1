@@ -66,6 +66,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Storage marketplace & analytics dashboards** – TypeScript modules exposing CLI and GUI entrypoints for decentralised storage and system metrics.
 - **Infrastructure-as-code** – Dockerfiles, Helm charts, Terraform and Ansible playbooks for reproducible environments.
 - **Strong encryption and signatures** – all transactions and messages are secured using well‑vetted cryptography with digital signatures.
+- **Stage 75 enterprise runtime** – deterministic VM gas enforcement with execution traces, sandbox telemetry for fault-tolerant VM pools, wallets with deterministic seeds and shared-secret support, and event-driven cross-chain registries/bridges that stream lifecycle updates to CLI and web dashboards.
 - **Permissioned privacy** – fine‑grained access controls enable private channels and selective data disclosure.
 - **Customisable governance** – token‑weighted voting and DAO modules allow on‑chain policy definition.
 - **Horizontal scalability** – sharding-ready architecture and multi‑node orchestration for high throughput networks.
@@ -100,6 +101,17 @@ pkg/          Reusable libraries and experimental modules
    - Wallet, watchtower and warfare nodes (`core.NewWallet`, `core.NewWatchtowerNode`, `core.NewWarfareNode`)
    - Token constructors in `internal/tokens` (`tokens.NewSYN223Token`, etc.)
 7. Finally, invoke `cli.Execute()` to dispatch Cobra commands.
+
+Enterprise deployments rely on the defensive modules initialised above:
+
+- **Warfare node telemetry** – `core.NewWarfareNode` now issues per-commander key pairs, enforces signed command envelopes with
+  replay protection, and streams logistics/tactical events to both CLI (`synnergy warfare events`) and the web console.
+- **Watchtower observability** – `core.NewWatchtowerNode` emits start/stop/fork alerts alongside periodic metric snapshots via
+  `Watchtower.SubscribeEvents`, enabling dashboards and the `synnergy monitoring` suite to visualise consensus health in real
+  time.
+- **Zero-trust data channels** – `core.NewZeroTrustEngine` orchestrates encrypted channels with participant governance,
+  key rotation and retention controls. CLI helpers (`synnergy zero-trust authorize`, `rotate`, `events`) expose the
+  same lifecycle flows used by automation scripts and the browser UI.
 
 ## Getting Started
 

@@ -60,6 +60,8 @@ export default function Home() {
       <p>Select a command, fill in optional flags, and run.</p>
       <p>
         <a href="/regnode">Regulatory node console</a>
+        {" | "}
+        <a href="/warfare">Warfare command center</a>
       </p>
       <select value={selected} onChange={(e) => setSelected(e.target.value)}>
         <option value="">-- select command --</option>

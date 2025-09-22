@@ -94,7 +94,7 @@ The `MiningNode` simulates proof-of-work mining. It can start or stop hashing, s
 
 ## Warfare Node
 
-`WarfareNode` provides military-focused extensions such as secure command execution and logistics tracking.
+`WarfareNode` provides military-focused extensions such as signed command execution, logistics/tactical telemetry and commander governance.
 
 **Key methods**
 - `SecureCommand` – validate privileged commands.
