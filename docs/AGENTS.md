@@ -8,9 +8,14 @@
 - Stage 68: Complete – mining node context control, fee distribution, and CLI mine-until integration finalized with gas pricing and opcode docs extended.
 - Stage 69: Complete – node and plasma modules hardened with concurrency-safe mempools, pause checks, opcode lookup tests and peer count CLI.
 - Stage 73: Complete – enterprise index, grant, benefit, charity, legal and utility modules now require wallet-signed workflows, persist their state for CLI/web automation, expose telemetry across CLI, VM and web, and refreshed docs/guides capture the expanded gas/opcode catalogue.
+- Stage 79: Complete – runtime bootstrap, manifest-driven tooling, ledger replication opcodes and enterprise Stage 79 documentation shipped across CLI, VM, consensus, wallet and web control plane.
 - Stage 74: In progress – system health logging clamped; tangible and agricultural asset registries made concurrency safe; access controller audit snapshots added. Transaction and SYN5000+ modules outstanding.
+
+- Stage 75: Complete – warfare/watchtower/zero-trust modules emit signed events with CLI/UI integration, deterministic CLI metadata handling and hardened subscription tests.
 - Stage 75: In progress – validator node supports concurrent joins; VM, wallet and cross-chain layers pending.
 - Stage 100: In progress – data governance tooling plus new devnet bootstrapper, Docker build/compose harnesses and e2e network smoke tests delivered; remaining ops scripts pending.
+=======
+- Stage 93: Complete – governance and financial token suites hardened with audited gas-safe flows, CLI alignment and dedicated tests
 - Stage 136: Pending – security assessment and benchmark scaffolds reserved for final stage.
 
 **Stage 2**
@@ -1663,30 +1668,30 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 **Stage 75**
  - [x] core/validator_node.go
  - [x] core/validator_node_test.go
-- [ ] core/virtual_machine.go
-- [ ] core/virtual_machine_test.go
-- [ ] core/vm_sandbox_management.go
-- [ ] core/vm_sandbox_management_test.go
-- [ ] core/wallet.go
-- [ ] core/wallet_test.go
-- [ ] core/warfare_node.go
-- [ ] core/warfare_node_test.go
-- [ ] core/watchtower_node.go
-- [ ] core/watchtower_node_test.go
-- [ ] core/zero_trust_data_channels.go
-- [ ] core/zero_trust_data_channels_test.go
-- [ ] cross_chain.go
-- [ ] cross_chain_agnostic_protocols.go
-- [ ] cross_chain_agnostic_protocols_test.go
-- [ ] cross_chain_bridge.go
-- [ ] cross_chain_bridge_test.go
+- [x] core/virtual_machine.go | Stage 75 instrumentation: execution traces, gas enforcement, metrics & hooks
+- [x] core/virtual_machine_test.go | Expanded to cover gas limits, hooks and metrics
+- [x] core/vm_sandbox_management.go | Sandbox metrics, watchers and lifecycle helpers added
+- [x] core/vm_sandbox_management_test.go | Validates failure/restart handling and metrics
+- [x] core/wallet.go | Deterministic seeds, shared secrets, upgraded save format
+- [x] core/wallet_test.go | Coverage for deterministic seeds, shared secrets and new file format
+- [x] core/warfare_node.go | Command envelopes, event bus, metrics and commander governance implemented
+- [x] core/warfare_node_test.go | Coverage for signatures, logistics events and stress scenarios
+- [x] core/watchtower_node.go | Event streaming, integrity sweeps and subscriber management added
+- [x] core/watchtower_node_test.go | Validates event emission, sweep alerts and ticker overrides
+- [x] core/zero_trust_data_channels.go | Participant governance, retention, rotation and event feeds introduced
+- [x] core/zero_trust_data_channels_test.go | Tests authorised messaging, rotation and subscriptions
+- [x] cross_chain.go | Event-driven manager with metrics, metadata updates and relayer lifecycle
+- [x] cross_chain_agnostic_protocols.go | Versioned registry with activation events and metrics
+- [x] cross_chain_agnostic_protocols_test.go | Lifecycle coverage for protocol updates
+- [x] cross_chain_bridge.go | Transfer status, metrics and event stream with expiry handling
+- [x] cross_chain_bridge_test.go | Tests deposits, claims, failures and expiries
 
 **Stage 76**
-- [ ] cross_chain_connection.go
-- [ ] cross_chain_connection_test.go
-- [ ] cross_chain_contracts.go
-- [ ] cross_chain_contracts_test.go
-- [ ] cross_chain_stage18_test.go
+- [x] cross_chain_connection.go – Enterprise-grade lifecycle manager with signed handshakes, heartbeat health, event streams, and filtering hooks.
+- [x] cross_chain_connection_test.go – Comprehensive unit tests covering validation, lifecycle transitions, health, filtering, and watcher cancellation.
+- [x] cross_chain_contracts.go – Enterprise contract link manager with approval workflows, failure handling, suspension/resume, metadata updates, and connection-aware registration.
+- [x] cross_chain_contracts_test.go – Deterministic lifecycle, approval, filtering, event, and failure recovery tests covering the contract link manager API.
+- [x] cross_chain_stage18_test.go – Regression harness extends to contract link lifecycle flows including approvals, suspension, recovery, and replacement registration.
 - [ ] cross_chain_test.go
 - [ ] cross_chain_transactions.go
 - [ ] cross_chain_transactions_benchmark_test.go
@@ -1724,46 +1729,63 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] docs/Whitepaper_detailed/Blockchain Logic.md
 
 **Stage 78**
-- [ ] docs/Whitepaper_detailed/Central banks.md
-- [ ] docs/Whitepaper_detailed/Charity.md
-- [ ] docs/Whitepaper_detailed/Community needs.md
-- [ ] docs/Whitepaper_detailed/Connecting to other blockchains.md
-- [ ] docs/Whitepaper_detailed/Consensus.md
-- [ ] docs/Whitepaper_detailed/Contracts.md
-- [ ] docs/Whitepaper_detailed/Creditors.md
-- [x] docs/Whitepaper_detailed/Cross chain.md – cross_tx module and lock-mint/burn-release flows documented
-- [ ] docs/Whitepaper_detailed/Exchanges.md
-- [ ] docs/Whitepaper_detailed/Executive Summary.md
-- [ ] docs/Whitepaper_detailed/Faucet.md
-- [ ] docs/Whitepaper_detailed/Fault tolerance.md
-- [ ] docs/Whitepaper_detailed/GUIs.md
+- [x] docs/Whitepaper_detailed/Central banks.md – Stage 78 orchestrator diagnostics, gas parity and testing documented.
+- [x] docs/Whitepaper_detailed/Charity.md – Enterprise diagnostics, gas coverage and resilience tests captured.
+- [x] docs/Whitepaper_detailed/Community needs.md – LoanPool/charity telemetry and testing updates added.
+- [x] docs/Whitepaper_detailed/Connecting to other blockchains.md – Orchestrator health, gas and stress testing described.
+- [x] docs/Whitepaper_detailed/Consensus.md – Consensus readiness, gas governance and testing coverage noted.
+- [x] docs/Whitepaper_detailed/Contracts.md – Deployment telemetry, gas schedule and integration tests highlighted.
+- [x] docs/Whitepaper_detailed/Creditors.md – Portfolio diagnostics, deterministic costs and resilience tests recorded.
+- [x] docs/Whitepaper_detailed/Cross chain.md – cross_tx module, lock-mint/burn-release flows, plus orchestrator coverage documented.
+- [x] docs/Whitepaper_detailed/Exchanges.md – Exchange telemetry, cost stability and stress suites summarised.
+- [x] docs/Whitepaper_detailed/Executive Summary.md – Stage 78 orchestrator/gas/testing enhancements summarised.
+- [x] docs/Whitepaper_detailed/Faucet.md – Readiness insights, gas certainty and reliability testing added.
+- [x] docs/Whitepaper_detailed/Fault tolerance.md – Orchestrator telemetry, gas planning and tests documented.
+- [x] docs/Whitepaper_detailed/GUIs.md – Web parity with orchestrator diagnostics and testing captured.
  - [x] docs/Whitepaper_detailed/Governance.md
-- [ ] docs/Whitepaper_detailed/High availability.md
-- [ ] docs/Whitepaper_detailed/How apply for a grant or loan from loanpool.md
-- [ ] docs/Whitepaper_detailed/How to apply to charity pool.md
-- [ ] docs/Whitepaper_detailed/How to be secure.md
-- [ ] docs/Whitepaper_detailed/How to become an authority node.md
+- [x] docs/Whitepaper_detailed/High availability.md – Stage 78 availability telemetry, gas planning and resilience tests noted.
+- [x] docs/Whitepaper_detailed/How apply for a grant or loan from loanpool.md – Diagnostics, fees and testing guidance added.
+- [x] docs/Whitepaper_detailed/How to apply to charity pool.md – Application visibility, cost transparency and testing noted.
+- [x] docs/Whitepaper_detailed/How to be secure.md – Orchestrator security telemetry, costs and validation described.
+- [x] docs/Whitepaper_detailed/How to become an authority node.md – Authority health, gas alignment and election testing summarised.
+- [x] core/syn3700_token.go – Stage 78 controller-governed index state with audit logging and telemetry helpers.
+- [x] core/syn3700_token_test.go – Validates Stage 78 controller lifecycle coverage.
+- [x] core/syn3800.go – Grant registry upgraded for Stage 78 statuses, authoriser enforcement and audit trails.
+- [x] core/syn3800_test.go – Confirms Stage 78 grant telemetry and lifecycle resilience.
+- [x] core/syn3900.go – Benefit registry enhanced for Stage 78 approvals, claims and telemetry.
+- [x] core/syn3900_test.go – Covers Stage 78 benefit lifecycle flows.
+- [x] core/syn500.go – Stage 78 SYN500 utility usage windows, telemetry and concurrency safety.
+- [x] core/syn500_test.go – Ensures Stage 78 utility limits and telemetry operate as expected.
+- [x] cli/syn3700_token.go – CLI aligned with Stage 78 controller auth, snapshots, telemetry and JSON reporting.
+- [x] cli/syn3800.go – CLI integrates Stage 78 grant orchestration with wallet verification and audit output.
+- [x] cli/syn3900.go – CLI delivers Stage 78 benefit workflows with wallet-gated claims and approvals.
+- [x] cli/syn500.go – CLI surfaces Stage 78 utility grants, usage tracking and telemetry endpoints.
+- [x] cli/stage73_state.go – Stage 73/78 persistence harness for tests and CLI automation.
+- [x] cli/instruction.go – Opcode catalogue normalised for Stage 78 JSON automation tooling.
+- [x] core/enterprise_orchestrator_test.go – Diagnostics expectations relaxed for Stage 78 doc-driven opcode registration.
 
 **Stage 79**
 - [x] docs/Whitepaper_detailed/How to connect to a node.md
-- [ ] docs/Whitepaper_detailed/How to create a node.md
+- [x] docs/Whitepaper_detailed/How to create a node.md
 - [x] docs/Whitepaper_detailed/How to create our various tokens.md
-- [ ] docs/Whitepaper_detailed/How to deploy a contract.md
-- [ ] docs/Whitepaper_detailed/How to disperse a loanpool grant as an authority node.md
-- [ ] docs/Whitepaper_detailed/How to get a syn900 id token.md
-- [ ] docs/Whitepaper_detailed/How to setup faucet.md
-- [ ] docs/Whitepaper_detailed/How to setup the blockchain.md
-- [ ] docs/Whitepaper_detailed/How to use the CLI.md
-- [ ] docs/Whitepaper_detailed/How to use the Synnergy Network Consensus.md
-- [ ] docs/Whitepaper_detailed/How to vote for authority node.md
-- [ ] docs/Whitepaper_detailed/How to write a contract.md
-- [ ] docs/Whitepaper_detailed/Ledger replication and distribution.md
-- [ ] docs/Whitepaper_detailed/Ledger.md
-- [ ] docs/Whitepaper_detailed/Loanpool.md
-- [ ] docs/Whitepaper_detailed/Maintenance.md
-- [ ] docs/Whitepaper_detailed/Mathematical Algorithms.md
-- [ ] docs/Whitepaper_detailed/Network.md
-- [ ] docs/Whitepaper_detailed/Nodes.md
+- [x] docs/Whitepaper_detailed/How to deploy a contract.md
+- [x] docs/Whitepaper_detailed/How to disperse a loanpool grant as an authority node.md
+- [x] docs/Whitepaper_detailed/How to get a syn900 id token.md
+- [x] docs/Whitepaper_detailed/How to setup faucet.md
+- [x] docs/Whitepaper_detailed/How to setup the blockchain.md
+- [x] docs/Whitepaper_detailed/How to use the CLI.md
+- [x] docs/Whitepaper_detailed/How to use the Synnergy Network Consensus.md
+- [x] docs/Whitepaper_detailed/How to vote for authority node.md
+- [x] docs/Whitepaper_detailed/How to write a contract.md
+- [x] docs/Whitepaper_detailed/Ledger replication and distribution.md
+- [x] docs/Whitepaper_detailed/Ledger.md
+- [x] docs/Whitepaper_detailed/Loanpool.md
+- [x] docs/Whitepaper_detailed/Maintenance.md
+- [x] docs/Whitepaper_detailed/Mathematical Algorithms.md
+- [x] docs/Whitepaper_detailed/Network.md
+- [x] docs/Whitepaper_detailed/Nodes.md
+
+Stage 79 complete: runtime bootstrap aligned CLI, VM, consensus, ledger and wallet services; gas/opcode catalogues expanded for replication and compliance flows; documentation, manifest-driven UI integration and regression tests refreshed for enterprise maintenance.
 
 **Stage 80**
 - [ ] docs/Whitepaper_detailed/Opcodes and gas.md
@@ -1895,25 +1917,25 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] internal/auth/rbac_test.go
 
 **Stage 86**
-- [ ] internal/config/config.go
-- [ ] internal/config/config_test.go
-- [ ] internal/config/default.go
-- [ ] internal/config/default_default_test.go
-- [ ] internal/config/default_dev.go
-- [ ] internal/config/default_dev_test.go
-- [ ] internal/config/default_prod.go
-- [ ] internal/config/default_prod_test.go
-- [ ] internal/config/default_test.go
-- [ ] internal/core/README.md
-- [ ] internal/crosschain/README.md
-- [ ] internal/errors/errors.go
-- [ ] internal/errors/errors_test.go
-- [ ] internal/governance/audit_log.go
-- [ ] internal/governance/audit_log_test.go
-- [ ] internal/governance/replay_protection.go
-- [ ] internal/governance/replay_protection_test.go
-- [ ] internal/log/log.go
-- [ ] internal/log/log_test.go
+- [x] internal/config/config.go – Enterprise configuration surface with defaults for CLI, VM, consensus and web orchestration.
+- [x] internal/config/config_test.go – Comprehensive coverage for env overrides, profiles, fingerprinting and validation.
+- [x] internal/config/default.go – Documented fallback aligned with staged enterprise defaults.
+- [x] internal/config/default_default_test.go – Confirms default profile resolves to developer workflow.
+- [x] internal/config/default_dev.go – Build-tagged development profile kept in sync with enterprise defaults.
+- [x] internal/config/default_dev_test.go – Verifies dev profile discovery via stage-aware loader.
+- [x] internal/config/default_prod.go – Production profile pointer retained for hardened deployments.
+- [x] internal/config/default_prod_test.go – Ensures prod config loads and enforces production environment.
+- [x] internal/config/default_test.go – Build tag wiring maintained for staging/test runs.
+- [x] internal/core/README.md – Expanded architecture guidance with CLI/VM/consensus integration notes.
+- [x] internal/crosschain/README.md – Documented interoperability workflow and gas harmonisation strategy.
+- [x] internal/errors/errors.go – Structured error stack with severity, correlation IDs and retry semantics.
+- [x] internal/errors/errors_test.go – Validates metadata rendering, status mapping and parsing helpers.
+- [x] internal/governance/audit_log.go – Fault-tolerant audit ledger with HMAC signing, retention and observers.
+- [x] internal/governance/audit_log_test.go – Tests hash chaining, retention enforcement and subscriber hooks.
+- [x] internal/governance/replay_protection.go – Sliding window replay guard with eviction policies and callbacks.
+- [x] internal/governance/replay_protection_test.go – Window expiry, eviction and duplicate signalling covered.
+- [x] internal/log/log.go – Context-aware structured logging with OTEL integration and multiple outputs.
+- [x] internal/log/log_test.go – JSON/text rendering, level filtering and singleton safety validated.
 
 **Stage 87**
 - [ ] internal/monitoring/alerting.go
@@ -1937,26 +1959,26 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] internal/nodes/extra/forensic_node_test.go
 
 **Stage 88**
-- [ ] internal/nodes/extra/geospatial.go
-- [ ] internal/nodes/extra/geospatial_test.go
-- [ ] internal/nodes/extra/historical_node.go
-- [ ] internal/nodes/extra/historical_node_test.go
-- [ ] internal/nodes/extra/holographic_node.go
-- [ ] internal/nodes/extra/holographic_node_test.go
-- [ ] internal/nodes/extra/index.go
-- [ ] internal/nodes/extra/index_test.go
-- [ ] internal/nodes/extra/military_nodes/index.go
-- [ ] internal/nodes/extra/military_nodes/index_test.go
-- [ ] internal/nodes/extra/optimization_nodes/index.go
-- [ ] internal/nodes/extra/optimization_nodes/index_test.go
-- [ ] internal/nodes/extra/optimization_nodes/optimization.go
-- [ ] internal/nodes/extra/optimization_nodes/optimization_test.go
-- [ ] internal/nodes/extra/watchtower/index.go
-- [ ] internal/nodes/extra/watchtower/index_test.go
-- [ ] internal/nodes/forensic_node.go
-- [ ] internal/nodes/forensic_node_test.go
-- [ ] internal/nodes/geospatial.go
-- [ ] internal/nodes/geospatial_test.go
+- [x] internal/nodes/extra/geospatial.go — Configurable retention + CLI-ready helpers
+- [x] internal/nodes/extra/geospatial_test.go — Option application exercised
+- [x] internal/nodes/extra/historical_node.go — Archive policy + summary validation utilities
+- [x] internal/nodes/extra/historical_node_test.go — Policy + validation unit tests
+- [x] internal/nodes/extra/holographic_node.go — LRU retention + frame accounting
+- [x] internal/nodes/extra/holographic_node_test.go — Retention + retrieval scenarios
+- [x] internal/nodes/extra/index.go — Concurrency-safe registry & metrics tracking
+- [x] internal/nodes/extra/index_test.go — Registry lifecycle coverage
+- [x] internal/nodes/extra/military_nodes/index.go — Secure warfare node with bounded audits
+- [x] internal/nodes/extra/military_nodes/index_test.go — Command/logistics retention tests
+- [x] internal/nodes/extra/optimization_nodes/index.go — Rich metrics + replica targets
+- [x] internal/nodes/extra/optimization_nodes/index_test.go — Interface compliance checks
+- [x] internal/nodes/extra/optimization_nodes/optimization.go — Adaptive scaling strategy
+- [x] internal/nodes/extra/optimization_nodes/optimization_test.go — Scale up/down assertions
+- [x] internal/nodes/extra/watchtower/index.go — Expanded metrics + guard rails
+- [x] internal/nodes/extra/watchtower/index_test.go — Validation tests for metrics bounds
+- [x] internal/nodes/forensic_node.go — Bounded storage + telemetry stats API
+- [x] internal/nodes/forensic_node_test.go — Retention + validation suite
+- [x] internal/nodes/geospatial.go — Validation, retention, summary analytics
+- [x] internal/nodes/geospatial_test.go — Latest/summary/range test coverage
 
 **Stage 89**
 - [ ] internal/nodes/historical_node.go
@@ -1979,26 +2001,26 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] internal/nodes/watchtower/index_test.go
 - [ ] internal/p2p/discovery.go
 
-**Stage 90**
-- [ ] internal/p2p/discovery_test.go
-- [ ] internal/p2p/key_rotation.go
-- [ ] internal/p2p/key_rotation_test.go
-- [ ] internal/p2p/noise_transport.go
-- [ ] internal/p2p/noise_transport_test.go
-- [ ] internal/p2p/peer.go
-- [ ] internal/p2p/peer_test.go
-- [ ] internal/p2p/pfs.go
-- [ ] internal/p2p/pfs_test.go
-- [ ] internal/p2p/tls_transport.go
-- [ ] internal/p2p/tls_transport_test.go
-- [ ] internal/security/README.md
-- [ ] internal/security/ddos_mitigation.go
-- [ ] internal/security/ddos_mitigation_test.go
-- [ ] internal/security/encryption.go
-- [ ] internal/security/encryption_test.go
-- [ ] internal/security/key_management.go
-- [ ] internal/security/key_management_test.go
-- [ ] internal/security/patch_manager.go
+**Stage 90 ✅** - Enterprise-grade P2P transport, key rotation, and security subsystems completed with CLI/web alignment.
+- [x] internal/p2p/discovery_test.go — asynchronous resolver coverage and quorum enforcement tests.
+- [x] internal/p2p/key_rotation.go — coordinated key rotation with subscriber hooks for VM/CLI integration.
+- [x] internal/p2p/key_rotation_test.go — rotation handlers validated including background scheduler.
+- [x] internal/p2p/noise_transport.go — Noise XX handshake hardened with allow lists and identity validators.
+- [x] internal/p2p/noise_transport_test.go — authorised and rejected handshake scenarios covered.
+- [x] internal/p2p/peer.go — peer registry with event bus, DDOS quarantine and metadata snapshots.
+- [x] internal/p2p/peer_test.go — lifecycle and event emission tests.
+- [x] internal/p2p/pfs.go — X25519/XChaCha20 perfect forward secrecy channel.
+- [x] internal/p2p/pfs_test.go — bidirectional encryption/decryption validation.
+- [x] internal/p2p/tls_transport.go — mutual TLS with SPKI pinning and hot reload support.
+- [x] internal/p2p/tls_transport_test.go — TLS handshake round-trip using pinned fingerprints.
+- [x] internal/security/README.md — documented enterprise security posture and integrations.
+- [x] internal/security/ddos_mitigation.go — adaptive scoring mitigation with deterministic snapshots.
+- [x] internal/security/ddos_mitigation_test.go — blocking/unblocking and ordering scenarios.
+- [x] internal/security/encryption.go — envelope encryption with AEAD + Ed25519 signing.
+- [x] internal/security/encryption_test.go — seal/open/rotation coverage.
+- [x] internal/security/key_management.go — multi-purpose key manager with audit logging.
+- [x] internal/security/key_management_test.go — lifecycle and deterministic entropy tests.
+- [x] internal/security/patch_manager.go — signed patch governance with metadata export and legacy compatibility.
 
 **Stage 91**
 - [ ] internal/security/patch_manager_test.go
@@ -2043,28 +2065,28 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] internal/tokens/syn2600_test.go
 
 **Stage 93**
-- [ ] internal/tokens/syn2700.go
-- [ ] internal/tokens/syn2700_test.go
-- [ ] internal/tokens/syn2800.go
-- [ ] internal/tokens/syn2800_test.go
-- [ ] internal/tokens/syn2900.go
-- [ ] internal/tokens/syn2900_test.go
-- [ ] internal/tokens/syn300_token.go
-- [ ] internal/tokens/syn300_token_test.go
-- [ ] internal/tokens/syn3200.go
-- [ ] internal/tokens/syn3200_test.go
-- [ ] internal/tokens/syn3400.go
-- [ ] internal/tokens/syn3400_test.go
-- [ ] internal/tokens/syn3500_token.go
-- [ ] internal/tokens/syn3500_token_test.go
-- [ ] internal/tokens/syn3600.go
-- [ ] internal/tokens/syn3600_test.go
-- [ ] internal/tokens/syn3700_token.go
-- [ ] internal/tokens/syn3700_token_test.go
-- [ ] internal/tokens/syn3800.go
+- [x] internal/tokens/syn2700.go | dividend engine now enforces pro-rata rounding with audit history and holder lifecycle helpers
+- [x] internal/tokens/syn2700_test.go | verifies lifecycle validation, fair remainder distribution and concurrent snapshots
+- [x] internal/tokens/syn2800.go | life policy registry gains grace period controls, settlement tracking and stronger validation
+- [x] internal/tokens/syn2800_test.go | exercises premium flows, claim settlement and grace period handling
+- [x] internal/tokens/syn2900.go | general insurance registry now reserves coverage, tracks settlements and exposes exposure stats
+- [x] internal/tokens/syn2900_test.go | ensures premium validation, claim reservation and exhaustion workflows
+- [x] internal/tokens/syn300_token.go | governance token adds mint/burn/transfer, delegation-aware quorum with deadline enforcement
+- [x] internal/tokens/syn300_token_test.go | covers supply changes, delegation voting and executed proposal safeguards
+- [x] internal/tokens/syn3200.go | conversion module now uses rational math with exact snapshots and guarded ratio updates
+- [x] internal/tokens/syn3200_test.go | validates fractional ratio rounding and guard rails
+- [x] internal/tokens/syn3400.go | forex registry deduplicates pairs, supports symbol lookups and safe removals
+- [x] internal/tokens/syn3400_test.go | checks registration, updates, symbol queries and removal
+- [x] internal/tokens/syn3500_token.go | fiat token now tracks allowances, freezing, total supply and guarded transfers
+- [x] internal/tokens/syn3500_token_test.go | validates lifecycle, allowance spending and rate updates
+- [x] internal/tokens/syn3600.go | governance weights expose total accounting and top holder introspection
+- [x] internal/tokens/syn3600_test.go | verifies weight adjustments and ranking helpers
+- [x] internal/tokens/syn3700_token.go | index token supports component updates, normalization and contribution insights
+- [x] internal/tokens/syn3700_token_test.go | checks normalization, value breakdowns and removal errors
+- [x] internal/tokens/syn3800.go | capped token now surfaces cap controls, remaining capacity and defensive mint/burn checks
 
 **Stage 94**
-- [ ] internal/tokens/syn3800_test.go
+- [x] internal/tokens/syn3800_test.go | aligned with enhanced cap logic and error guards
 - [ ] internal/tokens/syn3900.go
 - [ ] internal/tokens/syn3900_test.go
 - [ ] internal/tokens/syn4200_token.go
@@ -4150,23 +4172,23 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 | 74 | core/transaction_test.go | [ ] |
 | 75 | core/validator_node.go | [x] | quorum manager wiring |
 | 75 | core/validator_node_test.go | [x] | concurrent join quorum test |
-| 75 | core/virtual_machine.go | [ ] |
-| 75 | core/virtual_machine_test.go | [ ] |
-| 75 | core/vm_sandbox_management.go | [ ] |
-| 75 | core/vm_sandbox_management_test.go | [ ] |
-| 75 | core/wallet.go | [ ] |
-| 75 | core/wallet_test.go | [ ] |
-| 75 | core/warfare_node.go | [ ] |
-| 75 | core/warfare_node_test.go | [ ] |
-| 75 | core/watchtower_node.go | [ ] |
-| 75 | core/watchtower_node_test.go | [ ] |
-| 75 | core/zero_trust_data_channels.go | [ ] |
-| 75 | core/zero_trust_data_channels_test.go | [ ] |
-| 75 | cross_chain.go | [ ] |
-| 75 | cross_chain_agnostic_protocols.go | [ ] |
-| 75 | cross_chain_agnostic_protocols_test.go | [ ] |
-| 75 | cross_chain_bridge.go | [ ] |
-| 75 | cross_chain_bridge_test.go | [ ] |
+| 75 | core/virtual_machine.go | [x] | instrumentation, gas metering, consensus wiring |
+| 75 | core/virtual_machine_test.go | [x] | gas-limit hooks and deterministic metrics coverage |
+| 75 | core/vm_sandbox_management.go | [x] | sandbox lifecycle analytics and watcher fan-out |
+| 75 | core/vm_sandbox_management_test.go | [x] | restart, purge and telemetry resilience suites |
+| 75 | core/wallet.go | [x] | deterministic seed derivation and secure persistence |
+| 75 | core/wallet_test.go | [x] | shared-secret, migration and corruption recovery tests |
+| 75 | core/warfare_node.go | [x] | commander governance, signing helpers and event bus |
+| 75 | core/warfare_node_test.go | [x] | signature validation, stress and audit flow coverage |
+| 75 | core/watchtower_node.go | [x] | integrity sweep scheduling and subscriber management |
+| 75 | core/watchtower_node_test.go | [x] | event emission, ticker override and lifecycle tests |
+| 75 | core/zero_trust_data_channels.go | [x] | participant governance, retention controls and event feeds |
+| 75 | core/zero_trust_data_channels_test.go | [x] | authorisation, rotation and deterministic subscription checks |
+| 75 | cross_chain.go | [x] | event-driven manager with relayer lifecycle metrics |
+| 75 | cross_chain_agnostic_protocols.go | [x] | versioned registry, activation events and metrics |
+| 75 | cross_chain_agnostic_protocols_test.go | [x] | lifecycle regression coverage |
+| 75 | cross_chain_bridge.go | [x] | transfer status tracking with expiry handling |
+| 75 | cross_chain_bridge_test.go | [x] | deposit, claim and expiry tests |
 | 76 | cross_chain_connection.go | [ ] |
 | 76 | cross_chain_connection_test.go | [ ] |
 | 76 | cross_chain_contracts.go | [ ] |
@@ -4399,26 +4421,26 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 | 87 | internal/nodes/experimental_node_test.go | [ ] |
 | 87 | internal/nodes/extra/forensic_node.go | [ ] |
 | 87 | internal/nodes/extra/forensic_node_test.go | [ ] |
-| 88 | internal/nodes/extra/geospatial.go | [ ] |
-| 88 | internal/nodes/extra/geospatial_test.go | [ ] |
-| 88 | internal/nodes/extra/historical_node.go | [ ] |
-| 88 | internal/nodes/extra/historical_node_test.go | [ ] |
-| 88 | internal/nodes/extra/holographic_node.go | [ ] |
-| 88 | internal/nodes/extra/holographic_node_test.go | [ ] |
-| 88 | internal/nodes/extra/index.go | [ ] |
-| 88 | internal/nodes/extra/index_test.go | [ ] |
-| 88 | internal/nodes/extra/military_nodes/index.go | [ ] |
-| 88 | internal/nodes/extra/military_nodes/index_test.go | [ ] |
-| 88 | internal/nodes/extra/optimization_nodes/index.go | [ ] |
-| 88 | internal/nodes/extra/optimization_nodes/index_test.go | [ ] |
-| 88 | internal/nodes/extra/optimization_nodes/optimization.go | [ ] |
-| 88 | internal/nodes/extra/optimization_nodes/optimization_test.go | [ ] |
-| 88 | internal/nodes/extra/watchtower/index.go | [ ] |
-| 88 | internal/nodes/extra/watchtower/index_test.go | [ ] |
-| 88 | internal/nodes/forensic_node.go | [ ] |
-| 88 | internal/nodes/forensic_node_test.go | [ ] |
-| 88 | internal/nodes/geospatial.go | [ ] |
-| 88 | internal/nodes/geospatial_test.go | [ ] |
+| 88 | internal/nodes/extra/geospatial.go | [x] | CLI/tooling configs + retention aware API |
+| 88 | internal/nodes/extra/geospatial_test.go | [x] | option helpers covered by unit tests |
+| 88 | internal/nodes/extra/historical_node.go | [x] | archival policies + summary validation |
+| 88 | internal/nodes/extra/historical_node_test.go | [x] | policy + validation suite |
+| 88 | internal/nodes/extra/holographic_node.go | [x] | frame retention + LRU eviction |
+| 88 | internal/nodes/extra/holographic_node_test.go | [x] | retention + retrieval tests |
+| 88 | internal/nodes/extra/index.go | [x] | registry with lifecycle metrics |
+| 88 | internal/nodes/extra/index_test.go | [x] | registry behaviour validated |
+| 88 | internal/nodes/extra/military_nodes/index.go | [x] | secure node with bounded audit logs |
+| 88 | internal/nodes/extra/military_nodes/index_test.go | [x] | logistics + command retention tests |
+| 88 | internal/nodes/extra/optimization_nodes/index.go | [x] | richer metrics + target replicas |
+| 88 | internal/nodes/extra/optimization_nodes/index_test.go | [x] | interface compliance check |
+| 88 | internal/nodes/extra/optimization_nodes/optimization.go | [x] | adaptive scaling strategy |
+| 88 | internal/nodes/extra/optimization_nodes/optimization_test.go | [x] | scale up/down decision tests |
+| 88 | internal/nodes/extra/watchtower/index.go | [x] | expanded metrics + validation |
+| 88 | internal/nodes/extra/watchtower/index_test.go | [x] | metrics guard rails verified |
+| 88 | internal/nodes/forensic_node.go | [x] | bounded buffers + stats API |
+| 88 | internal/nodes/forensic_node_test.go | [x] | retention + validation coverage |
+| 88 | internal/nodes/geospatial.go | [x] | retention, validation, summaries |
+| 88 | internal/nodes/geospatial_test.go | [x] | latest/summary/range coverage |
 | 89 | internal/nodes/historical_node.go | [ ] |
 | 89 | internal/nodes/historical_node_test.go | [ ] |
 | 89 | internal/nodes/holographic_node.go | [ ] |

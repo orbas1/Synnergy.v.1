@@ -116,17 +116,30 @@ func TestSYN2900InsuranceRegistry(t *testing.T) {
 
 func TestSYN3400ForexRegistry(t *testing.T) {
 	reg := NewForexRegistry()
-	pair := reg.Register("USD", "EUR", 1.1)
+	pair, err := reg.Register("USD", "EUR", 1.1)
+	if err != nil {
+		t.Fatalf("register: %v", err)
+	}
+	if _, err := reg.Register("USD", "EUR", 1.15); err != nil {
+		t.Fatalf("re-register: %v", err)
+	}
 	if err := reg.UpdateRate(pair.PairID, 1.2); err != nil {
 		t.Fatalf("update rate: %v", err)
 	}
-	got, ok := reg.Get(pair.PairID)
-	if !ok || got.Rate != 1.2 {
-		t.Fatalf("unexpected pair data: %+v", got)
+	got, err := reg.Get(pair.PairID)
+	if err != nil || got.Rate != 1.2 {
+		t.Fatalf("unexpected pair data: %+v err:%v", got, err)
+	}
+	symbol, err := reg.GetBySymbol("USD", "EUR")
+	if err != nil || symbol.Rate != 1.2 {
+		t.Fatalf("unexpected symbol lookup: %+v err:%v", symbol, err)
 	}
 	pairs := reg.List()
 	if len(pairs) != 1 {
 		t.Fatalf("expected 1 pair got %d", len(pairs))
+	}
+	if err := reg.Remove(pair.PairID); err != nil {
+		t.Fatalf("remove pair: %v", err)
 	}
 }
 
@@ -222,7 +235,10 @@ func TestSYN300Token(t *testing.T) {
 		t.Fatalf("unexpected power after revoke %d", pow)
 	}
 	tok.Delegate("bob", "alice")
-	id := tok.CreateProposal("alice", "test")
+	id, err := tok.CreateProposal("alice", "test")
+	if err != nil {
+		t.Fatalf("create proposal: %v", err)
+	}
 	if err := tok.Vote(id, "alice", true); err != nil {
 		t.Fatalf("vote: %v", err)
 	}
@@ -236,7 +252,10 @@ func TestSYN300Token(t *testing.T) {
 	if err != nil || !status.Executed {
 		t.Fatalf("proposal not executed")
 	}
-	id2 := tok.CreateProposal("alice", "second")
+	id2, err := tok.CreateProposal("alice", "second")
+	if err != nil {
+		t.Fatalf("create proposal: %v", err)
+	}
 	if err := tok.Vote(id2, "bob", true); err != nil {
 		t.Fatalf("vote2: %v", err)
 	}

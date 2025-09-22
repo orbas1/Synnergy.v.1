@@ -803,6 +803,12 @@ This catalogue lists exported functions across the repository for quick navigati
 | `core/authority_nodes.go` | `72` | `func (r *AuthorityNodeRegistry) Info(addr string) (*AuthorityNode, error) {` |
 | `core/authority_nodes.go` | `81` | `func (r *AuthorityNodeRegistry) List() []*AuthorityNode {` |
 | `core/authority_nodes.go` | `86` | `func (r *AuthorityNodeRegistry) Deregister(addr string) {` |
+| `core/enterprise_orchestrator.go` | `21` | `func WithGasSchedule(schedule map[string]uint64) EnterpriseOption {` |
+| `core/enterprise_orchestrator.go` | `70` | `func NewEnterpriseOrchestrator(ctx context.Context, opts ...EnterpriseOption) (*EnterpriseOrchestrator, error) {` |
+| `core/enterprise_orchestrator.go` | `124` | `func (o *EnterpriseOrchestrator) Diagnostics(ctx context.Context) EnterpriseDiagnostics {` |
+| `core/enterprise_orchestrator.go` | `137` | `func (o *EnterpriseOrchestrator) RegisterConsensusNetwork(ctx context.Context, source, target string) (int, error) {` |
+| `core/enterprise_orchestrator.go` | `155` | `func (o *EnterpriseOrchestrator) RegisterAuthorityNode(ctx context.Context, addr, role string) (*AuthorityNode, error) {` |
+| `core/enterprise_orchestrator.go` | `173` | `func (o *EnterpriseOrchestrator) SyncGasSchedule(ctx context.Context, schedule map[string]uint64) (EnterpriseDiagnostics, error) {` |
 | `core/consensus_validator_management.go` | `17` | `func NewValidatorManager(minStake uint64) *ValidatorManager {` |
 | `core/consensus_validator_management.go` | `26` | `func (vm *ValidatorManager) Add(addr string, stake uint64) error {` |
 | `core/consensus_validator_management.go` | `38` | `func (vm *ValidatorManager) Remove(addr string) {` |

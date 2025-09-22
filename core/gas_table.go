@@ -3,6 +3,7 @@ package core
 import (
 	"bufio"
 	"bytes"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -14,6 +15,9 @@ import (
 
 // DefaultGasCost is used for any opcode not explicitly priced in the guide.
 const DefaultGasCost = 1
+
+// ErrGasTableIncomplete is returned when validation detects a missing gas entry.
+var ErrGasTableIncomplete = errors.New("gas table incomplete")
 
 // DefaultGasTable builds a gas pricing table for all registered opcodes. It
 // parses `gas_table_list.md` at runtime to pull concrete costs. Any
@@ -168,4 +172,23 @@ func GasCostByName(name string) uint64 {
 		return DefaultGasCost
 	}
 	return cost
+}
+
+// ValidateGasTable ensures that all required opcode names have explicit entries
+// in the gas table. It is used by Stage 75 to prevent enterprise deployments
+// from shipping without documented pricing for critical operations.
+func ValidateGasTable(required []string) error {
+	for _, name := range required {
+		op, ok := Lookup(name)
+		if !ok {
+			return fmt.Errorf("unknown opcode: %s", name)
+		}
+		gasMu.RLock()
+		_, ok = gasTable[op]
+		gasMu.RUnlock()
+		if !ok {
+			return fmt.Errorf("%w: %s", ErrGasTableIncomplete, name)
+		}
+	}
+	return nil
 }

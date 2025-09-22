@@ -251,5 +251,11 @@ Biometric enrollment stores SHA-256 hashes of user templates alongside correspon
 2. Confirm \(h = h_{\text{stored}}\).
 3. Validate \( \mathrm{Verify}_{\text{ECDSA}}(pk, h, \sigma)\) for signature \(\sigma\).
 
+## Stage 79 Enhancements
+- **Deterministic execution substrate.** Stage 79 introduces a bootstrap routine that wires the gas catalogue, virtual machine, ledger, consensus fabric and wallet into a single runtime so algorithmic services launch against a verified environment every time the CLI or orchestration stack starts【F:cmd/synnergy/bootstrap.go†L17-L142】【F:cmd/synnergy/main.go†L18-L55】.
+- **Ledger replication primitives.** New opcodes and gas entries—`Ledger_StreamReplication`, `Ledger_PrimaryElection`, `Ledger_PrivacyEnvelope`, `Loanpool_ComplianceDisburse` and `Node_Attest`—encode the algorithms for high-availability quorum rotation, privacy-preserving exports and compliance disbursement with deterministic complexity bounds documented in the gas guide【F:contracts_opcodes.go†L240-L404】【F:docs/reference/opcodes_list.md†L260-L700】【F:docs/reference/gas_table_list.md†L820-L839】.
+- **Manifest-aware analysis tooling.** The CLI manifest exporter and React control panel consume the full command graph, letting analysts inspect algorithm parameters, flag types and execution requirements directly from the browser while automated tests guarantee the manifest stays machine readable across releases【F:cli/gui_manifest.go†L20-L118】【F:web/pages/api/commands.js†L1-L29】【F:web/pages/api/run.js†L1-L21】【F:web/pages/index.js†L87-L200】【F:cli/gui_cmd_test.go†L11-L82】.
+- **Runtime regression coverage.** Gas catalogue checks and runtime lifecycle tests ensure Stage 79’s algorithmic services remain initialised and stoppable under load, preventing drift between theoretical guarantees and deployed behaviour【F:cmd/synnergy/bootstrap_test.go†L10-L41】【F:gas_table.go†L20-L167】.
+
 ## Conclusion
 The Synnergy Network’s strength derives from its rigorous mathematical underpinnings. By integrating vetted cryptographic primitives, adaptive consensus control, and intelligent analytics, **Neto Solaris** delivers a blockchain platform that is secure, scalable, and ready for the future of decentralized applications.

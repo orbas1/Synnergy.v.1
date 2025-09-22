@@ -130,6 +130,11 @@ Documentation under `docs/ux` outlines cross‑module guidelines for:
 | 31‑36 | Token Creation Tool, Validator Governance Portal, Wallet Admin Interface and Wallet GUI reach production readiness. |
 | 37‑40 | Administrative dashboards for authority nodes and cross‑chain management round out the operational toolkit. |
 
+## Stage 78 Enterprise Enhancements
+- **Shared diagnostics for UIs:** The enterprise orchestrator surfaces JSON diagnostics that the Next.js control panel and specialised dashboards now consume, ensuring parity between browser status views and the `synnergy orchestrator status --json` CLI output.【F:core/enterprise_orchestrator.go†L21-L166】【F:cli/orchestrator.go†L6-L75】【F:web/pages/api/orchestrator.js†L1-L23】
+- **Consistent gas narratives:** Stage 78 gas documentation anchors UI hints and CLI tooltips for enterprise operations such as authority elections and orchestrator audits, keeping GUI flows aligned with underlying costs.【F:docs/reference/gas_table_list.md†L420-L424】
+- **UI-driven resilience tests:** New orchestrator test suites validate JSON output and concurrency under unit, situational, stress, functional and real-world scenarios, protecting GUI polling loops from regressions during heavy network activity.【F:core/enterprise_orchestrator_test.go†L5-L75】【F:cli/orchestrator_test.go†L5-L26】
+
 ---
 © 2024 Neto Solaris All rights reserved.
 

@@ -39,7 +39,7 @@ A Shard Manager assigns leaders to shards, tracks cross‑shard receipts, and re
 The bridge manager locks assets on the source chain and records transfer claims, using the ledger to debit senders and credit recipients once proofs are provided【F:core/cross_chain_bridge.go†L9-L144】.
 
 ## Zero‑Trust Channels and Escrow
-Privacy‑sensitive workflows leverage a Zero Trust Engine that manages encrypted channels backed by ledger escrows. Messages are encrypted, signed, and verified to ensure confidentiality and authenticity【F:zero_trust_data_channels.go†L24-L102】.
+Privacy‑sensitive workflows leverage a Zero Trust Engine that manages encrypted channels backed by ledger escrows. Messages are encrypted, signed, and verified to ensure confidentiality and authenticity, while participant governance, retention policies and event feeds provide operational oversight for regulated deployments【F:core/zero_trust_data_channels.go†L1-L279】.
 
 ## Regulatory Oversight
 A regulatory manager evaluates transactions against jurisdictional rules and flags violations, enabling regulator‑operated nodes to log and escalate suspicious activity【F:regulatory_management.go†L8-L75】【F:regulatory_node.go†L8-L50】.

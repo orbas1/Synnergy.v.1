@@ -13,6 +13,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
   - [Run a Local Node](#run-a-local-node)
   - [Multi-node Devnet](#multi-node-devnet)
 - [CLI Modules](#cli-modules)
+- [Stage 78 Enterprise Diagnostics](#stage-78-enterprise-diagnostics)
 - [Production Deployment](#production-deployment)
   - [Docker Compose](#docker-compose)
   - [Kubernetes (Helm)](#kubernetes-helm)
@@ -47,6 +48,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Resource-managed CLI** – connection pool commands can release individual peers and `contractopcodes` reports gas costs for contract operations.
 - **Content node pricing** – gas table and opcode registry expose costs for registering nodes, uploading content, retrieving items and listing hosts so storage workflows remain predictable across the CLI and web UI.
 - **Content registry & secrets tooling** – `synnergy content_node` manages hosted content while the standalone `secrets-manager` binary validates stored keys.
+- **Enterprise orchestrator** – Stage 78 introduces `core.NewEnterpriseOrchestrator` and the `synnergy orchestrator` CLI to unify VM readiness, consensus relayers, wallet bootstrap, authority registry state and gas documentation with telemetry for CLI and web dashboards.
 - **DAO governance** – `synnergy dao` manages decentralised autonomous organisations with optional JSON output, ECDSA signature verification, admin-controlled member role updates via `dao-members update`, and elected authority node term renewals.
 - **Resilient node primitives** – forensic nodes prune over-capacity logs, full node modes are mutex-protected, gateway endpoints require a running node, and failover managers can remove stale peers.
 - **Thread-safe mempools and plasma bridge safeguards** – node mempools are mutex-protected for concurrent submissions and Plasma bridge operations surface explicit paused errors.
@@ -66,6 +68,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Storage marketplace & analytics dashboards** – TypeScript modules exposing CLI and GUI entrypoints for decentralised storage and system metrics.
 - **Infrastructure-as-code** – Dockerfiles, Helm charts, Terraform and Ansible playbooks for reproducible environments.
 - **Strong encryption and signatures** – all transactions and messages are secured using well‑vetted cryptography with digital signatures.
+- **Stage 75 enterprise runtime** – deterministic VM gas enforcement with execution traces, sandbox telemetry for fault-tolerant VM pools, wallets with deterministic seeds and shared-secret support, and event-driven cross-chain registries/bridges that stream lifecycle updates to CLI and web dashboards.
 - **Permissioned privacy** – fine‑grained access controls enable private channels and selective data disclosure.
 - **Customisable governance** – token‑weighted voting and DAO modules allow on‑chain policy definition.
 - **Horizontal scalability** – sharding-ready architecture and multi‑node orchestration for high throughput networks.
@@ -92,7 +95,7 @@ pkg/          Reusable libraries and experimental modules
 2. Resolve configuration path from `SYN_CONFIG` or `config.DefaultConfigPath`.
 3. Parse YAML via `config.Load` and configure logging.
 4. Initialise tracer provider (`otel.SetTracerProvider`).
-5. Warm caches by calling `synnergy.LoadGasTable()` and `synnergy.RegisterGasCost()` for core operations like `MineBlock`, `OpenConnection` and `MintNFT`.
+5. Warm caches by calling `synnergy.LoadGasTable()`, synchronising the Stage 78 enterprise schedule with `synnergy.EnsureGasSchedule()` and registering costs with `synnergy.RegisterGasCost()` for core operations like `MineBlock`, `OpenConnection`, `MintNFT` and the new orchestrator opcodes.
 6. Pre-load modules used by the CLI:
    - `core.NewNetwork` for pub‑sub networking
    - `core.NewContractRegistry` backed by `core.NewSimpleVM`
@@ -100,6 +103,17 @@ pkg/          Reusable libraries and experimental modules
    - Wallet, watchtower and warfare nodes (`core.NewWallet`, `core.NewWatchtowerNode`, `core.NewWarfareNode`)
    - Token constructors in `internal/tokens` (`tokens.NewSYN223Token`, etc.)
 7. Finally, invoke `cli.Execute()` to dispatch Cobra commands.
+
+Enterprise deployments rely on the defensive modules initialised above:
+
+- **Warfare node telemetry** – `core.NewWarfareNode` now issues per-commander key pairs, enforces signed command envelopes with
+  replay protection, and streams logistics/tactical events to both CLI (`synnergy warfare events`) and the web console.
+- **Watchtower observability** – `core.NewWatchtowerNode` emits start/stop/fork alerts alongside periodic metric snapshots via
+  `Watchtower.SubscribeEvents`, enabling dashboards and the `synnergy monitoring` suite to visualise consensus health in real
+  time.
+- **Zero-trust data channels** – `core.NewZeroTrustEngine` orchestrates encrypted channels with participant governance,
+  key rotation and retention controls. CLI helpers (`synnergy zero-trust authorize`, `rotate`, `events`) expose the
+  same lifecycle flows used by automation scripts and the browser UI.
 
 ## Getting Started
 
@@ -164,8 +178,11 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 | `staking_node start|status|stop` | Control the staking service |
 | `contracts compile|deploy|invoke|list|info` | WASM smart contract lifecycle through `core.NewContractRegistry` |
 | `system_health snapshot|log` | Emit metrics and structured logs |
+
 | `data feed create|apply|snapshot|get|delete` | Persist structured data feeds with JSON manifests |
 | `data resource import|info|list|usage|put|prune` | Manage binary resources with retention metadata and manifest-driven sync |
+=======
+| `orchestrator status|sync [--json]` | Aggregate VM, consensus, wallet and authority diagnostics via `core.NewEnterpriseOrchestrator` |
 | `data monitor status` | Report network data distribution metrics |
 | `audit log|list` | Record and query audit events via `core.NewAuditManager` |
 | `audit_node start|log|list` | Operate a bootstrap audit node for network-wide logs |
@@ -186,6 +203,7 @@ Run `./synnergy --help` for the full command tree. Common modules include:
 Additional modules cover DAO governance, cross-chain bridges, regulatory nodes, watchtowers and more.
 
 Helper scripts under `cmd/scripts` honour a `SYN_CLI` environment variable to locate the compiled binary and enable `set -euo pipefail` for safer automation.
+
 
 ### Data Governance Automation
 
@@ -216,6 +234,18 @@ nodes:
 Each helper honours the shared `--dry-run`, `--timeout` and `--log-file`
 switches provided by `scripts/lib/common.sh` so workflows are deterministic
 across CI, staging and developer laptops.
+=======
+## Stage 78 Enterprise Diagnostics
+Stage 78 upgrades the runtime with a hardened enterprise orchestrator that validates end-to-end readiness across the virtual machine, consensus mesh, wallets, node registries and gas documentation. The orchestrator powers the `synnergy orchestrator` CLI and exports JSON suitable for the function web dashboards so operators can embed live diagnostics into existing tooling.
+
+```bash
+./synnergy orchestrator status          # human-readable snapshot
+./synnergy orchestrator status --json   # machine-readable diagnostics
+./synnergy orchestrator sync            # refresh gas schedule & authority counts
+```
+
+Diagnostics confirm VM mode and concurrency, consensus network registration, wallet provenance, authority node totals, and whether Stage 78 opcodes are documented with enterprise-grade gas costs. Results surface through the updated Next.js API (`web/pages/api/orchestrator.js`) and dashboard widgets on the control panel home page, ensuring parity between CLI automation and browser operations. Stress, situational and real-world tests under `core/enterprise_orchestrator_test.go` and `cli/orchestrator_test.go` assert fault tolerance, security controls and regulatory alignment, keeping performance predictable even under high-throughput workloads.
+
 
 ## Production Deployment
 

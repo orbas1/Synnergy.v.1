@@ -24,6 +24,14 @@ make build
 - `synnergy bank_index add <id> <type>` – record a bank node in the index
 - `synnergy basenode dial <addr> --pub <hex> --sig <hex>` – connect to a peer with signature validation
 - `synnergy bioauth enroll <addr> <data> <pubHex>` – register a biometric template with an Ed25519 key
+- `synnergy system_health snapshot --json` – Stage 75 adds VM metrics, sandbox counts and cross-chain transfer totals to the health payload
+- `synnergy warfare commander issue <id>` – mint an Ed25519 commander credential and return the signing key material
+- `synnergy warfare command <cmd> --commander <id> --private <hex>` – execute a signed command envelope; omit flags to use the root commander
+- `synnergy warfare events --since <seq>` – stream command, logistics and tactical events for dashboards or automation
+- `synnergy zero-trust open <id> <hexkey> --owner <name> --meta scope=confidential` – create a channel with metadata and optional retention
+- `synnergy zero-trust authorize <id> <participant> <pubkey>` – add a participant public key capable of pushing encrypted payloads
+- `synnergy zero-trust events <id> --since <seq>` – fetch channel lifecycle events (open, message, rotate, close) for monitoring pipelines
+- `synnergy zero-trust rotate <id> <hexkey>` – rotate the symmetric encryption key while retaining authorised participants
 
 ## Help
 Run `synnergy --help` or `synnergy <command> --help` for more details.

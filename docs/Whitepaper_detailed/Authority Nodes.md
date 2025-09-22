@@ -52,7 +52,7 @@ Regulator nodes enforce jurisdictional rules by evaluating transactions and flag
 Creditor nodes administer the network's lending facilities. They steward a shared `LoanPool` treasury that accepts proposals, tallies votes, and disburses approved funds to recipients【F:core/loanpool.go†L9-L74】. Retail requests flow through `LoanPoolApply`, which records applications, tracks votes, and processes approved loans against the same pool【F:core/loanpool_apply.go†L17-L63】.
 
 ### Military Authority Nodes
-Military-operated nodes extend the base node with secure command execution and logistics tracking for defence assets. `WarfareNode` validates privileged commands and records asset movements to maintain operational readiness【F:core/warfare_node.go†L11-L51】.
+Military-operated nodes extend the base node with secure command execution, signed operational envelopes and live telemetry for defence assets. `WarfareNode` now issues commander key pairs, enforces nonce-monotonic signatures, records logistics/tactical updates, and streams events for audit dashboards and automated response playbooks【F:core/warfare_node.go†L25-L357】.
 
 ## Application and Election Workflow
 Prospective authority nodes submit on-chain applications detailing their role and description. The **AuthorityApplicationManager** assigns a sequential ID, tracks approvals and rejections, and finalises successful candidates into the registry【F:core/authority_apply.go†L11-L104】. Applications expire after a configurable TTL and are periodically purged by `Tick`, guaranteeing that stale requests do not linger【F:core/authority_apply.go†L106-L115】. Voting can be performed through CLI commands that register, vote, and list authority nodes, enabling transparent elections【F:cli/authority_nodes.go†L20-L112】.

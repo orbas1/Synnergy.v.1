@@ -49,21 +49,21 @@ func TestGasTableIncludesNewOpcodes(t *testing.T) {
 	if !HasOpcode("RegNodeLogs") {
 		t.Fatalf("missing RegNodeLogs opcode")
 	}
-        if GasCost("RegNodeLogs") != 1 {
-                t.Fatalf("unexpected cost for RegNodeLogs")
-        }
-        if !HasOpcode("RegNodeAudit") {
-                t.Fatalf("missing RegNodeAudit opcode")
-        }
-        if GasCost("RegNodeAudit") != 3 {
-                t.Fatalf("unexpected cost for RegNodeAudit")
-        }
-        if !HasOpcode("Access_Audit") {
-                t.Fatalf("missing Access_Audit opcode")
-        }
-        if GasCost("Access_Audit") != 2 {
-                t.Fatalf("unexpected cost for Access_Audit")
-        }
+	if GasCost("RegNodeLogs") != 1 {
+		t.Fatalf("unexpected cost for RegNodeLogs")
+	}
+	if !HasOpcode("RegNodeAudit") {
+		t.Fatalf("missing RegNodeAudit opcode")
+	}
+	if GasCost("RegNodeAudit") != 3 {
+		t.Fatalf("unexpected cost for RegNodeAudit")
+	}
+	if !HasOpcode("Access_Audit") {
+		t.Fatalf("missing Access_Audit opcode")
+	}
+	if GasCost("Access_Audit") != 2 {
+		t.Fatalf("unexpected cost for Access_Audit")
+	}
 }
 
 func TestRegisterGasCostValidation(t *testing.T) {
@@ -82,4 +82,42 @@ func TestMustGasCostPanics(t *testing.T) {
 		}
 	}()
 	MustGasCost("UnknownOpcode")
+}
+
+func TestEnsureGasSchedule(t *testing.T) {
+	ResetGasTable()
+	schedule := map[string]uint64{
+		"EnterpriseBootstrap":     120,
+		"EnterpriseConsensusSync": 95,
+		"EnterpriseWalletSeal":    60,
+	}
+
+        inserted, err := EnsureGasSchedule(schedule)
+        if err != nil {
+                t.Fatalf("EnsureGasSchedule returned error: %v", err)
+        }
+        if len(inserted) > len(schedule) {
+                t.Fatalf("unexpected inserted values: %v", inserted)
+        }
+
+	for name, cost := range schedule {
+		if !HasOpcode(name) {
+			t.Fatalf("expected opcode %s to be registered", name)
+		}
+		if GasCost(name) != cost {
+			t.Fatalf("unexpected cost for %s: %d", name, GasCost(name))
+		}
+	}
+
+	// Updating the schedule should refresh costs without duplicating entries.
+	updated, err := EnsureGasSchedule(map[string]uint64{"EnterpriseBootstrap": 150})
+	if err != nil {
+		t.Fatalf("EnsureGasSchedule update returned error: %v", err)
+	}
+        if len(updated) > 0 {
+                t.Fatalf("expected no new insertions, got %v", updated)
+        }
+	if GasCost("EnterpriseBootstrap") != 150 {
+		t.Fatalf("expected updated cost 150, got %d", GasCost("EnterpriseBootstrap"))
+	}
 }

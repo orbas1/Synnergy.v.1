@@ -166,6 +166,11 @@ Neto Solaris enforces strict security around LoanPool operations:
 - Use the `get` and `list` commands regularly to track status and maintain transparency with stakeholders.
 - Review `loanmgr stats` periodically and cancel or extend proposals proactively when circumstances evolve.
 
+## Stage 78 Enterprise Enhancements
+- **LoanPool diagnostics:** The enterprise orchestrator surfaces proposal counts, consensus relayers and wallet status so grant officers can confirm availability via `synnergy orchestrator status --json` or the function web before announcing new funding rounds.【F:core/enterprise_orchestrator.go†L21-L166】【F:cli/orchestrator.go†L6-L75】
+- **Transparent fees:** Stage 78 gas documentation covers orchestrator operations that underpin loan approvals, authority elections and wallet sealing, keeping applicant-facing costs stable across CLI, VM and browser experiences.【F:docs/reference/gas_table_list.md†L420-L424】
+- **Reliability testing:** Unit, situational, stress, functional and real-world orchestrator suites validate LoanPool integrations under heavy submission volumes and regulatory audits, protecting applicants from downtime during grant windows.【F:core/enterprise_orchestrator_test.go†L5-L75】【F:cli/orchestrator_test.go†L5-L26】
+
 ## 11. Support
 For additional assistance or to escalate issues, contact the Neto Solaris support team through your authority node representative or the official Synnergy Network communication channels.
 
