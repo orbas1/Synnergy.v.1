@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"errors"
 	"math/big"
+	"sort"
 	"sync"
 	"testing"
 	"time"
@@ -11,6 +12,13 @@ import (
 
 func TestBaseTokenMintTransferBurn(t *testing.T) {
 	tok := NewBaseToken(1, "Test", "TST", 0)
+	var eventsMu sync.Mutex
+	events := make([]Event, 0, 3)
+	tok.RegisterHook(func(evt Event) {
+		eventsMu.Lock()
+		events = append(events, evt)
+		eventsMu.Unlock()
+	})
 	if err := tok.Mint("alice", 100); err != nil {
 		t.Fatalf("mint: %v", err)
 	}
@@ -25,6 +33,40 @@ func TestBaseTokenMintTransferBurn(t *testing.T) {
 	}
 	if tok.TotalSupply() != 90 {
 		t.Fatalf("unexpected supply %d", tok.TotalSupply())
+	}
+	snap := tok.Snapshot("alice")
+	if snap.Balance != 50 || snap.LastUpdated.IsZero() {
+		t.Fatalf("unexpected snapshot %#v", snap)
+	}
+	accounts := tok.Accounts()
+	sort.Slice(accounts, func(i, j int) bool { return accounts[i].Address < accounts[j].Address })
+	if len(accounts) != 2 || accounts[1].Address != "bob" {
+		t.Fatalf("unexpected accounts %+v", accounts)
+	}
+	eventsMu.Lock()
+	if len(events) != 3 || events[0].Type != EventMint || events[1].Type != EventTransfer || events[2].Type != EventBurn {
+		t.Fatalf("unexpected events %+v", events)
+	}
+	eventsMu.Unlock()
+}
+
+func TestBaseTokenMaxSupplyAndValidation(t *testing.T) {
+	tok := NewBaseToken(42, "Cap", "CAP", 0, WithMaxSupply(100))
+	if err := tok.Mint("treasury", 90); err != nil {
+		t.Fatalf("mint: %v", err)
+	}
+	if err := tok.Mint("treasury", 20); !errors.Is(err, ErrSupplyCapExceeded) {
+		t.Fatalf("expected cap error got %v", err)
+	}
+	if err := tok.Transfer("treasury", "", 10); !errors.Is(err, ErrInvalidAddress) {
+		t.Fatalf("expected invalid address error got %v", err)
+	}
+	if err := tok.Transfer("treasury", "receiver", 0); !errors.Is(err, ErrAmountZero) {
+		t.Fatalf("expected zero amount error got %v", err)
+	}
+	tok.SetMaxSupply(200)
+	if err := tok.Mint("treasury", 10); err != nil {
+		t.Fatalf("mint after cap raise: %v", err)
 	}
 }
 

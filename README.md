@@ -30,7 +30,7 @@ Synnergy is a modular, high-performance blockchain written in Go and built for e
 - **Pluggable node roles** – mining, staking, authority, regulatory, watchtower, warfare and more via constructors such as `core.NewMiningNode` and `core.NewRegulatoryNode`.
 - **Cross-chain interoperability** – bridges, protocol registries, connection managers and transaction relays (`core.NewBridgeRegistry`, `core.NewProtocolRegistry`, `core.NewChainConnectionManager`, `core.NewCrossChainTxManager`). Stage 42 finalises these modules with JSON emitting CLIs for deposits, claims and contract mappings.
 - **AI modules** – contract management, inference analysis, anomaly detection and secure storage (`core.NewAIEnhancedContract`, `core.NewAIDriftMonitor`).
-- **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()`, tunable at runtime through the `SYN_GAS_OVERRIDES` environment variable and adjustable with `synnergy.RegisterGasCost()`, which validates opcode names and costs.
+- **Gas accounting** – deterministic costs loaded via `synnergy.LoadGasTable()` now include rich metadata surfaced through `synnergy.GasCatalogue()` so CLI and web dashboards can describe categories, default limits and intent. Runtime overrides continue to work through the `SYN_GAS_OVERRIDES` environment variable, while Stage 91 adds `synnergy.RegisterGasMetadata()` to validate names, attach descriptions and keep the VM and consensus engines aligned on pricing.
 - **Kademlia DHT tools** – CLI support for storing, retrieving and computing XOR distance between keys with gas-aware execution.
 - **Controlled proof-of-work** – mining nodes expose a `MineUntil` helper and `synnergy mining mine-until` command so hashing stops when a context is cancelled, a prefix target is reached, or a timeout fires.
 - **Opcode-aware contracts** – sample Solidity bridges, liquidity, multisig, oracle and token contracts invoke SNVM opcodes with deterministic gas costs.
@@ -95,7 +95,7 @@ pkg/          Reusable libraries and experimental modules
 2. Resolve configuration path from `SYN_CONFIG` or `config.DefaultConfigPath`.
 3. Parse YAML via `config.Load` and configure logging.
 4. Initialise tracer provider (`otel.SetTracerProvider`).
-5. Warm caches by calling `synnergy.LoadGasTable()`, synchronising the Stage 78 enterprise schedule with `synnergy.EnsureGasSchedule()` and registering costs with `synnergy.RegisterGasCost()` for core operations like `MineBlock`, `OpenConnection`, `MintNFT` and the new orchestrator opcodes.
+5. Warm caches by calling `synnergy.LoadGasTable()`, synchronising the Stage 78 enterprise schedule with `synnergy.EnsureGasSchedule()` and registering contextual metadata with `synnergy.RegisterGasMetadata()` for core operations like `MineBlock`, `OpenConnection`, `MintNFT` and the enterprise orchestrator opcodes.
 6. Pre-load modules used by the CLI:
    - `core.NewNetwork` for pub‑sub networking
    - `core.NewContractRegistry` backed by `core.NewSimpleVM`

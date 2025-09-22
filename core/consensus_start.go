@@ -27,7 +27,7 @@ func (s *ConsensusService) Start(ctx context.Context, interval time.Duration) {
 		return
 	}
 	go func() {
-		ctx, span := telemetry.Tracer().Start(ctx, "ConsensusService.Start")
+		ctx, span := telemetry.Tracer("core.consensus").Start(ctx, "ConsensusService.Start")
 		defer span.End()
 		ticker := time.NewTicker(interval)
 		defer ticker.Stop()

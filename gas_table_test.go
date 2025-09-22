@@ -92,13 +92,13 @@ func TestEnsureGasSchedule(t *testing.T) {
 		"EnterpriseWalletSeal":    60,
 	}
 
-        inserted, err := EnsureGasSchedule(schedule)
-        if err != nil {
-                t.Fatalf("EnsureGasSchedule returned error: %v", err)
-        }
-        if len(inserted) > len(schedule) {
-                t.Fatalf("unexpected inserted values: %v", inserted)
-        }
+	inserted, err := EnsureGasSchedule(schedule)
+	if err != nil {
+		t.Fatalf("EnsureGasSchedule returned error: %v", err)
+	}
+	if len(inserted) > len(schedule) {
+		t.Fatalf("unexpected inserted values: %v", inserted)
+	}
 
 	for name, cost := range schedule {
 		if !HasOpcode(name) {
@@ -114,10 +114,46 @@ func TestEnsureGasSchedule(t *testing.T) {
 	if err != nil {
 		t.Fatalf("EnsureGasSchedule update returned error: %v", err)
 	}
-        if len(updated) > 0 {
-                t.Fatalf("expected no new insertions, got %v", updated)
-        }
+	if len(updated) > 0 {
+		t.Fatalf("expected no new insertions, got %v", updated)
+	}
 	if GasCost("EnterpriseBootstrap") != 150 {
 		t.Fatalf("expected updated cost 150, got %d", GasCost("EnterpriseBootstrap"))
+	}
+}
+
+func TestGasMetadataCatalogue(t *testing.T) {
+	ResetGasTable()
+	if _, ok := GasMetadataFor("Unknown"); ok {
+		t.Fatalf("expected no metadata for unknown opcode")
+	}
+
+	if err := RegisterGasMetadata("EnterpriseBootstrap", 200, "orchestrator", "Stage 78 bootstrap sequence"); err != nil {
+		t.Fatalf("register metadata: %v", err)
+	}
+	entry, ok := GasMetadataFor("EnterpriseBootstrap")
+	if !ok {
+		t.Fatalf("expected metadata for EnterpriseBootstrap")
+	}
+	if entry.Category != "orchestrator" {
+		t.Fatalf("unexpected category: %s", entry.Category)
+	}
+	if entry.Cost != 200 {
+		t.Fatalf("unexpected cost: %d", entry.Cost)
+	}
+
+	entries := GasCatalogue()
+	if len(entries) == 0 {
+		t.Fatalf("expected non-empty metadata catalogue")
+	}
+	found := false
+	for _, e := range entries {
+		if e.Name == "EnterpriseBootstrap" {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Fatalf("catalogue missing EnterpriseBootstrap entry")
 	}
 }

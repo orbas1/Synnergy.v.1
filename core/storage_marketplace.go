@@ -53,7 +53,7 @@ func NewStorageMarketplace(vm VirtualMachine) *StorageMarketplace {
 // CreateListing registers a new storage offer identified by a content hash. The
 // caller must provide sufficient gas or the operation is rejected.
 func (m *StorageMarketplace) CreateListing(ctx context.Context, hash string, price uint64, owner string, gasLimit uint64) (string, error) {
-	ctx, span := telemetry.Tracer().Start(ctx, "StorageMarketplace.CreateListing")
+	ctx, span := telemetry.Tracer("core.storage_market").Start(ctx, "StorageMarketplace.CreateListing")
 	defer span.End()
 
 	required := synn.GasCost("CreateListing")
@@ -70,7 +70,7 @@ func (m *StorageMarketplace) CreateListing(ctx context.Context, hash string, pri
 
 // ListListings returns all current storage offers.
 func (m *StorageMarketplace) ListListings(ctx context.Context) ([]StorageListing, error) {
-	ctx, span := telemetry.Tracer().Start(ctx, "StorageMarketplace.ListListings")
+	ctx, span := telemetry.Tracer("core.storage_market").Start(ctx, "StorageMarketplace.ListListings")
 	defer span.End()
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -83,7 +83,7 @@ func (m *StorageMarketplace) ListListings(ctx context.Context) ([]StorageListing
 
 // OpenDeal creates a deal for a given listing and buyer.
 func (m *StorageMarketplace) OpenDeal(ctx context.Context, listingID, buyer string, gasLimit uint64) (string, error) {
-	ctx, span := telemetry.Tracer().Start(ctx, "StorageMarketplace.OpenDeal")
+	ctx, span := telemetry.Tracer("core.storage_market").Start(ctx, "StorageMarketplace.OpenDeal")
 	defer span.End()
 	required := synn.GasCost("OpenDeal")
 	if gasLimit < required {
@@ -102,7 +102,7 @@ func (m *StorageMarketplace) OpenDeal(ctx context.Context, listingID, buyer stri
 
 // CloseDeal removes an open deal.
 func (m *StorageMarketplace) CloseDeal(ctx context.Context, dealID string) error {
-	ctx, span := telemetry.Tracer().Start(ctx, "StorageMarketplace.CloseDeal")
+	ctx, span := telemetry.Tracer("core.storage_market").Start(ctx, "StorageMarketplace.CloseDeal")
 	defer span.End()
 	required := synn.GasCost("CloseDeal")
 	m.mu.Lock()
@@ -117,7 +117,7 @@ func (m *StorageMarketplace) CloseDeal(ctx context.Context, dealID string) error
 
 // GetListing returns the listing with the given ID.
 func (m *StorageMarketplace) GetListing(ctx context.Context, id string) (StorageListing, bool) {
-	ctx, span := telemetry.Tracer().Start(ctx, "StorageMarketplace.GetListing")
+	ctx, span := telemetry.Tracer("core.storage_market").Start(ctx, "StorageMarketplace.GetListing")
 	defer span.End()
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -127,7 +127,7 @@ func (m *StorageMarketplace) GetListing(ctx context.Context, id string) (Storage
 
 // GetDeal returns the deal with the given ID.
 func (m *StorageMarketplace) GetDeal(ctx context.Context, id string) (StorageDeal, bool) {
-	ctx, span := telemetry.Tracer().Start(ctx, "StorageMarketplace.GetDeal")
+	ctx, span := telemetry.Tracer("core.storage_market").Start(ctx, "StorageMarketplace.GetDeal")
 	defer span.End()
 	m.mu.RLock()
 	defer m.mu.RUnlock()
@@ -137,7 +137,7 @@ func (m *StorageMarketplace) GetDeal(ctx context.Context, id string) (StorageDea
 
 // ListDeals returns all open deals.
 func (m *StorageMarketplace) ListDeals(ctx context.Context) ([]StorageDeal, error) {
-	ctx, span := telemetry.Tracer().Start(ctx, "StorageMarketplace.ListDeals")
+	ctx, span := telemetry.Tracer("core.storage_market").Start(ctx, "StorageMarketplace.ListDeals")
 	defer span.End()
 	m.mu.RLock()
 	defer m.mu.RUnlock()

@@ -80,89 +80,28 @@ func main() {
 	} else if len(inserted) > 0 {
 		logrus.Infof("registered %d stage 78 opcodes", len(inserted))
 	}
-	mustRegister := func(name string) {
-		if err := synn.RegisterGasCost(name, synn.GasCost(name)); err != nil {
-			logrus.Fatalf("register gas cost %s: %v", name, err)
+	register := func(category, description string, names ...string) {
+		for _, name := range names {
+			cost := synn.GasCost(name)
+			if err := synn.RegisterGasMetadata(name, cost, category, description); err != nil {
+				logrus.Fatalf("register gas metadata %s: %v", name, err)
+			}
 		}
 	}
-	mustRegister("MineBlock")
-	mustRegister("CreateDAO")
-	mustRegister("UpdateMemberRole")
-	mustRegister("RenewAuthorityTerm")
-	// Stage 24 cross-chain operations
-	mustRegister("RegisterBridge")
-	mustRegister("BridgeDeposit")
-	mustRegister("BridgeClaim")
-	mustRegister("OpenConnection")
-	mustRegister("CloseConnection")
-	mustRegister("LockMint")
-	mustRegister("BurnRelease")
-	// Stage 25 node and operations costs
-	mustRegister("SetMode")
-	mustRegister("Stake")
-	mustRegister("Unstake")
-	mustRegister("Optimize")
-	mustRegister("SecureCommand")
-	mustRegister("TrackLogistics")
-	mustRegister("ShareTactical")
-	mustRegister("ReportFork")
-	mustRegister("Metrics")
-	// Stage 29 smart contract templates
-	mustRegister("DeployTokenFaucetTemplate")
-	mustRegister("DeployStorageMarketTemplate")
-	mustRegister("DeployDAOGovernanceTemplate")
-	mustRegister("DeployNFTMintingTemplate")
-	mustRegister("DeployAIModelMarketTemplate")
-	// Stage 34 smart-contract marketplace operations
-	mustRegister("DeploySmartContract")
-	mustRegister("TradeContract")
-	// Stage 35 storage marketplace operations
-	mustRegister("CreateListing")
-	mustRegister("ListListings")
-	mustRegister("GetListing")
-	mustRegister("OpenDeal")
-	mustRegister("CloseDeal")
-	mustRegister("ListDeals")
-	mustRegister("GetDeal")
-	mustRegister("Storage_Pin")
-	mustRegister("Storage_Retrieve")
-	mustRegister("IPFS_Add")
-	mustRegister("IPFS_Get")
-	mustRegister("IPFS_Unpin")
-	// Stage 36 NFT marketplace operations
-	mustRegister("MintNFT")
-	mustRegister("ListNFT")
-	mustRegister("BuyNFT")
-	// Stage 39 liquidity view operations for DEX screener
-	mustRegister("Liquidity_Pool")
-	mustRegister("Liquidity_Pools")
-	// Wallet operations used by GUI clients
-	mustRegister("NewWallet")
-	mustRegister("Sign")
-	mustRegister("VerifySignature")
-	// Stage 59 content node management
-	mustRegister("RegisterContentNode")
-	mustRegister("UploadContent")
-	mustRegister("RetrieveContent")
-	mustRegister("ListContentNodes")
-	// Stage 40 monetary policy queries
-	mustRegister("BlockReward")
-	mustRegister("CirculatingSupply")
-	mustRegister("RemainingSupply")
-	mustRegister("InitialPrice")
-	mustRegister("AlphaFactor")
-	mustRegister("MinimumStake")
-	// Stage 67 Kademlia operations
-	mustRegister("KademliaStore")
-	mustRegister("KademliaGet")
-	mustRegister("KademliaClosest")
-	mustRegister("KademliaDistance")
-	// Stage 78 enterprise orchestrator operations
-	mustRegister("EnterpriseBootstrap")
-	mustRegister("EnterpriseConsensusSync")
-	mustRegister("EnterpriseWalletSeal")
-	mustRegister("EnterpriseNodeAudit")
-	mustRegister("EnterpriseAuthorityElect")
+	register("consensus", "Core consensus lifecycle operations", "MineBlock")
+	register("dao", "DAO creation and authority renewal", "CreateDAO", "UpdateMemberRole", "RenewAuthorityTerm")
+	register("cross-chain", "Stage 24 cross-chain operations", "RegisterBridge", "BridgeDeposit", "BridgeClaim", "OpenConnection", "CloseConnection", "LockMint", "BurnRelease")
+	register("node", "Stage 25 node and infrastructure operations", "SetMode", "Stake", "Unstake", "Optimize", "SecureCommand", "TrackLogistics", "ShareTactical", "ReportFork", "Metrics")
+	register("templates", "Stage 29 contract templates", "DeployTokenFaucetTemplate", "DeployStorageMarketTemplate", "DeployDAOGovernanceTemplate", "DeployNFTMintingTemplate", "DeployAIModelMarketTemplate")
+	register("marketplace", "Stage 34 marketplace settlement", "DeploySmartContract", "TradeContract")
+	register("storage", "Stage 35 storage marketplace operations", "CreateListing", "ListListings", "GetListing", "OpenDeal", "CloseDeal", "ListDeals", "GetDeal", "Storage_Pin", "Storage_Retrieve", "IPFS_Add", "IPFS_Get", "IPFS_Unpin")
+	register("nft", "Stage 36 NFT marketplace operations", "MintNFT", "ListNFT", "BuyNFT")
+	register("dex", "Stage 39 liquidity view operations", "Liquidity_Pool", "Liquidity_Pools")
+	register("wallet", "Wallet lifecycle operations", "NewWallet", "Sign", "VerifySignature")
+	register("content", "Stage 59 content registry operations", "RegisterContentNode", "UploadContent", "RetrieveContent", "ListContentNodes")
+	register("monetary", "Stage 40 monetary policy queries", "BlockReward", "CirculatingSupply", "RemainingSupply", "InitialPrice", "AlphaFactor", "MinimumStake")
+	register("p2p", "Stage 67 Kademlia routing operations", "KademliaStore", "KademliaGet", "KademliaClosest", "KademliaDistance")
+	register("orchestrator", "Stage 78 enterprise orchestrator operations", "EnterpriseBootstrap", "EnterpriseConsensusSync", "EnterpriseWalletSeal", "EnterpriseNodeAudit", "EnterpriseAuthorityElect")
 	logrus.Debug("gas table loaded")
 
 	// Preload stage 3 modules so CLI commands can operate without extra setup.

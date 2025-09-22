@@ -1,4 +1,6 @@
 <!-- Stage 25 adds node operation pricing such as SetMode, Stake and ReportFork; Stage 35 integrates storage marketplace operations; Stage 36 adds NFT marketplace operations -->
+> **Stage 91 update:** The gas reference is now backed by the runtime metadata catalogue exposed through `synnergy.GasCatalogue()`. Each entry includes a category and description consumed by the CLI (`synnergy gas list`), the VM gas resolver and web dashboards. Use `synnergy.RegisterGasMetadata()` to document new opcodes or override the defaults supplied by this table so the VM, consensus and wallet layers remain aligned.
+
 | Function | Gas Cost |
 |---|---|
 | `Accrue` | `1` |

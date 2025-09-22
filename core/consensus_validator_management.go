@@ -29,7 +29,7 @@ func NewValidatorManager(minStake uint64) *ValidatorManager {
 
 // Add registers a validator with a given stake.
 func (vm *ValidatorManager) Add(ctx context.Context, addr string, stake uint64) error {
-	ctx, span := telemetry.Tracer().Start(ctx, "ValidatorManager.Add")
+	ctx, span := telemetry.Tracer("core.consensus").Start(ctx, "ValidatorManager.Add")
 	defer span.End()
 
 	vm.mu.Lock()
@@ -44,7 +44,7 @@ func (vm *ValidatorManager) Add(ctx context.Context, addr string, stake uint64) 
 
 // Remove deletes a validator from the set.
 func (vm *ValidatorManager) Remove(ctx context.Context, addr string) {
-	ctx, span := telemetry.Tracer().Start(ctx, "ValidatorManager.Remove")
+	ctx, span := telemetry.Tracer("core.consensus").Start(ctx, "ValidatorManager.Remove")
 	defer span.End()
 
 	vm.mu.Lock()
@@ -60,7 +60,7 @@ func (vm *ValidatorManager) Slash(ctx context.Context, addr string) {
 
 // Reward increases the stake of the validator by the provided amount.
 func (vm *ValidatorManager) Reward(ctx context.Context, addr string, amount uint64) {
-	ctx, span := telemetry.Tracer().Start(ctx, "ValidatorManager.Reward")
+	ctx, span := telemetry.Tracer("core.consensus").Start(ctx, "ValidatorManager.Reward")
 	defer span.End()
 
 	vm.mu.Lock()
@@ -71,7 +71,7 @@ func (vm *ValidatorManager) Reward(ctx context.Context, addr string, amount uint
 // SlashWithEvidence halves the stake of the validator, marks it as slashed and
 // records the provided evidence string for later auditing.
 func (vm *ValidatorManager) SlashWithEvidence(ctx context.Context, addr, evidence string) {
-	ctx, span := telemetry.Tracer().Start(ctx, "ValidatorManager.Slash")
+	ctx, span := telemetry.Tracer("core.consensus").Start(ctx, "ValidatorManager.Slash")
 	defer span.End()
 
 	vm.mu.Lock()

@@ -34,7 +34,7 @@ func NewSmartContractMarketplace(vm VirtualMachine) *SmartContractMarketplace {
 // deployment fails if the supplied gas is below the registered cost or if the
 // contract already exists.
 func (m *SmartContractMarketplace) DeployContract(ctx context.Context, wasm []byte, manifest string, gasLimit uint64, owner string) (string, error) {
-	ctx, span := telemetry.Tracer().Start(ctx, "SmartContractMarketplace.DeployContract")
+	ctx, span := telemetry.Tracer("core.smart_contract_market").Start(ctx, "SmartContractMarketplace.DeployContract")
 	defer span.End()
 
 	required := synn.GasCost("DeploySmartContract")
@@ -49,7 +49,7 @@ func (m *SmartContractMarketplace) DeployContract(ctx context.Context, wasm []by
 // the contract cannot be found or the underlying manager rejects the
 // transfer.
 func (m *SmartContractMarketplace) TradeContract(ctx context.Context, addr, newOwner string, gasLimit uint64) error {
-	ctx, span := telemetry.Tracer().Start(ctx, "SmartContractMarketplace.TradeContract")
+	ctx, span := telemetry.Tracer("core.smart_contract_market").Start(ctx, "SmartContractMarketplace.TradeContract")
 	defer span.End()
 
 	required := synn.GasCost("TradeContract")
