@@ -39,3 +39,22 @@ func TestConsensusServiceStartStop(t *testing.T) {
 		t.Fatalf("expected block to be mined")
 	}
 }
+
+func TestNextConsensusIntervalAdjustments(t *testing.T) {
+	base := 50 * time.Millisecond
+	if got := nextConsensusInterval(base, 0, nil, 100); got != base*4 {
+		t.Fatalf("expected idle backoff to quadruple base interval, got %v", got)
+	}
+
+	busyBlock := &Block{}
+	accelerated := nextConsensusInterval(200*time.Millisecond, 500, busyBlock, 100)
+	if accelerated != 100*time.Millisecond {
+		t.Fatalf("expected busy interval to halve base interval, got %v", accelerated)
+	}
+
+	// Ensure min interval is enforced when halving falls below threshold.
+	minCheck := nextConsensusInterval(2*time.Millisecond, 10, busyBlock, 1)
+	if minCheck < 5*time.Millisecond {
+		t.Fatalf("expected minimum interval enforcement, got %v", minCheck)
+	}
+}
