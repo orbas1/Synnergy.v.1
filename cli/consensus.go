@@ -39,8 +39,9 @@ func init() {
 		Short: "Show current consensus weights",
 		Run: func(cmd *cobra.Command, args []string) {
 			gasPrint("Weights")
-			ilog.Info("cli_weights", "pow", consensus.Weights.PoW, "pos", consensus.Weights.PoS, "poh", consensus.Weights.PoH)
-			printOutput(map[string]float64{"pow": consensus.Weights.PoW, "pos": consensus.Weights.PoS, "poh": consensus.Weights.PoH})
+			weights := consensus.WeightsSnapshot()
+			ilog.Info("cli_weights", "pow", weights.PoW, "pos", weights.PoS, "poh", weights.PoH)
+			printOutput(map[string]float64{"pow": weights.PoW, "pos": weights.PoS, "poh": weights.PoH})
 		},
 	}
 
@@ -60,9 +61,10 @@ func init() {
 				return
 			}
 			consensus.AdjustWeights(d, s)
-			ilog.Info("cli_adjust", "pow", consensus.Weights.PoW, "pos", consensus.Weights.PoS, "poh", consensus.Weights.PoH)
+			weights := consensus.WeightsSnapshot()
+			ilog.Info("cli_adjust", "pow", weights.PoW, "pos", weights.PoS, "poh", weights.PoH)
 			gasPrint("AdjustWeights")
-			printOutput(map[string]float64{"pow": consensus.Weights.PoW, "pos": consensus.Weights.PoS, "poh": consensus.Weights.PoH})
+			printOutput(map[string]float64{"pow": weights.PoW, "pos": weights.PoS, "poh": weights.PoH})
 		},
 	}
 

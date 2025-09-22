@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/signal"
+	"sort"
 	"strings"
 	"syscall"
 
@@ -175,6 +176,7 @@ func configureLogging(cfg *config.Config) error {
 
 func registerEnterpriseGasMetadata() error {
 	synn.LoadGasTable()
+
 	stage78Gas := map[string]uint64{
 		"EnterpriseBootstrap":      120,
 		"EnterpriseConsensusSync":  95,
@@ -196,10 +198,14 @@ func registerEnterpriseGasMetadata() error {
 		"EnterpriseSpecialLedger":    30,
 	}
 	if inserted, err := synn.EnsureGasSchedule(enterpriseSpecialGas); err != nil {
+
 		return fmt.Errorf("stage 79 gas sync failed: %w", err)
+=======
+		return fmt.Errorf("enterprise special gas sync failed: %w", err)
 	} else if len(inserted) > 0 {
 		logrus.Infof("registered %d enterprise special opcodes", len(inserted))
 	}
+
 
 	categories := []struct {
 		category    string
@@ -228,16 +234,59 @@ func registerEnterpriseGasMetadata() error {
 			cost := synn.GasCost(name)
 			if err := synn.RegisterGasMetadata(name, cost, category, description); err != nil {
 				return fmt.Errorf("register gas metadata %s: %w", name, err)
+=======
+	type category struct {
+		name        string
+		description string
+		operations  []string
+	}
+
+	categories := []category{
+		{name: "consensus", description: "Core consensus lifecycle operations", operations: []string{"MineBlock"}},
+		{name: "dao", description: "DAO creation and authority renewal", operations: []string{"CreateDAO", "UpdateMemberRole", "RenewAuthorityTerm"}},
+		{name: "cross-chain", description: "Stage 24 cross-chain operations", operations: []string{"RegisterBridge", "BridgeDeposit", "BridgeClaim", "OpenConnection", "CloseConnection", "LockMint", "BurnRelease"}},
+		{name: "node", description: "Stage 25 node and infrastructure operations", operations: []string{"SetMode", "Stake", "Unstake", "Optimize", "SecureCommand", "TrackLogistics", "ShareTactical", "ReportFork", "Metrics"}},
+		{name: "templates", description: "Stage 29 contract templates", operations: []string{"DeployTokenFaucetTemplate", "DeployStorageMarketTemplate", "DeployDAOGovernanceTemplate", "DeployNFTMintingTemplate", "DeployAIModelMarketTemplate"}},
+		{name: "marketplace", description: "Stage 34 marketplace settlement", operations: []string{"DeploySmartContract", "TradeContract"}},
+		{name: "storage", description: "Stage 35 storage marketplace operations", operations: []string{"CreateListing", "ListListings", "GetListing", "OpenDeal", "CloseDeal", "ListDeals", "GetDeal", "Storage_Pin", "Storage_Retrieve", "IPFS_Add", "IPFS_Get", "IPFS_Unpin"}},
+		{name: "nft", description: "Stage 36 NFT marketplace operations", operations: []string{"MintNFT", "ListNFT", "BuyNFT"}},
+		{name: "dex", description: "Stage 39 liquidity view operations", operations: []string{"Liquidity_Pool", "Liquidity_Pools"}},
+		{name: "wallet", description: "Wallet lifecycle operations", operations: []string{"NewWallet", "Sign", "VerifySignature"}},
+		{name: "content", description: "Stage 59 content registry operations", operations: []string{"RegisterContentNode", "UploadContent", "RetrieveContent", "ListContentNodes"}},
+		{name: "monetary", description: "Stage 40 monetary policy queries", operations: []string{"BlockReward", "CirculatingSupply", "RemainingSupply", "InitialPrice", "AlphaFactor", "MinimumStake"}},
+		{name: "p2p", description: "Stage 67 Kademlia routing operations", operations: []string{"KademliaStore", "KademliaGet", "KademliaClosest", "KademliaDistance"}},
+		{name: "orchestrator", description: "Stage 78 enterprise orchestrator operations", operations: []string{"EnterpriseBootstrap", "EnterpriseConsensusSync", "EnterpriseWalletSeal", "EnterpriseNodeAudit", "EnterpriseAuthorityElect"}},
+	}
+
+	enterpriseOps := make([]string, 0, len(enterpriseSpecialGas))
+	for op := range enterpriseSpecialGas {
+		enterpriseOps = append(enterpriseOps, op)
+	}
+	sort.Strings(enterpriseOps)
+	categories = append(categories, category{
+		name:        "enterprise",
+		description: "Stage 79 enterprise combined node operations",
+		operations:  enterpriseOps,
+	})
+
+	for _, cat := range categories {
+		for _, op := range cat.operations {
+			cost := synn.GasCost(op)
+			if err := synn.RegisterGasMetadata(op, cost, cat.name, cat.description); err != nil {
+				return fmt.Errorf("register gas metadata %s: %w", op, err)
 			}
 		}
 		return nil
 	}
+
 
 	for _, entry := range categories {
 		if err := register(entry.category, entry.description, entry.names...); err != nil {
 			return err
 		}
 	}
+
+=======
 
 	logrus.Debug("gas table loaded")
 	return nil

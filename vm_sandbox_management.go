@@ -25,6 +25,14 @@ type SandboxManager struct {
 	sandboxes map[string]*SandboxInfo
 }
 
+func cloneSandbox(sb *SandboxInfo) *SandboxInfo {
+	if sb == nil {
+		return nil
+	}
+	copy := *sb
+	return &copy
+}
+
 // NewSandboxManager returns an empty manager.
 func NewSandboxManager() *SandboxManager {
 	return &SandboxManager{sandboxes: make(map[string]*SandboxInfo)}
@@ -47,7 +55,7 @@ func (m *SandboxManager) StartSandbox(id, contractAddr string, gasLimit, memoryL
 		LastReset:    time.Now(),
 	}
 	m.sandboxes[id] = sb
-	return sb, nil
+	return cloneSandbox(sb), nil
 }
 
 // StopSandbox deactivates a sandbox.
@@ -90,7 +98,10 @@ func (m *SandboxManager) SandboxStatus(id string) (*SandboxInfo, bool) {
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	sb, ok := m.sandboxes[id]
-	return sb, ok
+	if !ok {
+		return nil, false
+	}
+	return cloneSandbox(sb), true
 }
 
 // ListSandboxes returns all sandboxes managed by this instance.
@@ -99,7 +110,7 @@ func (m *SandboxManager) ListSandboxes() []*SandboxInfo {
 	defer m.mu.RUnlock()
 	out := make([]*SandboxInfo, 0, len(m.sandboxes))
 	for _, sb := range m.sandboxes {
-		out = append(out, sb)
+		out = append(out, cloneSandbox(sb))
 	}
 	return out
 }
