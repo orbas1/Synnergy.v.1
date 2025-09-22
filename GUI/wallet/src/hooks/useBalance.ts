@@ -1,9 +1,22 @@
-import { getBalance } from '../services/api';
+import { walletStore, BalanceProvider } from '../state/walletStore';
+import { BalanceSummary } from '../services/walletService';
+import { normalizeAddress } from '../utils/address';
 
-export async function useBalance(address: string): Promise<number> {
-  try {
-    return await getBalance(address);
-  } catch {
-    return 0;
+export interface UseBalanceOptions {
+  refresh?: boolean;
+  store?: BalanceProvider;
+}
+
+export async function useBalance(address: string, options: UseBalanceOptions = {}): Promise<BalanceSummary> {
+  const provider = options.store ?? walletStore;
+  const normalized = normalizeAddress(address);
+
+  if (!options.refresh) {
+    const cached = provider.getBalance(normalized);
+    if (cached) {
+      return cached;
+    }
   }
+
+  return provider.refreshBalance(normalized);
 }
