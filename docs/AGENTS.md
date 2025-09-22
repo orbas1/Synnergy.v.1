@@ -1681,11 +1681,11 @@ Stage 72 complete: concurrency-safe financial token suite with comprehensive tes
 - [ ] cross_chain_bridge_test.go
 
 **Stage 76**
-- [ ] cross_chain_connection.go
-- [ ] cross_chain_connection_test.go
-- [ ] cross_chain_contracts.go
-- [ ] cross_chain_contracts_test.go
-- [ ] cross_chain_stage18_test.go
+- [x] cross_chain_connection.go – Enterprise-grade lifecycle manager with signed handshakes, heartbeat health, event streams, and filtering hooks.
+- [x] cross_chain_connection_test.go – Comprehensive unit tests covering validation, lifecycle transitions, health, filtering, and watcher cancellation.
+- [x] cross_chain_contracts.go – Enterprise contract link manager with approval workflows, failure handling, suspension/resume, metadata updates, and connection-aware registration.
+- [x] cross_chain_contracts_test.go – Deterministic lifecycle, approval, filtering, event, and failure recovery tests covering the contract link manager API.
+- [x] cross_chain_stage18_test.go – Regression harness extends to contract link lifecycle flows including approvals, suspension, recovery, and replacement registration.
 - [ ] cross_chain_test.go
 - [ ] cross_chain_transactions.go
 - [ ] cross_chain_transactions_benchmark_test.go
