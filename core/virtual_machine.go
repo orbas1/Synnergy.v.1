@@ -53,6 +53,9 @@ type SimpleVM struct {
 	callHandlers map[string]func() error
 	hooks        []ExecutionHook
 	metrics      vmMetrics
+	wg           sync.WaitGroup
+	lifecycle    context.Context
+	cancel       context.CancelFunc
 }
 
 // ErrGasLimit is returned when execution exhausts its allotted gas.
@@ -98,16 +101,27 @@ type executionContext struct {
 	used      uint64
 }
 
+var (
+	errVMNotRunning       = errors.New("vm not running")
+	errBytecodeRequired   = errors.New("bytecode required")
+	errGasLimitNotDefined = errors.New("gas limit required")
+)
+
 // Call implements the OpContext interface used by the global opcode dispatcher.
 // For now it simply acts as a stub; higher-level integration can wire this to
 // actual protocol functionality.
-func (vm *SimpleVM) Call(name string) error {
+func (vm *SimpleVM) Call(name string) (err error) {
 	vm.mu.RLock()
 	handler := vm.callHandlers[name]
 	vm.mu.RUnlock()
 	if handler == nil {
 		return nil
 	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("call %q panic: %v", name, r)
+		}
+	}()
 	return handler()
 }
 
@@ -156,11 +170,19 @@ func NewSimpleVM(modes ...VMMode) *SimpleVM {
 // tests to extend the VM without recompilation.
 func (vm *SimpleVM) RegisterHandler(op uint32, h opcodeHandler) {
 	vm.mu.Lock()
-	if vm.handlers == nil {
-		vm.handlers = make(map[uint32]opcodeHandler)
+	defer vm.mu.Unlock()
+	if h == nil {
+		h = vm.defaultH
 	}
-	vm.handlers[op] = h
-	vm.mu.Unlock()
+	handlers := make(map[uint32]opcodeHandler, len(vm.handlers)+1)
+	for code, handler := range vm.handlers {
+		handlers[code] = handler
+	}
+	handlers[op] = h
+	vm.handlers = handlers
+	if op == 0 {
+		vm.defaultH = h
+	}
 }
 
 // RegisterCallHandler wires a named call target to a callback. This allows the
@@ -230,11 +252,13 @@ func (vm *SimpleVM) snapshotHooks() []ExecutionHook {
 
 func (vm *SimpleVM) emitTrace(hooks []ExecutionHook, trace ExecutionTrace) {
 	for _, h := range hooks {
-		func() {
-			defer func() {
-				_ = recover()
-			}()
-			h(trace)
+		if h == nil {
+			continue
+		}
+		hook := h
+		go func() {
+			defer func() { _ = recover() }()
+			hook(trace)
 		}()
 	}
 }
@@ -261,12 +285,13 @@ func (ec *executionContext) Gas(amount uint64) error {
 		return nil
 	}
 	if amount > ec.remaining {
-		ec.used += amount
+		consumed := ec.remaining
+		ec.remaining = 0
+		ec.used += consumed
 		if ec.used > ec.limit {
 			ec.used = ec.limit
 		}
-		ec.remaining = 0
-		return fmt.Errorf("%w: required %d remaining %d", ErrGasLimit, amount, 0)
+		return fmt.Errorf("%w: required %d remaining %d", ErrGasLimit, amount, consumed)
 	}
 	ec.remaining -= amount
 	ec.used += amount
@@ -289,6 +314,7 @@ func (vm *SimpleVM) Start() error {
 	if vm.running {
 		return nil
 	}
+	vm.lifecycle, vm.cancel = context.WithCancel(context.Background())
 	vm.running = true
 	return nil
 }
@@ -296,11 +322,20 @@ func (vm *SimpleVM) Start() error {
 // Stop halts the VM instance.
 func (vm *SimpleVM) Stop() error {
 	vm.mu.Lock()
-	defer vm.mu.Unlock()
 	if !vm.running {
+		vm.mu.Unlock()
 		return nil
 	}
+	cancel := vm.cancel
+	vm.cancel = nil
+	vm.lifecycle = nil
 	vm.running = false
+	vm.mu.Unlock()
+
+	if cancel != nil {
+		cancel()
+	}
+	vm.wg.Wait()
 	return nil
 }
 
@@ -323,24 +358,45 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 	if ctx == nil {
 		ctx = context.Background()
 	}
-	if !vm.Status() {
-		return nil, 0, errors.New("vm not running")
+
+	vm.mu.RLock()
+	running := vm.running
+	lifecycle := vm.lifecycle
+	vm.mu.RUnlock()
+	if !running {
+		return nil, 0, errVMNotRunning
 	}
 
-	release, err := vm.acquireSlot(ctx)
+	release, err := vm.acquireSlot(ctx, lifecycle)
 	if err != nil {
 		return nil, 0, err
 	}
 	defer release()
 
+	vm.mu.RLock()
+	if !vm.running {
+		vm.mu.RUnlock()
+		return nil, 0, errVMNotRunning
+	}
+	handlers := vm.handlers
+	defaultH := vm.defaultH
+	vm.mu.RUnlock()
+
 	if len(wasm) == 0 {
-		return nil, 0, errors.New("bytecode required")
+		return nil, 0, errBytecodeRequired
+	}
+	if gasLimit == 0 {
+		return nil, 0, errGasLimitNotDefined
 	}
 
 	hooks := vm.snapshotHooks()
 	exec := newExecutionContext(vm, gasLimit)
 	start := time.Now()
-	out = args
+	out = make([]byte, len(args))
+	copy(out, args)
+
+	vm.wg.Add(1)
+	defer vm.wg.Done()
 
 	defer func() {
 		if r := recover(); r != nil {
@@ -352,8 +408,7 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 
 	opcodeNames := Opcodes()
 	for i := 0; i < len(wasm); i += 3 {
-		if ctx.Err() != nil {
-			err = ctx.Err()
+		if err := ctx.Err(); err != nil {
 			return nil, exec.Used(), err
 		}
 		b0 := wasm[i]
@@ -370,47 +425,66 @@ func (vm *SimpleVM) ExecuteContext(ctx context.Context, wasm []byte, method stri
 		name := vm.nameForOpcode(opcode, opcodeNames)
 		stepStart := time.Now()
 
-		if handler, ok := vm.handlers[opcode]; ok {
-			if err = exec.Gas(cost); err != nil {
-				vm.emitTrace(hooks, ExecutionTrace{Opcode: opcode, Name: name, GasCost: cost, Duration: time.Since(stepStart), RemainingGas: exec.Remaining(), Err: err})
-				return nil, exec.Used(), err
-			}
-			out, err = handler(out)
-			vm.emitTrace(hooks, ExecutionTrace{Opcode: opcode, Name: name, GasCost: cost, Duration: time.Since(stepStart), RemainingGas: exec.Remaining(), Err: err})
-			if err != nil {
-				err = fmt.Errorf("opcode 0x%06x failed: %w", opcode, err)
-				return nil, exec.Used(), err
-			}
-			continue
+		if stepErr := exec.Gas(cost); stepErr != nil {
+			vm.emitTrace(hooks, ExecutionTrace{Opcode: opcode, Name: name, GasCost: cost, Duration: time.Since(stepStart), RemainingGas: exec.Remaining(), Err: stepErr})
+			return nil, exec.Used(), stepErr
 		}
 
-		if opcode == 0 {
-			if err = exec.Gas(cost); err != nil {
-				vm.emitTrace(hooks, ExecutionTrace{Opcode: opcode, Name: name, GasCost: cost, Duration: time.Since(stepStart), RemainingGas: exec.Remaining(), Err: err})
-				return nil, exec.Used(), err
-			}
-			if vm.defaultH != nil {
-				out, err = vm.defaultH(out)
-				vm.emitTrace(hooks, ExecutionTrace{Opcode: opcode, Name: name, GasCost: cost, Duration: time.Since(stepStart), RemainingGas: exec.Remaining(), Err: err})
-				if err != nil {
-					err = fmt.Errorf("opcode 0x%06x failed: %w", opcode, err)
-					return nil, exec.Used(), err
+		handler, hasHandler := handlers[opcode]
+		var stepErr error
+		switch {
+		case hasHandler && handler != nil:
+			stepErr = func() (err error) {
+				defer func() {
+					if r := recover(); r != nil {
+						err = fmt.Errorf("opcode 0x%06x panic: %v", opcode, r)
+					}
+				}()
+				out, err = handler(out)
+				return err
+			}()
+		case opcode == 0 && defaultH != nil:
+			stepErr = func() (err error) {
+				defer func() {
+					if r := recover(); r != nil {
+						err = fmt.Errorf("opcode 0x%06x panic: %v", opcode, r)
+					}
+				}()
+				out, err = defaultH(out)
+				return err
+			}()
+		default:
+			if _, known := opcodeNames[Opcode(opcode)]; !known {
+				if defaultH != nil {
+					stepErr = func() (err error) {
+						defer func() {
+							if r := recover(); r != nil {
+								err = fmt.Errorf("opcode 0x%06x panic: %v", opcode, r)
+							}
+						}()
+						out, err = defaultH(out)
+						return err
+					}()
 				}
 			} else {
-				vm.emitTrace(hooks, ExecutionTrace{Opcode: opcode, Name: name, GasCost: cost, Duration: time.Since(stepStart), RemainingGas: exec.Remaining(), Err: nil})
+				func() {
+					defer func() {
+						if r := recover(); r != nil {
+							stepErr = fmt.Errorf("opcode 0x%06x panic: %v", opcode, r)
+						}
+					}()
+					stepErr = Dispatch(exec, Opcode(opcode))
+				}()
 			}
-			continue
 		}
 
-		err = Dispatch(exec, Opcode(opcode))
-		if err != nil {
-			vm.emitTrace(hooks, ExecutionTrace{Opcode: opcode, Name: name, GasCost: cost, Duration: time.Since(stepStart), RemainingGas: exec.Remaining(), Err: err})
-			continue
+		vm.emitTrace(hooks, ExecutionTrace{Opcode: opcode, Name: name, GasCost: cost, Duration: time.Since(stepStart), RemainingGas: exec.Remaining(), Err: stepErr})
+		if stepErr != nil {
+			return nil, exec.Used(), fmt.Errorf("opcode 0x%06x failed: %w", opcode, stepErr)
 		}
-		vm.emitTrace(hooks, ExecutionTrace{Opcode: opcode, Name: name, GasCost: cost, Duration: time.Since(stepStart), RemainingGas: exec.Remaining(), Err: nil})
 	}
 
-	if err = vm.awaitDeterministicDelay(ctx); err != nil {
+	if err := ctx.Err(); err != nil {
 		return nil, exec.Used(), err
 	}
 	return out, exec.Used(), nil
@@ -420,26 +494,21 @@ func (vm *SimpleVM) Execute(wasm []byte, method string, args []byte, gasLimit ui
 	return vm.ExecuteContext(context.Background(), wasm, method, args, gasLimit)
 }
 
-func (vm *SimpleVM) acquireSlot(ctx context.Context) (func(), error) {
+func (vm *SimpleVM) acquireSlot(ctx context.Context, lifecycle context.Context) (func(), error) {
 	if ctx == nil {
 		ctx = context.Background()
+	}
+	var stop <-chan struct{}
+	if lifecycle != nil {
+		stop = lifecycle.Done()
 	}
 	select {
 	case vm.limiter <- struct{}{}:
 		return func() { <-vm.limiter }, nil
 	case <-ctx.Done():
 		return nil, ctx.Err()
-	default:
-		return nil, errors.New("vm busy")
-	}
-}
-
-func (vm *SimpleVM) awaitDeterministicDelay(ctx context.Context) error {
-	select {
-	case <-time.After(time.Millisecond):
-		return nil
-	case <-ctx.Done():
-		return ctx.Err()
+	case <-stop:
+		return nil, errVMNotRunning
 	}
 }
 
