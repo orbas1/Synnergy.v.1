@@ -123,10 +123,69 @@ The Synnergy program evaluates every functional category on a 0–100 readiness 
 - Integrate provisioning scripts with enterprise IAM (SAML/OIDC) and document onboarding flows.
 
 ### 11. Documentation & Transparency
-- Consolidate production readiness requirements into a single authoritative guide.  
-- Record architecture decision records (ADRs) for critical protocol choices.  
-- Report security posture regularly (gosec remediation, pen-test findings, audit results).  
+- Consolidate production readiness requirements into a single authoritative guide.
+- Record architecture decision records (ADRs) for critical protocol choices.
+- Report security posture regularly (gosec remediation, pen-test findings, audit results).
 - Launch formal validator/regulator/auditor training backed by maintained runbooks.
+
+## Targeted Upgrade Deep-Dive Assessments
+
+| Domain | Score | Tier | Primary Risks | Immediate Upgrade Mandate |
+| --- | --- | --- | --- | --- |
+| Tokens & Asset Lifecycle | 42 | E | Oracle attestations unaudited, custody proofs missing, synthetic asset rebalancing manual. | Deploy MPC custody, oracle quorum attestations, automated reconciliation of SYN20/30/900 registries. |
+| Storage & Evidence Management | 35 | F | Retention policies unenforced, append-only proofs absent, archival nodes unverified. | Ship WORM-backed audit trails, automated retention/expiry flows, and storage attestation pipelines. |
+| Governance & Treasury Oversight | 33 | F | DAO voting lacks executable guarantees, treasury moves lack dual control, regulator exports incomplete. | Deliver executable governance modules with quorum/latency SLAs, dual-controlled treasury, and regulator-grade reporting. |
+| Loanpool Programs | 30 | F | Underwriting heuristics opaque, disbursement approvals untracked, collateral liquidation paths manual. | Stand up risk scoring, notarized approvals, automated collateral triggers, and credit-loss provisioning. |
+| Charity & Impact Finance | 28 | G | Impact claims unverifiable, AML/KYC trails inconsistent, beneficiary disbursement lacks transparency. | Require verifiable credentials, publish tamper-evident impact attestations, and enforce sanctions screening. |
+| Gas Use & Execution Economics | 36 | F | Gas table diverges from runtime cost, metering bypassed on multi-call flows, upgrades unbenchmarked. | Re-benchmark opcode costs, enforce metering invariants, and publish upgrade guardrails with regression tests. |
+
+### Tokens & Asset Lifecycle (Score 42 / Tier E)
+- **State of Play:** Token registries (SYN20, SYN30, SYN900) depend on off-chain oracle inputs and manual custody attestations, producing reconciliation gaps for wrapped and synthetic assets. Distribution logs are mutable and rely on unsupervised operators, creating counterparty risk during mint/burn cycles.
+- **Upgrade Objectives:**
+  - Introduce MPC/HSM-backed custody workflows for mint/burn keys with real-time rotation SLAs.
+  - Enforce multi-oracle quorum attestations (2-of-3 minimum) with signed transcripts anchored on-chain.
+  - Automate daily reconciliation between treasury wallets, circulating supply, and oracle feeds with alerting on variance.
+- **Validation Signals:** Completion of red-team custody drills, zero manual override events in audit logs, and live dashboards showing oracle quorum health and supply reconciliation.
+
+### Storage & Evidence Management (Score 35 / Tier F)
+- **State of Play:** Critical artifacts (consensus logs, regulatory approvals, zero-knowledge proofs) reside in mutable object storage without retention locks, immutability, or automated evidence promotion. Archival nodes advertise availability but lack cryptographic proof of data completeness.
+- **Upgrade Objectives:**
+  - Roll out tamper-evident WORM storage for audit logs, consensus evidence, and compliance artifacts with retention automation.
+  - Implement periodic cryptographic sealing (Merkle sealing + notary timestamping) for archival snapshots consumed by regulators.
+  - Deliver storage attestation services that prove block/transaction completeness and enable rapid disaster recovery restores.
+- **Validation Signals:** Successful restore drills from sealed archives, immutable log attestations passing third-party audit, and green status on storage attestation dashboards across all regions.
+
+### Governance & Treasury Oversight (Score 33 / Tier F)
+- **State of Play:** DAO governance (SYN300) permits proposals and voting but lacks enforced quorum, time-lock execution, and tamper-evident treasury event trails. Treasury multi-sig keys are untracked, and there is no regulator-facing ledger for high-value disbursements.
+- **Upgrade Objectives:**
+  - Implement executable governance pipelines with quorum enforcement, challenge windows, and programmatic execution guards.
+  - Enforce dual-control/segregation-of-duties on treasury operations with MPC-signed disbursements and full auditability.
+  - Publish regulator-grade reporting (balance sheets, vote outcomes, treasury deltas) with automated delivery and legal-hold support.
+- **Validation Signals:** On-chain governance events mapped to executed code changes, successful completion of treasury SOC 1/2 audits, and regulatory portals consuming near-real-time treasury statements.
+
+### Loanpool Programs (Score 30 / Tier F)
+- **State of Play:** Loanpool underwriting relies on heuristic scoring without documented risk models, collateral valuations are manual, and disbursement approvals do not capture signature provenance. Liquidation workflows lack automation, risking systemic defaults.
+- **Upgrade Objectives:**
+  - Embed quantitative risk scoring, credit exposure dashboards, and configurable covenants across all loan classes.
+  - Require notarized multi-party approvals for disbursements, capturing borrower metadata, collateral IDs, and compliance attestations.
+  - Automate collateral liquidation triggers (price feeds, covenant breaches) with governance oversight and borrower notification protocols.
+- **Validation Signals:** Back-tested loss provisioning, zero orphaned approvals in audit logs, and simulated liquidation drills executed within target SLAs.
+
+### Charity & Impact Finance (Score 28 / Tier G)
+- **State of Play:** Charity pool inflows/outflows lack standardized verification, enabling potential misallocation or sanctions breaches. Impact metrics rely on self-reported narratives without verifiable credentials or public attestations.
+- **Upgrade Objectives:**
+  - Require verifiable credentials (VCs) for beneficiary onboarding, AML/KYC, and ongoing eligibility checks anchored to the identity ledger.
+  - Publish tamper-evident impact attestations (e.g., zk-SNARK backed) tied to disbursement events and third-party validators.
+  - Integrate sanctions, politically exposed persons (PEP), and adverse media screening with periodic revalidation and alerting.
+- **Validation Signals:** Independent NGO audits consuming on-chain attestations, zero sanctions match false negatives, and public dashboards evidencing disbursement-to-impact traceability.
+
+### Gas Use & Execution Economics (Score 36 / Tier F)
+- **State of Play:** Current gas tables were modeled on development workloads and do not reflect cross-chain, AI-assisted, or batched transaction realities. Metering bypasses exist on multi-call pathways, and opcode upgrades lack regression benchmarking, allowing DoS vectors and economic manipulation.
+- **Upgrade Objectives:**
+  - Re-benchmark every opcode and system call under production-like loads, aligning gas schedules with CPU/memory/IO profiles and publishing results.
+  - Enforce metering invariants via runtime assertions, fuzz testing, and liveness monitors targeting multi-call and delegate-call patterns.
+  - Establish upgrade guardrails that require economic regression reports, community review, and staged rollouts before gas schedule changes.
+- **Validation Signals:** Successful completion of gas economics simulations without liveness failures, automated alerts on anomalous gas consumption, and signed governance artifacts accompanying every gas-table update.
 
 ## Final Upgrade Workstreams
 ### 1. Security & Custody Strike Team (Weeks 0–4)
