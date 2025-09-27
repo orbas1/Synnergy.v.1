@@ -53,3 +53,16 @@ Longer explanation if necessary.
 
 For architectural context, see the detailed whitepaper under `Whitepaper_detailed/`.
 
+## Operational Scripts
+
+Synnergy ships an extensive library of operational bash scripts under `scripts/` that are orchestrated through `script_launcher.sh` and the shared workflow engine. Key behaviours:
+
+- Each `*.sh` entry point delegates to the launcher, which generates a manifest, runs prerequisite checks and can execute commands with timeouts.
+- Real commands only run when the `SYN_WORKFLOW_EXECUTE_CMDS=1` environment variable is set. Without it, workflows operate in plan mode and record the intended operations. Synnergy CLI invocations additionally require `SYN_WORKFLOW_EXECUTE_CLI=1`.
+- Common tasks have dedicated helpers:
+  - `./scripts/install_dependencies.sh --set section=web` installs Node dependencies while recording Go module downloads in the manifest.
+  - `./scripts/format_code.sh` runs `go fmt` when execution is enabled and logs formatted packages.
+  - `./scripts/contract_coverage_report.sh --output build/coverage.out` ensures the output directory exists, runs the Go coverage suite and captures the manifest in `scripts/state/testing/`.
+  - `./scripts/artifact_checksum.sh --set path=dist` computes SHA-256 checksums for release artifacts and persists the summary JSON.
+- All workflows accept `--plan` and `--output <path>` to preview actions or override manifest destinations. Notes attached with `--note` become part of the recorded metadata.
+
