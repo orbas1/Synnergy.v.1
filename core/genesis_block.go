@@ -41,6 +41,11 @@ func (n *Node) InitGenesis(wallets GenesisWallets) (GenesisStats, *Block, error)
 		Remaining:   RemainingSupply(0),
 		Weights:     n.Consensus.WeightsSnapshot(),
 	}
+	if n.LiquidityPools != nil {
+		if err := EnsureGenesisDex(n.LiquidityPools); err != nil {
+			return GenesisStats{}, nil, err
+		}
+	}
 	ilog.Info("genesis_init", "hash", block.Hash, "circulating", stats.Circulating, "remaining", stats.Remaining)
 	return stats, block, nil
 }

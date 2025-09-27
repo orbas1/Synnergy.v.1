@@ -25,6 +25,13 @@ func TestInitGenesis(t *testing.T) {
 	if stats.Remaining != MaxSupply-GenesisAllocation {
 		t.Fatalf("remaining %d", stats.Remaining)
 	}
+	pool, ok := node.LiquidityPools.Get("SYNN-BTC")
+	if !ok {
+		t.Fatalf("expected SYNN-BTC pool after genesis")
+	}
+	if pool.ReserveA != 100 || pool.ReserveB != 1 {
+		t.Fatalf("unexpected SYNN-BTC reserves %d:%d", pool.ReserveA, pool.ReserveB)
+	}
 	if _, _, err := node.InitGenesis(wallets); err == nil {
 		t.Fatalf("expected error on second init")
 	}
