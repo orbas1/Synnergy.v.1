@@ -9,32 +9,34 @@ import (
 
 // Node represents a participant in the network.
 type Node struct {
-	ID            string
-	Addr          string
-	Ledger        *Ledger
-	Consensus     *SynnergyConsensus
-	VM            *SNVM
-	Mempool       []*Transaction
-	Blockchain    []*Block
-	Validators    *ValidatorManager
-	MaxTxPerBlock int
-	mu            sync.Mutex
-	wallets       map[string]*Wallet
+	ID             string
+	Addr           string
+	Ledger         *Ledger
+	Consensus      *SynnergyConsensus
+	VM             *SNVM
+	Mempool        []*Transaction
+	Blockchain     []*Block
+	Validators     *ValidatorManager
+	MaxTxPerBlock  int
+	mu             sync.Mutex
+	wallets        map[string]*Wallet
+	LiquidityPools *LiquidityPoolRegistry
 }
 
 // NewNode creates a new node instance.
 func NewNode(id, addr string, ledger *Ledger) *Node {
 	return &Node{
-		ID:            id,
-		Addr:          addr,
-		Ledger:        ledger,
-		Consensus:     NewSynnergyConsensus(),
-		VM:            NewSNVM(),
-		Mempool:       []*Transaction{},
-		Blockchain:    []*Block{},
-		Validators:    NewValidatorManager(MinStake),
-		MaxTxPerBlock: 100,
-		wallets:       make(map[string]*Wallet),
+		ID:             id,
+		Addr:           addr,
+		Ledger:         ledger,
+		Consensus:      NewSynnergyConsensus(),
+		VM:             NewSNVM(),
+		Mempool:        []*Transaction{},
+		Blockchain:     []*Block{},
+		Validators:     NewValidatorManager(MinStake),
+		MaxTxPerBlock:  100,
+		wallets:        make(map[string]*Wallet),
+		LiquidityPools: NewLiquidityPoolRegistry(),
 	}
 }
 

@@ -20,6 +20,18 @@ Synnergy’s architecture, tooling, and documentation demonstrate an ambitious e
 
 ---
 
+### Extended Domain Grades
+| Domain | Maturity Grade | Severity | Key Production Gaps |
+| --- | --- | --- | --- |
+| Token Standards & Registry | C- | High | In-memory registries reset on restart, no custody segregation, and mint/burn paths lack policy enforcement. |
+| Storage Marketplace | D+ | High | Listings/deals live only in process memory, no collateral escrow, and no integrity proofs for pinned data. |
+| Governance & Authority Nodes | D | Critical | Vote weighting relies on ad-hoc randomness, there is no slashing, and government nodes cannot enforce policy guardrails. |
+| Loanpool Treasury | C | High | Disbursements skip multi-party approvals, treasury drawdowns lack audit hooks, and emergency brakes are manual. |
+| Charity Pool | D | High | Voting, payout rotation, and eligibility checks are stubs with no end-to-end reconciliation. |
+| Gas Accounting | C | Medium | Gas pricing defaults to `1` for unknown opcodes and runtime never verifies documentation drift. |
+
+---
+
 ## 1. Security & Cryptography (Critical)
 - **Static Analysis Debt**: `docs/security_audit_results.md` documents **170 open `gosec ./...` findings** (integer overflow, unchecked errors, weak randomness). Until triaged and cleared, the codebase cannot be considered hardened.
 - **Private Key Exposure**: `core/validator_keys.go` maintains validator private keys in a global in-memory map with no encryption, expiration, or hardware-backed custody. A compromised process can dump keys, forging sub-blocks.
@@ -90,6 +102,54 @@ Synnergy’s architecture, tooling, and documentation demonstrate an ambitious e
 - **Security Posture Reporting**: Stakeholders lack visibility into gosec remediation progress, penetration tests, or third-party audits.
 - **Training Programs**: No formal enablement paths exist for validators, regulators, or auditors to certify their operational readiness.
 
+## 12. Token Standards & Treasury Controls (High)
+**Maturity Grade: C-**
+
+- **Volatile Registry State**: The token registry (`internal/tokens/index.go`) is entirely in-memory; process restarts drop every token and allowance without checkpoints or persistence, breaking custody continuity for exchanges and auditors.
+- **Unchecked Mint/Burn Authority**: SYN20 pause/freeze mechanics (`internal/tokens/syn20.go`) guard balances but there is no role-based policy binding mint/burn to governance decisions or treasury approvals. CLI flows can mint without quorum, inviting abuse.
+- **Event Trail Gaps**: Although `internal/tokens/base.go` emits hooks, there is no downstream subscriber writing immutable audit trails or reconciling total supply with on-ledger balances.
+- **Testing Coverage**: Unit tests cover happy paths for mint/transfer, yet there is no fuzz/property testing across 30+ SYN token variants to guarantee allowances, caps, and overflow rules remain consistent.
+
+## 13. Storage Marketplace & Secure Data Flows (High)
+**Maturity Grade: D+**
+
+- **In-Memory Market State**: Listings and deals in `core/storage_marketplace.go` live solely inside process memory (`listings`/`deals` maps). A restart erases escrow positions and breaks contractual guarantees for storage providers.
+- **No Collateral or SLA Enforcement**: `OpenDeal` and `CloseDeal` never check provider collateral or verify retrieval proofs. Consumers cannot recover funds if data is withheld.
+- **Ledger Integration Missing**: Gas-pricing opcodes exist, yet there is no linkage between storage deals and tokenized payments or staking; all economic settlement is off-chain placeholders.
+- **Telemetry Without Action**: Spans are emitted via OpenTelemetry, but there is no monitoring pipeline ensuring deal anomalies trigger enforcement or slashing.
+
+## 14. Governance & Authority Nodes (Critical)
+**Maturity Grade: D**
+
+- **Randomized Electorate Without Determinism**: `AuthorityNodeRegistry.Electorate` (`core/authority_nodes.go`) uses `math/rand` seeded by wall-clock time to shuffle outcomes, making vote weighting unpredictable and unverifiable across nodes.
+- **No Slashing or Misconduct Tracking**: Votes map directly to validator stake boosts, yet there is no misbehavior detection or slashing when signatures are reused or nodes go offline.
+- **Government Role Limitations**: `GovernmentAuthorityNode` (`core/government_authority_node.go`) only blocks minting/policy changes; it lacks hooks to enforce statutory reporting, vetoes, or emergency shutdowns required by regulators.
+- **Signature Lifecycle Gaps**: Vote verification ensures signature authenticity but never persists evidence or revocation state, so long-term accountability is weak.
+
+## 15. Loanpool Treasury & Credit Programs (High)
+**Maturity Grade: C**
+
+- **Single-Signature Disbursement**: `LoanPool.Disburse` (`core/loanpool.go`) executes treasury transfers without multi-party approvals, dual control, or integration with treasury custody services.
+- **Minimal Risk Scoring**: Proposals only check amount/non-empty fields; there is no credit scoring, collateral, or rate assignment, so treasury capital can be drained by coordinated actors.
+- **Operational Runbooks Missing**: While CLI workflows exist, there is no automated audit log or reconciliation process to reconcile `Treasury` balances with ledger balances after large draws.
+- **Expiry Handling is Basic**: Votes expire via `Tick`, yet there is no automated reminder, extension approval workflow, or slashing for stalling proposals.
+
+## 16. Charity Pool & Social Impact Programs (High)
+**Maturity Grade: D**
+
+- **Stubbed Voting & Payouts**: `CharityPool.Tick` and `Winners` (`core/charity.go`) are no-ops returning empty results, so the charity lifecycle cannot advance beyond registration.
+- **Eligibility Enforcement Absent**: `CharityPool.Vote` merely stores a key without verifying cycles, prior votes, or anti-fraud heuristics; a single wallet can stuff ballots indefinitely.
+- **Ledger Dependence Without Validation**: Deposits rely on `StateRW.Transfer` but there are no reconciliations between donations and payouts, nor any disclosure pipeline for donors.
+- **Audit Metadata Missing**: Registrations persist JSON blobs yet omit attestation hashes, jurisdiction data, or sanctions screening outcomes expected by compliance teams.
+
+## 17. Gas Accounting & Upgrade Governance (Medium)
+**Maturity Grade: C**
+
+- **Silent Pricing Drift**: `GasCost` (`gas_table.go`) returns `DefaultGasCost` of `1` when documentation lags implementation. Mispriced opcodes could subsidize expensive operations unnoticed.
+- **No Version Pinning**: Gas metadata is scraped from `docs/reference/gas_table_list.md` at runtime without checksum validation or version negotiation, so node operators cannot prove they are using identical schedules.
+- **Upgrade Workflow Incomplete**: There is no governance proposal type that ties opcode additions to gas schedule updates, making network-wide upgrades manual and error-prone.
+- **Lack of Historical Snapshots**: Nodes do not persist historical gas tables, preventing retroactive billing audits or dispute resolution for past transactions.
+
 ---
 
 ## Final Upgrade Roadmap
@@ -113,5 +173,9 @@ Synnergy’s architecture, tooling, and documentation demonstrate an ambitious e
    - Publish production readiness checklist, ADRs, and training curricula.
    - Release stable, versioned APIs/SDKs and integration guides for wallets, custodians, and exchanges.
    - Establish transparent security/compliance reporting cadence for stakeholders.
+6. **Token, Treasury, and Grants Hardening (Weeks 12–16)**
+   - Persist token registries and storage marketplace state with tamper-evident checkpoints tied to ledger commitments.
+   - Introduce multi-party approvals, credit scoring, and automated reconciliations for loanpool and charity disbursements.
+   - Formalize governance upgrade proposals that bundle opcode/gas updates with executable configuration changes and publish signed schedules.
 
 Executing this roadmap closes the critical security, custody, and protocol correctness gaps while elevating operational excellence to the "S-tier" bar expected by regulated enterprises.
